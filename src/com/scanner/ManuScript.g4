@@ -24,6 +24,11 @@
  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
+/**
+ * TODO:
+ *  - add pointer expressions
+ */
+
 /** A Java 1.7 grammar for ANTLR v4 derived from ANTLR v3 Java grammar.
  *  Uses ANTLR v4's left-recursive expression notation.
  *  It parses ECJ, Netbeans, JDK etc...
@@ -44,50 +49,50 @@ compilationUnit
     ;
 
 packageDeclaration
-    :   'from' qualifiedName ';'
+    :   PACKAGE qualifiedName ';'
     ;
 
 importDeclaration
-    :   'take' qualifiedName 'take everything'? ';'
+    :   IMPORT qualifiedName 'take everything'? ';'
     ;
 
 typeDeclaration
     :   classOrInterfaceModifier* classDeclaration
     |   classOrInterfaceModifier* enumDeclaration
     |   classOrInterfaceModifier* interfaceDeclaration
-    |   classOrInterfaceModifier* annotationTypeDeclaration
+//    |   classOrInterfaceModifier* annotationTypeDeclaration
     |   ';'
     ;
 
 modifier
     :   classOrInterfaceModifier
-    |   (   'native'
-        |   'synchronized'
-        |   'transient'
+    |   (   NATIVE
+        |   SYNCHRONIZED
+        |   TRANSIENT
         )
     ;
 
 classOrInterfaceModifier
-    :   annotation       // class or interface
-    |   (   PUBLIC     // class or interface
-        |   'hereditary'  // class or interface
-        |   'secret'    // class or interface
-        |   'static'     // class or interface
-        |   'template'   // class or interface
-        |   'permanent'      // class only -- does not apply to interfaces
-        |   'strictfp'   // class or interface
+    :   /*annotation       // class or interface
+    |*/   (   PUBLIC     // class or interface
+        |   PROTECTED  // class or interface
+        |   PRIVATE    // class or interface
+        |   STATIC     // class or interface
+        |   ABSTRACT   // class or interface
+        |   FINAL      // class only -- does not apply to interfaces
+        |   STRICTFP   // class or interface
         )
     ;
 
 variableModifier
     :   'final'
-    |   annotation
+//    |   annotation
     ;
 
 classDeclaration
-    :   'The' classOrInterfaceModifier? 'script' Identifier typeParameters?
-        (('is a' | 'is an') typeType)?
-        ('that can' typeList)?
+    :   STARTING classOrInterfaceModifier? CLASS Identifier typeParameters?
+        ((EXTENDS) typeType)?
+        (IMPLEMENTS typeList)?
         classBody
     ;
 
@@ -96,7 +101,7 @@ typeParameters
     ;
 
 typeParameter
-    :   Identifier (('is a' | 'is an') typeBound)?
+    :   Identifier ((EXTENDS) typeBound)?
     ;
 
 typeBound
@@ -113,7 +118,7 @@ enumConstants
     ;
 
 enumConstant
-    :   annotation* Identifier arguments? classBody?
+    :   /*annotation**/ Identifier arguments? classBody?
     ;
 
 enumBodyDeclarations
@@ -121,7 +126,7 @@ enumBodyDeclarations
     ;
 
 interfaceDeclaration
-    :   'interface' Identifier typeParameters? (('is a' | 'is an') typeList)? interfaceBody
+    :   INTERFACE Identifier typeParameters? ((EXTENDS) typeList)? interfaceBody
     ;
 
 typeList
@@ -143,7 +148,7 @@ interfaceBody
 
 classBodyDeclaration
     :   ';'
-    |   'static'? block
+    |   STATIC? block
     |   modifier* memberDeclaration
     ;
 
@@ -154,7 +159,7 @@ memberDeclaration
     |   constructorDeclaration
     |   genericConstructorDeclaration
     |   interfaceDeclaration
-    |   annotationTypeDeclaration
+//    |   annotationTypeDeclaration
     |   classDeclaration
     |   enumDeclaration
     ;
@@ -166,19 +171,19 @@ memberDeclaration
  */
 methodDeclaration
     :   methodModifier* 'ACT' Identifier 'starring' formalParameters ('[' ']')*
-        ('ignores' qualifiedNameList)?
+        (THROWS qualifiedNameList)?
         (   methodBody
         |   ';'
         )
     ;
 
 methodModifier
-    :   'universal'
-    |   'hereditary'
-    |   'secret'
-    |   'static'
-    |   'template'
-    |   'permanent'
+    :   PUBLIC
+    |   PROTECTED
+    |   PRIVATE
+    |   STATIC
+    |   ABSTRACT
+    |   FINAL
     ;
 
 genericMethodDeclaration
@@ -186,14 +191,14 @@ genericMethodDeclaration
     ;
 
 constructorDeclaration
-    :   constructorModifier* Identifier 'starring' formalParameters ('ignores' qualifiedNameList)?
+    :   constructorModifier* Identifier 'starring' formalParameters (THROWS qualifiedNameList)?
         constructorBody
     ;
 
 constructorModifier
-    :   'universal'
-    |   'hereditary'
-    |   'secret'
+    :   PUBLIC
+    |   PROTECTED
+    |   PRIVATE
     ;
 
 genericConstructorDeclaration
@@ -205,11 +210,11 @@ fieldDeclaration
     ;
 
 fieldModifier
-    :   'universal'
-    |   'hereditary'
-    |   'secret'
-    |   'static'
-    |   'permanent'
+    :   PUBLIC
+    |   PROTECTED
+    |   PRIVATE
+    |   STATIC
+    |   FINAL
     ;
 
 interfaceBodyDeclaration
@@ -225,7 +230,7 @@ interfaceMemberDeclaration
     |   interfaceMethodDeclaration
     |   genericInterfaceMethodDeclaration
     |   interfaceDeclaration
-    |   annotationTypeDeclaration
+//    |   annotationTypeDeclaration
     |   classDeclaration
     |   enumDeclaration
     ;
@@ -241,7 +246,7 @@ constantDeclarator
 // see matching of [] comment in methodDeclaratorRest
 interfaceMethodDeclaration
     :   typeType Identifier formalParameters ('[' ']')*
-        ('ignores' qualifiedNameList)?
+        (THROWS qualifiedNameList)?
         ';'
     ;
 
@@ -275,31 +280,32 @@ enumConstantName
     ;
 
 typeType
-    :   classOrInterfaceType ('[' ']')*
+    :   pointerType ('[' ']')*
+    |	classOrInterfaceType ('[' ']')*
     |   primitiveType ('[' ']')*
     |   structType ('[' ']')*
     ;
     
 pointerType
-	:	(primitiveType)'*';
+	:	(primitiveType | classOrInterfaceType | structType)'*';
+
+structType
+    :   STRUCT Identifier
+    ;
 
 classOrInterfaceType
     :   Identifier typeArguments? ('.' Identifier typeArguments? )*
     ;
 
 primitiveType
-    :   'boolean'
-    |   'char'
-    |   'byte'
-    |   'short'
-    |   'int'
-    |   'long'
-    |   'float'
-    |   'double'
-    ;
-
-structType
-    :   'composition' Identifier
+    :   BOOLEAN
+    |   CHAR
+    |   BYTE
+    |   SHORT
+    |   INT
+    |   LONG
+    |   FLOAT
+    |   DOUBLE
     ;
 
 structDefinition
@@ -307,10 +313,10 @@ structDefinition
     ;
 
 structDefinitionNoModifier
-    :   'composition' Identifier '{A}' structDeclarationList '{Z}'
-    |   'composition' Identifier '{SCENE' Identifier? '}' structDeclarationList '{END' Identifier? '}'
-    |   'composition' Identifier 'SCENE' structDeclarationList 'END'
-    |   'composition' Identifier '{' structDeclarationList '}'
+    :   STRUCT Identifier '{A}' structDeclarationList '{Z}'
+    |   STRUCT Identifier '{SCENE' Identifier? '}' structDeclarationList '{END' Identifier? '}'
+    |   STRUCT Identifier 'SCENE' structDeclarationList 'END'
+    |   STRUCT Identifier '{' structDeclarationList '}'
     ;
 
 structDeclarationList
@@ -330,8 +336,8 @@ qualifierList
     ;
 
 qualifier
-    :   'static'
-    |   'permanent'
+    :   STATIC
+    |   FINAL
     ;
 
 structDeclaratorList
@@ -356,7 +362,7 @@ typeArguments
 
 typeArgument
     :   typeType
-    |   '?' (('extends' | 'super') typeType)?
+    |   '?' ((EXTENDS | SUPER) typeType)?
     ;
 
 qualifiedNameList
@@ -403,67 +409,67 @@ literal
 
 // ANNOTATIONS
 
-annotation
-    :   '@' annotationName ( '(' ( elementValuePairs | elementValue )? ')' )?
-    ;
+//annotation
+//    :   '@' annotationName ( '(' ( elementValuePairs | elementValue )? ')' )?
+//    ;
+//
+//annotationName : qualifiedName ;
 
-annotationName : qualifiedName ;
+//elementValuePairs
+//    :   elementValuePair (',' elementValuePair)*
+//    ;
+//
+//elementValuePair
+//    :   Identifier '=' elementValue
+//    ;
+//
+//elementValue
+//    :   expression
+////    |   annotation
+//    |   elementValueArrayInitializer
+//    ;
+//
+//elementValueArrayInitializer
+//    :   '{' (elementValue (',' elementValue)*)? (',')? '}'
+//    ;
 
-elementValuePairs
-    :   elementValuePair (',' elementValuePair)*
-    ;
+//annotationTypeDeclaration
+//    :   '@' INTERFACE Identifier annotationTypeBody
+//    ;
+//
+//annotationTypeBody
+//    :   '{' (annotationTypeElementDeclaration)* '}'
+//    ;
+//
+//annotationTypeElementDeclaration
+//    :   modifier* annotationTypeElementRest
+//    |   ';' // this is not allowed by the grammar, but apparently allowed by the actual compiler
+//    ;
+//
+//annotationTypeElementRest
+//    :   typeType annotationMethodOrConstantRest ';'
+//    |   classDeclaration ';'?
+//    |   interfaceDeclaration ';'?
+//    |   enumDeclaration ';'?
+//    |   annotationTypeDeclaration ';'?
+//    ;
+//
+//annotationMethodOrConstantRest
+//    :   annotationMethodRest
+//    |   annotationConstantRest
+//    ;
+//
+//annotationMethodRest
+//    :   Identifier '(' ')' defaultValue?
+//    ;
+//
+//annotationConstantRest
+//    :   variableDeclarators
+//    ;
 
-elementValuePair
-    :   Identifier '=' elementValue
-    ;
-
-elementValue
-    :   expression
-    |   annotation
-    |   elementValueArrayInitializer
-    ;
-
-elementValueArrayInitializer
-    :   '{' (elementValue (',' elementValue)*)? (',')? '}'
-    ;
-
-annotationTypeDeclaration
-    :   '@' 'interface' Identifier annotationTypeBody
-    ;
-
-annotationTypeBody
-    :   '{' (annotationTypeElementDeclaration)* '}'
-    ;
-
-annotationTypeElementDeclaration
-    :   modifier* annotationTypeElementRest
-    |   ';' // this is not allowed by the grammar, but apparently allowed by the actual compiler
-    ;
-
-annotationTypeElementRest
-    :   typeType annotationMethodOrConstantRest ';'
-    |   classDeclaration ';'?
-    |   interfaceDeclaration ';'?
-    |   enumDeclaration ';'?
-    |   annotationTypeDeclaration ';'?
-    ;
-
-annotationMethodOrConstantRest
-    :   annotationMethodRest
-    |   annotationConstantRest
-    ;
-
-annotationMethodRest
-    :   Identifier '(' ')' defaultValue?
-    ;
-
-annotationConstantRest
-    :   variableDeclarators
-    ;
-
-defaultValue
-    :   'default' elementValue
-    ;
+//defaultValue
+//    :   'default' elementValue
+//    ;
 
 // STATEMENTS / BLOCKS
 
@@ -490,18 +496,18 @@ localVariableDeclaration
 statement
     :   block
     |   ASSERT expression (':' expression)? ';'
-    |   'if' parExpression statement ('else' statement)?
-    |   'replay'? '(' forControl ')' statement
+    |   IF parExpression statement (ELSE statement)?
+    |   FOR? '(' forControl ')' statement
     |   'when' parExpression statement
-    |   'rehearse' statement 'when' parExpression ';'
-    |   'audition' block (catchClause+ finallyBlock? | finallyBlock)
-    |   'audition' resourceSpecification block catchClause* finallyBlock?
-    |   'switch' parExpression ('{' | '{A}' | '{SCENE' Identifier? '}') switchBlockStatementGroup* switchLabel* ('}' | '{Z}' | '{END' Identifier? '}')
-    |   'synchronized' parExpression block
-    |   'give' expression? ';'
-    |   'ignore' expression ';'
-    |   'break' Identifier? ';'
-    |   'continue' Identifier? ';'
+    |   DO statement 'when' parExpression ';'
+    |   TRY block (catchClause+ finallyBlock? | finallyBlock)
+    |   TRY resourceSpecification block catchClause* finallyBlock?
+    |   SWITCH parExpression ('{' | '{A}' | '{SCENE' Identifier? '}') switchBlockStatementGroup* switchLabel* ('}' | '{Z}' | '{END' Identifier? '}')
+    |   SYNCHRONIZED parExpression block
+    |   RETURN expression? ';'
+    |   THROW expression ';'
+    |   BREAK Identifier? ';'
+    |   CONTINUE Identifier? ';'
     |   ';'
     |   statementExpression ';'
     |   Identifier ':' statement
@@ -510,7 +516,7 @@ statement
     ;
 
 catchClause
-    :   'catch' '(' variableModifier* catchType Identifier ')' block
+    :   CATCH '(' variableModifier* catchType Identifier ')' block
     ;
 
 catchType
@@ -518,7 +524,7 @@ catchType
     ;
 
 finallyBlock
-    :   'finally' block
+    :   FINALLY block
     ;
 
 resourceSpecification
@@ -541,9 +547,9 @@ switchBlockStatementGroup
     ;
 
 switchLabel
-    :   'version' constantExpression ':'
-    |   'version' enumConstantName ':'
-    |   'original' ':'
+    :   CASE constantExpression ':'
+    |   CASE enumConstantName ':'
+    |   DEFAULT ':'
     ;
 
 forControl
@@ -593,13 +599,13 @@ constantExpression
 expression
     :   primary
     |   expression '.' Identifier
-    |   expression '.' 'this'
-    |   expression '.' 'new' nonWildcardTypeArguments? innerCreator
-    |   expression '.' 'super' superSuffix
+    |   expression '.' THIS
+    |   expression '.' NEW nonWildcardTypeArguments? innerCreator
+    |   expression '.' SUPER superSuffix
     |   expression '.' explicitGenericInvocation
     |   expression '[' expression ']'
     |   expression '(' expressionList? ')'
-    |   'new' creator
+    |   NEW creator
     |   '(' typeType ')' expression
     |   expression ('++' | '--')
     |   ('+'|'-'|'++'|'--') expression
@@ -608,7 +614,7 @@ expression
     |   expression ('+'|'-') expression
     |   expression ('<' '<' | '>' '>' '>' | '>' '>') expression
     |   expression ('<=' | '>=' | '>' | '<') expression
-    |   expression 'can act as' typeType
+    |   expression INSTANCEOF typeType
     |   expression ('==' | '!=') expression
     |   expression '&' expression
     |   expression '^' expression
@@ -632,17 +638,17 @@ expression
         )
         expression
     ;
-pointerExpression
-	:	'*'Identifier;
 
 primary
     :   '(' expression ')'
-    |   'this'
-    |   'super'
+    |   THIS
+    |   SUPER
     |   literal
     |   Identifier
+    |	'*'Identifier
+    |	'&'Identifier
     |   typeType '.' 'class'
-    |   nonWildcardTypeArguments (explicitGenericInvocationSuffix | 'this' arguments)
+    |   nonWildcardTypeArguments (explicitGenericInvocationSuffix | THIS arguments)
     ;
 
 creator
@@ -694,7 +700,7 @@ superSuffix
     ;
 
 explicitGenericInvocationSuffix
-    :   'super' superSuffix
+    :   SUPER superSuffix
     |   Identifier arguments
     ;
 
@@ -706,14 +712,8 @@ arguments
 
 // §3.9 Keywords
 
-//keywords	  : ABSTRACT | ASSERT | BOOLEAN | BREAK | BYTE | CASE | CATCH | CHAR | CLASS | CONST | CONTINUE | DEFAULT | DO
-//				DOUBLE | ELSE | ENUM | EXTENDS | FINAL | FINALLY | FLOAT | FOR | IF | GOTO | IMPLEMENTS | IMPORT | INSTANCEOF |
-//				INT | INTERFACE | LONG | NATIVE | NEW | PACKAGE | PRINT | PRIVATE | PROTECTED | PUBLIC | RETURN | SCAN | SCANTO |
-//				SHORT | STARTING | STATIC | STRICTFP | SUPER | SWITCH | SYNCHRONIZED | THIS | THROW | THROWS | TRANSIENT | TRY | 
-//				VOID | WHILE;
-
 ABSTRACT      : 'template';
-ASSERT        : 'assert';
+ASSERT        : 'assert'; //not used
 BOOLEAN       : 'boolean';
 BREAK         : 'break';
 BYTE          : 'byte';
@@ -721,20 +721,20 @@ CASE          : 'version';
 CATCH         : 'catch';
 CHAR          : 'char';
 CLASS         : 'script';
-CONST         : 'const';
+CONST         : 'const'; //not used
 CONTINUE      : 'continue';
 DEFAULT       : 'original';
 DO            : 'rehearse';
 DOUBLE        : 'double';
 ELSE          : 'else';
-ENUM          : 'enum';
+ENUM          : 'enum'; //not used
 EXTENDS       : 'is a' | 'is an';
 FINAL         : 'permanent';
 FINALLY       : 'finally';
 FLOAT         : 'float';
 FOR           : 'replay';
 IF            : 'if';
-GOTO          : 'goto';
+GOTO          : 'goto'; //not used
 IMPLEMENTS    : 'that can';
 IMPORT        : 'take';
 INSTANCEOF    : 'can act as';
@@ -755,6 +755,7 @@ SHORT         : 'short';
 STARTING	  : 'The';
 STATIC        : 'static';
 STRICTFP      : 'strictfp';
+STRUCT		  : 'composition';
 SUPER         : 'super';
 SWITCH        : 'switch';
 SYNCHRONIZED  : 'synchronized';
@@ -1021,8 +1022,6 @@ NullLiteral
 
 // §3.11 Separators
 
-//SEPARATOR		: LPAREN | RPAREN | LBRACE | RBRACE | LBRACK | RBRACK | SEMI | COMMA | DOT;
-
 LPAREN          : '(';
 RPAREN          : ')';
 LBRACE          : '{';
@@ -1119,5 +1118,5 @@ COMMENT
     ;
 
 LINE_COMMENT
-    :   '['Identifier'?]:' ~[\r\n]* -> channel(HIDDEN)
+    :   '['Identifier']:' ~[\r\n]* -> channel(HIDDEN)
     ;

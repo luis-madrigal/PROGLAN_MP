@@ -43,6 +43,7 @@ public class ScannerModel {
 			public void reportContextSensitivity(Parser arg0, DFA arg1, int arg2, int arg3, int arg4, ATNConfigSet arg5) {
 				// TODO Auto-generated method stub
 				
+				
 			}
 			
 			@Override
@@ -70,17 +71,19 @@ public class ScannerModel {
 		
 		ParseTree tree = parser.compilationUnit();
 		
+		
 		System.out.println(tree.toStringTree(parser));
 		
 		String tokenized = "";
 		
 		Vocabulary vocabulary = parser.getVocabulary();
-		for(Token token : tokens.getTokens())
+		for(Token token : tokens.getTokens()) {
 			tokenized += "<"+this.getTokenClass(vocabulary.getDisplayName(token.getType()))+", "+token.getText()+">"+"\n";
+		}
 
 		return tokenized;
 	}
-	
+
 	public String getTokenClass(String displayName) {
 		if(Tokens.match(displayName, Tokens.KEYWORDS))
 			return "Keyword";

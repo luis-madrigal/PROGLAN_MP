@@ -161,36 +161,36 @@ public class Panel implements ActionListener, KeyListener {
 		this.inputLines.setForeground(Color.WHITE);
 		this.inputLines.setEditable(false);
 		this.inputLines.setMargin(new Insets(0, 5, 0, 5));
-//		this.codeInput.getDocument().addDocumentListener(new DocumentListener() {
-//			public String getText() {
-//				int caretPosition = codeInput.getDocument().getLength();
-//				Element root = codeInput.getDocument().getDefaultRootElement();
-//				String text = "1" + System.getProperty("line.separator");
-//				for(int i = 2; i < root.getElementIndex(caretPosition)+2; i++) {
-//					text += i+System.getProperty("line.separator");
-//				}
-//				
-//				return text;
-//			}
-//
-//			@Override
-//			public void changedUpdate(DocumentEvent arg0) {
-//				inputLines.setText(getText());
-//			}
-//
-//			@Override
-//			public void insertUpdate(DocumentEvent arg0) {
-//				inputLines.setText(getText());
+		this.codeInput.getDocument().addDocumentListener(new DocumentListener() {
+			public String getText() {
+				int caretPosition = codeInput.getDocument().getLength();
+				Element root = codeInput.getDocument().getDefaultRootElement();
+				String text = "1" + System.getProperty("line.separator");
+				for(int i = 2; i < root.getElementIndex(caretPosition)+2; i++) {
+					text += i+System.getProperty("line.separator");
+				}
+				
+				return text;
+			}
+
+			@Override
+			public void changedUpdate(DocumentEvent arg0) {
+				inputLines.setText(getText());
+			}
+
+			@Override
+			public void insertUpdate(DocumentEvent arg0) {
+				inputLines.setText(getText());
 //				highlight();
-//				
-//			}
-//
-//			@Override
-//			public void removeUpdate(DocumentEvent arg0) {
-//				inputLines.setText(getText());
+				
+			}
+
+			@Override
+			public void removeUpdate(DocumentEvent arg0) {
+				inputLines.setText(getText());
 //				highlight();
-//			}
-//			
+			}
+			
 //			private void highlight() {
 //				
 //				Runnable doHighlight = new Runnable() {
@@ -215,7 +215,7 @@ public class Panel implements ActionListener, KeyListener {
 //				};
 //				SwingUtilities.invokeLater(doHighlight);
 //			}
-//		});
+		});
 		
 		this.inputPane = new JScrollPane(this.codeInput);
 		this.inputPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
@@ -366,7 +366,7 @@ public class Panel implements ActionListener, KeyListener {
 		
 		this.parsedOut.setCaretPosition(parsedOut.getDocument().getLength());
 	}
-
+	
 	@Override
 	public void keyPressed(KeyEvent e) {
 		if((e.getKeyCode() == KeyEvent.VK_R) &&

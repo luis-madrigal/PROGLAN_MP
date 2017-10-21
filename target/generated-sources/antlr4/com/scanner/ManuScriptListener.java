@@ -438,6 +438,16 @@ public interface ManuScriptListener extends ParseTreeListener {
 	 */
 	void exitPointerType(ManuScriptParser.PointerTypeContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link ManuScriptParser#structType}.
+	 * @param ctx the parse tree
+	 */
+	void enterStructType(ManuScriptParser.StructTypeContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link ManuScriptParser#structType}.
+	 * @param ctx the parse tree
+	 */
+	void exitStructType(ManuScriptParser.StructTypeContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link ManuScriptParser#classOrInterfaceType}.
 	 * @param ctx the parse tree
 	 */
@@ -457,16 +467,6 @@ public interface ManuScriptListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitPrimitiveType(ManuScriptParser.PrimitiveTypeContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link ManuScriptParser#structType}.
-	 * @param ctx the parse tree
-	 */
-	void enterStructType(ManuScriptParser.StructTypeContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link ManuScriptParser#structType}.
-	 * @param ctx the parse tree
-	 */
-	void exitStructType(ManuScriptParser.StructTypeContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link ManuScriptParser#structDefinition}.
 	 * @param ctx the parse tree
@@ -687,146 +687,6 @@ public interface ManuScriptListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitLiteral(ManuScriptParser.LiteralContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link ManuScriptParser#annotation}.
-	 * @param ctx the parse tree
-	 */
-	void enterAnnotation(ManuScriptParser.AnnotationContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link ManuScriptParser#annotation}.
-	 * @param ctx the parse tree
-	 */
-	void exitAnnotation(ManuScriptParser.AnnotationContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link ManuScriptParser#annotationName}.
-	 * @param ctx the parse tree
-	 */
-	void enterAnnotationName(ManuScriptParser.AnnotationNameContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link ManuScriptParser#annotationName}.
-	 * @param ctx the parse tree
-	 */
-	void exitAnnotationName(ManuScriptParser.AnnotationNameContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link ManuScriptParser#elementValuePairs}.
-	 * @param ctx the parse tree
-	 */
-	void enterElementValuePairs(ManuScriptParser.ElementValuePairsContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link ManuScriptParser#elementValuePairs}.
-	 * @param ctx the parse tree
-	 */
-	void exitElementValuePairs(ManuScriptParser.ElementValuePairsContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link ManuScriptParser#elementValuePair}.
-	 * @param ctx the parse tree
-	 */
-	void enterElementValuePair(ManuScriptParser.ElementValuePairContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link ManuScriptParser#elementValuePair}.
-	 * @param ctx the parse tree
-	 */
-	void exitElementValuePair(ManuScriptParser.ElementValuePairContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link ManuScriptParser#elementValue}.
-	 * @param ctx the parse tree
-	 */
-	void enterElementValue(ManuScriptParser.ElementValueContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link ManuScriptParser#elementValue}.
-	 * @param ctx the parse tree
-	 */
-	void exitElementValue(ManuScriptParser.ElementValueContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link ManuScriptParser#elementValueArrayInitializer}.
-	 * @param ctx the parse tree
-	 */
-	void enterElementValueArrayInitializer(ManuScriptParser.ElementValueArrayInitializerContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link ManuScriptParser#elementValueArrayInitializer}.
-	 * @param ctx the parse tree
-	 */
-	void exitElementValueArrayInitializer(ManuScriptParser.ElementValueArrayInitializerContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link ManuScriptParser#annotationTypeDeclaration}.
-	 * @param ctx the parse tree
-	 */
-	void enterAnnotationTypeDeclaration(ManuScriptParser.AnnotationTypeDeclarationContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link ManuScriptParser#annotationTypeDeclaration}.
-	 * @param ctx the parse tree
-	 */
-	void exitAnnotationTypeDeclaration(ManuScriptParser.AnnotationTypeDeclarationContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link ManuScriptParser#annotationTypeBody}.
-	 * @param ctx the parse tree
-	 */
-	void enterAnnotationTypeBody(ManuScriptParser.AnnotationTypeBodyContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link ManuScriptParser#annotationTypeBody}.
-	 * @param ctx the parse tree
-	 */
-	void exitAnnotationTypeBody(ManuScriptParser.AnnotationTypeBodyContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link ManuScriptParser#annotationTypeElementDeclaration}.
-	 * @param ctx the parse tree
-	 */
-	void enterAnnotationTypeElementDeclaration(ManuScriptParser.AnnotationTypeElementDeclarationContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link ManuScriptParser#annotationTypeElementDeclaration}.
-	 * @param ctx the parse tree
-	 */
-	void exitAnnotationTypeElementDeclaration(ManuScriptParser.AnnotationTypeElementDeclarationContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link ManuScriptParser#annotationTypeElementRest}.
-	 * @param ctx the parse tree
-	 */
-	void enterAnnotationTypeElementRest(ManuScriptParser.AnnotationTypeElementRestContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link ManuScriptParser#annotationTypeElementRest}.
-	 * @param ctx the parse tree
-	 */
-	void exitAnnotationTypeElementRest(ManuScriptParser.AnnotationTypeElementRestContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link ManuScriptParser#annotationMethodOrConstantRest}.
-	 * @param ctx the parse tree
-	 */
-	void enterAnnotationMethodOrConstantRest(ManuScriptParser.AnnotationMethodOrConstantRestContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link ManuScriptParser#annotationMethodOrConstantRest}.
-	 * @param ctx the parse tree
-	 */
-	void exitAnnotationMethodOrConstantRest(ManuScriptParser.AnnotationMethodOrConstantRestContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link ManuScriptParser#annotationMethodRest}.
-	 * @param ctx the parse tree
-	 */
-	void enterAnnotationMethodRest(ManuScriptParser.AnnotationMethodRestContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link ManuScriptParser#annotationMethodRest}.
-	 * @param ctx the parse tree
-	 */
-	void exitAnnotationMethodRest(ManuScriptParser.AnnotationMethodRestContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link ManuScriptParser#annotationConstantRest}.
-	 * @param ctx the parse tree
-	 */
-	void enterAnnotationConstantRest(ManuScriptParser.AnnotationConstantRestContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link ManuScriptParser#annotationConstantRest}.
-	 * @param ctx the parse tree
-	 */
-	void exitAnnotationConstantRest(ManuScriptParser.AnnotationConstantRestContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link ManuScriptParser#defaultValue}.
-	 * @param ctx the parse tree
-	 */
-	void enterDefaultValue(ManuScriptParser.DefaultValueContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link ManuScriptParser#defaultValue}.
-	 * @param ctx the parse tree
-	 */
-	void exitDefaultValue(ManuScriptParser.DefaultValueContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link ManuScriptParser#block}.
 	 * @param ctx the parse tree
@@ -1067,16 +927,6 @@ public interface ManuScriptListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitExpression(ManuScriptParser.ExpressionContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link ManuScriptParser#pointerExpression}.
-	 * @param ctx the parse tree
-	 */
-	void enterPointerExpression(ManuScriptParser.PointerExpressionContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link ManuScriptParser#pointerExpression}.
-	 * @param ctx the parse tree
-	 */
-	void exitPointerExpression(ManuScriptParser.PointerExpressionContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link ManuScriptParser#primary}.
 	 * @param ctx the parse tree
