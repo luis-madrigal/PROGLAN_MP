@@ -103,7 +103,6 @@ public class Panel implements ActionListener, KeyListener {
                 for (Style style : styles.getStyles()) {
 	                Pattern pattern = Pattern.compile(style.getRegex());
 	                Matcher matcher = pattern.matcher(text);
-	                System.out.println(style.getRegex());
 	                while (matcher.find()) {
 	                    setCharacterAttributes(matcher.start(), matcher.end() - matcher.start() - 1, style.getAttrSet(), false);
 	                }
@@ -162,61 +161,61 @@ public class Panel implements ActionListener, KeyListener {
 		this.inputLines.setForeground(Color.WHITE);
 		this.inputLines.setEditable(false);
 		this.inputLines.setMargin(new Insets(0, 5, 0, 5));
-		this.codeInput.getDocument().addDocumentListener(new DocumentListener() {
-			public String getText() {
-				int caretPosition = codeInput.getDocument().getLength();
-				Element root = codeInput.getDocument().getDefaultRootElement();
-				String text = "1" + System.getProperty("line.separator");
-				for(int i = 2; i < root.getElementIndex(caretPosition)+2; i++) {
-					text += i+System.getProperty("line.separator");
-				}
-				
-				return text;
-			}
-
-			@Override
-			public void changedUpdate(DocumentEvent arg0) {
-				inputLines.setText(getText());
-			}
-
-			@Override
-			public void insertUpdate(DocumentEvent arg0) {
-				inputLines.setText(getText());
-				highlight();
-				
-			}
-
-			@Override
-			public void removeUpdate(DocumentEvent arg0) {
-				inputLines.setText(getText());
-				highlight();
-			}
-			
-			private void highlight() {
-				
-				Runnable doHighlight = new Runnable() {
-					
-					@Override
-					public void run() {
-						String text = codeInput.getText();
-
-			            for (Style style : styles.getStyles()) {
-			                Pattern pattern = Pattern.compile(style.getRegex());
-			                Matcher matcher = pattern.matcher(text);
-
-			                while (matcher.find()) {
-			                	System.out.print("Start index: " + matcher.start());
-			                    System.out.print(" End index: " + matcher.end());
-			                    System.out.println(" Found: " + matcher.group());
-			                    
-			                    codeInput.getStyledDocument().setCharacterAttributes(matcher.start(), matcher.end() - matcher.start(), style.getAttrSet(), true);
-			                }
-			            }
-					}
-				};
-				SwingUtilities.invokeLater(doHighlight);
-			}
-		});
+//		this.codeInput.getDocument().addDocumentListener(new DocumentListener() {
+//			public String getText() {
+//				int caretPosition = codeInput.getDocument().getLength();
+//				Element root = codeInput.getDocument().getDefaultRootElement();
+//				String text = "1" + System.getProperty("line.separator");
+//				for(int i = 2; i < root.getElementIndex(caretPosition)+2; i++) {
+//					text += i+System.getProperty("line.separator");
+//				}
+//				
+//				return text;
+//			}
+//
+//			@Override
+//			public void changedUpdate(DocumentEvent arg0) {
+//				inputLines.setText(getText());
+//			}
+//
+//			@Override
+//			public void insertUpdate(DocumentEvent arg0) {
+//				inputLines.setText(getText());
+//				highlight();
+//				
+//			}
+//
+//			@Override
+//			public void removeUpdate(DocumentEvent arg0) {
+//				inputLines.setText(getText());
+//				highlight();
+//			}
+//			
+//			private void highlight() {
+//				
+//				Runnable doHighlight = new Runnable() {
+//					
+//					@Override
+//					public void run() {
+//						String text = codeInput.getText();
+//
+//			            for (Style style : styles.getStyles()) {
+//			                Pattern pattern = Pattern.compile(style.getRegex());
+//			                Matcher matcher = pattern.matcher(text);
+//
+//			                while (matcher.find()) {
+//			                	System.out.print("Start index: " + matcher.start());
+//			                    System.out.print(" End index: " + matcher.end());
+//			                    System.out.println(" Found: " + matcher.group());
+//			                    
+//			                    codeInput.getStyledDocument().setCharacterAttributes(matcher.start(), matcher.end() - matcher.start(), style.getAttrSet(), true);
+//			                }
+//			            }
+//					}
+//				};
+//				SwingUtilities.invokeLater(doHighlight);
+//			}
+//		});
 		
 		this.inputPane = new JScrollPane(this.codeInput);
 		this.inputPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
@@ -341,7 +340,7 @@ public class Panel implements ActionListener, KeyListener {
 		gbc.gridx = 0;
 		gbc.gridy = 2;
 		gbc.insets = new Insets(30, 10, 10, 10);
-//		this.pnlMain.add(this.consolePane, gbc);
+		this.pnlMain.add(this.consolePane, gbc);
 		
 		//Scanner for input string
 		this.scanner = new ScannerModel();
