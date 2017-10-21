@@ -1,0 +1,62 @@
+from com.default;
+
+[Comment]: Sample comment
+
+The universal script NewClass
+{SCENE}
+	composition values
+	{A}
+		int a;
+		int b;
+		int c;
+	{Z}
+
+	composition values v;
+
+	universal ACT performFunction starring(int x, int *p)
+	{A}
+		float _sampleIdentifier123 = 999.9f;
+		boolean y = (5 > 4 && true) || (false && !(x == 0));
+		int[] myArray = new int[10];
+		int z;
+
+		Say "Please input a number: ";
+
+		int input;
+		Write to input;
+
+		Say "The input is: " + input;
+		x = input;
+		z = input;
+
+		if( x != 0 )
+		{A}
+			[Comment]: sample single line comment
+		{Z}
+		else
+		{A}
+		{Z}
+		v.a = input;
+		when( x > 5 )
+		{A}
+			replay( int i = 0 ; i < x ; i++ )
+			{A}
+				Say "Hello World" + v.a;
+			{Z}
+		
+		x--;
+		{Z}
+		*p = 0;
+		give z;
+	{Z}
+	
+	universal static ACT main starring()
+	{A}
+		int x = 2;
+		int p = 3;
+		NewClass dc = new NewClass();
+		x = dc.performFunction(x, &p);
+		Say "Value of X: " + x;
+		Say "Value of P: " + p;
+	{Z}
+{END}
