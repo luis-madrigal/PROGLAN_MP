@@ -19,6 +19,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
+import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextPane;
 import javax.swing.ScrollPaneConstants;
@@ -55,8 +56,11 @@ public class Panel implements ActionListener, KeyListener {
 	private JPanel topPane;
 	private JPanel bottomPane;
 	
+	private JTabbedPane outputTabs;
+	
 	private JTextPane codeInput;
 	private JTextPane parsedOut;
+	private JPanel parseTree;
 	private JTextPane console;
 	
 	private JScrollPane inputPane;
@@ -253,7 +257,7 @@ public class Panel implements ActionListener, KeyListener {
 		gbc.insets = new Insets(0, 10, 0, 0);
 		gbc.weightx = 1;
 		gbc.weighty = 1;
-		this.pnlMain.add(this.lblParsedOut, gbc);
+//		this.pnlMain.add(this.lblParsedOut, gbc);
 		
 //		this.outputLines = new JTextArea("1");
 //		this.outputLines.setFont(new Font("Consolas", 150, 12));
@@ -313,10 +317,15 @@ public class Panel implements ActionListener, KeyListener {
 //		gbc.weightx = 1;
 //		gbc.weighty = 1;
 //		this.pnlMain.add(this.parsedPane, gbc);
+		this.parseTree = new JPanel(); //TODO: do parse tree
+		
+		this.outputTabs = new JTabbedPane();
+		this.outputTabs.add("Parsed Out", this.parsedPane);
+		this.outputTabs.add("Parse Tree", this.parseTree);
 		
 		this.topSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
 		this.topSplitPane.setLeftComponent(this.inputPane);
-		this.topSplitPane.setRightComponent(this.parsedPane);
+		this.topSplitPane.setRightComponent(this.outputTabs);
 		this.topSplitPane.setDividerLocation((int) Frame.SCREEN_SIZE.getWidth()/2);
 		gbc = new GridBagConstraints();
 		gbc.anchor = GridBagConstraints.NORTHEAST;
@@ -380,9 +389,6 @@ public class Panel implements ActionListener, KeyListener {
 		gbc.insets = new Insets(30, 10, 10, 10);
 		this.pnlMain.add(this.bottomSplitPane, gbc);
 		
-		//Scanner for input string
-		this.scanner = new ScannerModel();
-		
 		this.topSplitPane.addPropertyChangeListener(JSplitPane.DIVIDER_LOCATION_PROPERTY, 
 		    new PropertyChangeListener() {
 		        @Override
@@ -390,6 +396,11 @@ public class Panel implements ActionListener, KeyListener {
 		        	lblParsedOut.setLocation(topSplitPane.getDividerLocation() + 20, lblParsedOut.getY());
 		        }
 		});
+		
+		//Scanner for input string
+		this.scanner = new ScannerModel();
+		
+		
 }
 	
 	public JPanel getUI() {
