@@ -9,6 +9,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -16,10 +18,10 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextPane;
 import javax.swing.ScrollPaneConstants;
-import javax.swing.SwingUtilities;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.AttributeSet;
@@ -32,7 +34,6 @@ import javax.swing.text.StyleConstants;
 import com.ide.styles.Style;
 import com.ide.styles.Styles;
 import com.scanner.ScannerModel;
-import com.utils.Tokens;
 
 
 public class Panel implements ActionListener, KeyListener {
@@ -48,9 +49,14 @@ public class Panel implements ActionListener, KeyListener {
 	private JTextArea inputLines;
 //	private JTextArea outputLines;
 	
+	private JSplitPane topSplitPane;
+	private JSplitPane bottomSplitPane;
+	
+	private JPanel topPane;
+	private JPanel bottomPane;
+	
 	private JTextPane codeInput;
 	private JTextPane parsedOut;
-	
 	private JTextPane console;
 	
 	private JScrollPane inputPane;
@@ -218,6 +224,7 @@ public class Panel implements ActionListener, KeyListener {
 		});
 		
 		this.inputPane = new JScrollPane(this.codeInput);
+		this.inputPane.setPreferredSize(new Dimension((int) Frame.SCREEN_SIZE.getWidth()/2, 150));
 		this.inputPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		this.inputPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
 		this.inputPane.setRowHeaderView(this.inputLines);
@@ -230,7 +237,7 @@ public class Panel implements ActionListener, KeyListener {
 		gbc.gridy = 1;
 		gbc.insets = new Insets(30, 10, 10, 0);
 		gbc.weighty = 0;
-		this.pnlMain.add(this.inputPane, gbc);
+//		this.pnlMain.add(this.inputPane, gbc);
 		
 		
 		//Output Parse Tree
@@ -292,20 +299,38 @@ public class Panel implements ActionListener, KeyListener {
 //		});
         
 		this.parsedPane = new JScrollPane(this.parsedOut);
-		this.parsedPane.setPreferredSize(new Dimension(350, 150));
+		this.parsedPane.setPreferredSize(new Dimension((int) Frame.SCREEN_SIZE.getWidth()/2, 150));
 		this.parsedPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 //		this.parsedPane.setRowHeaderView(this.outputLines);
 		
+//		gbc = new GridBagConstraints();
+//		gbc.anchor = GridBagConstraints.NORTHEAST;
+//		gbc.fill = GridBagConstraints.BOTH;
+//		gbc.gridwidth = 3;
+//		gbc.gridx = 1;
+//		gbc.gridy = 1;
+//		gbc.insets = new Insets(30, 10, 10, 10);
+//		gbc.weightx = 1;
+//		gbc.weighty = 1;
+//		this.pnlMain.add(this.parsedPane, gbc);
+		
+		this.topSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
+		this.topSplitPane.setLeftComponent(this.inputPane);
+		this.topSplitPane.setRightComponent(this.parsedPane);
+		this.topSplitPane.setDividerLocation((int) Frame.SCREEN_SIZE.getWidth()/2);
 		gbc = new GridBagConstraints();
 		gbc.anchor = GridBagConstraints.NORTHEAST;
 		gbc.fill = GridBagConstraints.BOTH;
-		gbc.gridwidth = 3;
-		gbc.gridx = 1;
+		gbc.gridwidth = 6;
+		gbc.gridx = 0;
 		gbc.gridy = 1;
 		gbc.insets = new Insets(30, 10, 10, 10);
-//		gbc.weightx = 1;
-//		gbc.weighty = 1;
-		this.pnlMain.add(this.parsedPane, gbc);
+		this.pnlMain.add(this.topSplitPane, gbc);
+		
+		this.bottomPane = new JPanel();
+		this.bottomPane.setLayout(new GridBagLayout());
+		this.bottomPane.setBackground(Color.WHITE);
+		this.bottomPane.isOpaque();
 		
 		this.lblConsole = new JLabel("Console:");
 		this.lblConsole.setFont(new Font("Segoe UI", 150, baseFontSize));
@@ -315,11 +340,12 @@ public class Panel implements ActionListener, KeyListener {
 		gbc.fill = GridBagConstraints.HORIZONTAL;
 		gbc.gridwidth = 3;
 		gbc.gridx = 0;
-		gbc.gridy = 2;
+		gbc.gridy = 0;
 		gbc.insets = new Insets(0, 10, 0, 0);
 		gbc.weightx = 1;
 		gbc.weighty = 1;
-		this.pnlMain.add(this.lblConsole, gbc);
+		this.bottomPane.add(this.lblConsole, gbc);
+//		this.pnlMain.add(this.lblConsole, gbc);
 		
 		this.console = new JTextPane();
 //        this.parsedOut.setSize(30, 50);
@@ -332,21 +358,39 @@ public class Panel implements ActionListener, KeyListener {
 		this.consolePane = new JScrollPane(this.console);
 		this.consolePane.setPreferredSize(new Dimension(350, 150));
 		this.consolePane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-		
 		gbc = new GridBagConstraints();
 		gbc.anchor = GridBagConstraints.NORTHEAST;
 		gbc.fill = GridBagConstraints.BOTH;
 		gbc.gridwidth = 6;
 		gbc.gridx = 0;
-		gbc.gridy = 2;
+		gbc.gridy = 0;
 		gbc.insets = new Insets(30, 10, 10, 10);
-		this.pnlMain.add(this.consolePane, gbc);
+		this.bottomPane.add(this.consolePane, gbc);
+		
+		this.bottomSplitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
+		this.bottomSplitPane.setTopComponent(this.topSplitPane);
+		this.bottomSplitPane.setBottomComponent(this.bottomPane);
+		this.bottomSplitPane.setDividerLocation((int) Frame.SCREEN_SIZE.getHeight()/2);
+		gbc = new GridBagConstraints();
+		gbc.anchor = GridBagConstraints.NORTHEAST;
+		gbc.fill = GridBagConstraints.BOTH;
+		gbc.gridwidth = 6;
+		gbc.gridx = 0;
+		gbc.gridy = 1;
+		gbc.insets = new Insets(30, 10, 10, 10);
+		this.pnlMain.add(this.bottomSplitPane, gbc);
 		
 		//Scanner for input string
 		this.scanner = new ScannerModel();
 		
-		
-	}
+		this.topSplitPane.addPropertyChangeListener(JSplitPane.DIVIDER_LOCATION_PROPERTY, 
+		    new PropertyChangeListener() {
+		        @Override
+		        public void propertyChange(PropertyChangeEvent pce) {
+		        	lblParsedOut.setLocation(topSplitPane.getDividerLocation() + 20, lblParsedOut.getY());
+		        }
+		});
+}
 	
 	public JPanel getUI() {
 		return this.pnlMain;
