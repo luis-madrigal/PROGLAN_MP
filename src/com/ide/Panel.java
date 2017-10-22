@@ -34,7 +34,7 @@ import javax.swing.text.StyleConstants;
 
 import com.ide.styles.Style;
 import com.ide.styles.Styles;
-import com.scanner.ScannerModel;
+import com.parser.ScannerModel;
 
 
 public class Panel implements ActionListener, KeyListener {
@@ -55,16 +55,17 @@ public class Panel implements ActionListener, KeyListener {
 	
 	private JPanel topPane;
 	private JPanel bottomPane;
+	private JPanel parseTreePane;
 	
 	private JTabbedPane outputTabs;
 	
 	private JTextPane codeInput;
 	private JTextPane parsedOut;
-	private JPanel parseTree;
 	private JTextPane console;
 	
 	private JScrollPane inputPane;
 	private JScrollPane parsedPane;
+	private JScrollPane treePane;
 	private JScrollPane consolePane;
 	
 
@@ -74,6 +75,7 @@ public class Panel implements ActionListener, KeyListener {
 	private final static String newline = "\n";
 	
 	private ScannerModel scanner;
+//	private ParseTreePane parseTreePane;
 	
 	private int baseFontSize = (int) Frame.SCREEN_SIZE.getHeight() / 60;
 	
@@ -317,11 +319,14 @@ public class Panel implements ActionListener, KeyListener {
 //		gbc.weightx = 1;
 //		gbc.weighty = 1;
 //		this.pnlMain.add(this.parsedPane, gbc);
-		this.parseTree = new JPanel(); //TODO: do parse tree
+//		this.parseTreePane = new ParseTreePane();
+		this.treePane = new JScrollPane(); //TODO: do parse tree
+		this.treePane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		this.treePane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
 		
 		this.outputTabs = new JTabbedPane();
 		this.outputTabs.add("Parsed Out", this.parsedPane);
-		this.outputTabs.add("Parse Tree", this.parseTree);
+		this.outputTabs.add("Parse Tree", this.treePane);
 		
 		this.topSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
 		this.topSplitPane.setLeftComponent(this.inputPane);
@@ -413,7 +418,9 @@ public class Panel implements ActionListener, KeyListener {
 		
 		this.parsedOut.setText("");
 //		this.parsedOut.setText(this.parsedOut.getText() + newline);
-		this.parsedOut.setText(this.parsedOut.getText() + this.scanner.generateParseTree(text+newline));
+		this.parsedOut.setText(this.parsedOut.getText() + this.scanner.getTokens(text+newline));
+		
+		this.treePane.setViewportView(this.scanner.getTree());
 		
 		this.console.setText(this.scanner.getMessage());
 		
@@ -430,7 +437,7 @@ public class Panel implements ActionListener, KeyListener {
 			String text = this.codeInput.getText();
 			
 			this.parsedOut.setText("");
-			this.parsedOut.setText(this.parsedOut.getText()+this.scanner.generateParseTree(text+newline));
+			this.parsedOut.setText(this.parsedOut.getText()+this.scanner.getTokens(text+newline));
 			
 			this.codeInput.selectAll();
 			

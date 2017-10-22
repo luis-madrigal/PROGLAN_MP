@@ -1,7 +1,11 @@
-package com.scanner;
+package com.parser;
+import java.util.List;
+import java.util.Arrays;
 import java.util.BitSet;
+import java.util.LinkedList;
 import java.util.Stack;
 
+import org.antlr.v4.gui.TreeViewer;
 import org.antlr.v4.runtime.ANTLRErrorListener;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
@@ -14,13 +18,17 @@ import org.antlr.v4.runtime.atn.ATNConfigSet;
 import org.antlr.v4.runtime.dfa.DFA;
 import org.antlr.v4.runtime.tree.ParseTree;
 
+import com.scanner.ManuScriptLexer;
+import com.scanner.ManuScriptParser;
 import com.utils.Tokens;
 
 public class ScannerModel {
 	
 	private String message;
+	private ParseTree tree;
+	private List<String> ruleNames;
 	
-	public String generateParseTree(String input) {
+	public String getTokens(String input) {
 		ANTLRInputStream istream = new ANTLRInputStream(input);
 		
 		message = "";
@@ -68,9 +76,9 @@ public class ScannerModel {
 		ManuScriptParser parser = new ManuScriptParser(tokens);
 		parser.removeErrorListeners();
 		parser.addErrorListener(listener);
-		
-		ParseTree tree = parser.compilationUnit();
-		
+
+		this.ruleNames = Arrays.asList(parser.getRuleNames());
+		this.tree = parser.compilationUnit();
 		
 		System.out.println(tree.toStringTree(parser));
 		
@@ -124,5 +132,9 @@ public class ScannerModel {
 		}
 		
 		return tabs;
+	}
+	
+	public TreeViewer getTree() {
+		return new TreeViewer(ruleNames, tree);
 	}
 }
