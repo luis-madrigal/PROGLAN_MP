@@ -47,7 +47,7 @@ grammar ManuScript;
 compilationUnit
     :   packageDeclaration? importDeclaration* typeDeclaration? EOF
     ;
-
+    
 packageDeclaration
     :   PACKAGE qualifiedName ';'
     ;
@@ -149,6 +149,7 @@ interfaceBody
 classBodyDeclaration
     :   ';'
     |   STATIC? block
+    |	structDefinition
     |   modifier* memberDeclaration
     ;
 
@@ -309,10 +310,6 @@ primitiveType
     ;
 
 structDefinition
-    :   fieldModifier* structDefinitionNoModifier
-    ;
-
-structDefinitionNoModifier
     :   STRUCT Identifier '{A}' structDeclarationList '{Z}'
     |   STRUCT Identifier '{SCENE' Identifier? '}' structDeclarationList '{END' Identifier? '}'
     |   STRUCT Identifier 'SCENE' structDeclarationList 'END'

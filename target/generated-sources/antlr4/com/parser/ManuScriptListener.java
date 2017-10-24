@@ -478,16 +478,6 @@ public interface ManuScriptListener extends ParseTreeListener {
 	 */
 	void exitStructDefinition(ManuScriptParser.StructDefinitionContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link ManuScriptParser#structDefinitionNoModifier}.
-	 * @param ctx the parse tree
-	 */
-	void enterStructDefinitionNoModifier(ManuScriptParser.StructDefinitionNoModifierContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link ManuScriptParser#structDefinitionNoModifier}.
-	 * @param ctx the parse tree
-	 */
-	void exitStructDefinitionNoModifier(ManuScriptParser.StructDefinitionNoModifierContext ctx);
-	/**
 	 * Enter a parse tree produced by {@link ManuScriptParser#structDeclarationList}.
 	 * @param ctx the parse tree
 	 */

@@ -580,18 +580,6 @@ public class ManuScriptBaseListener implements ManuScriptListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterStructDefinitionNoModifier(ManuScriptParser.StructDefinitionNoModifierContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitStructDefinitionNoModifier(ManuScriptParser.StructDefinitionNoModifierContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
 	@Override public void enterStructDeclarationList(ManuScriptParser.StructDeclarationListContext ctx) { }
 	/**
 	 * {@inheritDoc}

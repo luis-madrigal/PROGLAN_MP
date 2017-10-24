@@ -18,8 +18,8 @@ import org.antlr.v4.runtime.atn.ATNConfigSet;
 import org.antlr.v4.runtime.dfa.DFA;
 import org.antlr.v4.runtime.tree.ParseTree;
 
-import com.scanner.ManuScriptLexer;
-import com.scanner.ManuScriptParser;
+import com.parser.ManuScriptLexer;
+import com.parser.ManuScriptParser;
 import com.utils.Tokens;
 
 public class ScannerModel {
@@ -43,8 +43,8 @@ public class ScannerModel {
 			        sourceName = String.format("%s:%d:%d: ", sourceName, arg2, arg3);
 			    }
 
-			    System.err.println(sourceName+"line "+arg2+":"+arg3+" "+arg4);
-			    message = message + "\n" + sourceName+"line "+arg2+":"+arg3+" "+arg4;
+//			    System.err.println(sourceName+"line "+arg2+":"+arg3+" "+arg4);
+			    message = message + "line "+arg2+":"+arg3+" "+arg4+"\n";
 			}
 			
 			@Override
@@ -80,7 +80,7 @@ public class ScannerModel {
 		this.ruleNames = Arrays.asList(parser.getRuleNames());
 		this.tree = parser.compilationUnit();
 		
-		System.out.println(tree.toStringTree(parser));
+//		System.out.println(tree.toStringTree(parser));
 		
 		String tokenized = "";
 		
