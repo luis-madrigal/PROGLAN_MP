@@ -2,3 +2,8 @@
 build
 .classpath
 .project
+.idea/misc.xml
+.idea/modules.xml
+.idea/workspace.xml
+.idea/vcs.xml
+ManuScript.iml
