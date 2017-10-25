@@ -6,14 +6,14 @@ The universal script NewClass
 {SCENE}
 	composition values
 	{A}
-		int a [Error1]: Expected ';' after 'a'
+		int a [Error1]: Expected ';' after 'a' //error is consistent with what is displayed
 		int b;
-		int c [Error2]: Expected ';' after 'c'
+		int c [Error2]: Expected ';' after 'c' //error is consistent with what is displayed
 	{Z}
 
 	composition values v;
 
-	[Error3]: Unexpected 'ACT' after 'universal', expected 'script'
+	[Error3]: Unexpected 'ACT' after 'universal', expected 'script' //parser is detecting a class declaration instead of a method
 	The universal ACT performFunction starring(int x, int *p)
 	{A}
 		float _sampleIdentifier123 = 999.9f;
@@ -23,14 +23,14 @@ The universal script NewClass
 
 		Say "Please input a number: ";
 
-		input; [Error4]: Error?
+		input; [Error4]: Error? //input can be a class name (since class names are identifiers
 		Write to input;
 
 		Say "The input is: " + input;
 		x = input;
 		z = input;
 
-		if( x  0 ) [Error5]: Missing relational operator
+		if( x  0 ) [Error5]: Missing relational operator //error is saying that x is a valid input for an if statement
 		{A}
 			[Comment]: sample single line comment
 		{Z}
