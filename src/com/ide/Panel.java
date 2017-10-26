@@ -151,6 +151,7 @@ public class Panel implements ActionListener, KeyListener {
 		gbc.gridy = 0;
 		gbc.insets = new Insets(10, 10, 10, 0);
 		gbc.weightx = 1;
+		this.btnRun.setFocusable(false);
 		this.btnRun.addActionListener(this);
 		this.pnlMain.add(this.btnRun, gbc);
 		

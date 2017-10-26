@@ -13,3 +13,5 @@ ManuScript.iml
 build/classes/com/ide/Driver.class
 build/classes/com/ide/Frame.class
 build/classes/com/ide/Panel$1.class
+.classpath
+build/classes/com/ide/Panel.class
