@@ -14,6 +14,8 @@ import java.beans.PropertyChangeListener;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.swing.BoxLayout;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -31,6 +33,8 @@ import javax.swing.text.DefaultStyledDocument;
 import javax.swing.text.Element;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
+
+import org.antlr.v4.gui.TreeViewer;
 
 import com.ide.styles.Style;
 import com.ide.styles.Styles;
@@ -67,7 +71,9 @@ public class Panel implements ActionListener, KeyListener {
 	private JScrollPane parsedPane;
 	private JScrollPane treePane;
 	private JScrollPane consolePane;
-	
+
+	private JButton btnScaleUp;
+	private JButton btnScaleDown;
 
 	private final static Color SUBLIME_BG = new Color(39, 40, 34);
 	private final static Color SUBLIME_KEYWORD = new Color(102, 217, 239);
@@ -91,6 +97,8 @@ public class Panel implements ActionListener, KeyListener {
         
 //        SimpleAttributeSet attrDefault = new SimpleAttributeSet();
 //        attrLiteral.addAttribute(StyleConstants.Foreground, Color.WHITE);
+        
+
         
         DefaultStyledDocument doc = new DefaultStyledDocument() {            
         	public void insertString (int offset, String str, AttributeSet a) throws BadLocationException {
@@ -129,6 +137,8 @@ public class Panel implements ActionListener, KeyListener {
 		this.pnlMain.setBackground(Color.WHITE);
 		this.pnlMain.isOpaque();
 		GridBagConstraints gbc;
+		
+		
 		
 		
 		//Run Button
@@ -243,7 +253,6 @@ public class Panel implements ActionListener, KeyListener {
 		gbc.gridy = 1;
 		gbc.insets = new Insets(30, 10, 10, 0);
 		gbc.weighty = 0;
-//		this.pnlMain.add(this.inputPane, gbc);
 		
 		
 		//Output Parse Tree
@@ -259,74 +268,67 @@ public class Panel implements ActionListener, KeyListener {
 		gbc.insets = new Insets(0, 10, 0, 0);
 		gbc.weightx = 1;
 		gbc.weighty = 1;
-//		this.pnlMain.add(this.lblParsedOut, gbc);
-		
-//		this.outputLines = new JTextArea("1");
-//		this.outputLines.setFont(new Font("Consolas", 150, 12));
-//		this.outputLines.setBackground(Color.DARK_GRAY);
-//		this.outputLines.setForeground(Color.WHITE);
-//		this.outputLines.setEditable(false);
-//		this.outputLines.setMargin(new Insets(0, 5, 0, 5));
 		
 		this.parsedOut = new JTextPane(doc);
-//        this.parsedOut.setSize(30, 50);
         this.parsedOut.setFont(new Font("Consolas", 150, baseFontSize));
         this.parsedOut.setEditable(false);
         this.parsedOut.setForeground(Color.WHITE);
         this.parsedOut.setBackground(SUBLIME_BG);
         this.parsedOut.isOpaque();
 		
-//		this.parsedOut.getDocument().addDocumentListener(new DocumentListener() {
-//			public String getText() {
-//				int caretPosition = parsedOut.getDocument().getLength();
-//				Element root = parsedOut.getDocument().getDefaultRootElement();
-//				String text = "1" + System.getProperty("line.separator");
-//				for(int i = 2; i < root.getElementIndex(caretPosition)+2; i++) {
-//					text += i+System.getProperty("line.separator");
-//				}
-//				
-//				return text;
-//			}
-//
-//			@Override
-//			public void changedUpdate(DocumentEvent arg0) {
-//				outputLines.setText(getText());
-//			}
-//
-//			@Override
-//			public void insertUpdate(DocumentEvent arg0) {
-//				outputLines.setText(getText());	
-//			}
-//
-//			@Override
-//			public void removeUpdate(DocumentEvent arg0) {
-//				outputLines.setText(getText());
-//			}
-//		});
         
 		this.parsedPane = new JScrollPane(this.parsedOut);
 		this.parsedPane.setPreferredSize(new Dimension((int) Frame.SCREEN_SIZE.getWidth()/2, 150));
 		this.parsedPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-//		this.parsedPane.setRowHeaderView(this.outputLines);
-		
-//		gbc = new GridBagConstraints();
-//		gbc.anchor = GridBagConstraints.NORTHEAST;
-//		gbc.fill = GridBagConstraints.BOTH;
-//		gbc.gridwidth = 3;
-//		gbc.gridx = 1;
-//		gbc.gridy = 1;
-//		gbc.insets = new Insets(30, 10, 10, 10);
-//		gbc.weightx = 1;
-//		gbc.weighty = 1;
-//		this.pnlMain.add(this.parsedPane, gbc);
-//		this.parseTreePane = new ParseTreePane();
+	
 		this.treePane = new JScrollPane(); //TODO: do parse tree
 		this.treePane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		this.treePane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
 		
+		
+		JPanel parentPane = new JPanel();
+		parentPane.setLayout(new BoxLayout(parentPane, BoxLayout.Y_AXIS));
+		
+		//Scale Button
+		JPanel pnlScaleMenu = new JPanel();
+		pnlScaleMenu.setLayout(null);
+        this.btnScaleUp = new JButton();
+        btnScaleUp.setBackground(Color.WHITE);
+        btnScaleUp.setBorder(null);
+        btnScaleUp.setIcon(new ImageIcon("res/ico_add_off.png"));
+        btnScaleUp.setRolloverIcon(new ImageIcon("res/ico_add_on.png"));
+        btnScaleUp.setPressedIcon(new ImageIcon("res/ico_add_on.png"));
+        btnScaleUp.setFocusable(false);
+        
+		this.btnScaleUp.setBounds(3, 3, 30, 30);
+		this.btnScaleUp.addActionListener(this);
+		pnlScaleMenu.add(this.btnScaleUp);
+        
+        this.btnScaleDown = new JButton();
+        btnScaleDown.setBackground(Color.WHITE);
+        btnScaleDown.setBorder(null);
+        btnScaleDown.setIcon(new ImageIcon("res/ico_subtract_off.png"));
+        btnScaleDown.setRolloverIcon(new ImageIcon("res/ico_subtract_on.png"));
+        btnScaleDown.setPressedIcon(new ImageIcon("res/ico_subtract_on.png"));
+        btnScaleDown.setFocusable(false);
+        
+		this.btnScaleDown.setBounds(38, 3, 30, 30);
+		this.btnScaleDown.addActionListener(this);
+		this.btnScaleDown.addActionListener(this);
+		pnlScaleMenu.add(this.btnScaleDown);
+		
+		pnlScaleMenu.setMaximumSize(new Dimension(1366, 36));
+		pnlScaleMenu.setMinimumSize(new Dimension(0, 36));
+		pnlScaleMenu.setPreferredSize(new Dimension(1366, 36));
+		pnlScaleMenu.setBackground(Color.WHITE);
+		parentPane.add(pnlScaleMenu);
+		parentPane.add(treePane);
+		
 		this.outputTabs = new JTabbedPane();
 		this.outputTabs.add("Parsed Out", this.parsedPane);
-		this.outputTabs.add("Parse Tree", this.treePane);
+		this.outputTabs.add("Parse Tree", parentPane);
+		
+		parentPane.setSize(outputTabs.getWidth(), 40);
 		
 		this.topSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
 		this.topSplitPane.setLeftComponent(this.inputPane);
@@ -413,20 +415,41 @@ public class Panel implements ActionListener, KeyListener {
 	}
 
 	@Override
-	public void actionPerformed(ActionEvent arg0) {
-		String text = this.codeInput.getText();
+	public void actionPerformed(ActionEvent e) {
+		if(e.getSource() == this.btnRun) {
+			String text = this.codeInput.getText();		
+			
+			this.parsedOut.setText("");
+//			this.parsedOut.setText(this.parsedOut.getText() + newline);
+			this.parsedOut.setText(this.parsedOut.getText() + this.scanner.getTokens(text+newline));
+			
+			this.scanner.generateTree(); // Required to do this
+			this.treePane.setViewportView(this.scanner.getTree());			
+			
+			this.console.setText(this.scanner.getMessage());			
+			this.codeInput.selectAll();			
+			this.parsedOut.setCaretPosition(parsedOut.getDocument().getLength());
+		}
 		
-		this.parsedOut.setText("");
-//		this.parsedOut.setText(this.parsedOut.getText() + newline);
-		this.parsedOut.setText(this.parsedOut.getText() + this.scanner.getTokens(text+newline));
+		if(e.getSource() == this.btnScaleUp) {
+			TreeViewer treeViewer = this.scanner.getTree();
+			if(treeViewer != null) {
+				treeViewer.setScale(treeViewer.getScale()+0.5);
+				this.treePane.setViewportView(treeViewer);
+
+			}
+		}
 		
-		this.treePane.setViewportView(this.scanner.getTree());
-		
-		this.console.setText(this.scanner.getMessage());
-		
-		this.codeInput.selectAll();
-		
-		this.parsedOut.setCaretPosition(parsedOut.getDocument().getLength());
+		if(e.getSource() == this.btnScaleDown) {
+			TreeViewer treeViewer = this.scanner.getTree();
+			if(treeViewer != null) {
+				double scale = treeViewer.getScale();
+				if(scale > 0.5) {
+					treeViewer.setScale(scale-0.5);
+					this.treePane.setViewportView(treeViewer);
+				}
+			}
+		}
 	}
 	
 	@Override
