@@ -1,5 +1,6 @@
 package com.parser;
 import java.util.List;
+import java.awt.Font;
 import java.util.Arrays;
 import java.util.BitSet;
 import java.util.LinkedList;
@@ -27,6 +28,7 @@ public class ScannerModel {
 	private String message;
 	private ParseTree tree;
 	private List<String> ruleNames;
+	private TreeViewer treeViewer;
 	
 	public String getTokens(String input) {
 		ANTLRInputStream istream = new ANTLRInputStream(input);
@@ -130,11 +132,24 @@ public class ScannerModel {
 		for(int j = 0; j < n; j++) {
 			tabs = tabs.concat("\t");
 		}
-		
+		 
 		return tabs;
+	}
+
+	public void generateTree() {
+		this.treeViewer = new TreeViewer(ruleNames, tree);
+		this.treeViewer.setUseCurvedEdges(true);
 	}
 	
 	public TreeViewer getTree() {
-		return new TreeViewer(ruleNames, tree);
+		return treeViewer;
+	}
+
+	public TreeViewer getTreeViewer() {
+		return treeViewer;
+	}
+
+	public void setTreeViewer(TreeViewer treeViewer) {
+		this.treeViewer = treeViewer;
 	}
 }
