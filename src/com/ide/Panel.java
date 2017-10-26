@@ -35,10 +35,21 @@ import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 
 import org.antlr.v4.gui.TreeViewer;
+import org.fife.ui.rsyntaxtextarea.AbstractTokenMakerFactory;
+import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
+import org.fife.ui.rsyntaxtextarea.Style;
+import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
+import org.fife.ui.rsyntaxtextarea.SyntaxScheme;
+import org.fife.ui.rsyntaxtextarea.Token;
+import org.fife.ui.rsyntaxtextarea.TokenMakerFactory;
+import org.fife.ui.rtextarea.RTextArea;
 
-import com.ide.styles.Style;
+import com.ide.styles.IdeStyle;
+import com.ide.styles.ManuScriptTokenMaker;
 import com.ide.styles.Styles;
+import com.parser.ManuScriptLexer;
 import com.parser.ScannerModel;
+
 
 
 public class Panel implements ActionListener, KeyListener {
@@ -63,7 +74,7 @@ public class Panel implements ActionListener, KeyListener {
 	
 	private JTabbedPane outputTabs;
 	
-	private JTextPane codeInput;
+	private RSyntaxTextArea codeInput;
 	private JTextPane parsedOut;
 	private JTextPane console;
 	
@@ -76,6 +87,7 @@ public class Panel implements ActionListener, KeyListener {
 	private JButton btnScaleDown;
 
 	private final static Color SUBLIME_BG = new Color(39, 40, 34);
+	private final static Color SUBLIME_HIGHLIGHT = new Color(51, 51, 42);
 	private final static Color SUBLIME_KEYWORD = new Color(102, 217, 239);
 	private final static Color SUBLIME_LITERAL = new Color(230, 219, 116);
 	private final static String newline = "\n";
@@ -120,7 +132,7 @@ public class Panel implements ActionListener, KeyListener {
 //                while(matcher.find()) {
 //                	setCharacterAttributes(matcher.start(), matcher.end() - matcher.start(), attrLiteral, false);
 //                }
-                for (Style style : styles.getStyles()) {
+                for (IdeStyle style : styles.getStyles()) {
 	                Pattern pattern = Pattern.compile(style.getRegex());
 	                Matcher matcher = pattern.matcher(text);
 	                while (matcher.find()) {
@@ -171,19 +183,31 @@ public class Panel implements ActionListener, KeyListener {
 		gbc.weighty = 1;
 		this.pnlMain.add(this.lblCodeInput, gbc);
 		
-		this.codeInput = new JTextPane();
-		this.codeInput.setFont(new Font("Consolas", 150, baseFontSize));
+		this.codeInput = new RSyntaxTextArea();
+		this.codeInput.setSyntaxScheme(getExpressionColorScheme(this.codeInput.getSyntaxScheme()));
+		
+		
+		AbstractTokenMakerFactory atmf = (AbstractTokenMakerFactory)TokenMakerFactory.getDefaultInstance();
+		atmf.putMapping("text/manuscript", "com.ide.styles.ManuScriptTokenMaker");
+		
+		this.codeInput.setSyntaxEditingStyle("text/manuscript");
+
+		this.codeInput.setCurrentLineHighlightColor(SUBLIME_HIGHLIGHT);
+		this.codeInput.setCodeFoldingEnabled(true);
+//		this.codeInput.setFont(new Font("Consolas", 150, baseFontSize));
 		this.codeInput.setForeground(Color.WHITE);
 		this.codeInput.setBackground(SUBLIME_BG);
-		this.codeInput.isOpaque();
-		this.codeInput.setCaretColor(Color.WHITE);
+//		this.codeInput.isOpaque();
+//		this.codeInput.setCaretColor(Color.WHITE);
 		
 		this.inputLines = new JTextArea("1");
+	      
 		this.inputLines.setFont(new Font("Consolas", 150, baseFontSize));
 		this.inputLines.setBackground(Color.DARK_GRAY);
 		this.inputLines.setForeground(Color.WHITE);
 		this.inputLines.setEditable(false);
 		this.inputLines.setMargin(new Insets(0, 5, 0, 5));
+		
 		this.codeInput.getDocument().addDocumentListener(new DocumentListener() {
 			public String getText() {
 				int caretPosition = codeInput.getDocument().getLength();
@@ -410,7 +434,20 @@ public class Panel implements ActionListener, KeyListener {
 		
 		
 }
-	
+	private SyntaxScheme getExpressionColorScheme(SyntaxScheme textAreaSyntaxScheme) {
+		SyntaxScheme ss = textAreaSyntaxScheme;
+		// show brackets in dark purple
+		ss.setStyle(Token.SEPARATOR, new Style(Color.CYAN));
+		// show double quotes / strings in dark cyan
+		ss.setStyle(Token.LITERAL_STRING_DOUBLE_QUOTE, new Style(Color.CYAN));
+		// show attributes in RapidMiner orange
+		ss.setStyle(Token.VARIABLE, new Style(Color.CYAN));
+		// show unknown attributes that are placed in brackets in [] in black
+		ss.setStyle(Token.COMMENT_KEYWORD, new Style(Color.CYAN));
+		// show operators that are not defined in the functions in black (like other unknown words)
+		ss.setStyle(Token.OPERATOR, new Style(Color.CYAN));
+		return ss;
+	}
 	public JPanel getUI() {
 		return this.pnlMain;
 	}
@@ -471,13 +508,10 @@ public class Panel implements ActionListener, KeyListener {
 
 	@Override
 	public void keyReleased(KeyEvent e) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
 	public void keyTyped(KeyEvent e) {
-		// TODO Auto-generated method stub
 		
 	}
 }
