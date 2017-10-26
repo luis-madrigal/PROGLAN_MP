@@ -10,5 +10,8 @@ ManuScript.iml
 *.xml___jb_tmp___
 .idea/encodings.xml
 *.class
-build/classes/com/ide/*
-*.class
+build/classes/com/ide/Driver.class
+build/classes/com/ide/Frame.class
+build/classes/com/ide/Panel$1.class
+.classpath
+build/classes/com/ide/Panel.class
