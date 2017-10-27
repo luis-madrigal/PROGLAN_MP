@@ -13,6 +13,16 @@ public class Styles {
 	private final static Color SUBLIME_KEYWORD = new Color(102, 217, 239);
 	private final static Color SUBLIME_LITERAL = new Color(230, 219, 116);
 	
+	
+	public final static Color UN_LITERAL_STRING_DOUBLE_QUOTE = new Color(23, 198, 163);
+	public final static Color UN_VARIABLE = new Color(82, 227, 246);
+
+	public final static Color UN_RESERVED_WORD = new Color(255, 0, 127);	
+	public final static Color UN_COMMENT_KEYWORD = new Color(167, 236, 33);	
+	public final static Color UN_OPERATOR = Color.WHITE;
+	
+		
+	
 	private ArrayList<IdeStyle> styles;
 	
 //	public static Style LITERAL = new Style("\"(.*)\"", new SimpleAttributeSet());

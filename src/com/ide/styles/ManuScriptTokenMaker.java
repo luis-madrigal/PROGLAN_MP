@@ -7,6 +7,8 @@ import org.fife.ui.rsyntaxtextarea.RSyntaxUtilities;
 import org.fife.ui.rsyntaxtextarea.Token;
 import org.fife.ui.rsyntaxtextarea.TokenMap;
 
+import com.utils.Tokens;
+
 /**
  * Reference:
  * https://github.com/bobbylight/RSyntaxTextArea/wiki/Adding-Syntax-Highlighting-for-a-new-Language#UsingTMM
@@ -230,19 +232,46 @@ public class ManuScriptTokenMaker extends AbstractTokenMaker {
 	@Override
 	public TokenMap getWordsToHighlight() {
 	   TokenMap tokenMap = new TokenMap();
+	   String[] keywords = Tokens.KEYWORDS.trim().split("\\|");
+	   String[] operators = Tokens.OPERATORS.trim().split("\\|");
+	   String[] separators = Tokens.SEPARATORS.trim().split("\\|");
+		  
+	   String token;
+	   
+	   for(int i = 0; i < keywords.length; i++) {
+		   token = keywords[i].trim();
+		   if(!token.isEmpty())
+			   tokenMap.put(token, Token.RESERVED_WORD);
+		   System.out.println(token);
+	   }
+	   
+	   for(int i = 0; i < operators.length; i++) {
+		   token = operators[i].trim();
+		   if(!token.isEmpty())
+			   tokenMap.put(token, Token.RESERVED_WORD);
+		   System.out.println(token);
+	   }
+	   
+	   for(int i = 0; i < separators.length; i++) {
+		   token = separators[i].trim();
+		   if(!token.isEmpty())
+			   tokenMap.put(token, Token.RESERVED_WORD);
+		   System.out.println(token);
+	   }
+	   
+	   
+//	   tokenMap.put("[]*",  Token.COMMENT_MULTILINE);
+//	   tokenMap.put("*[]",  Token.COMMENT_MULTILINE);
+	   
 
-	   tokenMap.put("The",  Token.RESERVED_WORD);
-	   
-	   tokenMap.put("[]*",  Token.COMMENT_MULTILINE);
-	   tokenMap.put("*[]",  Token.COMMENT_MULTILINE);
-	   
-	   tokenMap.put("universal",   Token.RESERVED_WORD);
-	   tokenMap.put("is",    Token.RESERVED_WORD);
-	   tokenMap.put("a", Token.RESERVED_WORD);
+//	   tokenMap.put("The",  Token.RESERVED_WORD);
+//	   tokenMap.put("universal",   Token.RESERVED_WORD);
+//	   tokenMap.put("is",    Token.RESERVED_WORD);
+//	   tokenMap.put("a", Token.RESERVED_WORD);
 	  
-	   tokenMap.put("Say", Token.FUNCTION);
-	   tokenMap.put("scanf",  Token.FUNCTION);
-	   tokenMap.put("fopen",  Token.FUNCTION);
+//	   tokenMap.put("Say", Token.FUNCTION);
+//	   tokenMap.put("scanf",  Token.FUNCTION);
+//	   tokenMap.put("fopen",  Token.FUNCTION);
 	   
 	   return tokenMap;
 	}

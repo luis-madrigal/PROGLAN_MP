@@ -435,18 +435,19 @@ public class Panel implements ActionListener, KeyListener {
 		
 }
 	private SyntaxScheme getExpressionColorScheme(SyntaxScheme textAreaSyntaxScheme) {
-		SyntaxScheme ss = textAreaSyntaxScheme;
-		// show brackets in dark purple
-		ss.setStyle(Token.SEPARATOR, new Style(Color.CYAN));
-		// show double quotes / strings in dark cyan
-		ss.setStyle(Token.LITERAL_STRING_DOUBLE_QUOTE, new Style(Color.CYAN));
+		SyntaxScheme syntaxScheme = textAreaSyntaxScheme;
+		syntaxScheme.setStyle(Token.RESERVED_WORD, new Style(Styles.UN_RESERVED_WORD));
+		
+		syntaxScheme.setStyle(Token.SEPARATOR, new Style(Color.WHITE));
+
+		syntaxScheme.setStyle(Token.LITERAL_STRING_DOUBLE_QUOTE, new Style(Styles.UN_LITERAL_STRING_DOUBLE_QUOTE));
 		// show attributes in RapidMiner orange
-		ss.setStyle(Token.VARIABLE, new Style(Color.CYAN));
+		syntaxScheme.setStyle(Token.VARIABLE, new Style(Styles.UN_VARIABLE));
 		// show unknown attributes that are placed in brackets in [] in black
-		ss.setStyle(Token.COMMENT_KEYWORD, new Style(Color.CYAN));
+		syntaxScheme.setStyle(Token.COMMENT_KEYWORD, new Style(Styles.UN_COMMENT_KEYWORD));
 		// show operators that are not defined in the functions in black (like other unknown words)
-		ss.setStyle(Token.OPERATOR, new Style(Color.CYAN));
-		return ss;
+		syntaxScheme.setStyle(Token.OPERATOR, new Style(Styles.UN_OPERATOR));
+		return syntaxScheme;
 	}
 	public JPanel getUI() {
 		return this.pnlMain;

@@ -3,7 +3,6 @@ import java.util.List;
 import java.awt.Font;
 import java.util.Arrays;
 import java.util.BitSet;
-import java.util.LinkedList;
 import java.util.Stack;
 
 import org.antlr.v4.gui.TreeViewer;
