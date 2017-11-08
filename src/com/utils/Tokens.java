@@ -1,6 +1,5 @@
 package com.utils;
 import java.util.ArrayList;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Tokens {
@@ -25,6 +24,7 @@ public class Tokens {
 																	add("that can");
 																	add("can act as");
 																}};
+	
 //	Original:
 //	public static final String SEPARATORS = "\\(|\\)|\\{|\\}|[|]|;|,|\\.";
 	
@@ -33,8 +33,8 @@ public class Tokens {
 //	public static final String OPERATORS = "=|>|<|!|~|\\?|:|==|<=|>=|!=|&&|\\|\\||\\+\\+|--|\\+|-|\\*|/|&|\\||^|%|\\+=|-=|\\*=|/=|&=|\\|=|^=|%=|<<=|>>=|>>>=";
 
 	
-	private static Pattern pattern;
-	private static Matcher matcher;
+//	private static Pattern pattern;
+//	private static Matcher matcher;
 	
 	public static boolean match(String toMatch, String tokenType) {
 //		pattern = Pattern.compile("'("+tokenType+")'");

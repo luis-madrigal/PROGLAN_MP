@@ -36,7 +36,6 @@ import javax.swing.text.StyleConstants;
 
 import org.antlr.v4.gui.TreeViewer;
 import org.fife.ui.rsyntaxtextarea.AbstractTokenMakerFactory;
-import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rsyntaxtextarea.Style;
 import org.fife.ui.rsyntaxtextarea.SyntaxScheme;
 import org.fife.ui.rsyntaxtextarea.Token;
@@ -65,9 +64,9 @@ public class Panel implements ActionListener, KeyListener {
 	private JSplitPane topSplitPane;
 	private JSplitPane bottomSplitPane;
 	
-	private JPanel topPane;
+//	private JPanel topPane;
 	private JPanel bottomPane;
-	private JPanel parseTreePane;
+//	private JPanel parseTreePane;
 	
 	private JTabbedPane outputTabs;
 	
@@ -110,7 +109,9 @@ public class Panel implements ActionListener, KeyListener {
 
         
         DefaultStyledDocument doc = new DefaultStyledDocument() {            
-        	public void insertString (int offset, String str, AttributeSet a) throws BadLocationException {
+			private static final long serialVersionUID = 1L;
+
+			public void insertString (int offset, String str, AttributeSet a) throws BadLocationException {
                 super.insertString(offset, str, a);
 
                 String text = getText(0, getLength());

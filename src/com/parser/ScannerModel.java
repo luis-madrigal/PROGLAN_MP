@@ -1,6 +1,5 @@
 package com.parser;
 import java.util.List;
-import java.awt.Font;
 import java.util.Arrays;
 import java.util.BitSet;
 import java.util.Stack;
@@ -22,6 +21,7 @@ import com.parser.ManuScriptLexer;
 import com.parser.ManuScriptParser;
 import com.utils.Tokens;
 
+@SuppressWarnings("deprecation")
 public class ScannerModel {
 	
 	private String message;
