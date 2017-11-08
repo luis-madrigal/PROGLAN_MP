@@ -28,7 +28,7 @@ public class ScannerModel {
 	private String message;
 	private ParseTree tree;
 	private List<String> ruleNames;
-	private TreeViewerSample treeViewer;
+	private TreeViewer treeViewer;
 	
 	public String getTokens(String input) {
 		ANTLRInputStream istream = new ANTLRInputStream(input);
@@ -138,10 +138,10 @@ public class ScannerModel {
 	}
 
 	public void generateTree() {
-		this.treeViewer = new TreeViewerSample(ruleNames, tree);
+		this.treeViewer = new TreeViewer(ruleNames, tree);
 		this.treeViewer.setUseCurvedEdges(true);
 	}
-	
+
 	public TreeViewer getTree() {
 		return treeViewer;
 	}
@@ -150,7 +150,7 @@ public class ScannerModel {
 		return treeViewer;
 	}
 
-	public void setTreeViewer(TreeViewerSample treeViewer) {
+	public void setTreeViewer(TreeViewer treeViewer) {
 		this.treeViewer = treeViewer;
 	}
 }

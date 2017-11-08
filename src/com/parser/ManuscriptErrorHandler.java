@@ -5,6 +5,9 @@ import org.antlr.v4.runtime.atn.ATNState;
 import org.antlr.v4.runtime.atn.ParserATNSimulator;
 import org.antlr.v4.runtime.misc.IntervalSet;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 public class ManuscriptErrorHandler extends DefaultErrorStrategy {
 
     public ManuscriptErrorHandler(){
@@ -115,8 +118,10 @@ public class ManuscriptErrorHandler extends DefaultErrorStrategy {
     }
 
     protected void reportInputMismatch(Parser recognizer, InputMismatchException e) {
-        String msg = "mismatched input " + this.getTokenErrorDisplay(e.getOffendingToken()) + " expecting " + e.getExpectedTokens().toString(recognizer.getVocabulary());
-//        String msg = "mismatched input " + this.getTokenErrorDisplay(e.getOffendingToken()) + " expecting " + e.;
+//        String msg = "mismatched input " + this.getTokenErrorDisplay(e.getOffendingToken()) + " expecting " + e.getExpectedTokens().toString(recognizer.getVocabulary());
+//        String msg = "mismatched input " + this.getTokenErrorDisplay(e.getOffendingToken()) + " expecting " + recognizer.getRuleContext().toString(Arrays.asList(recognizer.getRuleNames())) ;
+//        String msg = "mismatched input " + this.getTokenErrorDisplay(e.getOffendingToken()) + " expecting " + e.getCtx().toString(Arrays.asList(recognizer.getRuleNames()),e.getCtx().parent) ;
+        String msg = "mismatched input " + this.getTokenErrorDisplay(e.getOffendingToken()) + " expecting " + Arrays.asList(recognizer.getRuleNames()).get(e.getCtx().getRuleIndex());
 
         recognizer.notifyErrorListeners(e.getOffendingToken(), msg, e);
     }
@@ -133,7 +138,8 @@ public class ManuscriptErrorHandler extends DefaultErrorStrategy {
             Token t = recognizer.getCurrentToken();
             String tokenName = this.getTokenErrorDisplay(t);
             IntervalSet expecting = this.getExpectedTokens(recognizer);
-            String msg = "extraneous input " + tokenName + " expecting " + expecting.toString(recognizer.getVocabulary());
+//            String msg = "extraneous input " + tokenName + " expecting " + expecting.toString(recognizer.getVocabulary());
+            String msg = "extraneous input " + tokenName + " expecting " + recognizer.getVocabulary().getDisplayName(expecting.getMinElement());
             recognizer.notifyErrorListeners(t, msg, (RecognitionException)null);
         }
     }
