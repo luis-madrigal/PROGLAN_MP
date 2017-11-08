@@ -433,12 +433,17 @@ public class Panel implements ActionListener, KeyListener {
 		this.scanner = new ScannerModel();
 		
 		
-}
+	}
+	/**
+	 * TODO: SyntaxHighlighting :: Map colors here
+	 * @param textAreaSyntaxScheme
+	 * @return
+	 */
 	private SyntaxScheme getExpressionColorScheme(SyntaxScheme textAreaSyntaxScheme) {
 		SyntaxScheme syntaxScheme = textAreaSyntaxScheme;
 		syntaxScheme.setStyle(Token.RESERVED_WORD, new Style(Styles.UN_RESERVED_WORD));
 		
-		syntaxScheme.setStyle(Token.SEPARATOR, new Style(Color.WHITE));
+		syntaxScheme.setStyle(Token.SEPARATOR, new Style(Styles.UN_SEPARATOR));
 
 		syntaxScheme.setStyle(Token.LITERAL_STRING_DOUBLE_QUOTE, new Style(Styles.UN_LITERAL_STRING_DOUBLE_QUOTE));
 		// show attributes in RapidMiner orange
@@ -447,6 +452,8 @@ public class Panel implements ActionListener, KeyListener {
 		syntaxScheme.setStyle(Token.COMMENT_KEYWORD, new Style(Styles.UN_COMMENT_KEYWORD));
 		// show operators that are not defined in the functions in black (like other unknown words)
 		syntaxScheme.setStyle(Token.OPERATOR, new Style(Styles.UN_OPERATOR));
+		
+		
 		return syntaxScheme;
 	}
 	public JPanel getUI() {
