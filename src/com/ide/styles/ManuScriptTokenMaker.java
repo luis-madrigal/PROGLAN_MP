@@ -228,7 +228,10 @@ public class ManuScriptTokenMaker extends AbstractTokenMaker {
 	   // Return the first token in our linked list.
 	   return firstToken;
 	}
-
+	
+	/*
+	 * TODO: SyntaxHighlighting
+	 */
 	@Override
 	public TokenMap getWordsToHighlight() {
 	   TokenMap tokenMap = new TokenMap();
@@ -239,39 +242,32 @@ public class ManuScriptTokenMaker extends AbstractTokenMaker {
 	   String token;
 	   
 	   for(int i = 0; i < keywords.length; i++) {
-		   token = keywords[i].trim();
+		   token = keywords[i].trim().replace("\\", "");
 		   if(!token.isEmpty())
 			   tokenMap.put(token, Token.RESERVED_WORD);
 		   System.out.println(token);
 	   }
 	   
 	   for(int i = 0; i < operators.length; i++) {
-		   token = operators[i].trim();
+		   token = operators[i].trim().replace("\\", "");
 		   if(!token.isEmpty())
-			   tokenMap.put(token, Token.RESERVED_WORD);
+			   tokenMap.put(token, Token.OPERATOR);
 		   System.out.println(token);
 	   }
 	   
 	   for(int i = 0; i < separators.length; i++) {
-		   token = separators[i].trim();
+		   token = separators[i].trim().replace("\\", "");
 		   if(!token.isEmpty())
-			   tokenMap.put(token, Token.RESERVED_WORD);
+			   tokenMap.put(token, Token.SEPARATOR);
 		   System.out.println(token);
 	   }
 	   
-	   
-//	   tokenMap.put("[]*",  Token.COMMENT_MULTILINE);
-//	   tokenMap.put("*[]",  Token.COMMENT_MULTILINE);
-	   
 
-//	   tokenMap.put("The",  Token.RESERVED_WORD);
-//	   tokenMap.put("universal",   Token.RESERVED_WORD);
-//	   tokenMap.put("is",    Token.RESERVED_WORD);
-//	   tokenMap.put("a", Token.RESERVED_WORD);
-	  
-//	   tokenMap.put("Say", Token.FUNCTION);
-//	   tokenMap.put("scanf",  Token.FUNCTION);
-//	   tokenMap.put("fopen",  Token.FUNCTION);
+	   tokenMap.put("[]:",  Token.COMMENT_KEYWORD);
+	   
+	   tokenMap.put("[]*",  Token.COMMENT_MULTILINE);
+	   tokenMap.put("*[]",  Token.COMMENT_MULTILINE);
+	   
 	   
 	   return tokenMap;
 	}

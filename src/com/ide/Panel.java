@@ -38,16 +38,12 @@ import org.antlr.v4.gui.TreeViewer;
 import org.fife.ui.rsyntaxtextarea.AbstractTokenMakerFactory;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rsyntaxtextarea.Style;
-import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 import org.fife.ui.rsyntaxtextarea.SyntaxScheme;
 import org.fife.ui.rsyntaxtextarea.Token;
 import org.fife.ui.rsyntaxtextarea.TokenMakerFactory;
-import org.fife.ui.rtextarea.RTextArea;
 
 import com.ide.styles.IdeStyle;
-import com.ide.styles.ManuScriptTokenMaker;
 import com.ide.styles.Styles;
-import com.parser.ManuScriptLexer;
 import com.parser.ScannerModel;
 
 
@@ -433,12 +429,16 @@ public class Panel implements ActionListener, KeyListener {
 		this.scanner = new ScannerModel();
 		
 		
-}
+	}
+	
+	/*
+	 * TODO: SyntaxHighlighting
+	 */
 	private SyntaxScheme getExpressionColorScheme(SyntaxScheme textAreaSyntaxScheme) {
 		SyntaxScheme syntaxScheme = textAreaSyntaxScheme;
 		syntaxScheme.setStyle(Token.RESERVED_WORD, new Style(Styles.UN_RESERVED_WORD));
 		
-		syntaxScheme.setStyle(Token.SEPARATOR, new Style(Color.WHITE));
+		syntaxScheme.setStyle(Token.SEPARATOR, new Style(Styles.UN_SEPARATOR));
 
 		syntaxScheme.setStyle(Token.LITERAL_STRING_DOUBLE_QUOTE, new Style(Styles.UN_LITERAL_STRING_DOUBLE_QUOTE));
 		// show attributes in RapidMiner orange

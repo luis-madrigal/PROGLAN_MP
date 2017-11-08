@@ -19,7 +19,10 @@ public class Styles {
 
 	public final static Color UN_RESERVED_WORD = new Color(255, 0, 127);	
 	public final static Color UN_COMMENT_KEYWORD = new Color(167, 236, 33);	
+	
 	public final static Color UN_OPERATOR = Color.WHITE;
+	public final static Color UN_SEPARATOR = new Color(97, 187, 229);
+	
 	
 		
 	
