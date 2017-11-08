@@ -43,6 +43,7 @@ import org.fife.ui.rsyntaxtextarea.Token;
 import org.fife.ui.rsyntaxtextarea.TokenMakerFactory;
 
 import com.ide.styles.IdeStyle;
+import com.ide.styles.RSyntaxTextAreaManuscript;
 import com.ide.styles.Styles;
 import com.parser.ScannerModel;
 
@@ -70,7 +71,7 @@ public class Panel implements ActionListener, KeyListener {
 	
 	private JTabbedPane outputTabs;
 	
-	private RSyntaxTextArea codeInput;
+	private RSyntaxTextAreaManuscript codeInput;
 	private JTextPane parsedOut;
 	private JTextPane console;
 	
@@ -179,9 +180,8 @@ public class Panel implements ActionListener, KeyListener {
 		gbc.weighty = 1;
 		this.pnlMain.add(this.lblCodeInput, gbc);
 		
-		this.codeInput = new RSyntaxTextArea();
+		this.codeInput = new RSyntaxTextAreaManuscript();
 		this.codeInput.setSyntaxScheme(getExpressionColorScheme(this.codeInput.getSyntaxScheme()));
-		
 		
 		AbstractTokenMakerFactory atmf = (AbstractTokenMakerFactory)TokenMakerFactory.getDefaultInstance();
 		atmf.putMapping("text/manuscript", "com.ide.styles.ManuScriptTokenMaker");

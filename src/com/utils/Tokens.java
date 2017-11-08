@@ -1,4 +1,5 @@
 package com.utils;
+import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -7,6 +8,23 @@ public class Tokens {
 	public static final String OPERATORS = "=|>|<|!|~|\\?|:|==|<=|>=|!=|&&|\\|\\||\\+\\+|--|\\+|-|\\*|/|&|\\||^|%|\\+=|-=|\\*=|/=|&=|\\|=|^=|%=|<<=|>>=|>>>=";
 	public static final String SEPARATORS = "\\(|\\)|\\{|\\}|[|]|;|,|\\.|\\{A\\}|\\{Z\\}|\\{SCENE\\}|\\{END\\}";
 	
+	@SuppressWarnings("serial")
+	public static final ArrayList<String> COMPOUND_KEYWORDS_START = new ArrayList<String>() {{
+																		add("take");
+																		add("is");
+																		add("that");
+																		add("can");
+																	}};
+																	
+																	
+	@SuppressWarnings("serial")
+	public static final ArrayList<String> COMPOUND_KEYWORDS = new ArrayList<String>() {{
+																	add("take everything");
+																	add("is a");
+																	add("is an");
+																	add("that can");
+																	add("can act as");
+																}};
 //	Original:
 //	public static final String SEPARATORS = "\\(|\\)|\\{|\\}|[|]|;|,|\\.";
 	
@@ -24,5 +42,7 @@ public class Tokens {
 
 		
 		return Pattern.matches("'("+tokenType+")'", toMatch);
+//		System.out.println(tokenType);
+//		return toMatch.equalsIgnoreCase("'("+tokenType+")'");
 	}
 }
