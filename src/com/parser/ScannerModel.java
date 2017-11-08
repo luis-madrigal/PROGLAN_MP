@@ -28,7 +28,7 @@ public class ScannerModel {
 	private String message;
 	private ParseTree tree;
 	private List<String> ruleNames;
-	private TreeViewer treeViewer;
+	private TreeViewerSample treeViewer;
 	
 	public String getTokens(String input) {
 		ANTLRInputStream istream = new ANTLRInputStream(input);
@@ -66,7 +66,7 @@ public class ScannerModel {
 			public void reportAmbiguity(Parser arg0, DFA arg1, int arg2, int arg3, boolean arg4, BitSet arg5,
 					ATNConfigSet arg6) {
 				// TODO Auto-generated method stub
-				
+
 			}
 		};
 		
@@ -77,6 +77,7 @@ public class ScannerModel {
 		CommonTokenStream tokens = new CommonTokenStream(lexer);
 		ManuScriptParser parser = new ManuScriptParser(tokens);
 		parser.removeErrorListeners();
+		parser.setErrorHandler(new ManuscriptErrorHandler());
 		parser.addErrorListener(listener);
 
 		this.ruleNames = Arrays.asList(parser.getRuleNames());
@@ -137,7 +138,7 @@ public class ScannerModel {
 	}
 
 	public void generateTree() {
-		this.treeViewer = new TreeViewer(ruleNames, tree);
+		this.treeViewer = new TreeViewerSample(ruleNames, tree);
 		this.treeViewer.setUseCurvedEdges(true);
 	}
 	
@@ -149,7 +150,7 @@ public class ScannerModel {
 		return treeViewer;
 	}
 
-	public void setTreeViewer(TreeViewer treeViewer) {
+	public void setTreeViewer(TreeViewerSample treeViewer) {
 		this.treeViewer = treeViewer;
 	}
 }
