@@ -15,3 +15,5 @@ build/classes/com/ide/Frame.class
 build/classes/com/ide/Panel$1.class
 .classpath
 build/classes/com/ide/Panel.class
+.idea/uiDesigner.xml
+.idea/gradle.xml
