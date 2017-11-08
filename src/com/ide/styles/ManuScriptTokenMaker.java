@@ -231,6 +231,7 @@ public class ManuScriptTokenMaker extends AbstractTokenMaker {
 	
 	/*
 	 * TODO: SyntaxHighlighting
+	 * Assign a token type to a String using tokenMap.put(<String>, <Token.TYPE>).
 	 */
 	@Override
 	public TokenMap getWordsToHighlight() {
@@ -264,7 +265,6 @@ public class ManuScriptTokenMaker extends AbstractTokenMaker {
 	   
 
 	   tokenMap.put("[]:",  Token.COMMENT_KEYWORD);
-	   
 	   tokenMap.put("[]*",  Token.COMMENT_MULTILINE);
 	   tokenMap.put("*[]",  Token.COMMENT_MULTILINE);
 	   

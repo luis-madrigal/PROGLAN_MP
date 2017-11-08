@@ -433,19 +433,23 @@ public class Panel implements ActionListener, KeyListener {
 	
 	/*
 	 * TODO: SyntaxHighlighting
+	 * Specify the color for a Token type here using syntaxScheme.
+	 * 
+	 * The Token class is from the RSyntax external library. It has static methods
+	 * for the generic token types.
+	 * 
+	 * To assign a word as a token to highlight, go to ManuScriptTokenMaker.java in
+	 * src.com.ide.styles and check the getWordsToHighlight() function.
+	 * 
 	 */
 	private SyntaxScheme getExpressionColorScheme(SyntaxScheme textAreaSyntaxScheme) {
 		SyntaxScheme syntaxScheme = textAreaSyntaxScheme;
-		syntaxScheme.setStyle(Token.RESERVED_WORD, new Style(Styles.UN_RESERVED_WORD));
-		
-		syntaxScheme.setStyle(Token.SEPARATOR, new Style(Styles.UN_SEPARATOR));
 
+		syntaxScheme.setStyle(Token.RESERVED_WORD, new Style(Styles.UN_RESERVED_WORD));
+		syntaxScheme.setStyle(Token.SEPARATOR, new Style(Styles.UN_SEPARATOR));
 		syntaxScheme.setStyle(Token.LITERAL_STRING_DOUBLE_QUOTE, new Style(Styles.UN_LITERAL_STRING_DOUBLE_QUOTE));
-		// show attributes in RapidMiner orange
 		syntaxScheme.setStyle(Token.VARIABLE, new Style(Styles.UN_VARIABLE));
-		// show unknown attributes that are placed in brackets in [] in black
 		syntaxScheme.setStyle(Token.COMMENT_KEYWORD, new Style(Styles.UN_COMMENT_KEYWORD));
-		// show operators that are not defined in the functions in black (like other unknown words)
 		syntaxScheme.setStyle(Token.OPERATOR, new Style(Styles.UN_OPERATOR));
 		return syntaxScheme;
 	}
