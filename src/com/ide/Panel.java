@@ -470,8 +470,9 @@ public class Panel implements ActionListener, KeyListener {
 			this.scanner.generateTree(); // Required to do this
 			this.treePane.setViewportView(this.scanner.getTree());			
 			
+			
 			this.console.setText(this.scanner.getMessage());			
-			this.codeInput.selectAll();			
+			this.codeInput.selectAll();
 			this.parsedOut.setCaretPosition(parsedOut.getDocument().getLength());
 		}
 		

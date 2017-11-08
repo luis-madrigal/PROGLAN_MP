@@ -6,21 +6,29 @@ import java.awt.datatransfer.Clipboard;
 import java.util.ArrayList;
 
 import javax.swing.UIManager;
+import javax.swing.text.Element;
 
+import org.fife.ui.rsyntaxtextarea.LinkGeneratorResult;
+import org.fife.ui.rsyntaxtextarea.RSyntaxDocument;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rsyntaxtextarea.RtfGenerator;
 import org.fife.ui.rsyntaxtextarea.RtfTransferable;
 import org.fife.ui.rsyntaxtextarea.Token;
+import org.fife.ui.rsyntaxtextarea.TokenImpl;
 
 import com.utils.Tokens;
 
 public class RSyntaxTextAreaManuscript extends RSyntaxTextArea {
 	private static final long serialVersionUID = 1L;
 	protected ArrayList<Color> nextColor;
-	
+
+	protected LinkGeneratorResult linkGeneratorResult;
 	public RSyntaxTextAreaManuscript() {
+		super();
 		nextColor = new ArrayList<Color>();
 	}
+	
+	@Override
 	/**
 	 * Returns the foreground color to use when painting a token.
 	 *
@@ -33,7 +41,7 @@ public class RSyntaxTextAreaManuscript extends RSyntaxTextArea {
 		
 		if (getHyperlinksEnabled() && hoveredOverLinkOffset==t.getOffset() &&
 				(t.isHyperlink() || linkGeneratorResult!=null)) {
-			return hyperlinkFG;
+			return getHyperlinkForeground();
 		}
 		
 		Color fg = getForegroundForTokenTypeCompound(t);
@@ -71,7 +79,7 @@ public class RSyntaxTextAreaManuscript extends RSyntaxTextArea {
 			}
 		}
 		
-		Color fg = syntaxScheme.getStyle(type).foreground;
+		Color fg = this.getSyntaxScheme().getStyle(type).foreground;
 		
 		if(!t.getLexeme().contains(" ")) {
 			if(nextColor.size() > 0) {
@@ -141,6 +149,7 @@ public class RSyntaxTextAreaManuscript extends RSyntaxTextArea {
 		}
 
 		// Set the system clipboard contents to the RTF selection.
+		
 		RtfTransferable contents = new RtfTransferable(gen.getRtf().getBytes());
 		try {
 			cb.setContents(contents, null);
@@ -148,6 +157,103 @@ public class RSyntaxTextAreaManuscript extends RSyntaxTextArea {
 			UIManager.getLookAndFeel().provideErrorFeedback(null);
 			return;
 		}
+
+	}
+	/**
+	 * Clones a token list.  This is necessary as tokens are reused in
+	 * {@link RSyntaxDocument}, so we can't simply use the ones we
+	 * are handed from it.
+	 *
+	 * @param t The token list to clone.
+	 * @return The clone of the token list.
+	 */
+	private TokenImpl cloneTokenList(Token t) {
+
+		if (t==null) {
+			return null;
+		}
+
+		TokenImpl clone = new TokenImpl(t);
+		TokenImpl cloneEnd = clone;
+
+		while ((t=t.getNextToken())!=null) {
+			TokenImpl temp = new TokenImpl(t);
+			cloneEnd.setNextToken(temp);
+			cloneEnd = temp;
+		}
+
+		return clone;
+
+	}
+	/**
+	 * Returns a token list for the given range in the document.
+	 *
+	 * @param startOffs The starting offset in the document.
+	 * @param endOffs The end offset in the document.
+	 * @return The first token in the token list.
+	 */
+	protected Token getTokenListFor(int startOffs, int endOffs) {
+
+		TokenImpl tokenList = null;
+		TokenImpl lastToken = null;
+
+		Element map = getDocument().getDefaultRootElement();
+		int startLine = map.getElementIndex(startOffs);
+		int endLine = map.getElementIndex(endOffs);
+
+		for (int line=startLine; line<=endLine; line++) {
+			TokenImpl t = (TokenImpl)getTokenListForLine(line);
+			t = cloneTokenList(t);
+			if (tokenList==null) {
+				tokenList = t;
+				lastToken = tokenList;
+			}
+			else {
+				lastToken.setNextToken(t);
+			}
+			while (lastToken.getNextToken()!=null &&
+					lastToken.getNextToken().isPaintable()) {
+				lastToken = (TokenImpl)lastToken.getNextToken();
+			}
+			if (line<endLine) {
+				// Document offset MUST be correct to prevent exceptions
+				// in getTokenListFor()
+				int docOffs = map.getElement(line).getEndOffset()-1;
+				t = new TokenImpl(new char[] { '\n' }, 0,0, docOffs,
+								Token.WHITESPACE, 0);
+				lastToken.setNextToken(t);
+				lastToken = t;
+			}
+		}
+
+		// Trim the beginning and end of the token list so that it starts
+		// at startOffs and ends at endOffs.
+
+		// Be careful and check that startOffs is actually in the list.
+		// startOffs can be < the token list's start if the end "newline"
+		// character of a line is the first character selected (the token
+		// list returned for that line will be null, so the first token in
+		// the final token list will be from the next line and have a
+		// starting offset > startOffs?).
+		if (startOffs>=tokenList.getOffset()) {
+			while (!tokenList.containsPosition(startOffs)) {
+				tokenList = (TokenImpl)tokenList.getNextToken();
+			}
+			tokenList.makeStartAt(startOffs);
+		}
+
+		TokenImpl temp = tokenList;
+		// Be careful to check temp for null here.  It is possible that no
+		// token contains endOffs, if endOffs is at the end of a line.
+		while (temp!=null && !temp.containsPosition(endOffs)) {
+			temp = (TokenImpl)temp.getNextToken();
+		}
+		if (temp!=null) {
+			temp.textCount = endOffs - temp.getOffset();
+			temp.setNextToken(null);
+		}
+
+		return tokenList;
 
 	}
 }
