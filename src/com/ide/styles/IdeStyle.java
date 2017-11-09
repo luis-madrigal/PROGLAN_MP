@@ -2,11 +2,11 @@ package com.ide.styles;
 
 import javax.swing.text.SimpleAttributeSet;
 
-public class Style {
+public class IdeStyle {
 	
 	private String regex;
 	private SimpleAttributeSet attrSet;
-	public Style(String regex, SimpleAttributeSet attrSet) {
+	public IdeStyle(String regex, SimpleAttributeSet attrSet) {
 		super();
 		this.regex = regex;
 		this.attrSet = attrSet;
