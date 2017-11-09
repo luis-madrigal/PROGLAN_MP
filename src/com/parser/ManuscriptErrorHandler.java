@@ -138,8 +138,8 @@ public class ManuscriptErrorHandler extends DefaultErrorStrategy {
             Token t = recognizer.getCurrentToken();
             String tokenName = this.getTokenErrorDisplay(t);
             IntervalSet expecting = this.getExpectedTokens(recognizer);
-//            String msg = "extraneous input " + tokenName + " expecting " + expecting.toString(recognizer.getVocabulary());
-            String msg = "extraneous input " + tokenName + " expecting " + recognizer.getVocabulary().getDisplayName(expecting.getMinElement());
+            String msg = "extraneous input " + tokenName + " expecting " + expecting.toString(recognizer.getVocabulary());
+//            String msg = "extraneous input " + tokenName + " expecting " + recognizer.getVocabulary().getDisplayName(expecting.getMinElement());
             recognizer.notifyErrorListeners(t, msg, (RecognitionException)null);
         }
     }
