@@ -9,7 +9,7 @@ public class Scope extends HashSet<String>{
 	
 	private Scope parent;
 	private HashMap<String, SymbolContext> symTable;
-	
+
 	public Scope(Scope parent) {
 		this.parent = parent;
 		symTable = new HashMap<String, SymbolContext>();
@@ -20,6 +20,13 @@ public class Scope extends HashSet<String>{
 			return true;
 		
 		return (parent == null)? false : parent.inScope(varName);
+	}
+	
+	public HashMap<String, SymbolContext> checkTables(String varName) {
+		if(symTable.containsKey(varName))
+			return symTable;
+		
+		return (parent == null)? null : parent.checkTables(varName);
 	}
 
 	public HashMap<String, SymbolContext> getSymTable() {

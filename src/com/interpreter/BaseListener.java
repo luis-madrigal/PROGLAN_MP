@@ -70,7 +70,6 @@ public class BaseListener extends ManuScriptBaseListener{
 
         if(ctx.FINAL() != null)
         	isConstant = true;
-        System.out.println(isConstant);
         
 		for (VariableDeclaratorContext vdctx : ctx.variableDeclarators().variableDeclarator()) {
 			//TODO: value only works for literal. not yet evaluating expressions
@@ -117,27 +116,33 @@ public class BaseListener extends ManuScriptBaseListener{
 
 	@Override public void exitLocalVariableDeclaration(ManuScriptParser.LocalVariableDeclarationContext ctx) { }
 		
-	@Override public void enterVariableDeclarator(ManuScriptParser.VariableDeclaratorContext ctx) { 
-		
-        //TODO: push to symbol table
-//        System.out.println(varName +" declared");
-	}
+	@Override public void enterVariableDeclarator(ManuScriptParser.VariableDeclaratorContext ctx) { }
 	
 	@Override public void exitVariableDeclarator(ManuScriptParser.VariableDeclaratorContext ctx) { }
 	
-//	@Override public void enterExpression(ManuScriptParser.ExpressionContext ctx) { 
-////		ctx.
-////		System.out.println(ctx.getStart().getLine() +":" +ctx.getChildCount());
-//		if(ctx.primary() != null && ctx.primary().Identifier() != null) {
-//			String varName = ctx.primary().Identifier().getText();
-//			checkIfInScope(ctx, varName);
-//		}
-////		ctx.
-//	}
-//	
-//	@Override public void exitExpression(ManuScriptParser.ExpressionContext ctx) {
-//		System.out.println(ctx.getStart().getLine() +":" +ctx.getChildCount());
-//	}
+	@Override public void enterAssignExpr(ManuScriptParser.AssignExprContext ctx) { 
+		String varName = ctx.expression().get(0).getText();
+		String assignVal = ctx.expression().get(1).getText();
+		HashMap<String, SymbolContext> symTable;
+		
+		int lineNumStart = ctx.getStart().getLine();
+		int lineNumEnd = ctx.getStop().getLine();
+		int charNumStart = ctx.getStart().getCharPositionInLine();
+		int charNumEnd = ctx.getStop().getCharPositionInLine();
+		
+		if(scopes.peek().inScope(varName)){
+			symTable = scopes.peek().checkTables(varName);
+			if(symTable.get(varName).isConstant())
+				Console.instance().err(String.format(SemanticErrors.CONSTANT_MOD, lineNumStart, charNumStart, varName));
+			else
+				checkIfTypeMismatch(ctx, symTable.get(varName).getSymbolType(), assignVal);
+		} else {
+			Console.instance().err(String.format(SemanticErrors.UNDECLARED_VAR, lineNumStart, charNumStart, varName));
+		}
+	}
+	
+	@Override public void exitAssignExpr(ManuScriptParser.AssignExprContext ctx) { }
+	
 	
 	@Override public void enterFunctionExpr(ManuScriptParser.FunctionExprContext ctx) { 
 		String methodName = ctx.expression().getText();
@@ -236,16 +241,6 @@ public class BaseListener extends ManuScriptBaseListener{
 //		}
 //		
 		return false;
-	}
-	
-	private void checkIfInScope(ParserRuleContext ctx, String varName) {
-		Scope scope = scopes.peek();
-        if(scope.inScope(varName)) {
-//            System.out.println("OK   : " + varName);
-        }
-        else {
-        	Console.instance().err(String.format(SemanticErrors.UNDECLARED_VAR, ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), varName));
-        }
 	}
 	
 	private HashMap<String, SymbolContext> getCurrentSymTable() {
