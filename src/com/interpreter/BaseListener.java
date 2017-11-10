@@ -66,7 +66,10 @@ public class BaseListener extends ManuScriptBaseListener{
 		String varType = ctx.typeType().getText();
 //		HashMap<String, String> variables = new HashMap<String, String>();
         Scope scope = scopes.peek();
-        
+        boolean isConstant = false;
+        if(ctx.fieldModifier().size() > 1)
+        	isConstant = true;
+        System.out.println(isConstant);
 		for (VariableDeclaratorContext vdctx : ctx.variableDeclarators().variableDeclarator()) {
 			//TODO: value only works for literal. not yet evaluating expressions
 			String value = (vdctx.variableInitializer() == null)? null : vdctx.variableInitializer().getText();
@@ -76,10 +79,11 @@ public class BaseListener extends ManuScriptBaseListener{
 			if(getCurrentSymTable().containsKey(varName)) {
 				Console.instance().err(String.format(SemanticErrors.DUPLICATE_VAR, vdctx.getStart().getLine(), vdctx.getStart().getCharPositionInLine(), varName));
 			} else if(value == null || !checkIfTypeMismatch(ctx, varType, value)) {
+//				if(vdctx)
 				System.out.println("added "+varName+" to symbol table");
 //				variables.put(varName, value);
 				scope.add(varName);
-				getCurrentSymTable().put(varName, new SymbolContext(ctx.typeType().getText(), scope, varName));
+				getCurrentSymTable().put(varName, new SymbolContext(ctx.typeType().getText(), scope, varName, isConstant));
 			}
 		}
 	}
