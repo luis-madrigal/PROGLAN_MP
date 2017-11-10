@@ -54,9 +54,10 @@ public class BaseListener extends ManuScriptBaseListener{
         Scope scope = scopes.peek();
         
 		for (VariableDeclaratorContext vdctx : ctx.variableDeclarators().variableDeclarator()) {
+			//TODO: value only works for literal. not yet evaluating expressions
 			String value = (vdctx.variableInitializer() == null)? null : vdctx.variableInitializer().getText();
 			String varName = vdctx.variableDeclaratorId().getText();
-			if(!checkIfTypeMismatch(ctx, varType, value)) {
+			if(value == null || !checkIfTypeMismatch(ctx, varType, value)) {
 				System.out.println("added "+varName+" to symbol table");
 				variables.put(varName, value);
 				scope.add(varName);
