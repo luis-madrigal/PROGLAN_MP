@@ -17,13 +17,13 @@ import com.utils.Console;
 
 public class BaseListener extends ManuScriptBaseListener{
 	private Stack<Scope> scopes;
-	private HashMap<String, SymbolContext> symTable;
+//	private HashMap<String, SymbolContext> symTable;
 	private HashMap<String, MethodContext> methodTable;
 	
 	public BaseListener() {
 		scopes = new Stack<Scope>();
 		scopes.push(new Scope(null));
-		symTable = new HashMap<String, SymbolContext>();
+//		symTable = new HashMap<String, SymbolContext>();
 		methodTable = new HashMap<String, MethodContext>();
 	}
 	
@@ -52,7 +52,7 @@ public class BaseListener extends ManuScriptBaseListener{
 				
 				System.out.println("added "+varName+" from method " +methodName+ " to symbol table");
 				scope.add(varName);
-				symTable.put(varName, new SymbolContext(fpctx.typeType().getText(), scope, varName));
+				getCurrentSymTable().put(varName, new SymbolContext(fpctx.typeType().getText(), scope, varName));
 			}
 		}
 	
@@ -62,13 +62,33 @@ public class BaseListener extends ManuScriptBaseListener{
 		scopes.pop();
 	}
 	
-	@Override public void enterFieldDeclaration(ManuScriptParser.FieldDeclarationContext ctx) { }
+	@Override public void enterFieldDeclaration(ManuScriptParser.FieldDeclarationContext ctx) {
+		String varType = ctx.typeType().getText();
+//		HashMap<String, String> variables = new HashMap<String, String>();
+        Scope scope = scopes.peek();
+        
+		for (VariableDeclaratorContext vdctx : ctx.variableDeclarators().variableDeclarator()) {
+			//TODO: value only works for literal. not yet evaluating expressions
+			String value = (vdctx.variableInitializer() == null)? null : vdctx.variableInitializer().getText();
+			value = (value != null && value.equals("null"))? null : value;
+			String varName = vdctx.variableDeclaratorId().getText();
+			
+			if(getCurrentSymTable().containsKey(varName)) {
+				Console.instance().err(String.format(SemanticErrors.DUPLICATE_VAR, vdctx.getStart().getLine(), vdctx.getStart().getCharPositionInLine(), varName));
+			} else if(value == null || !checkIfTypeMismatch(ctx, varType, value)) {
+				System.out.println("added "+varName+" to symbol table");
+//				variables.put(varName, value);
+				scope.add(varName);
+				getCurrentSymTable().put(varName, new SymbolContext(ctx.typeType().getText(), scope, varName));
+			}
+		}
+	}
 	
 	@Override public void exitFieldDeclaration(ManuScriptParser.FieldDeclarationContext ctx) { }
 	
 	@Override public void enterLocalVariableDeclaration(ManuScriptParser.LocalVariableDeclarationContext ctx) { 
 		String varType = ctx.typeType().getText();
-		HashMap<String, String> variables = new HashMap<String, String>();
+//		HashMap<String, String> variables = new HashMap<String, String>();
         Scope scope = scopes.peek();
         
 		for (VariableDeclaratorContext vdctx : ctx.variableDeclarators().variableDeclarator()) {
@@ -77,11 +97,13 @@ public class BaseListener extends ManuScriptBaseListener{
 			value = (value.equals("null"))? null : value;
 			String varName = vdctx.variableDeclaratorId().getText();
 			
-			if(value == null || !checkIfTypeMismatch(ctx, varType, value)) {
+			if(getCurrentSymTable().containsKey(varName)) {
+				Console.instance().err(String.format(SemanticErrors.DUPLICATE_VAR, vdctx.getStart().getLine(), vdctx.getStart().getCharPositionInLine(), varName));
+			} else if(value == null || !checkIfTypeMismatch(ctx, varType, value)) {
 				System.out.println("added "+varName+" to symbol table");
-				variables.put(varName, value);
+//				variables.put(varName, value);
 				scope.add(varName);
-				symTable.put(varName, new SymbolContext(ctx.typeType().getText(), scope, varName));
+				getCurrentSymTable().put(varName, new SymbolContext(ctx.typeType().getText(), scope, varName));
 			}
 		}
 
@@ -134,13 +156,14 @@ public class BaseListener extends ManuScriptBaseListener{
 		
 		int i = 0;
 		for (ExpressionContext ectx : ctx.expressionList().expression()) {
+			Scope scope;
 			String type;
 			String arg = ectx.getText();
 			int ectxLineNum = ectx.getStart().getLine();
 			int ectxCharPosAtLine = ectx.getStart().getCharPositionInLine();
-			if(symTable.containsKey(arg) && symTable.get(arg).getScope() == scopes.peek()) {
+			if(scopes.peek().inScope(arg)) {
 				//Existing variable. now check for type mismatch
-				if(!symTable.get(arg).getSymbolType().equals(mcx.getArgTypes().get(i)))
+				if(!getCurrentSymTable().get(arg).getSymbolType().equals(mcx.getArgTypes().get(i)))
 					Console.instance().err(String.format(SemanticErrors.TYPE_MISMATCH, ectxLineNum, ectxCharPosAtLine, mcx.getArgTypes().get(i)));
 			} else if((type = LiteralMatcher.instance().getLiteralType(arg)) != null) {
 				//check if type corresponds with mcx
@@ -217,6 +240,10 @@ public class BaseListener extends ManuScriptBaseListener{
         else {
         	Console.instance().err(String.format(SemanticErrors.UNDECLARED_VAR, ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), varName));
         }
+	}
+	
+	private HashMap<String, SymbolContext> getCurrentSymTable() {
+		return scopes.peek().getSymTable();
 	}
 	
 }

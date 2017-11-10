@@ -17,7 +17,8 @@ public class SemanticErrors {
 	public static final String PARAM_COUNT_MISMATCH_L = LINE_INFO + "method '%s' requires %d argument/s";
 	
 	//SCOPE
-	public static final String UNDECLARED_VAR = LINE_INFO + "undeclared variable %s";
+	public static final String UNDECLARED_VAR = LINE_INFO + "undeclared variable '%s'";
+	public static final String DUPLICATE_VAR = LINE_INFO + "duplicate variable '%s'";
 	
 	//SPECIAL ERRORS
 	public static final String ONLY_ONE_CHAR = LINE_INFO + "char can only contain one character. Try using string instead";
