@@ -16,9 +16,12 @@ import org.antlr.v4.runtime.Vocabulary;
 import org.antlr.v4.runtime.atn.ATNConfigSet;
 import org.antlr.v4.runtime.dfa.DFA;
 import org.antlr.v4.runtime.tree.ParseTree;
+import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
+import com.interpreter.BaseListener;
 import com.parser.ManuScriptLexer;
 import com.parser.ManuScriptParser;
+import com.utils.Console;
 import com.utils.Tokens;
 
 @SuppressWarnings("deprecation")
@@ -45,7 +48,8 @@ public class ScannerModel {
 			    }
 
 //			    System.err.println(sourceName+"line "+arg2+":"+arg3+" "+arg4);
-			    message = message + "line "+arg2+":"+arg3+" "+arg4+"\n";
+//			    message = message + "line "+arg2+":"+arg3+" "+arg4+"\n";
+			    Console.instance().err("line "+arg2+":"+arg3+" "+arg4);
 			}
 			
 			@Override
@@ -77,9 +81,12 @@ public class ScannerModel {
 		parser.removeErrorListeners();
 		parser.setErrorHandler(new ManuscriptErrorHandler());
 		parser.addErrorListener(listener);
+		
 
 		this.ruleNames = Arrays.asList(parser.getRuleNames());
 		this.tree = parser.compilationUnit();
+		
+		ParseTreeWalker.DEFAULT.walk(new BaseListener(), this.tree);
 		
 //		System.out.println(tree.toStringTree(parser));
 		

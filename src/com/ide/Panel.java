@@ -45,6 +45,7 @@ import com.ide.styles.IdeStyle;
 import com.ide.styles.RSyntaxTextAreaManuscript;
 import com.ide.styles.Styles;
 import com.parser.ScannerModel;
+import com.utils.Console;
 
 
 
@@ -72,7 +73,7 @@ public class Panel implements ActionListener, KeyListener {
 	
 	private RSyntaxTextAreaManuscript codeInput;
 	private JTextPane parsedOut;
-	private JTextPane console;
+//	private JTextPane console;
 	
 	private JScrollPane inputPane;
 	private JScrollPane parsedPane;
@@ -91,7 +92,7 @@ public class Panel implements ActionListener, KeyListener {
 	private ScannerModel scanner;
 //	private ParseTreePane parseTreePane;
 	
-	private int baseFontSize = (int) Frame.SCREEN_SIZE.getHeight() / 60;
+	public static int baseFontSize = (int) Frame.SCREEN_SIZE.getHeight() / 60;
 	
 	public Panel() {
 		this.styles = new Styles();
@@ -191,7 +192,7 @@ public class Panel implements ActionListener, KeyListener {
 
 		this.codeInput.setCurrentLineHighlightColor(SUBLIME_HIGHLIGHT);
 		this.codeInput.setCodeFoldingEnabled(true);
-//		this.codeInput.setFont(new Font("Consolas", 150, baseFontSize));
+		this.codeInput.setFont(new Font("Consolas", 150, baseFontSize));
 		this.codeInput.setForeground(Color.WHITE);
 		this.codeInput.setBackground(SUBLIME_BG);
 //		this.codeInput.isOpaque();
@@ -385,15 +386,15 @@ public class Panel implements ActionListener, KeyListener {
 		this.bottomPane.add(this.lblConsole, gbc);
 //		this.pnlMain.add(this.lblConsole, gbc);
 		
-		this.console = new JTextPane();
-//        this.parsedOut.setSize(30, 50);
-        this.console.setFont(new Font("Consolas", 150, baseFontSize));
-        this.console.setEditable(false);
-        this.console.setForeground(Color.RED);
-        this.console.setBackground(Color.WHITE);
-        this.console.isOpaque();
-		
-		this.consolePane = new JScrollPane(this.console);
+//		this.console = new JTextPane();
+////        this.parsedOut.setSize(30, 50);
+//        this.console.setFont(new Font("Consolas", 150, baseFontSize));
+//        this.console.setEditable(false);
+//        this.console.setForeground(Color.RED);
+//        this.console.setBackground(Color.WHITE);
+//        this.console.isOpaque();
+				
+		this.consolePane = new JScrollPane(Console.instance().getTextPane());
 		this.consolePane.setPreferredSize(new Dimension(350, 150));
 		this.consolePane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		gbc = new GridBagConstraints();
@@ -461,6 +462,7 @@ public class Panel implements ActionListener, KeyListener {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if(e.getSource() == this.btnRun) {
+			Console.instance().purge();
 			String text = this.codeInput.getText();		
 			
 			this.parsedOut.setText("");
@@ -470,8 +472,7 @@ public class Panel implements ActionListener, KeyListener {
 			this.scanner.generateTree(); // Required to do this
 			this.treePane.setViewportView(this.scanner.getTree());			
 			
-			
-			this.console.setText(this.scanner.getMessage());			
+//			this.console.setText(this.console.getText() + this.scanner.getMessage());			
 			this.codeInput.selectAll();
 			this.parsedOut.setCaretPosition(parsedOut.getDocument().getLength());
 		}

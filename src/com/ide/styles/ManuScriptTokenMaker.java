@@ -246,21 +246,21 @@ public class ManuScriptTokenMaker extends AbstractTokenMaker {
 		   token = keywords[i].trim().replace("\\", "");
 		   if(!token.isEmpty())
 			   tokenMap.put(token, Token.RESERVED_WORD);
-		   System.out.println(token);
+//		   System.out.println(token);
 	   }
 	   
 	   for(int i = 0; i < operators.length; i++) {
 		   token = operators[i].trim().replace("\\", "");
 		   if(!token.isEmpty())
 			   tokenMap.put(token, Token.OPERATOR);
-		   System.out.println(token);
+//		   System.out.println(token);
 	   }
 	   
 	   for(int i = 0; i < separators.length; i++) {
 		   token = separators[i].trim().replace("\\", "");
 		   if(!token.isEmpty())
 			   tokenMap.put(token, Token.SEPARATOR);
-		   System.out.println(token);
+//		   System.out.println(token);
 	   }
 	   
 
