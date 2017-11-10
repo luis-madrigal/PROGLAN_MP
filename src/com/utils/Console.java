@@ -27,6 +27,15 @@ public class Console {
 		return instance;
 	}
 	
+	public void log(String msg) {
+		this.textPane.setText(this.textPane.getText() + msg);
+	}
+	
+	public void logln(String msg) {
+		this.textPane.setText(this.textPane.getText() + msg +"\n");
+	}
+	
+	//TODO: messages called here are supposed to be red
 	public void err(String msg) {
 		this.textPane.setText(this.textPane.getText() + msg +"\n");
 	}

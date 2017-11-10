@@ -301,6 +301,7 @@ classOrInterfaceType
 primitiveType
     :   BOOLEAN
     |   CHAR
+    |	STRING
     |   BYTE
     |   SHORT
     |   INT
@@ -568,7 +569,11 @@ forUpdate
     ;
 
 outputStatement
-	:	PRINT literal
+	:	PRINT outputValue ('+' outputValue)*
+	;
+	
+outputValue
+	:	StringLiteral | Identifier
 	;
 	
 inputStatement
@@ -595,15 +600,15 @@ constantExpression
 
 expression
     :   primary
-    |   expression '.' Identifier
-    |   expression '.' THIS
-    |   expression '.' NEW nonWildcardTypeArguments? innerCreator
-    |   expression '.' SUPER superSuffix
-    |   expression '.' explicitGenericInvocation
+//    |   expression '.' Identifier
+//    |   expression '.' THIS
+//    |   expression '.' NEW nonWildcardTypeArguments? innerCreator
+//    |   expression '.' SUPER superSuffix
+//    |   expression '.' explicitGenericInvocation
     |   expression '[' expression ']'
     |   expression '(' expressionList? ')'
-    |   NEW creator
-    |   '(' typeType ')' expression
+//    |   NEW creator
+//    |   '(' typeType ')' expression
     |   expression ('++' | '--')
     |   ('+'|'-'|'++'|'--') expression
     |   ('~'|'!') expression
@@ -611,7 +616,7 @@ expression
     |   expression ('+'|'-') expression
     |   expression ('<' '<' | '>' '>' '>' | '>' '>') expression
     |   expression ('<=' | '>=' | '>' | '<') expression
-    |   expression INSTANCEOF typeType
+//    |   expression INSTANCEOF typeType
     |   expression ('==' | '!=') expression
     |   expression '&' expression
     |   expression '^' expression
@@ -638,14 +643,14 @@ expression
 
 primary
     :   '(' expression ')'
-    |   THIS
-    |   SUPER
+//    |   THIS
+//    |   SUPER
     |   literal
     |   Identifier
     |	'*'Identifier
-    |	'&'Identifier
-    |   typeType '.' 'class'
-    |   nonWildcardTypeArguments (explicitGenericInvocationSuffix | THIS arguments)
+//    |	'&'Identifier
+//    |   typeType '.' 'class'
+//    |   nonWildcardTypeArguments (explicitGenericInvocationSuffix | THIS arguments)
     ;
 
 creator
@@ -752,6 +757,7 @@ SHORT         : 'short';
 STARTING	  : 'The';
 STATIC        : 'static';
 STRICTFP      : 'strictfp';
+STRING		  : 'string';
 STRUCT		  : 'composition';
 SUPER         : 'super';
 SWITCH        : 'switch';
