@@ -31,13 +31,13 @@ public class BaseListener extends ManuScriptBaseListener{
 	
 	@Override public void exitVariableModifier(ManuScriptParser.VariableModifierContext ctx) { }
 	
-	@Override public void enterClassDeclaration(ManuScriptParser.ClassDeclarationContext ctx) {
-		scopes.push(new Scope(scopes.peek()));
-	}
-	
-	@Override public void exitClassDeclaration(ManuScriptParser.ClassDeclarationContext ctx) {
-		scopes.pop();
-	} 
+//	@Override public void enterClassDeclaration(ManuScriptParser.ClassDeclarationContext ctx) {
+//		scopes.push(new Scope(scopes.peek()));
+//	}
+//	
+//	@Override public void exitClassDeclaration(ManuScriptParser.ClassDeclarationContext ctx) {
+//		scopes.pop();
+//	} 
 	
 	@Override public void enterMethodDeclaration(ManuScriptParser.MethodDeclarationContext ctx) {
 		String methodName = ctx.Identifier().getText();
@@ -67,9 +67,11 @@ public class BaseListener extends ManuScriptBaseListener{
 //		HashMap<String, String> variables = new HashMap<String, String>();
         Scope scope = scopes.peek();
         boolean isConstant = false;
-        if(ctx.fieldModifier().size() > 1)
+
+        if(ctx.FINAL() != null)
         	isConstant = true;
         System.out.println(isConstant);
+        
 		for (VariableDeclaratorContext vdctx : ctx.variableDeclarators().variableDeclarator()) {
 			//TODO: value only works for literal. not yet evaluating expressions
 			String value = (vdctx.variableInitializer() == null)? null : vdctx.variableInitializer().getText();

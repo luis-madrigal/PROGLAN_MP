@@ -18,55 +18,15 @@ public interface ManuScriptListener extends ParseTreeListener {
 	 */
 	void exitCompilationUnit(ManuScriptParser.CompilationUnitContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link ManuScriptParser#packageDeclaration}.
+	 * Enter a parse tree produced by {@link ManuScriptParser#bodyDeclaration}.
 	 * @param ctx the parse tree
 	 */
-	void enterPackageDeclaration(ManuScriptParser.PackageDeclarationContext ctx);
+	void enterBodyDeclaration(ManuScriptParser.BodyDeclarationContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link ManuScriptParser#packageDeclaration}.
+	 * Exit a parse tree produced by {@link ManuScriptParser#bodyDeclaration}.
 	 * @param ctx the parse tree
 	 */
-	void exitPackageDeclaration(ManuScriptParser.PackageDeclarationContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link ManuScriptParser#importDeclaration}.
-	 * @param ctx the parse tree
-	 */
-	void enterImportDeclaration(ManuScriptParser.ImportDeclarationContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link ManuScriptParser#importDeclaration}.
-	 * @param ctx the parse tree
-	 */
-	void exitImportDeclaration(ManuScriptParser.ImportDeclarationContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link ManuScriptParser#typeDeclaration}.
-	 * @param ctx the parse tree
-	 */
-	void enterTypeDeclaration(ManuScriptParser.TypeDeclarationContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link ManuScriptParser#typeDeclaration}.
-	 * @param ctx the parse tree
-	 */
-	void exitTypeDeclaration(ManuScriptParser.TypeDeclarationContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link ManuScriptParser#modifier}.
-	 * @param ctx the parse tree
-	 */
-	void enterModifier(ManuScriptParser.ModifierContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link ManuScriptParser#modifier}.
-	 * @param ctx the parse tree
-	 */
-	void exitModifier(ManuScriptParser.ModifierContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link ManuScriptParser#classOrInterfaceModifier}.
-	 * @param ctx the parse tree
-	 */
-	void enterClassOrInterfaceModifier(ManuScriptParser.ClassOrInterfaceModifierContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link ManuScriptParser#classOrInterfaceModifier}.
-	 * @param ctx the parse tree
-	 */
-	void exitClassOrInterfaceModifier(ManuScriptParser.ClassOrInterfaceModifierContext ctx);
+	void exitBodyDeclaration(ManuScriptParser.BodyDeclarationContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link ManuScriptParser#variableModifier}.
 	 * @param ctx the parse tree
@@ -78,36 +38,6 @@ public interface ManuScriptListener extends ParseTreeListener {
 	 */
 	void exitVariableModifier(ManuScriptParser.VariableModifierContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link ManuScriptParser#classDeclaration}.
-	 * @param ctx the parse tree
-	 */
-	void enterClassDeclaration(ManuScriptParser.ClassDeclarationContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link ManuScriptParser#classDeclaration}.
-	 * @param ctx the parse tree
-	 */
-	void exitClassDeclaration(ManuScriptParser.ClassDeclarationContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link ManuScriptParser#typeParameters}.
-	 * @param ctx the parse tree
-	 */
-	void enterTypeParameters(ManuScriptParser.TypeParametersContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link ManuScriptParser#typeParameters}.
-	 * @param ctx the parse tree
-	 */
-	void exitTypeParameters(ManuScriptParser.TypeParametersContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link ManuScriptParser#typeParameter}.
-	 * @param ctx the parse tree
-	 */
-	void enterTypeParameter(ManuScriptParser.TypeParameterContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link ManuScriptParser#typeParameter}.
-	 * @param ctx the parse tree
-	 */
-	void exitTypeParameter(ManuScriptParser.TypeParameterContext ctx);
-	/**
 	 * Enter a parse tree produced by {@link ManuScriptParser#typeBound}.
 	 * @param ctx the parse tree
 	 */
@@ -118,56 +48,6 @@ public interface ManuScriptListener extends ParseTreeListener {
 	 */
 	void exitTypeBound(ManuScriptParser.TypeBoundContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link ManuScriptParser#enumDeclaration}.
-	 * @param ctx the parse tree
-	 */
-	void enterEnumDeclaration(ManuScriptParser.EnumDeclarationContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link ManuScriptParser#enumDeclaration}.
-	 * @param ctx the parse tree
-	 */
-	void exitEnumDeclaration(ManuScriptParser.EnumDeclarationContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link ManuScriptParser#enumConstants}.
-	 * @param ctx the parse tree
-	 */
-	void enterEnumConstants(ManuScriptParser.EnumConstantsContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link ManuScriptParser#enumConstants}.
-	 * @param ctx the parse tree
-	 */
-	void exitEnumConstants(ManuScriptParser.EnumConstantsContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link ManuScriptParser#enumConstant}.
-	 * @param ctx the parse tree
-	 */
-	void enterEnumConstant(ManuScriptParser.EnumConstantContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link ManuScriptParser#enumConstant}.
-	 * @param ctx the parse tree
-	 */
-	void exitEnumConstant(ManuScriptParser.EnumConstantContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link ManuScriptParser#enumBodyDeclarations}.
-	 * @param ctx the parse tree
-	 */
-	void enterEnumBodyDeclarations(ManuScriptParser.EnumBodyDeclarationsContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link ManuScriptParser#enumBodyDeclarations}.
-	 * @param ctx the parse tree
-	 */
-	void exitEnumBodyDeclarations(ManuScriptParser.EnumBodyDeclarationsContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link ManuScriptParser#interfaceDeclaration}.
-	 * @param ctx the parse tree
-	 */
-	void enterInterfaceDeclaration(ManuScriptParser.InterfaceDeclarationContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link ManuScriptParser#interfaceDeclaration}.
-	 * @param ctx the parse tree
-	 */
-	void exitInterfaceDeclaration(ManuScriptParser.InterfaceDeclarationContext ctx);
-	/**
 	 * Enter a parse tree produced by {@link ManuScriptParser#typeList}.
 	 * @param ctx the parse tree
 	 */
@@ -177,36 +57,6 @@ public interface ManuScriptListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitTypeList(ManuScriptParser.TypeListContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link ManuScriptParser#classBody}.
-	 * @param ctx the parse tree
-	 */
-	void enterClassBody(ManuScriptParser.ClassBodyContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link ManuScriptParser#classBody}.
-	 * @param ctx the parse tree
-	 */
-	void exitClassBody(ManuScriptParser.ClassBodyContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link ManuScriptParser#interfaceBody}.
-	 * @param ctx the parse tree
-	 */
-	void enterInterfaceBody(ManuScriptParser.InterfaceBodyContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link ManuScriptParser#interfaceBody}.
-	 * @param ctx the parse tree
-	 */
-	void exitInterfaceBody(ManuScriptParser.InterfaceBodyContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link ManuScriptParser#classBodyDeclaration}.
-	 * @param ctx the parse tree
-	 */
-	void enterClassBodyDeclaration(ManuScriptParser.ClassBodyDeclarationContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link ManuScriptParser#classBodyDeclaration}.
-	 * @param ctx the parse tree
-	 */
-	void exitClassBodyDeclaration(ManuScriptParser.ClassBodyDeclarationContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link ManuScriptParser#memberDeclaration}.
 	 * @param ctx the parse tree
@@ -228,56 +78,6 @@ public interface ManuScriptListener extends ParseTreeListener {
 	 */
 	void exitMethodDeclaration(ManuScriptParser.MethodDeclarationContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link ManuScriptParser#methodModifier}.
-	 * @param ctx the parse tree
-	 */
-	void enterMethodModifier(ManuScriptParser.MethodModifierContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link ManuScriptParser#methodModifier}.
-	 * @param ctx the parse tree
-	 */
-	void exitMethodModifier(ManuScriptParser.MethodModifierContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link ManuScriptParser#genericMethodDeclaration}.
-	 * @param ctx the parse tree
-	 */
-	void enterGenericMethodDeclaration(ManuScriptParser.GenericMethodDeclarationContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link ManuScriptParser#genericMethodDeclaration}.
-	 * @param ctx the parse tree
-	 */
-	void exitGenericMethodDeclaration(ManuScriptParser.GenericMethodDeclarationContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link ManuScriptParser#constructorDeclaration}.
-	 * @param ctx the parse tree
-	 */
-	void enterConstructorDeclaration(ManuScriptParser.ConstructorDeclarationContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link ManuScriptParser#constructorDeclaration}.
-	 * @param ctx the parse tree
-	 */
-	void exitConstructorDeclaration(ManuScriptParser.ConstructorDeclarationContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link ManuScriptParser#constructorModifier}.
-	 * @param ctx the parse tree
-	 */
-	void enterConstructorModifier(ManuScriptParser.ConstructorModifierContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link ManuScriptParser#constructorModifier}.
-	 * @param ctx the parse tree
-	 */
-	void exitConstructorModifier(ManuScriptParser.ConstructorModifierContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link ManuScriptParser#genericConstructorDeclaration}.
-	 * @param ctx the parse tree
-	 */
-	void enterGenericConstructorDeclaration(ManuScriptParser.GenericConstructorDeclarationContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link ManuScriptParser#genericConstructorDeclaration}.
-	 * @param ctx the parse tree
-	 */
-	void exitGenericConstructorDeclaration(ManuScriptParser.GenericConstructorDeclarationContext ctx);
-	/**
 	 * Enter a parse tree produced by {@link ManuScriptParser#fieldDeclaration}.
 	 * @param ctx the parse tree
 	 */
@@ -287,36 +87,6 @@ public interface ManuScriptListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitFieldDeclaration(ManuScriptParser.FieldDeclarationContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link ManuScriptParser#fieldModifier}.
-	 * @param ctx the parse tree
-	 */
-	void enterFieldModifier(ManuScriptParser.FieldModifierContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link ManuScriptParser#fieldModifier}.
-	 * @param ctx the parse tree
-	 */
-	void exitFieldModifier(ManuScriptParser.FieldModifierContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link ManuScriptParser#interfaceBodyDeclaration}.
-	 * @param ctx the parse tree
-	 */
-	void enterInterfaceBodyDeclaration(ManuScriptParser.InterfaceBodyDeclarationContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link ManuScriptParser#interfaceBodyDeclaration}.
-	 * @param ctx the parse tree
-	 */
-	void exitInterfaceBodyDeclaration(ManuScriptParser.InterfaceBodyDeclarationContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link ManuScriptParser#interfaceMemberDeclaration}.
-	 * @param ctx the parse tree
-	 */
-	void enterInterfaceMemberDeclaration(ManuScriptParser.InterfaceMemberDeclarationContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link ManuScriptParser#interfaceMemberDeclaration}.
-	 * @param ctx the parse tree
-	 */
-	void exitInterfaceMemberDeclaration(ManuScriptParser.InterfaceMemberDeclarationContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link ManuScriptParser#constDeclaration}.
 	 * @param ctx the parse tree
@@ -337,26 +107,6 @@ public interface ManuScriptListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitConstantDeclarator(ManuScriptParser.ConstantDeclaratorContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link ManuScriptParser#interfaceMethodDeclaration}.
-	 * @param ctx the parse tree
-	 */
-	void enterInterfaceMethodDeclaration(ManuScriptParser.InterfaceMethodDeclarationContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link ManuScriptParser#interfaceMethodDeclaration}.
-	 * @param ctx the parse tree
-	 */
-	void exitInterfaceMethodDeclaration(ManuScriptParser.InterfaceMethodDeclarationContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link ManuScriptParser#genericInterfaceMethodDeclaration}.
-	 * @param ctx the parse tree
-	 */
-	void enterGenericInterfaceMethodDeclaration(ManuScriptParser.GenericInterfaceMethodDeclarationContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link ManuScriptParser#genericInterfaceMethodDeclaration}.
-	 * @param ctx the parse tree
-	 */
-	void exitGenericInterfaceMethodDeclaration(ManuScriptParser.GenericInterfaceMethodDeclarationContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link ManuScriptParser#variableDeclarators}.
 	 * @param ctx the parse tree
@@ -407,16 +157,6 @@ public interface ManuScriptListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitArrayInitializer(ManuScriptParser.ArrayInitializerContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link ManuScriptParser#enumConstantName}.
-	 * @param ctx the parse tree
-	 */
-	void enterEnumConstantName(ManuScriptParser.EnumConstantNameContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link ManuScriptParser#enumConstantName}.
-	 * @param ctx the parse tree
-	 */
-	void exitEnumConstantName(ManuScriptParser.EnumConstantNameContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link ManuScriptParser#typeType}.
 	 * @param ctx the parse tree
@@ -648,16 +388,6 @@ public interface ManuScriptListener extends ParseTreeListener {
 	 */
 	void exitMethodBody(ManuScriptParser.MethodBodyContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link ManuScriptParser#constructorBody}.
-	 * @param ctx the parse tree
-	 */
-	void enterConstructorBody(ManuScriptParser.ConstructorBodyContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link ManuScriptParser#constructorBody}.
-	 * @param ctx the parse tree
-	 */
-	void exitConstructorBody(ManuScriptParser.ConstructorBodyContext ctx);
-	/**
 	 * Enter a parse tree produced by {@link ManuScriptParser#qualifiedName}.
 	 * @param ctx the parse tree
 	 */
@@ -727,66 +457,6 @@ public interface ManuScriptListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitStatement(ManuScriptParser.StatementContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link ManuScriptParser#catchClause}.
-	 * @param ctx the parse tree
-	 */
-	void enterCatchClause(ManuScriptParser.CatchClauseContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link ManuScriptParser#catchClause}.
-	 * @param ctx the parse tree
-	 */
-	void exitCatchClause(ManuScriptParser.CatchClauseContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link ManuScriptParser#catchType}.
-	 * @param ctx the parse tree
-	 */
-	void enterCatchType(ManuScriptParser.CatchTypeContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link ManuScriptParser#catchType}.
-	 * @param ctx the parse tree
-	 */
-	void exitCatchType(ManuScriptParser.CatchTypeContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link ManuScriptParser#finallyBlock}.
-	 * @param ctx the parse tree
-	 */
-	void enterFinallyBlock(ManuScriptParser.FinallyBlockContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link ManuScriptParser#finallyBlock}.
-	 * @param ctx the parse tree
-	 */
-	void exitFinallyBlock(ManuScriptParser.FinallyBlockContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link ManuScriptParser#resourceSpecification}.
-	 * @param ctx the parse tree
-	 */
-	void enterResourceSpecification(ManuScriptParser.ResourceSpecificationContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link ManuScriptParser#resourceSpecification}.
-	 * @param ctx the parse tree
-	 */
-	void exitResourceSpecification(ManuScriptParser.ResourceSpecificationContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link ManuScriptParser#resources}.
-	 * @param ctx the parse tree
-	 */
-	void enterResources(ManuScriptParser.ResourcesContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link ManuScriptParser#resources}.
-	 * @param ctx the parse tree
-	 */
-	void exitResources(ManuScriptParser.ResourcesContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link ManuScriptParser#resource}.
-	 * @param ctx the parse tree
-	 */
-	void enterResource(ManuScriptParser.ResourceContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link ManuScriptParser#resource}.
-	 * @param ctx the parse tree
-	 */
-	void exitResource(ManuScriptParser.ResourceContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link ManuScriptParser#switchBlockStatementGroup}.
 	 * @param ctx the parse tree
@@ -1096,36 +766,6 @@ public interface ManuScriptListener extends ParseTreeListener {
 	 */
 	void exitPrimary(ManuScriptParser.PrimaryContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link ManuScriptParser#creator}.
-	 * @param ctx the parse tree
-	 */
-	void enterCreator(ManuScriptParser.CreatorContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link ManuScriptParser#creator}.
-	 * @param ctx the parse tree
-	 */
-	void exitCreator(ManuScriptParser.CreatorContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link ManuScriptParser#createdName}.
-	 * @param ctx the parse tree
-	 */
-	void enterCreatedName(ManuScriptParser.CreatedNameContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link ManuScriptParser#createdName}.
-	 * @param ctx the parse tree
-	 */
-	void exitCreatedName(ManuScriptParser.CreatedNameContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link ManuScriptParser#innerCreator}.
-	 * @param ctx the parse tree
-	 */
-	void enterInnerCreator(ManuScriptParser.InnerCreatorContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link ManuScriptParser#innerCreator}.
-	 * @param ctx the parse tree
-	 */
-	void exitInnerCreator(ManuScriptParser.InnerCreatorContext ctx);
-	/**
 	 * Enter a parse tree produced by {@link ManuScriptParser#arrayCreatorRest}.
 	 * @param ctx the parse tree
 	 */
@@ -1135,76 +775,6 @@ public interface ManuScriptListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitArrayCreatorRest(ManuScriptParser.ArrayCreatorRestContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link ManuScriptParser#classCreatorRest}.
-	 * @param ctx the parse tree
-	 */
-	void enterClassCreatorRest(ManuScriptParser.ClassCreatorRestContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link ManuScriptParser#classCreatorRest}.
-	 * @param ctx the parse tree
-	 */
-	void exitClassCreatorRest(ManuScriptParser.ClassCreatorRestContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link ManuScriptParser#explicitGenericInvocation}.
-	 * @param ctx the parse tree
-	 */
-	void enterExplicitGenericInvocation(ManuScriptParser.ExplicitGenericInvocationContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link ManuScriptParser#explicitGenericInvocation}.
-	 * @param ctx the parse tree
-	 */
-	void exitExplicitGenericInvocation(ManuScriptParser.ExplicitGenericInvocationContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link ManuScriptParser#nonWildcardTypeArguments}.
-	 * @param ctx the parse tree
-	 */
-	void enterNonWildcardTypeArguments(ManuScriptParser.NonWildcardTypeArgumentsContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link ManuScriptParser#nonWildcardTypeArguments}.
-	 * @param ctx the parse tree
-	 */
-	void exitNonWildcardTypeArguments(ManuScriptParser.NonWildcardTypeArgumentsContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link ManuScriptParser#typeArgumentsOrDiamond}.
-	 * @param ctx the parse tree
-	 */
-	void enterTypeArgumentsOrDiamond(ManuScriptParser.TypeArgumentsOrDiamondContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link ManuScriptParser#typeArgumentsOrDiamond}.
-	 * @param ctx the parse tree
-	 */
-	void exitTypeArgumentsOrDiamond(ManuScriptParser.TypeArgumentsOrDiamondContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link ManuScriptParser#nonWildcardTypeArgumentsOrDiamond}.
-	 * @param ctx the parse tree
-	 */
-	void enterNonWildcardTypeArgumentsOrDiamond(ManuScriptParser.NonWildcardTypeArgumentsOrDiamondContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link ManuScriptParser#nonWildcardTypeArgumentsOrDiamond}.
-	 * @param ctx the parse tree
-	 */
-	void exitNonWildcardTypeArgumentsOrDiamond(ManuScriptParser.NonWildcardTypeArgumentsOrDiamondContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link ManuScriptParser#superSuffix}.
-	 * @param ctx the parse tree
-	 */
-	void enterSuperSuffix(ManuScriptParser.SuperSuffixContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link ManuScriptParser#superSuffix}.
-	 * @param ctx the parse tree
-	 */
-	void exitSuperSuffix(ManuScriptParser.SuperSuffixContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link ManuScriptParser#explicitGenericInvocationSuffix}.
-	 * @param ctx the parse tree
-	 */
-	void enterExplicitGenericInvocationSuffix(ManuScriptParser.ExplicitGenericInvocationSuffixContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link ManuScriptParser#explicitGenericInvocationSuffix}.
-	 * @param ctx the parse tree
-	 */
-	void exitExplicitGenericInvocationSuffix(ManuScriptParser.ExplicitGenericInvocationSuffixContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link ManuScriptParser#arguments}.
 	 * @param ctx the parse tree
