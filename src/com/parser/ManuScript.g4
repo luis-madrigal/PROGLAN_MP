@@ -599,46 +599,46 @@ constantExpression
     ;
 
 expression
-    :   primary
+    :   primary # primaryExpr
 //    |   expression '.' Identifier
 //    |   expression '.' THIS
 //    |   expression '.' NEW nonWildcardTypeArguments? innerCreator
 //    |   expression '.' SUPER superSuffix
 //    |   expression '.' explicitGenericInvocation
-    |   expression '[' expression ']'
-    |   expression '(' expressionList? ')'
+    |   expression '[' expression ']' # arrayExpr
+    |   expression '(' expressionList? ')' # functionExpr
 //    |   NEW creator
 //    |   '(' typeType ')' expression
-    |   expression ('++' | '--')
-    |   ('+'|'-'|'++'|'--') expression
-    |   ('~'|'!') expression
-    |   expression ('*'|'/'|'%') expression
-    |   expression ('+'|'-') expression
-    |   expression ('<' '<' | '>' '>' '>' | '>' '>') expression
-    |   expression ('<=' | '>=' | '>' | '<') expression
+    |   expression ('++' | '--') # postIncDecExpr
+    |   ('+'|'-'|'++'|'--') expression # preIncDecSignExpr
+    |   ('~'|'!') expression # negationExpr
+    |   expression ('*'|'/'|'%') expression # multDivModExpr
+    |   expression ('+'|'-') expression # addSubExpr
+//    |   expression ('<' '<' | '>' '>' '>' | '>' '>') expression
+    |   expression ('<=' | '>=' | '>' | '<') expression # comparisonExpr
 //    |   expression INSTANCEOF typeType
-    |   expression ('==' | '!=') expression
-    |   expression '&' expression
-    |   expression '^' expression
-    |   expression '|' expression
-    |   expression '&&' expression
-    |   expression '||' expression
-    |   expression '?' expression ':' expression
-    |   <assoc=right> expression
+    |   expression ('==' | '!=') expression # equalityExpr
+//    |   expression '&' expression 
+//    |   expression '^' expression
+//    |   expression '|' expression
+    |   expression '&&' expression # andExpr
+    |   expression '||' expression # orExpr
+    |   expression '?' expression ':' expression # oneLineIfExpr
+    |   <assoc=right> expression 
         (   '='
         |   '+='
         |   '-='
         |   '*='
         |   '/='
-        |   '&='
-        |   '|='
-        |   '^='
-        |   '>>='
-        |   '>>>='
-        |   '<<='
+//        |   '&='
+//        |   '|='
+//        |   '^='
+//        |   '>>='
+//        |   '>>>='
+//        |   '<<='
         |   '%='
         )
-        expression
+        expression # assignExpr
     ;
 
 primary

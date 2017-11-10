@@ -918,15 +918,173 @@ public interface ManuScriptListener extends ParseTreeListener {
 	 */
 	void exitConstantExpression(ManuScriptParser.ConstantExpressionContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link ManuScriptParser#expression}.
+	 * Enter a parse tree produced by the {@code negationExpr}
+	 * labeled alternative in {@link ManuScriptParser#expression}.
 	 * @param ctx the parse tree
 	 */
-	void enterExpression(ManuScriptParser.ExpressionContext ctx);
+	void enterNegationExpr(ManuScriptParser.NegationExprContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link ManuScriptParser#expression}.
+	 * Exit a parse tree produced by the {@code negationExpr}
+	 * labeled alternative in {@link ManuScriptParser#expression}.
 	 * @param ctx the parse tree
 	 */
-	void exitExpression(ManuScriptParser.ExpressionContext ctx);
+	void exitNegationExpr(ManuScriptParser.NegationExprContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code addSubExpr}
+	 * labeled alternative in {@link ManuScriptParser#expression}.
+	 * @param ctx the parse tree
+	 */
+	void enterAddSubExpr(ManuScriptParser.AddSubExprContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code addSubExpr}
+	 * labeled alternative in {@link ManuScriptParser#expression}.
+	 * @param ctx the parse tree
+	 */
+	void exitAddSubExpr(ManuScriptParser.AddSubExprContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code arrayExpr}
+	 * labeled alternative in {@link ManuScriptParser#expression}.
+	 * @param ctx the parse tree
+	 */
+	void enterArrayExpr(ManuScriptParser.ArrayExprContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code arrayExpr}
+	 * labeled alternative in {@link ManuScriptParser#expression}.
+	 * @param ctx the parse tree
+	 */
+	void exitArrayExpr(ManuScriptParser.ArrayExprContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code orExpr}
+	 * labeled alternative in {@link ManuScriptParser#expression}.
+	 * @param ctx the parse tree
+	 */
+	void enterOrExpr(ManuScriptParser.OrExprContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code orExpr}
+	 * labeled alternative in {@link ManuScriptParser#expression}.
+	 * @param ctx the parse tree
+	 */
+	void exitOrExpr(ManuScriptParser.OrExprContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code oneLineIfExpr}
+	 * labeled alternative in {@link ManuScriptParser#expression}.
+	 * @param ctx the parse tree
+	 */
+	void enterOneLineIfExpr(ManuScriptParser.OneLineIfExprContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code oneLineIfExpr}
+	 * labeled alternative in {@link ManuScriptParser#expression}.
+	 * @param ctx the parse tree
+	 */
+	void exitOneLineIfExpr(ManuScriptParser.OneLineIfExprContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code comparisonExpr}
+	 * labeled alternative in {@link ManuScriptParser#expression}.
+	 * @param ctx the parse tree
+	 */
+	void enterComparisonExpr(ManuScriptParser.ComparisonExprContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code comparisonExpr}
+	 * labeled alternative in {@link ManuScriptParser#expression}.
+	 * @param ctx the parse tree
+	 */
+	void exitComparisonExpr(ManuScriptParser.ComparisonExprContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code functionExpr}
+	 * labeled alternative in {@link ManuScriptParser#expression}.
+	 * @param ctx the parse tree
+	 */
+	void enterFunctionExpr(ManuScriptParser.FunctionExprContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code functionExpr}
+	 * labeled alternative in {@link ManuScriptParser#expression}.
+	 * @param ctx the parse tree
+	 */
+	void exitFunctionExpr(ManuScriptParser.FunctionExprContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code postIncDecExpr}
+	 * labeled alternative in {@link ManuScriptParser#expression}.
+	 * @param ctx the parse tree
+	 */
+	void enterPostIncDecExpr(ManuScriptParser.PostIncDecExprContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code postIncDecExpr}
+	 * labeled alternative in {@link ManuScriptParser#expression}.
+	 * @param ctx the parse tree
+	 */
+	void exitPostIncDecExpr(ManuScriptParser.PostIncDecExprContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code primaryExpr}
+	 * labeled alternative in {@link ManuScriptParser#expression}.
+	 * @param ctx the parse tree
+	 */
+	void enterPrimaryExpr(ManuScriptParser.PrimaryExprContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code primaryExpr}
+	 * labeled alternative in {@link ManuScriptParser#expression}.
+	 * @param ctx the parse tree
+	 */
+	void exitPrimaryExpr(ManuScriptParser.PrimaryExprContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code multDivModExpr}
+	 * labeled alternative in {@link ManuScriptParser#expression}.
+	 * @param ctx the parse tree
+	 */
+	void enterMultDivModExpr(ManuScriptParser.MultDivModExprContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code multDivModExpr}
+	 * labeled alternative in {@link ManuScriptParser#expression}.
+	 * @param ctx the parse tree
+	 */
+	void exitMultDivModExpr(ManuScriptParser.MultDivModExprContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code assignExpr}
+	 * labeled alternative in {@link ManuScriptParser#expression}.
+	 * @param ctx the parse tree
+	 */
+	void enterAssignExpr(ManuScriptParser.AssignExprContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code assignExpr}
+	 * labeled alternative in {@link ManuScriptParser#expression}.
+	 * @param ctx the parse tree
+	 */
+	void exitAssignExpr(ManuScriptParser.AssignExprContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code preIncDecSignExpr}
+	 * labeled alternative in {@link ManuScriptParser#expression}.
+	 * @param ctx the parse tree
+	 */
+	void enterPreIncDecSignExpr(ManuScriptParser.PreIncDecSignExprContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code preIncDecSignExpr}
+	 * labeled alternative in {@link ManuScriptParser#expression}.
+	 * @param ctx the parse tree
+	 */
+	void exitPreIncDecSignExpr(ManuScriptParser.PreIncDecSignExprContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code equalityExpr}
+	 * labeled alternative in {@link ManuScriptParser#expression}.
+	 * @param ctx the parse tree
+	 */
+	void enterEqualityExpr(ManuScriptParser.EqualityExprContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code equalityExpr}
+	 * labeled alternative in {@link ManuScriptParser#expression}.
+	 * @param ctx the parse tree
+	 */
+	void exitEqualityExpr(ManuScriptParser.EqualityExprContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code andExpr}
+	 * labeled alternative in {@link ManuScriptParser#expression}.
+	 * @param ctx the parse tree
+	 */
+	void enterAndExpr(ManuScriptParser.AndExprContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code andExpr}
+	 * labeled alternative in {@link ManuScriptParser#expression}.
+	 * @param ctx the parse tree
+	 */
+	void exitAndExpr(ManuScriptParser.AndExprContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link ManuScriptParser#primary}.
 	 * @param ctx the parse tree

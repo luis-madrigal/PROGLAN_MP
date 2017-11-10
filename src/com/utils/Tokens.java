@@ -3,7 +3,7 @@ import java.util.ArrayList;
 import java.util.regex.Pattern;
 
 public class Tokens {
-	public static final String KEYWORDS = "from|take|everything|take everything|The|script|universal|template|permanent|is a|is an|that can|static|hereditary|secret|starring|ignores|this|super|new|ACT|interface|if|else|switch|version|original|when|replay|rehearse|break|continue|give|ignore|audition|catch|finally|Say|Write|to|can act as|composition|cast|as|boolean|byte|short|int|long|char|float|double|string";
+	public static final String KEYWORDS = "from|take|everything|take everything|The|script|universal|template|permanent|is a|is an|that can|static|hereditary|secret|starring|ignores|this|super|new|ACT|interface|if|else|switch|version|original|when|replay|rehearse|break|continue|give|ignore|audition|catch|finally|Say|Write|to|can act as|composition|cast|as|boolean|byte|short|int|long|char|float|double|string|null";
 	public static final String OPERATORS = "=|>|<|!|~|\\?|:|==|<=|>=|!=|&&|\\|\\||\\+\\+|--|\\+|-|\\*|/|&|\\||^|%|\\+=|-=|\\*=|/=|&=|\\|=|^=|%=|<<=|>>=|>>>=";
 	public static final String SEPARATORS = "\\(|\\)|\\{|\\}|[|]|;|,|\\.|\\{A\\}|\\{Z\\}|\\{SCENE\\}|\\{END\\}";
 	
