@@ -196,7 +196,7 @@ public class Panel implements ActionListener, KeyListener {
 		this.codeInput.setForeground(Color.WHITE);
 		this.codeInput.setBackground(SUBLIME_BG);
 //		this.codeInput.isOpaque();
-//		this.codeInput.setCaretColor(Color.WHITE);
+		this.codeInput.setCaretColor(Color.WHITE);
 		
 		this.inputLines = new JTextArea("1");
 	      

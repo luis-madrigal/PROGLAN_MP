@@ -1,0 +1,25 @@
+permanent int FINAL_X = 10;
+
+ACT add starring(int x, int y) {
+	return (x + y);
+}
+
+ACT main starring() {
+	int x = 0;
+	int y = 0;
+	
+	Say "Enter value for X: ";
+	Write to x;
+	Say "Enter value for Y: ";
+	Write to y;
+
+	Say "Value is" +add(x); [comment]: error1
+	
+	FINAL_X++; [comment]: error2
+	FINAL_X += 10; /[comment]: error3
+	
+	x = 5 + z; [comment]: error4
+	x = "hello"; [comment]: error5
+	
+	Say x;
+}

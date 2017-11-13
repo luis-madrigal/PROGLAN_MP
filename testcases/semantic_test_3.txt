@@ -1,0 +1,56 @@
+boolean assertNonZero(int x) {
+	if(x > 0) {
+		return true;
+	}
+	
+	//error #1
+}
+
+void sayHelloWorld() {
+	print("Hello World");
+}
+
+//error #2
+void sayHelloWorld() {
+	print("Hello World"); 
+}
+
+//error #3 (IMPORTANT: NOT AN ERROR IF YOU SUPPORT OOP. THIS IS METHOD OVERLOADING!)
+void sayHelloWorld(int x){
+	for(int i = 0; i < x; i++) {
+		print("Hello World");
+	}
+}
+
+void arrayTest(int size_1, int size_2) {
+	int[] simpleArray = new int[size_1];
+	int[] simpleArray = new int[size_2]; //error #4
+	int[] simpleArray_2 = new int[2.0f]; //error #5
+	
+	int complexArraySize = (size_1 * 2) - size_2 - 4;
+	int[] complexArray = new int[complexArraySize];
+	
+	for(int i = 0; i < complexArraySize; i++) {
+		complexArraySize[i] = i;
+	}
+	
+	return complexArray; //error #6
+}
+
+void main() {
+	int x = 0, y = 5, z = 13;
+	
+	float someValue = (x + y) / (y + z) * 1.0f; //IMPORTANT! Type-casting should be supported for int-float pairs.
+	
+	z = assertNonZero(x); //error #7
+	
+	if(z > 0) {
+		print("Computated value: " + someValue()); //error #8
+		print("Computed value: " +someValue);
+	}
+	
+	int z = 0, x = 0; //syntax error #9, #10
+	
+	
+	
+}

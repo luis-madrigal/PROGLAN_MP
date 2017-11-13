@@ -756,6 +756,16 @@ public interface ManuScriptListener extends ParseTreeListener {
 	 */
 	void exitAndExpr(ManuScriptParser.AndExprContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link ManuScriptParser#variableExpr}.
+	 * @param ctx the parse tree
+	 */
+	void enterVariableExpr(ManuScriptParser.VariableExprContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link ManuScriptParser#variableExpr}.
+	 * @param ctx the parse tree
+	 */
+	void exitVariableExpr(ManuScriptParser.VariableExprContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link ManuScriptParser#primary}.
 	 * @param ctx the parse tree
 	 */

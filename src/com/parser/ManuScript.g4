@@ -576,7 +576,7 @@ outputStatement
 	;
 	
 outputValue
-	:	StringLiteral | Identifier
+	:	expression
 	;
 	
 inputStatement
@@ -608,12 +608,12 @@ expression
 //    |   expression '.' NEW nonWildcardTypeArguments? innerCreator
 //    |   expression '.' SUPER superSuffix
 //    |   expression '.' explicitGenericInvocation
-    |   expression '[' expression ']' # arrayExpr
-    |   expression '(' expressionList? ')' # functionExpr
+    |   variableExpr '[' expression ']' # arrayExpr
+    |   variableExpr '(' expressionList? ')' # functionExpr
 //    |   NEW creator
 //    |   '(' typeType ')' expression
-    |   expression ('++' | '--') # postIncDecExpr
-    |   ('+'|'-'|'++'|'--') expression # preIncDecSignExpr
+    |   variableExpr ('++' | '--') # postIncDecExpr
+    |   ('+'|'-'|'++'|'--') variableExpr # preIncDecSignExpr
     |   ('~'|'!') expression # negationExpr
     |   expression ('*'|'/'|'%') expression # multDivModExpr
     |   expression ('+'|'-') expression # addSubExpr
@@ -627,7 +627,7 @@ expression
     |   expression '&&' expression # andExpr
     |   expression '||' expression # orExpr
     |   expression '?' expression ':' expression # oneLineIfExpr
-    |   <assoc=right> expression 
+    |   <assoc=right> variableExpr 
         (   '='
         |   '+='
         |   '-='
@@ -643,6 +643,11 @@ expression
         )
         expression # assignExpr
     ;
+    
+variableExpr
+	:	Identifier
+	|	'*'Identifier
+	;
 
 primary
     :   '(' expression ')'

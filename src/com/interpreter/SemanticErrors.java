@@ -1,5 +1,7 @@
 package com.interpreter;
 
+import com.utils.Console;
+
 public class SemanticErrors {
 	
 	private static final String LINE_INFO = "line %d:%d ";
@@ -21,4 +23,12 @@ public class SemanticErrors {
 	
 	//SPECIAL ERRORS
 	public static final String ONLY_ONE_CHAR = LINE_INFO + "char can only contain one character. Try using string instead";
+	
+	public static void throwTypeMismatch(int lineNumber, int charPos, String expectedType) {
+		
+	}
+	
+	public static void throwError(String error, Object ...args) {
+		Console.instance().err(String.format(error, args));
+	}
 }

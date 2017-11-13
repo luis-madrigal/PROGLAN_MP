@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Stack;
 
 import org.antlr.v4.runtime.ParserRuleContext;
+import org.antlr.v4.runtime.tree.ParseTree;
 
 import com.interpreter.contexts.MethodContext;
 import com.interpreter.contexts.SymbolContext;
@@ -12,33 +13,23 @@ import com.parser.ManuScriptBaseListener;
 import com.parser.ManuScriptParser;
 import com.parser.ManuScriptParser.ExpressionContext;
 import com.parser.ManuScriptParser.FormalParameterContext;
+import com.parser.ManuScriptParser.LiteralContext;
+import com.parser.ManuScriptParser.PrimaryContext;
+import com.parser.ManuScriptParser.PrimaryExprContext;
 import com.parser.ManuScriptParser.VariableDeclaratorContext;
 import com.utils.Console;
+import com.utils.Literals;
 
 public class BaseListener extends ManuScriptBaseListener{
 	private Stack<Scope> scopes;
-//	private HashMap<String, SymbolContext> symTable;
 	private HashMap<String, MethodContext> methodTable;
 	
 	public BaseListener() {
 		scopes = new Stack<Scope>();
 		scopes.push(new Scope(null));
-//		symTable = new HashMap<String, SymbolContext>();
 		methodTable = new HashMap<String, MethodContext>();
 	}
-	
-	@Override public void enterVariableModifier(ManuScriptParser.VariableModifierContext ctx) { }
-	
-	@Override public void exitVariableModifier(ManuScriptParser.VariableModifierContext ctx) { }
-	
-//	@Override public void enterClassDeclaration(ManuScriptParser.ClassDeclarationContext ctx) {
-//		scopes.push(new Scope(scopes.peek()));
-//	}
-//	
-//	@Override public void exitClassDeclaration(ManuScriptParser.ClassDeclarationContext ctx) {
-//		scopes.pop();
-//	} 
-	
+
 	@Override public void enterMethodDeclaration(ManuScriptParser.MethodDeclarationContext ctx) {
 		String methodName = ctx.Identifier().getText();
 		methodTable.put(methodName, new MethodContext(ctx, scopes.peek(), methodName));
@@ -55,7 +46,6 @@ public class BaseListener extends ManuScriptBaseListener{
 				getCurrentSymTable().put(varName, new SymbolContext(fpctx.typeType().getText(), scope, varName));
 			}
 		}
-	
 	}
 
 	@Override public void exitMethodDeclaration(ManuScriptParser.MethodDeclarationContext ctx) { 
@@ -64,7 +54,6 @@ public class BaseListener extends ManuScriptBaseListener{
 	
 	@Override public void enterFieldDeclaration(ManuScriptParser.FieldDeclarationContext ctx) {
 		String varType = ctx.typeType().getText();
-//		HashMap<String, String> variables = new HashMap<String, String>();
         Scope scope = scopes.peek();
         boolean isConstant = false;
 
@@ -72,17 +61,15 @@ public class BaseListener extends ManuScriptBaseListener{
         	isConstant = true;
         
 		for (VariableDeclaratorContext vdctx : ctx.variableDeclarators().variableDeclarator()) {
-			//TODO: value only works for literal. not yet evaluating expressions
-			String value = (vdctx.variableInitializer() == null)? null : vdctx.variableInitializer().getText();
-			value = (value != null && value.equals("null"))? null : value;
 			String varName = vdctx.variableDeclaratorId().getText();
 			
 			if(getCurrentSymTable().containsKey(varName)) {
-				Console.instance().err(String.format(SemanticErrors.DUPLICATE_VAR, vdctx.getStart().getLine(), vdctx.getStart().getCharPositionInLine(), varName));
-			} else if(value == null || !checkIfTypeMismatch(ctx, varType, value)) {
-//				if(vdctx)
+				SemanticErrors.throwError(SemanticErrors.DUPLICATE_VAR, vdctx.getStart().getLine(), vdctx.getStart().getCharPositionInLine(), varName);
+			} else {
+				if(vdctx.variableInitializer() != null) {
+					this.expressionChecker(vdctx.variableInitializer(), varType);
+				}
 				System.out.println("added "+varName+" to symbol table");
-//				variables.put(varName, value);
 				scope.add(varName);
 				getCurrentSymTable().put(varName, new SymbolContext(ctx.typeType().getText(), scope, varName, isConstant));
 			}
@@ -93,20 +80,18 @@ public class BaseListener extends ManuScriptBaseListener{
 	
 	@Override public void enterLocalVariableDeclaration(ManuScriptParser.LocalVariableDeclarationContext ctx) { 
 		String varType = ctx.typeType().getText();
-//		HashMap<String, String> variables = new HashMap<String, String>();
         Scope scope = scopes.peek();
         
 		for (VariableDeclaratorContext vdctx : ctx.variableDeclarators().variableDeclarator()) {
-			//TODO: value only works for literal. not yet evaluating expressions
-			String value = (vdctx.variableInitializer() == null)? null : vdctx.variableInitializer().getText();
-			value = (value.equals("null"))? null : value;
 			String varName = vdctx.variableDeclaratorId().getText();
 			
 			if(getCurrentSymTable().containsKey(varName)) {
-				Console.instance().err(String.format(SemanticErrors.DUPLICATE_VAR, vdctx.getStart().getLine(), vdctx.getStart().getCharPositionInLine(), varName));
-			} else if(value == null || !checkIfTypeMismatch(ctx, varType, value)) {
+				SemanticErrors.throwError(SemanticErrors.DUPLICATE_VAR, vdctx.getStart().getLine(), vdctx.getStart().getCharPositionInLine(), varName);
+			} else {
+				if(vdctx.variableInitializer() != null) {
+					this.expressionChecker(vdctx.variableInitializer(), varType);
+				}
 				System.out.println("added "+varName+" to symbol table");
-//				variables.put(varName, value);
 				scope.add(varName);
 				getCurrentSymTable().put(varName, new SymbolContext(ctx.typeType().getText(), scope, varName));
 			}
@@ -120,32 +105,28 @@ public class BaseListener extends ManuScriptBaseListener{
 	
 	@Override public void exitVariableDeclarator(ManuScriptParser.VariableDeclaratorContext ctx) { }
 	
-	@Override public void enterAssignExpr(ManuScriptParser.AssignExprContext ctx) { 
-		String varName = ctx.expression().get(0).getText();
-		String assignVal = ctx.expression().get(1).getText();
-		HashMap<String, SymbolContext> symTable;
+	@Override 
+	public void enterAssignExpr(ManuScriptParser.AssignExprContext ctx) { 
+		String varName = ctx.variableExpr().getText();
+		SymbolContext sctx;
 		
 		int lineNumStart = ctx.getStart().getLine();
-		int lineNumEnd = ctx.getStop().getLine();
 		int charNumStart = ctx.getStart().getCharPositionInLine();
-		int charNumEnd = ctx.getStop().getCharPositionInLine();
 		
-		if(scopes.peek().inScope(varName)){
-			symTable = scopes.peek().checkTables(varName);
-			if(symTable.get(varName).isConstant())
-				Console.instance().err(String.format(SemanticErrors.CONSTANT_MOD, lineNumStart, charNumStart, varName));
-			else
-				checkIfTypeMismatch(ctx, symTable.get(varName).getSymbolType(), assignVal);
+		if((sctx = scopes.peek().checkTables(varName)) != null){
+			if(sctx.isConstant())
+				SemanticErrors.throwError(SemanticErrors.CONSTANT_MOD, lineNumStart, charNumStart, varName);
+			else {
+				this.expressionChecker(ctx.expression(), sctx.getSymbolType());
+			}
 		} else {
-			Console.instance().err(String.format(SemanticErrors.UNDECLARED_VAR, lineNumStart, charNumStart, varName));
+			SemanticErrors.throwError(SemanticErrors.UNDECLARED_VAR, ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), varName);
 		}
 	}
 	
-	@Override public void exitAssignExpr(ManuScriptParser.AssignExprContext ctx) { }
-	
 	
 	@Override public void enterFunctionExpr(ManuScriptParser.FunctionExprContext ctx) { 
-		String methodName = ctx.expression().getText();
+		String methodName = ctx.variableExpr().getText();
 		int lineNum = ctx.getStart().getLine();
 		int charPosInLine = ctx.getStart().getCharPositionInLine();
 		
@@ -156,91 +137,70 @@ public class BaseListener extends ManuScriptBaseListener{
 		MethodContext mcx = methodTable.get(methodName);
 		
 		if(mcx.getArgTypes().size() > ctx.expressionList().expression().size()) {
-			Console.instance().err(String.format(SemanticErrors.PARAM_COUNT_MISMATCH_L, lineNum, charPosInLine, methodName, mcx.getArgTypes().size()));
+			SemanticErrors.throwError(SemanticErrors.PARAM_COUNT_MISMATCH_L, lineNum, charPosInLine, methodName, mcx.getArgTypes().size());
 			return;
 		} else if(mcx.getArgTypes().size() < ctx.expressionList().expression().size()) {
-			Console.instance().err(String.format(SemanticErrors.PARAM_COUNT_MISMATCH_G, lineNum, charPosInLine, methodName, mcx.getArgTypes().size()));
+			SemanticErrors.throwError(SemanticErrors.PARAM_COUNT_MISMATCH_L, lineNum, charPosInLine, methodName, mcx.getArgTypes().size());
 			return;
 		}
-		
-		System.out.println(methodName+" with args: ");
-		
+				
 		int i = 0;
 		for (ExpressionContext ectx : ctx.expressionList().expression()) {
-			Scope scope;
-			String type;
-			String arg = ectx.getText();
+			String arg = ectx.getText(); //evaluate expr
 			int ectxLineNum = ectx.getStart().getLine();
 			int ectxCharPosAtLine = ectx.getStart().getCharPositionInLine();
+			
 			if(scopes.peek().inScope(arg)) {
 				//Existing variable. now check for type mismatch
 				if(!getCurrentSymTable().get(arg).getSymbolType().equals(mcx.getArgTypes().get(i)))
-					Console.instance().err(String.format(SemanticErrors.TYPE_MISMATCH, ectxLineNum, ectxCharPosAtLine, mcx.getArgTypes().get(i)));
-			} else if((type = LiteralMatcher.instance().getLiteralType(arg)) != null) {
-				//check if type corresponds with mcx
-				System.out.println(mcx.getArgTypes().get(i));
-				if(!type.equals(mcx.getArgTypes().get(i)))
-					Console.instance().err(String.format(SemanticErrors.TYPE_MISMATCH, ectxLineNum, ectxCharPosAtLine, mcx.getArgTypes().get(i)));
+					SemanticErrors.throwError(SemanticErrors.TYPE_MISMATCH, ectxLineNum, ectxCharPosAtLine, mcx.getArgTypes().get(i));
+			} else if(ectx instanceof PrimaryExprContext && ((PrimaryExprContext) ectx).primary().Identifier() != null) {
+				//variable but not in scope or not declared.
+				SemanticErrors.throwError(SemanticErrors.UNDECLARED_VAR, ectxLineNum, ectxCharPosAtLine, arg);
 			} else {
-				//undeclared variable
-	        	Console.instance().err(String.format(SemanticErrors.UNDECLARED_VAR, ectxLineNum, ectxCharPosAtLine, arg));
+				//literal or expression
+				this.expressionChecker(ectx, mcx.getArgTypes().get(i));
 			}
 			i++;
 		}
 	}
 	
-	@Override public void exitFunctionExpr(ManuScriptParser.FunctionExprContext ctx) { 
-		
-	}
-	
-	
-	@Override public void enterOutputStatement(ManuScriptParser.OutputStatementContext ctx) { 
-//		for (OutputValueContext ovctx : ctx.outputValue()) {
-//			if(ovctx.StringLiteral() != null)
-//				Console.instance().log(Utils.removeFirstandLastChar(ovctx.getText()));
-//		}
-	}
-
-	@Override public void exitOutputStatement(ManuScriptParser.OutputStatementContext ctx) { 
-		
-	}
-	
-	private boolean checkIfTypeMismatch(ParserRuleContext ctx, String varType, String value) {
-		if(!LiteralMatcher.instance().isOfType(varType, value)) {
-			Console.instance().err(String.format(SemanticErrors.TYPE_MISMATCH, ctx.getStart().getLine(), ctx.getStop().getCharPositionInLine(), varType));
-			return true;
-		}
-//		if(varType.equals("int")) {
-//			try {
-//				Integer.parseInt(value);
-//			}catch(NumberFormatException e) {
-//	        	Console.instance().err(String.format(SemanticErrors.INT_MISMATCH, ctx.getStart().getLine(), ctx.getStop().getCharPositionInLine()));
-//	        	return true;
-//			}
-//		} else if(varType.equals("float")) {
-//			try {
-//				Float.parseFloat(value);
-//			}catch(NumberFormatException e) {
-//	        	Console.instance().err(String.format(SemanticErrors.FLOAT_MISMATCH, ctx.getStart().getLine(), ctx.getStop().getCharPositionInLine()));
-//	        	return true;
-//			}
-//		} else if(varType.equals("string")) {
-//			if(!value.substring(value.length()-1).equals("\"") || !value.substring(0, 1).equals("\"")) {
-//	        	Console.instance().err(String.format(SemanticErrors.STRING_MISMATCH, ctx.getStart().getLine(), ctx.getStop().getCharPositionInLine()));
-//	        	return true;
-//			}
-//		} else if(varType.equals("char")) {
-//			if(!value.substring(value.length()-1).equals("'") || !value.substring(0, 1).equals("'")) {
-//	        	Console.instance().err(String.format(SemanticErrors.CHAR_MISMATCH, ctx.getStart().getLine(), ctx.getStop().getCharPositionInLine()));
-//	        	return true;
-//			}
-//			if(value.length() > 3) {
-//	        	Console.instance().err(String.format(SemanticErrors.ONLY_ONE_CHAR, ctx.getStart().getLine(), ctx.getStop().getCharPositionInLine()));
-//	        	return true;
-//			}
-//		}
-//		
-		return false;
+	private boolean expressionChecker(ParseTree tree, String expectedType) {
+		if (tree.getChildCount() == 0) {
+			//check if either literal or variable then check type. return false if mismatch
+			if(tree.getParent() instanceof LiteralContext) {
+				System.out.println("literal detected");
+				LiteralContext lctx = (LiteralContext) tree.getParent();
+				if(!tree.getParent().getText().equals("null")) {
+					if((expectedType.equals(Literals.STRING) && lctx.StringLiteral() == null)
+							|| (expectedType.equals(Literals.CHARACTER) && lctx.CharacterLiteral() == null)
+							|| (expectedType.equals(Literals.INTEGER) && lctx.IntegerLiteral() == null)
+							|| (expectedType.equals(Literals.BOOLEAN) && lctx.BooleanLiteral() == null)
+							|| (expectedType.equals(Literals.FLOAT) && lctx.FloatingPointLiteral() == null))
+						SemanticErrors.throwError(SemanticErrors.TYPE_MISMATCH, lctx.getStart().getLine(), lctx.getStart().getCharPositionInLine(), expectedType);
+				}
+			} else if(tree.getParent() instanceof PrimaryContext && ((PrimaryContext) tree.getParent()).Identifier() != null) {
+				PrimaryContext pctx = (PrimaryContext) tree.getParent();
+				String varName = tree.getParent().getText();
+				SymbolContext sctx;
+				if((sctx = scopes.peek().checkTables(varName)) != null) {
+					//Existing variable. now check for type mismatch
+					if(!sctx.getSymbolType().equals(expectedType))
+						SemanticErrors.throwError(SemanticErrors.TYPE_MISMATCH, pctx.getStart().getLine(), pctx.getStart().getCharPositionInLine(), expectedType);
+				} else {
+					SemanticErrors.throwError(SemanticErrors.UNDECLARED_VAR, pctx.getStart().getLine(), pctx.getStart().getCharPositionInLine(), expectedType);
+				}
+				System.out.println("variable detected");
+			}
+			System.out.println(tree.getText());
+	    } else {
+	    	int i = 0;
+	        while(tree.getChild(i) != null) {
+	        	expressionChecker(tree.getChild(i), expectedType);
+	        	i++;
+	        }
+	    }
+	    return true;
 	}
 	
 	private HashMap<String, SymbolContext> getCurrentSymTable() {

@@ -22,9 +22,9 @@ public class Scope extends HashSet<String>{
 		return (parent == null)? false : parent.inScope(varName);
 	}
 	
-	public HashMap<String, SymbolContext> checkTables(String varName) {
+	public SymbolContext checkTables(String varName) {
 		if(symTable.containsKey(varName))
-			return symTable;
+			return symTable.get(varName);
 		
 		return (parent == null)? null : parent.checkTables(varName);
 	}
