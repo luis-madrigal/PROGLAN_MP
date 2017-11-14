@@ -2,35 +2,29 @@ package com.interpreter.matchers;
 
 import java.util.HashMap;
 
+import com.parser.ManuScriptParser.LiteralContext;
 import com.utils.Literals;
 
 public class LiteralMatcher {
 	
 	private static LiteralMatcher instance;
-	private HashMap<String, Matcher> matchMap;
 	
 	private LiteralMatcher() {
-		matchMap = new HashMap<String, Matcher>();
-		matchMap.put(Literals.INTEGER, new IntegerMatcher());
-		matchMap.put(Literals.CHARACTER, new CharMatcher());
-		matchMap.put(Literals.STRING, new StringMatcher());
-		matchMap.put(Literals.FLOAT, new FloatMatcher());
+		
 	}
 	
-	public boolean isOfType(String type, String value) {
-		return matchMap.get(type).isOfType(value);
-	}
-	
-	public String getLiteralType(String value) {
-		if(LiteralMatcher.instance().isOfType(Literals.INTEGER, value))
+	public String getLiteralType(LiteralContext ctx) {
+		if(ctx.IntegerLiteral() != null)
 			return Literals.INTEGER;
-		if(LiteralMatcher.instance().isOfType(Literals.CHARACTER, value))
+		if(ctx.CharacterLiteral() != null)
 			return Literals.CHARACTER;
-		if(LiteralMatcher.instance().isOfType(Literals.STRING, value))
+		if(ctx.StringLiteral() != null)
 			return Literals.STRING;
-		if(LiteralMatcher.instance().isOfType(Literals.FLOAT, value))
+		if(ctx.FloatingPointLiteral() != null)
 			return Literals.FLOAT;
-		return null;
+		if(ctx.BooleanLiteral() != null)
+			return Literals.BOOLEAN;
+		return Literals.NULL;
 	}
 	
 	public static LiteralMatcher instance() {
