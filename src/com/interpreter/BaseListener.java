@@ -17,6 +17,7 @@ import com.parser.ManuScriptParser.EqualityExprContext;
 import com.parser.ManuScriptParser.ExpressionContext;
 import com.parser.ManuScriptParser.FormalParameterContext;
 import com.parser.ManuScriptParser.LiteralContext;
+import com.parser.ManuScriptParser.MethodBodyContext;
 import com.parser.ManuScriptParser.OrExprContext;
 import com.parser.ManuScriptParser.PrimaryContext;
 import com.parser.ManuScriptParser.PrimaryExprContext;
@@ -38,11 +39,26 @@ public class BaseListener extends ManuScriptBaseListener{
 	@Override public void exitCompilationUnit(ManuScriptParser.CompilationUnitContext ctx) {
 		
 	}
+	
+	@Override public void enterBlock(ManuScriptParser.BlockContext ctx) { 
+		if(!(ctx.parent instanceof MethodBodyContext)) {
+			Scope scope = new Scope(scopes.peek());
+			scopes.push(scope);
+		}
+	}
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitBlock(ManuScriptParser.BlockContext ctx) { 
+		scopes.pop();
+	}
 
 	@Override public void enterMethodDeclaration(ManuScriptParser.MethodDeclarationContext ctx) {
 		String methodName = ctx.Identifier().getText();
 		methodTable.put(methodName, new MethodContext(ctx, scopes.peek(), methodName));
-		
+		System.out.println("new method");
 		Scope scope = new Scope(scopes.peek());
 		scopes.push(scope);
 		
@@ -57,10 +73,6 @@ public class BaseListener extends ManuScriptBaseListener{
 		}
 	}
 
-	@Override public void exitMethodDeclaration(ManuScriptParser.MethodDeclarationContext ctx) { 
-		scopes.pop();
-	}
-	
 	@Override public void enterFieldDeclaration(ManuScriptParser.FieldDeclarationContext ctx) {
 		String varType = ctx.typeType().getText();
         Scope scope = scopes.peek();
@@ -76,7 +88,7 @@ public class BaseListener extends ManuScriptBaseListener{
 				SemanticErrors.throwError(SemanticErrors.DUPLICATE_VAR, vdctx.getStart().getLine(), vdctx.getStart().getCharPositionInLine(), varName);
 			} else {
 				if(vdctx.variableInitializer() != null) {
-					this.expressionTypeCheck(vdctx.variableInitializer(), varType);
+					this.expressionChecker(vdctx.variableInitializer(), varType);
 				}
 				System.out.println("added "+varName+" to symbol table");
 				scope.add(varName);
@@ -126,7 +138,7 @@ public class BaseListener extends ManuScriptBaseListener{
 			if(sctx.isConstant())
 				SemanticErrors.throwError(SemanticErrors.CONSTANT_MOD, lineNumStart, charNumStart, varName);
 			else {
-				this.expressionTypeCheck(ctx.expression(), sctx.getSymbolType());
+				this.expressionChecker(ctx.expression(), sctx.getSymbolType());
 			}
 		} else {
 			SemanticErrors.throwError(SemanticErrors.UNDECLARED_VAR, ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), varName);
@@ -168,7 +180,7 @@ public class BaseListener extends ManuScriptBaseListener{
 				SemanticErrors.throwError(SemanticErrors.UNDECLARED_VAR, ectxLineNum, ectxCharPosAtLine, arg);
 			} else {
 				//literal or expression
-				this.expressionTypeCheck(ectx, mcx.getArgTypes().get(i));
+				this.expressionChecker(ectx, mcx.getArgTypes().get(i));
 			}
 			i++;
 		}
@@ -234,54 +246,54 @@ public class BaseListener extends ManuScriptBaseListener{
 	    
 	}
 	
-	private boolean expressionTypeCheck(ParseTree node, String expectedType) {
-		if (node.getChildCount() == 0) {
-			//check if either literal or variable then check type. return false if mismatch
-			if(node.getParent() instanceof LiteralContext) {
-				LiteralContext lctx = (LiteralContext) node.getParent();
-				if(!node.getParent().getText().equals("null")) {
-					if((expectedType.equals(Literals.STRING) && lctx.StringLiteral() == null)
-							|| (expectedType.equals(Literals.CHARACTER) && lctx.CharacterLiteral() == null)
-							|| (expectedType.equals(Literals.INTEGER) && lctx.IntegerLiteral() == null)
-							|| (expectedType.equals(Literals.BOOLEAN) && lctx.BooleanLiteral() == null)
-							|| (expectedType.equals(Literals.FLOAT) && lctx.FloatingPointLiteral() == null))
-						SemanticErrors.throwError(SemanticErrors.TYPE_MISMATCH, lctx.getStart().getLine(), lctx.getStart().getCharPositionInLine(), expectedType);
-				}
-			} else if(node.getParent() instanceof PrimaryContext && ((PrimaryContext) node.getParent()).Identifier() != null) {
-				PrimaryContext pctx = (PrimaryContext) node.getParent();
-				String varName = node.getParent().getText();
-				SymbolContext sctx;
-				if((sctx = scopes.peek().checkTables(varName)) != null) {
-					//Existing variable. now check for type mismatch
-					if(!sctx.getSymbolType().equals(expectedType))
-						SemanticErrors.throwError(SemanticErrors.TYPE_MISMATCH, pctx.getStart().getLine(), pctx.getStart().getCharPositionInLine(), expectedType);
-				} else {
-					SemanticErrors.throwError(SemanticErrors.UNDECLARED_VAR, pctx.getStart().getLine(), pctx.getStart().getCharPositionInLine(), expectedType);
-				}
-			}
-			System.out.println(node.getText());
-			return true;
-	    } else if(node instanceof ComparisonExprContext 
-	    		|| node instanceof EqualityExprContext
-	    		|| node instanceof AndExprContext
-	    		|| node instanceof OrExprContext){
-	    	System.out.println("comparison check");
-	    	ParserRuleContext prctx = (ParserRuleContext) node;
-	    	if(!expectedType.equals(Literals.BOOLEAN)) {
-	    		SemanticErrors.throwError(SemanticErrors.TYPE_MISMATCH, prctx.getStart().getLine(), prctx.getStart().getCharPositionInLine(), expectedType);
-	    	} else
-//	    		this.boolExpressionCheck(node, expectedType);
-    		return false;
-	    }
-		else {
-	    	int i = 0;
-	        while(node.getChild(i) != null) {
-	        	expressionTypeCheck(node.getChild(i), expectedType);
-	        	i++;
-	        }
-	    }
-	    return true;
-	}
+//	private boolean expressionTypeCheck(ParseTree node, String expectedType) {
+//		if (node.getChildCount() == 0) {
+//			//check if either literal or variable then check type. return false if mismatch
+//			if(node.getParent() instanceof LiteralContext) {
+//				LiteralContext lctx = (LiteralContext) node.getParent();
+//				if(!node.getParent().getText().equals("null")) {
+//					if((expectedType.equals(Literals.STRING) && lctx.StringLiteral() == null)
+//							|| (expectedType.equals(Literals.CHARACTER) && lctx.CharacterLiteral() == null)
+//							|| (expectedType.equals(Literals.INTEGER) && lctx.IntegerLiteral() == null)
+//							|| (expectedType.equals(Literals.BOOLEAN) && lctx.BooleanLiteral() == null)
+//							|| (expectedType.equals(Literals.FLOAT) && lctx.FloatingPointLiteral() == null))
+//						SemanticErrors.throwError(SemanticErrors.TYPE_MISMATCH, lctx.getStart().getLine(), lctx.getStart().getCharPositionInLine(), expectedType);
+//				}
+//			} else if(node.getParent() instanceof PrimaryContext && ((PrimaryContext) node.getParent()).Identifier() != null) {
+//				PrimaryContext pctx = (PrimaryContext) node.getParent();
+//				String varName = node.getParent().getText();
+//				SymbolContext sctx;
+//				if((sctx = scopes.peek().checkTables(varName)) != null) {
+//					//Existing variable. now check for type mismatch
+//					if(!sctx.getSymbolType().equals(expectedType))
+//						SemanticErrors.throwError(SemanticErrors.TYPE_MISMATCH, pctx.getStart().getLine(), pctx.getStart().getCharPositionInLine(), expectedType);
+//				} else {
+//					SemanticErrors.throwError(SemanticErrors.UNDECLARED_VAR, pctx.getStart().getLine(), pctx.getStart().getCharPositionInLine(), expectedType);
+//				}
+//			}
+//			System.out.println(node.getText());
+//			return true;
+//	    } else if(node instanceof ComparisonExprContext 
+//	    		|| node instanceof EqualityExprContext
+//	    		|| node instanceof AndExprContext
+//	    		|| node instanceof OrExprContext){
+//	    	System.out.println("comparison check");
+//	    	ParserRuleContext prctx = (ParserRuleContext) node;
+//	    	if(!expectedType.equals(Literals.BOOLEAN)) {
+//	    		SemanticErrors.throwError(SemanticErrors.TYPE_MISMATCH, prctx.getStart().getLine(), prctx.getStart().getCharPositionInLine(), expectedType);
+//	    	} else
+////	    		this.boolExpressionCheck(node, expectedType);
+//    		return false;
+//	    }
+//		else {
+//	    	int i = 0;
+//	        while(node.getChild(i) != null) {
+//	        	expressionTypeCheck(node.getChild(i), expectedType);
+//	        	i++;
+//	        }
+//	    }
+//	    return true;
+//	}
 	
 	//still not working
 	private boolean boolExpressionCheck(ParseTree node, String expectedType) {
