@@ -12,6 +12,8 @@ import com.interpreter.matchers.LiteralMatcher;
 import com.parser.ManuScriptBaseListener;
 import com.parser.ManuScriptParser;
 import com.parser.ManuScriptParser.AndExprContext;
+import com.parser.ManuScriptParser.ArrayCreatorRestContext;
+import com.parser.ManuScriptParser.ArrayInitExprContext;
 import com.parser.ManuScriptParser.ComparisonExprContext;
 import com.parser.ManuScriptParser.EqualityExprContext;
 import com.parser.ManuScriptParser.ExpressionContext;
@@ -124,7 +126,20 @@ public class BaseListener extends ManuScriptBaseListener{
 				SemanticErrors.throwError(SemanticErrors.DUPLICATE_VAR, vdctx.getStart().getLine(), vdctx.getStart().getCharPositionInLine(), varName);
 			} else {
 				if(vdctx.variableInitializer() != null) {
-					this.expressionChecker(vdctx.variableInitializer(), varType);
+					if(vdctx.variableInitializer().expression() instanceof ArrayInitExprContext) {
+						ArrayInitExprContext aictx = (ArrayInitExprContext) vdctx.variableInitializer().expression();
+						ArrayCreatorRestContext acrctx = aictx.creator().arrayCreatorRest();
+						
+						if(acrctx.arrayInitializer() != null) {
+							//array is being initialized
+							this.expressionChecker(acrctx.arrayInitializer(), aictx.creator().createdName().getText());
+						} else if(acrctx.expression() != null) {
+							//array is being declared TODO: expression(0) can be wrong
+							this.expressionChecker(acrctx.expression(0), aictx.creator().createdName().getText());
+						}
+					} else {
+						this.expressionChecker(vdctx.variableInitializer(), varType);
+					}
 				}
 				System.out.println("added "+varName+" to symbol table");
 				scope.add(varName);

@@ -291,15 +291,15 @@ typeType
     ;
     
 pointerType
-	:	(primitiveType | classOrInterfaceType | structType)'*';
+	:	(primitiveType | structType)'*';
 
 structType
     :   STRUCT Identifier
     ;
-
-classOrInterfaceType
-    :   Identifier typeArguments? ('.' Identifier typeArguments? )*
-    ;
+//
+//classOrInterfaceType
+//    :   Identifier typeArguments? ('.' Identifier typeArguments? )*
+//    ;
 
 primitiveType
     :   BOOLEAN
@@ -610,7 +610,7 @@ expression
 //    |   expression '.' explicitGenericInvocation
     |   variableExpr '[' expression ']' # arrayExpr
     |   variableExpr '(' expressionList? ')' # functionExpr
-//    |   NEW creator
+    |   NEW creator #arrayInitExpr
 //    |   '(' typeType ')' expression
     |   variableExpr ('++' | '--') # postIncDecExpr
     |   ('+'|'-'|'++'|'--') variableExpr # preIncDecSignExpr
@@ -661,15 +661,14 @@ primary
 //    |   nonWildcardTypeArguments (explicitGenericInvocationSuffix | THIS arguments)
     ;
 
-//creator
-//    :   nonWildcardTypeArguments createdName classCreatorRest
-//    |   createdName (arrayCreatorRest | classCreatorRest)
-//    ;
-//
-//createdName
-//    :   Identifier typeArgumentsOrDiamond? ('.' Identifier typeArgumentsOrDiamond?)*
-//    |   primitiveType
-//    ;
+creator
+    :   createdName (arrayCreatorRest)
+    ;
+
+createdName
+    :   primitiveType 
+    | 	pointerType
+    ;
 //
 //innerCreator
 //    :   Identifier nonWildcardTypeArgumentsOrDiamond? classCreatorRest

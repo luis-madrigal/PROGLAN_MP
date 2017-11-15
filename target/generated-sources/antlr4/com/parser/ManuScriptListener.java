@@ -188,16 +188,6 @@ public interface ManuScriptListener extends ParseTreeListener {
 	 */
 	void exitStructType(ManuScriptParser.StructTypeContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link ManuScriptParser#classOrInterfaceType}.
-	 * @param ctx the parse tree
-	 */
-	void enterClassOrInterfaceType(ManuScriptParser.ClassOrInterfaceTypeContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link ManuScriptParser#classOrInterfaceType}.
-	 * @param ctx the parse tree
-	 */
-	void exitClassOrInterfaceType(ManuScriptParser.ClassOrInterfaceTypeContext ctx);
-	/**
 	 * Enter a parse tree produced by {@link ManuScriptParser#primitiveType}.
 	 * @param ctx the parse tree
 	 */
@@ -758,6 +748,18 @@ public interface ManuScriptListener extends ParseTreeListener {
 	 */
 	void exitArrayExpr(ManuScriptParser.ArrayExprContext ctx);
 	/**
+	 * Enter a parse tree produced by the {@code arrayInitExpr}
+	 * labeled alternative in {@link ManuScriptParser#expression}.
+	 * @param ctx the parse tree
+	 */
+	void enterArrayInitExpr(ManuScriptParser.ArrayInitExprContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code arrayInitExpr}
+	 * labeled alternative in {@link ManuScriptParser#expression}.
+	 * @param ctx the parse tree
+	 */
+	void exitArrayInitExpr(ManuScriptParser.ArrayInitExprContext ctx);
+	/**
 	 * Enter a parse tree produced by the {@code orExpr}
 	 * labeled alternative in {@link ManuScriptParser#expression}.
 	 * @param ctx the parse tree
@@ -909,6 +911,26 @@ public interface ManuScriptListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitPrimary(ManuScriptParser.PrimaryContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link ManuScriptParser#creator}.
+	 * @param ctx the parse tree
+	 */
+	void enterCreator(ManuScriptParser.CreatorContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link ManuScriptParser#creator}.
+	 * @param ctx the parse tree
+	 */
+	void exitCreator(ManuScriptParser.CreatorContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link ManuScriptParser#createdName}.
+	 * @param ctx the parse tree
+	 */
+	void enterCreatedName(ManuScriptParser.CreatedNameContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link ManuScriptParser#createdName}.
+	 * @param ctx the parse tree
+	 */
+	void exitCreatedName(ManuScriptParser.CreatedNameContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link ManuScriptParser#arrayCreatorRest}.
 	 * @param ctx the parse tree

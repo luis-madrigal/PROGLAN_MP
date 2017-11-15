@@ -232,18 +232,6 @@ public class ManuScriptBaseListener implements ManuScriptListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterClassOrInterfaceType(ManuScriptParser.ClassOrInterfaceTypeContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitClassOrInterfaceType(ManuScriptParser.ClassOrInterfaceTypeContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
 	@Override public void enterPrimitiveType(ManuScriptParser.PrimitiveTypeContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -880,6 +868,18 @@ public class ManuScriptBaseListener implements ManuScriptListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterArrayInitExpr(ManuScriptParser.ArrayInitExprContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitArrayInitExpr(ManuScriptParser.ArrayInitExprContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterOrExpr(ManuScriptParser.OrExprContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -1031,6 +1031,30 @@ public class ManuScriptBaseListener implements ManuScriptListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitPrimary(ManuScriptParser.PrimaryContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterCreator(ManuScriptParser.CreatorContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitCreator(ManuScriptParser.CreatorContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterCreatedName(ManuScriptParser.CreatedNameContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitCreatedName(ManuScriptParser.CreatedNameContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
