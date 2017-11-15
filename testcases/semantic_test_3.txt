@@ -1,53 +1,53 @@
-ACT assertNonZero(int x) {
+ACT assertNonZero starring(int x) {
 	if(x > 0) {
-		return true;
+		give true;
 	}
-	
+	[comment]: error1
 }
 
-ACT sayHelloWorld() {
+ACT sayHelloWorld starring() {
 	Say "Hello World";
 }
 
-ACT sayHelloWorld() {
-	Say "Hello World"
+[comment]: error2
+ACT sayHelloWorld starring() {
+	Say "Hello World";
 }
 
-void sayHelloWorld(int x){
+[comment]: error3
+ACT sayHelloWorld starring(int x){
 	replay(int i = 0; i < x; i++) {
-		Say "Hello World"
+		Say "Hello World";
 	}
 }
 
-void arrayTest(int size_1, int size_2) {
+ACT arrayTest starring(int size_1, int size_2) {
 	int[] simpleArray = new int[size_1];
-	int[] simpleArray = new int[size_2]; //error #4
-	int[] simpleArray_2 = new int[2.0f]; //error #5
+	int[] simpleArray = new int[size_2]; [comment]: error4
+	int[] simpleArray_2 = new int[2.0f]; [comment]: error5
 	
 	int complexArraySize = (size_1 * 2) - size_2 - 4;
 	int[] complexArray = new int[complexArraySize];
 	
-	for(int i = 0; i < complexArraySize; i++) {
+	replay(int i = 0; i < complexArraySize; i++) {
 		complexArraySize[i] = i;
 	}
 	
-	return complexArray; //error #6
+	give complexArray; [comment]: error6
 }
 
-void main() {
+ACT main starring() {
 	int x = 0, y = 5, z = 13;
 	
-	float someValue = (x + y) / (y + z) * 1.0f; //IMPORTANT! Type-casting should be supported for int-float pairs.
+	float someValue = (x + y) / (y + z) * 1.0f; 
 	
-	z = assertNonZero(x); //error #7
+	z = assertNonZero(x); [comment]: error7
 	
 	if(z > 0) {
-		print("Computated value: " + someValue()); //error #8
-		print("Computed value: " +someValue);
+		Say ("Computated value: " + someValue()); [comment]: error8
+		Say ("Computed value: " +someValue);
 	}
 	
-	int z = 0, x = 0; //syntax error #9, #10
-	
-	
+	int z = 0, x = 0; [comment]: error9 and 10
 	
 }

@@ -104,7 +104,20 @@ public class BaseListener extends ManuScriptBaseListener{
 				SemanticErrors.throwError(SemanticErrors.DUPLICATE_VAR, vdctx.getStart().getLine(), vdctx.getStart().getCharPositionInLine(), varName);
 			} else {
 				if(vdctx.variableInitializer() != null) {
-					this.expressionChecker(vdctx.variableInitializer(), varType);
+					if(vdctx.variableInitializer().expression() instanceof ArrayInitExprContext) {
+						ArrayInitExprContext aictx = (ArrayInitExprContext) vdctx.variableInitializer().expression();
+						ArrayCreatorRestContext acrctx = aictx.creator().arrayCreatorRest();
+						
+						if(acrctx.arrayInitializer() != null) {
+							//array is being initialized
+							this.expressionChecker(acrctx.arrayInitializer(), aictx.creator().createdName().getText());
+						} else if(acrctx.expression() != null) {
+							//array is being declared TODO: expression(0) can be wrong
+							this.expressionChecker(acrctx.expression(0), aictx.creator().createdName().getText());
+						}
+					} else {
+						this.expressionChecker(vdctx.variableInitializer(), varType);
+					}
 				}
 				System.out.println("added "+varName+" to symbol table");
 				scope.add(varName);
@@ -157,7 +170,8 @@ public class BaseListener extends ManuScriptBaseListener{
 	
 	@Override 
 	public void enterAssignExpr(ManuScriptParser.AssignExprContext ctx) { 
-		String varName = ctx.variableExpr().getText();
+		String varName = ctx.equationExpr().getText();
+		varName = varName.split("\\[")[0];//TODO: bad implementation
 		SymbolContext sctx;
 		
 		int lineNumStart = ctx.getStart().getLine();
@@ -182,39 +196,79 @@ public class BaseListener extends ManuScriptBaseListener{
 		String methodName = ctx.variableExpr().getText();
 		int lineNum = ctx.getStart().getLine();
 		int charPosInLine = ctx.getStart().getCharPositionInLine();
-		
+		System.out.println(methodName);
+
 		if(!methodTable.containsKey(methodName)) {
 			Console.instance().err(String.format(SemanticErrors.UNDEFINED_METHOD, lineNum, charPosInLine, methodName));
 			return;
 		}
 		MethodContext mcx = methodTable.get(methodName);
-		
-		if(mcx.getArgTypes().size() > ctx.expressionList().expression().size()) {
-			SemanticErrors.throwError(SemanticErrors.PARAM_COUNT_MISMATCH_L, lineNum, charPosInLine, methodName, mcx.getArgTypes().size());
-			return;
-		} else if(mcx.getArgTypes().size() < ctx.expressionList().expression().size()) {
-			SemanticErrors.throwError(SemanticErrors.PARAM_COUNT_MISMATCH_L, lineNum, charPosInLine, methodName, mcx.getArgTypes().size());
-			return;
-		}
-				
-		int i = 0;
-		for (ExpressionContext ectx : ctx.expressionList().expression()) {
-			String arg = ectx.getText(); //evaluate expr
-			int ectxLineNum = ectx.getStart().getLine();
-			int ectxCharPosAtLine = ectx.getStart().getCharPositionInLine();
-			
-			if(scopes.peek().inScope(arg)) {
-				//Existing variable. now check for type mismatch
-				if(!getCurrentSymTable().get(arg).getSymbolType().equals(mcx.getArgTypes().get(i)))
-					SemanticErrors.throwError(SemanticErrors.TYPE_MISMATCH, ectxLineNum, ectxCharPosAtLine, mcx.getArgTypes().get(i));
-			} else if(ectx instanceof PrimaryExprContext && ((PrimaryExprContext) ectx).primary().Identifier() != null) {
-				//variable but not in scope or not declared.
-				SemanticErrors.throwError(SemanticErrors.UNDECLARED_VAR, ectxLineNum, ectxCharPosAtLine, arg);
-			} else {
-				//literal or expression
-				this.expressionChecker(ectx, mcx.getArgTypes().get(i));
+		if(ctx.expressionList() != null) {
+			if(mcx.getArgTypes().size() > ctx.expressionList().expression().size()) {
+				SemanticErrors.throwError(SemanticErrors.PARAM_COUNT_MISMATCH_L, lineNum, charPosInLine, methodName, mcx.getArgTypes().size());
+				return;
+			} else if(mcx.getArgTypes().size() < ctx.expressionList().expression().size()) {
+				SemanticErrors.throwError(SemanticErrors.PARAM_COUNT_MISMATCH_G, lineNum, charPosInLine, methodName, mcx.getArgTypes().size());
+				return;
 			}
-			i++;
+			int i = 0;
+			for (ExpressionContext ectx : ctx.expressionList().expression()) {
+				String arg = ectx.getText(); //evaluate expr
+				int ectxLineNum = ectx.getStart().getLine();
+				int ectxCharPosAtLine = ectx.getStart().getCharPositionInLine();
+				
+				if(scopes.peek().inScope(arg)) {
+					//Existing variable. now check for type mismatch
+					if(!getCurrentSymTable().get(arg).getSymbolType().equals(mcx.getArgTypes().get(i)))
+						SemanticErrors.throwError(SemanticErrors.TYPE_MISMATCH, ectxLineNum, ectxCharPosAtLine, mcx.getArgTypes().get(i));
+				} else if(ectx instanceof PrimaryExprContext && ((PrimaryExprContext) ectx).primary().Identifier() != null) {
+					//variable but not in scope or not declared.
+					SemanticErrors.throwError(SemanticErrors.UNDECLARED_VAR, ectxLineNum, ectxCharPosAtLine, arg);
+				} else {
+					//literal or expression
+					this.expressionChecker(ectx, mcx.getArgTypes().get(i));
+				}
+				i++;
+			}
+		} else {
+			SemanticErrors.throwError(SemanticErrors.PARAM_COUNT_MISMATCH_L, lineNum, charPosInLine, methodName, mcx.getArgTypes().size());
+		}
+	}
+	
+	@Override
+	public void enterOutputStatement(ManuScriptParser.OutputStatementContext ctx) {
+//		this.expressionChecker(ctx.expression(0));
+	}
+	
+	@Override
+	public void enterPostIncDecExpr(ManuScriptParser.PostIncDecExprContext ctx) {
+		String varName = ctx.variableExpr().getText();
+		SymbolContext sctx;
+		
+		if((sctx = scopes.peek().checkTables(varName)) != null){
+			if(sctx.isConstant())
+				SemanticErrors.throwError(SemanticErrors.CONSTANT_MOD, ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), varName);
+			else {
+				this.expressionChecker(ctx, sctx.getSymbolType());
+			}
+		} else {
+			SemanticErrors.throwError(SemanticErrors.UNDECLARED_VAR, ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), varName);
+		}
+	}
+	
+	@Override
+	public void enterPreIncDecSignExpr(ManuScriptParser.PreIncDecSignExprContext ctx) {
+		String varName = ctx.variableExpr().getText();
+		SymbolContext sctx;
+		
+		if((sctx = scopes.peek().checkTables(varName)) != null){
+			if(sctx.isConstant())
+				SemanticErrors.throwError(SemanticErrors.CONSTANT_MOD, ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), varName);
+			else {
+				this.expressionChecker(ctx, sctx.getSymbolType());
+			}
+		} else {
+			SemanticErrors.throwError(SemanticErrors.UNDECLARED_VAR, ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), varName);
 		}
 	}
 	
@@ -278,6 +332,31 @@ public class BaseListener extends ManuScriptBaseListener{
 	    
 	}
 	
+	private String expressionChecker(ParseTree node) {
+		String finalType = Types.NULL;
+    	int i = 0;
+        while(node.getChild(i) != null) {
+        	if(node instanceof ComparisonExprContext 
+    	    		|| node instanceof EqualityExprContext
+    	    		|| node instanceof AndExprContext
+    	    		|| node instanceof OrExprContext) {
+        		System.out.println("bool expression detected");
+        	} else {
+        		finalType = expressionChecker(node.getChild(i));
+        	}
+        	i++;
+        }
+        
+        if(node.getParent() instanceof PrimaryContext && ((PrimaryContext) node.getParent()).Identifier() != null) {
+			PrimaryContext pctx = (PrimaryContext) node.getParent();
+			String varName = node.getParent().getText();
+			if(scopes.peek().checkTables(varName) == null) {
+				SemanticErrors.throwError(SemanticErrors.UNDECLARED_VAR, pctx.getStart().getLine(), pctx.getStart().getCharPositionInLine(), varName);
+			}
+		}
+        
+        return finalType;
+	}
 //	private boolean expressionTypeCheck(ParseTree node, String expectedType) {
 //		if (node.getChildCount() == 0) {
 //			//check if either literal or variable then check type. return false if mismatch
