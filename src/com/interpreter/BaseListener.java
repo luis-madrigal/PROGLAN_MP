@@ -23,12 +23,13 @@ import com.parser.ManuScriptParser.PrimaryContext;
 import com.parser.ManuScriptParser.PrimaryExprContext;
 import com.parser.ManuScriptParser.VariableDeclaratorContext;
 import com.utils.Console;
-import com.utils.Literals;
+import com.utils.Types;
 import com.utils.Utils;
 
 public class BaseListener extends ManuScriptBaseListener{
 	private Stack<Scope> scopes;
 	private HashMap<String, MethodContext> methodTable;
+	private String currentMethod;
 	
 	public BaseListener() {
 		scopes = new Stack<Scope>();
@@ -46,11 +47,7 @@ public class BaseListener extends ManuScriptBaseListener{
 			scopes.push(scope);
 		}
 	}
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
+	
 	@Override public void exitBlock(ManuScriptParser.BlockContext ctx) { 
 		scopes.pop();
 	}
@@ -58,6 +55,7 @@ public class BaseListener extends ManuScriptBaseListener{
 	@Override public void enterMethodDeclaration(ManuScriptParser.MethodDeclarationContext ctx) {
 		String methodName = ctx.Identifier().getText();
 		methodTable.put(methodName, new MethodContext(ctx, scopes.peek(), methodName));
+		currentMethod = methodName;
 		System.out.println("new method");
 		Scope scope = new Scope(scopes.peek());
 		scopes.push(scope);
@@ -145,6 +143,9 @@ public class BaseListener extends ManuScriptBaseListener{
 		}
 	}
 	
+	@Override public void enterReturnStmt(ManuScriptParser.ReturnStmtContext ctx) {
+		
+	}
 	
 	@Override public void enterFunctionExpr(ManuScriptParser.FunctionExprContext ctx) { 
 		String methodName = ctx.variableExpr().getText();
@@ -187,7 +188,7 @@ public class BaseListener extends ManuScriptBaseListener{
 	}
 	
 	private String expressionChecker(ParseTree node, String expectedType) {
-		String finalType = Literals.NULL;
+		String finalType = Types.NULL;
     	int i = 0;
         while(node.getChild(i) != null) {
         	if(node instanceof ComparisonExprContext 
@@ -203,7 +204,7 @@ public class BaseListener extends ManuScriptBaseListener{
         
 		if (node.getChildCount() == 0) {
 			//check if either literal or variable then check type. return false if mismatch
-			String actualType = Literals.NULL;
+			String actualType = Types.NULL;
 			
 			if(node.getParent() instanceof LiteralContext) {
 				LiteralContext lctx = (LiteralContext) node.getParent();
@@ -239,7 +240,7 @@ public class BaseListener extends ManuScriptBaseListener{
 //	    		this.boolExpressionCheck(node, expectedType);
 //    		return false;
 	    	this.boolExpressionCheck(node, expectedType);
-	    	return Literals.BOOLEAN;
+	    	return Types.BOOLEAN;
 	    } 
 		
 		return finalType;
@@ -315,12 +316,12 @@ public class BaseListener extends ManuScriptBaseListener{
 				hasError = true;
 				//error. null cannot be compared
 			}
-			else if(leftType.equals(Literals.STRING) || rightType.equals(Literals.STRING)) {
+			else if(leftType.equals(Types.STRING) || rightType.equals(Types.STRING)) {
 				hasError = true;
 				//error. string cannot be compared
 			}
-			else if((leftType.equals(Literals.BOOLEAN) && !rightType.equals(Literals.BOOLEAN))
-					|| (!leftType.equals(Literals.BOOLEAN) && rightType.equals(Literals.BOOLEAN))) {
+			else if((leftType.equals(Types.BOOLEAN) && !rightType.equals(Types.BOOLEAN))
+					|| (!leftType.equals(Types.BOOLEAN) && rightType.equals(Types.BOOLEAN))) {
 				hasError = true;
 				//error. boolean cannot be compared to non boolean
 			}

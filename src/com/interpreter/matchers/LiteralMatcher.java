@@ -3,7 +3,7 @@ package com.interpreter.matchers;
 import java.util.HashMap;
 
 import com.parser.ManuScriptParser.LiteralContext;
-import com.utils.Literals;
+import com.utils.Types;
 
 public class LiteralMatcher {
 	
@@ -15,16 +15,16 @@ public class LiteralMatcher {
 	
 	public String getLiteralType(LiteralContext ctx) {
 		if(ctx.IntegerLiteral() != null)
-			return Literals.INTEGER;
+			return Types.INTEGER;
 		if(ctx.CharacterLiteral() != null)
-			return Literals.CHARACTER;
+			return Types.CHARACTER;
 		if(ctx.StringLiteral() != null)
-			return Literals.STRING;
+			return Types.STRING;
 		if(ctx.FloatingPointLiteral() != null)
-			return Literals.FLOAT;
+			return Types.FLOAT;
 		if(ctx.BooleanLiteral() != null)
-			return Literals.BOOLEAN;
-		return Literals.NULL;
+			return Types.BOOLEAN;
+		return Types.NULL;
 	}
 	
 	public static LiteralMatcher instance() {

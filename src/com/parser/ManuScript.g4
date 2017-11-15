@@ -495,25 +495,25 @@ localVariableDeclaration
     ;
 
 statement
-    :   block
+    :   block #blockStmt
 //    |   ASSERT expression (':' expression)? ';'
-    |   IF parExpression statement (ELSE statement)?
-    |   FOR? '(' forControl ')' statement
-    |   'when' parExpression statement
-    |   DO statement 'when' parExpression ';'
+    |   IF parExpression statement (ELSE statement)? #ifElseStmt
+    |   FOR? '(' forControl ')' statement #forStmt
+    |   'when' parExpression statement #whileStmt
+    |   DO statement 'when' parExpression ';' #doWhileStmt
 //    |   TRY block (catchClause+ finallyBlock? | finallyBlock)
 //    |   TRY resourceSpecification block catchClause* finallyBlock?
-    |   SWITCH parExpression ('{' | '{A}' | '{SCENE' Identifier? '}') switchBlockStatementGroup* switchLabel* ('}' | '{Z}' | '{END' Identifier? '}')
+    |   SWITCH parExpression ('{' | '{A}' | '{SCENE' Identifier? '}') switchBlockStatementGroup* switchLabel* ('}' | '{Z}' | '{END' Identifier? '}') #switchStmt
 //    |   SYNCHRONIZED parExpression block
-    |   RETURN expression? ';'
+    |   RETURN expression? ';' #returnStmt
 //    |   THROW expression ';'
-    |   BREAK Identifier? ';'
+    |   BREAK Identifier? ';' #breakStmt
 //    |   CONTINUE Identifier? ';'
-    |   ';'
-    |   statementExpression ';'
-    |   Identifier ':' statement
-    |	outputStatement
-    |	inputStatement
+    |   ';' #semicolonStmt
+    |   statementExpression ';' #exprStmt
+//    |   Identifier ':' statement
+    |	outputStatement #outputStmt
+    |	inputStatement #inputStmt
     ;
 
 //catchClause
