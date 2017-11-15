@@ -10,6 +10,7 @@ public class TerminalNode extends AbstractSyntaxTree {
     protected Object value;
 
     public TerminalNode(KeyTokens.TERMINAL_TYPE type, Object value){
+    	super(null); // TODO: What?
         this.type = type;
         this.value = value;
     }
