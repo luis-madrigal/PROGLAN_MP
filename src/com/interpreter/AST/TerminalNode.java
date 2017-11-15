@@ -9,14 +9,11 @@ public class TerminalNode extends AbstractSyntaxTree {
 	protected KeyTokens.TERMINAL_TYPE type;
     protected Object value;
 
-    public TerminalNode(AbstractSyntaxTree parent) {
-		super(parent);
-		// TODO Auto-generated constructor stub
-	}
-//    public TerminalNode(KeyTokens.TERMINAL_TYPE type, Object value){
-//        this.type = type;
-//        this.value = value;
-//    }
+    public TerminalNode(KeyTokens.TERMINAL_TYPE type, Object value){
+    	super(null); // TODO: What?
+        this.type = type;
+        this.value = value;
+    }
 
     public KeyTokens.TERMINAL_TYPE getType() {
         return type;

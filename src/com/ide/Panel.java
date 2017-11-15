@@ -427,6 +427,7 @@ public class Panel implements ActionListener, KeyListener {
 		syntaxScheme.setStyle(Token.LITERAL_STRING_DOUBLE_QUOTE, new Style(Styles.UN_LITERAL_STRING_DOUBLE_QUOTE));
 		syntaxScheme.setStyle(Token.VARIABLE, new Style(Styles.UN_VARIABLE));
 		syntaxScheme.setStyle(Token.COMMENT_KEYWORD, new Style(Styles.UN_COMMENT_KEYWORD));
+		syntaxScheme.setStyle(Token.COMMENT_EOL, new Style(Styles.UN_COMMENT_EOL));
 		syntaxScheme.setStyle(Token.OPERATOR, new Style(Styles.UN_OPERATOR));
 		return syntaxScheme;
 	}

@@ -13,13 +13,13 @@ ACT main starring() {
 	Say "Enter value for Y: ";
 	Write to y;
 
-	Say "Value is" +add(x); [comment]: error1
+	Say "Value is" +add(x); [Comment]: error1
 	
-	FINAL_X++; [comment]: error2
-	FINAL_X += 10; [comment]: error3
+	FINAL_X++; [Comment]: error2
+	FINAL_X += 10; [Comment]: error3
 	
-	x = 5 + z; [comment]: error4
-	x = "hello"; [comment]: error5
+	x = 5 + z; [Comment]: error4
+	x = "hello"; [Comment]: error5
 	
 	Say x;
 }

@@ -25,14 +25,6 @@ public class Tokens {
 																	add("can act as");
 																}};
 	
-//	Original:
-//	public static final String SEPARATORS = "\\(|\\)|\\{|\\}|[|]|;|,|\\.";
-	
-	
-//	public static final String KEYWORDS = "from|take|everything|take everything|The|script|universal|template|permanent|is a|is an|that can|static|hereditary|secret|starring|ignores|this|super|new|ACT|interface|if|else|switch|version|original|when|replay|rehearse|break|continue|give|ignore|audition|catch|finally|Say|Write|to|can act as|composition|cast|as|boolean|byte|short|int|long|char|float|double";
-//	public static final String OPERATORS = "=|>|<|!|~|\\?|:|==|<=|>=|!=|&&|\\|\\||\\+\\+|--|\\+|-|\\*|/|&|\\||^|%|\\+=|-=|\\*=|/=|&=|\\|=|^=|%=|<<=|>>=|>>>=";
-
-	
 //	private static Pattern pattern;
 //	private static Matcher matcher;
 	
