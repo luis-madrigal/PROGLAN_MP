@@ -21,6 +21,10 @@ public class AbstractSyntaxTree {
         return children;
     }
 
+    public AbstractSyntaxTree getChild(int index){
+        return children.get(index);
+    }
+
     public void addChildren(AbstractSyntaxTree child) {
         this.children.add(child);
     }
@@ -33,6 +37,13 @@ public class AbstractSyntaxTree {
         this.parent = parent;
     }
 
+    public Object getValue(){
+        return value;
+    }
+
+    public void setValue(Object value){
+        this.value = value;
+    }
 
 
 }

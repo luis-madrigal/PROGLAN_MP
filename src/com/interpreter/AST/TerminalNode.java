@@ -6,19 +6,15 @@ import com.utils.KeyTokens;
  * for terminals (Variables/Literals)
  */
 public class TerminalNode extends AbstractSyntaxTree {
-    protected KeyTokens.TERMINAL_TYPE type;
-    protected Object value;
+    protected KeyTokens.TERMINAL_TYPE literalType;
 
-    public TerminalNode(KeyTokens.TERMINAL_TYPE type, Object value){
-        this.type = type;
-        this.value = value;
+    public TerminalNode(AbstractSyntaxTree parent, KeyTokens.TERMINAL_TYPE type){
+        super(parent);
+        this.literalType = type;
     }
 
-    public KeyTokens.TERMINAL_TYPE getType() {
-        return type;
+    public KeyTokens.TERMINAL_TYPE getLiteralType() {
+        return literalType;
     }
 
-    public Object getValue() {
-        return value;
-    }
 }

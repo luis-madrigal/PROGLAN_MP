@@ -1,6 +1,7 @@
 package com.interpreter.AST;
 
 public enum NodeType{
+    //TODO: wala pang structures
     PROCEDURE,
     RETURN,
     BIN_OP, COMPARE_OP, ASSIGN,
