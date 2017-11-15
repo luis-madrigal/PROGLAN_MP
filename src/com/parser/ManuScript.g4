@@ -512,8 +512,8 @@ statement
     |   ';' #semicolonStmt
     |   statementExpression ';' #exprStmt
 //    |   Identifier ':' statement
-    |	outputStatement #outputStmt
-    |	inputStatement #inputStmt
+    |	outputStatement ';' #outputStmt
+    |	inputStatement ';' #inputStmt
     ;
 
 //catchClause
@@ -572,13 +572,9 @@ forUpdate
     ;
 
 outputStatement
-	:	PRINT outputValue ('+' outputValue)*
+	:	PRINT expression ('+' expression)*
 	;
-	
-outputValue
-	:	expression
-	;
-	
+
 inputStatement
 	:	SCAN typeType? SCANTO variableDeclaratorId
 	;
@@ -627,7 +623,7 @@ expression
     |   expression '&&' expression # andExpr
     |   expression '||' expression # orExpr
     |   expression '?' expression ':' expression # oneLineIfExpr
-    |   <assoc=right> variableExpr 
+    |   <assoc=right> equationExpr 
         (   '='
         |   '+='
         |   '-='
@@ -647,6 +643,12 @@ expression
 variableExpr
 	:	Identifier
 	|	'*'Identifier
+	;
+	
+equationExpr
+	:	Identifier
+	|	'*'Identifier
+	|	variableExpr '[' expression ']'
 	;
 
 primary

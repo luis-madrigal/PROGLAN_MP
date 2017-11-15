@@ -760,18 +760,6 @@ public class ManuScriptBaseListener implements ManuScriptListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterOutputValue(ManuScriptParser.OutputValueContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitOutputValue(ManuScriptParser.OutputValueContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
 	@Override public void enterInputStatement(ManuScriptParser.InputStatementContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -1019,6 +1007,18 @@ public class ManuScriptBaseListener implements ManuScriptListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitVariableExpr(ManuScriptParser.VariableExprContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterEquationExpr(ManuScriptParser.EquationExprContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitEquationExpr(ManuScriptParser.EquationExprContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
