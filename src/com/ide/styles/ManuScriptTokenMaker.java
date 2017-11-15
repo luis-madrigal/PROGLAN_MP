@@ -265,6 +265,7 @@ public class ManuScriptTokenMaker extends AbstractTokenMaker {
 	   
 
 	   tokenMap.put("[]:", Token.COMMENT_KEYWORD);
+	   tokenMap.put("[Comment]:", Token.COMMENT_KEYWORD);
 	   tokenMap.put("[]*", Token.COMMENT_MULTILINE);
 	   tokenMap.put("*[]", Token.COMMENT_MULTILINE);
 	   
