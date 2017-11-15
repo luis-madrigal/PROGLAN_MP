@@ -9,6 +9,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.regex.Matcher;
@@ -50,7 +52,7 @@ import com.utils.Console;
 
 
 
-public class Panel implements ActionListener, KeyListener {
+public class Panel implements ActionListener, KeyListener, MouseListener {
 	private JPanel pnlMain;
 	private JButton btnRun;
 	
@@ -185,7 +187,6 @@ public class Panel implements ActionListener, KeyListener {
 		
 		this.codeInput = new RSyntaxTextAreaManuscript();
 		this.codeInput.setSyntaxScheme(getExpressionColorScheme(this.codeInput.getSyntaxScheme()));
-		
 		AbstractTokenMakerFactory atmf = (AbstractTokenMakerFactory)TokenMakerFactory.getDefaultInstance();
 		atmf.putMapping("text/manuscript", "com.ide.styles.ManuScriptTokenMaker");
 		
@@ -199,6 +200,7 @@ public class Panel implements ActionListener, KeyListener {
 //		this.codeInput.isOpaque();
 		this.codeInput.setCaretColor(Color.WHITE);
 		Console.instance().setCodeInput(codeInput);
+		Console.instance().getTextPane().addMouseListener(this);
 		
 		this.inputLines = new JTextArea("1");
 	      
@@ -497,5 +499,53 @@ public class Panel implements ActionListener, KeyListener {
 	@Override
 	public void keyTyped(KeyEvent e) {
 		
+	}
+
+	@Override
+	public void mouseClicked(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseEntered(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseExited(MouseEvent e) {
+		
+	}
+
+	@Override
+	public void mousePressed(MouseEvent e) {
+		
+	}
+
+	@Override
+	public void mouseReleased(MouseEvent e) {
+		if(e.getSource() == Console.instance().getTextPane()) {
+			gotoErrorLine(e);
+		}
+		
+	}
+	
+	void gotoErrorLine(MouseEvent e) {
+		JTextPane textPane = Console.instance().getTextPane();
+		 Element ele = textPane.getStyledDocument().getCharacterElement(textPane.viewToModel(e.getPoint()));
+		 AttributeSet attributeSet = ele.getAttributes();
+		 
+		 int line = Integer.parseInt(attributeSet.getAttribute("key").toString());
+//		 try {
+//			this.codeInput.addLineHighlight(line-1, Color.CYAN);
+//		} catch (NumberFormatException e1) {
+//			e1.printStackTrace();
+//		} catch (BadLocationException e1) {
+//			e1.printStackTrace();
+//		}
+
+		 RXTextUtilities.gotoStartOfLine(codeInput, line);
+		 RXTextUtilities.centerLineInScrollPane(codeInput);
 	}
 }

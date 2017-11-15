@@ -6,7 +6,6 @@
 	<classpathentry kind="src" path="res"/>
 	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="jar/rsyntaxtextarea-3.0.0-SNAPSHOT.jar"/>
-	<classpathentry kind="lib" path="C:/Javalib/antlr-4.7-complete.jar"/>
-
+	<classpathentry kind="lib" path="C:/Users/Candy/Downloads/antlr-4.7-complete.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>
