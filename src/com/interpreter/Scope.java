@@ -1,7 +1,9 @@
 package com.interpreter;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 
 import com.interpreter.contexts.SymbolContext;
 
@@ -9,10 +11,12 @@ public class Scope extends HashSet<String>{
 	
 	private Scope parent;
 	private HashMap<String, SymbolContext> symTable;
+	private List<Scope> children;
 
 	public Scope(Scope parent) {
 		this.parent = parent;
 		symTable = new HashMap<String, SymbolContext>();
+		children = new ArrayList<>();
 	}
 	
 	public boolean inScope(String varName) {
@@ -35,5 +39,13 @@ public class Scope extends HashSet<String>{
 
 	public void setSymTable(HashMap<String, SymbolContext> symTable) {
 		this.symTable = symTable;
+	}
+
+	public Scope getParent(){
+		return parent;
+	}
+
+	public void addChild(Scope child){
+		children.add(child);
 	}
 }

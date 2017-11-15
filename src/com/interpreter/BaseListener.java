@@ -53,11 +53,27 @@ public class BaseListener extends ManuScriptBaseListener{
 	}
 
 	@Override public void enterMethodDeclaration(ManuScriptParser.MethodDeclarationContext ctx) {
+
+		//TODO: methodTable = HashMap <String, List<MethodContext>>
+		/*
+
+				if(methodTable.get(methodName) == null){
+					methodTable.put(methodName, new List<MethodContext>(new MethodContext(......)));
+				}
+				else{
+					methodTable.get(methodName).add(new MethodContext(.............));
+				}
+		 */
 		String methodName = ctx.Identifier().getText();
 		methodTable.put(methodName, new MethodContext(ctx, scopes.peek(), methodName));
 		currentMethod = methodName;
+
+		Scope parent = scopes.peek();
+		Scope scope = new Scope(parent);
+		parent.addChild(scope);
+
 		System.out.println("new method");
-		Scope scope = new Scope(scopes.peek());
+
 		scopes.push(scope);
 		
 		if(ctx.formalParameters().formalParameterList() != null) {
