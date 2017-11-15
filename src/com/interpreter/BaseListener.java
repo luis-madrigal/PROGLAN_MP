@@ -57,7 +57,7 @@ public class BaseListener extends ManuScriptBaseListener{
 
 	@Override public void enterMethodDeclaration(ManuScriptParser.MethodDeclarationContext ctx) {
 
-		//TODO: methodTable = HashMap <String, List<MethodContext>>
+		//TODO: methodTable = HashMap <String, List<MethodContext>> for overloading
 		/*
 
 				if(methodTable.get(methodName) == null){
