@@ -188,16 +188,6 @@ public interface ManuScriptListener extends ParseTreeListener {
 	 */
 	void exitStructType(ManuScriptParser.StructTypeContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link ManuScriptParser#classOrInterfaceType}.
-	 * @param ctx the parse tree
-	 */
-	void enterClassOrInterfaceType(ManuScriptParser.ClassOrInterfaceTypeContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link ManuScriptParser#classOrInterfaceType}.
-	 * @param ctx the parse tree
-	 */
-	void exitClassOrInterfaceType(ManuScriptParser.ClassOrInterfaceTypeContext ctx);
-	/**
 	 * Enter a parse tree produced by {@link ManuScriptParser#primitiveType}.
 	 * @param ctx the parse tree
 	 */
@@ -448,15 +438,149 @@ public interface ManuScriptListener extends ParseTreeListener {
 	 */
 	void exitLocalVariableDeclaration(ManuScriptParser.LocalVariableDeclarationContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link ManuScriptParser#statement}.
+	 * Enter a parse tree produced by the {@code blockStmt}
+	 * labeled alternative in {@link ManuScriptParser#statement}.
 	 * @param ctx the parse tree
 	 */
-	void enterStatement(ManuScriptParser.StatementContext ctx);
+	void enterBlockStmt(ManuScriptParser.BlockStmtContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link ManuScriptParser#statement}.
+	 * Exit a parse tree produced by the {@code blockStmt}
+	 * labeled alternative in {@link ManuScriptParser#statement}.
 	 * @param ctx the parse tree
 	 */
-	void exitStatement(ManuScriptParser.StatementContext ctx);
+	void exitBlockStmt(ManuScriptParser.BlockStmtContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code ifElseStmt}
+	 * labeled alternative in {@link ManuScriptParser#statement}.
+	 * @param ctx the parse tree
+	 */
+	void enterIfElseStmt(ManuScriptParser.IfElseStmtContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code ifElseStmt}
+	 * labeled alternative in {@link ManuScriptParser#statement}.
+	 * @param ctx the parse tree
+	 */
+	void exitIfElseStmt(ManuScriptParser.IfElseStmtContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code forStmt}
+	 * labeled alternative in {@link ManuScriptParser#statement}.
+	 * @param ctx the parse tree
+	 */
+	void enterForStmt(ManuScriptParser.ForStmtContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code forStmt}
+	 * labeled alternative in {@link ManuScriptParser#statement}.
+	 * @param ctx the parse tree
+	 */
+	void exitForStmt(ManuScriptParser.ForStmtContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code whileStmt}
+	 * labeled alternative in {@link ManuScriptParser#statement}.
+	 * @param ctx the parse tree
+	 */
+	void enterWhileStmt(ManuScriptParser.WhileStmtContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code whileStmt}
+	 * labeled alternative in {@link ManuScriptParser#statement}.
+	 * @param ctx the parse tree
+	 */
+	void exitWhileStmt(ManuScriptParser.WhileStmtContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code doWhileStmt}
+	 * labeled alternative in {@link ManuScriptParser#statement}.
+	 * @param ctx the parse tree
+	 */
+	void enterDoWhileStmt(ManuScriptParser.DoWhileStmtContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code doWhileStmt}
+	 * labeled alternative in {@link ManuScriptParser#statement}.
+	 * @param ctx the parse tree
+	 */
+	void exitDoWhileStmt(ManuScriptParser.DoWhileStmtContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code switchStmt}
+	 * labeled alternative in {@link ManuScriptParser#statement}.
+	 * @param ctx the parse tree
+	 */
+	void enterSwitchStmt(ManuScriptParser.SwitchStmtContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code switchStmt}
+	 * labeled alternative in {@link ManuScriptParser#statement}.
+	 * @param ctx the parse tree
+	 */
+	void exitSwitchStmt(ManuScriptParser.SwitchStmtContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code returnStmt}
+	 * labeled alternative in {@link ManuScriptParser#statement}.
+	 * @param ctx the parse tree
+	 */
+	void enterReturnStmt(ManuScriptParser.ReturnStmtContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code returnStmt}
+	 * labeled alternative in {@link ManuScriptParser#statement}.
+	 * @param ctx the parse tree
+	 */
+	void exitReturnStmt(ManuScriptParser.ReturnStmtContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code breakStmt}
+	 * labeled alternative in {@link ManuScriptParser#statement}.
+	 * @param ctx the parse tree
+	 */
+	void enterBreakStmt(ManuScriptParser.BreakStmtContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code breakStmt}
+	 * labeled alternative in {@link ManuScriptParser#statement}.
+	 * @param ctx the parse tree
+	 */
+	void exitBreakStmt(ManuScriptParser.BreakStmtContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code semicolonStmt}
+	 * labeled alternative in {@link ManuScriptParser#statement}.
+	 * @param ctx the parse tree
+	 */
+	void enterSemicolonStmt(ManuScriptParser.SemicolonStmtContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code semicolonStmt}
+	 * labeled alternative in {@link ManuScriptParser#statement}.
+	 * @param ctx the parse tree
+	 */
+	void exitSemicolonStmt(ManuScriptParser.SemicolonStmtContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code exprStmt}
+	 * labeled alternative in {@link ManuScriptParser#statement}.
+	 * @param ctx the parse tree
+	 */
+	void enterExprStmt(ManuScriptParser.ExprStmtContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code exprStmt}
+	 * labeled alternative in {@link ManuScriptParser#statement}.
+	 * @param ctx the parse tree
+	 */
+	void exitExprStmt(ManuScriptParser.ExprStmtContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code outputStmt}
+	 * labeled alternative in {@link ManuScriptParser#statement}.
+	 * @param ctx the parse tree
+	 */
+	void enterOutputStmt(ManuScriptParser.OutputStmtContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code outputStmt}
+	 * labeled alternative in {@link ManuScriptParser#statement}.
+	 * @param ctx the parse tree
+	 */
+	void exitOutputStmt(ManuScriptParser.OutputStmtContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code inputStmt}
+	 * labeled alternative in {@link ManuScriptParser#statement}.
+	 * @param ctx the parse tree
+	 */
+	void enterInputStmt(ManuScriptParser.InputStmtContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code inputStmt}
+	 * labeled alternative in {@link ManuScriptParser#statement}.
+	 * @param ctx the parse tree
+	 */
+	void exitInputStmt(ManuScriptParser.InputStmtContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link ManuScriptParser#switchBlockStatementGroup}.
 	 * @param ctx the parse tree
@@ -527,16 +651,6 @@ public interface ManuScriptListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitOutputStatement(ManuScriptParser.OutputStatementContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link ManuScriptParser#outputValue}.
-	 * @param ctx the parse tree
-	 */
-	void enterOutputValue(ManuScriptParser.OutputValueContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link ManuScriptParser#outputValue}.
-	 * @param ctx the parse tree
-	 */
-	void exitOutputValue(ManuScriptParser.OutputValueContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link ManuScriptParser#inputStatement}.
 	 * @param ctx the parse tree
@@ -623,6 +737,18 @@ public interface ManuScriptListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitArrayExpr(ManuScriptParser.ArrayExprContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code arrayInitExpr}
+	 * labeled alternative in {@link ManuScriptParser#expression}.
+	 * @param ctx the parse tree
+	 */
+	void enterArrayInitExpr(ManuScriptParser.ArrayInitExprContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code arrayInitExpr}
+	 * labeled alternative in {@link ManuScriptParser#expression}.
+	 * @param ctx the parse tree
+	 */
+	void exitArrayInitExpr(ManuScriptParser.ArrayInitExprContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code orExpr}
 	 * labeled alternative in {@link ManuScriptParser#expression}.
@@ -766,6 +892,16 @@ public interface ManuScriptListener extends ParseTreeListener {
 	 */
 	void exitVariableExpr(ManuScriptParser.VariableExprContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link ManuScriptParser#equationExpr}.
+	 * @param ctx the parse tree
+	 */
+	void enterEquationExpr(ManuScriptParser.EquationExprContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link ManuScriptParser#equationExpr}.
+	 * @param ctx the parse tree
+	 */
+	void exitEquationExpr(ManuScriptParser.EquationExprContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link ManuScriptParser#primary}.
 	 * @param ctx the parse tree
 	 */
@@ -775,6 +911,26 @@ public interface ManuScriptListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitPrimary(ManuScriptParser.PrimaryContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link ManuScriptParser#creator}.
+	 * @param ctx the parse tree
+	 */
+	void enterCreator(ManuScriptParser.CreatorContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link ManuScriptParser#creator}.
+	 * @param ctx the parse tree
+	 */
+	void exitCreator(ManuScriptParser.CreatorContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link ManuScriptParser#createdName}.
+	 * @param ctx the parse tree
+	 */
+	void enterCreatedName(ManuScriptParser.CreatedNameContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link ManuScriptParser#createdName}.
+	 * @param ctx the parse tree
+	 */
+	void exitCreatedName(ManuScriptParser.CreatedNameContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link ManuScriptParser#arrayCreatorRest}.
 	 * @param ctx the parse tree

@@ -291,15 +291,15 @@ typeType
     ;
     
 pointerType
-	:	(primitiveType | classOrInterfaceType | structType)'*';
+	:	(primitiveType | structType)'*';
 
 structType
     :   STRUCT Identifier
     ;
-
-classOrInterfaceType
-    :   Identifier typeArguments? ('.' Identifier typeArguments? )*
-    ;
+//
+//classOrInterfaceType
+//    :   Identifier typeArguments? ('.' Identifier typeArguments? )*
+//    ;
 
 primitiveType
     :   BOOLEAN
@@ -495,25 +495,25 @@ localVariableDeclaration
     ;
 
 statement
-    :   block
+    :   block #blockStmt
 //    |   ASSERT expression (':' expression)? ';'
-    |   IF parExpression statement (ELSE statement)?
-    |   FOR? '(' forControl ')' statement
-    |   'when' parExpression statement
-    |   DO statement 'when' parExpression ';'
+    |   IF parExpression statement (ELSE statement)? #ifElseStmt
+    |   FOR? '(' forControl ')' statement #forStmt
+    |   'when' parExpression statement #whileStmt
+    |   DO statement 'when' parExpression ';' #doWhileStmt
 //    |   TRY block (catchClause+ finallyBlock? | finallyBlock)
 //    |   TRY resourceSpecification block catchClause* finallyBlock?
-    |   SWITCH parExpression ('{' | '{A}' | '{SCENE' Identifier? '}') switchBlockStatementGroup* switchLabel* ('}' | '{Z}' | '{END' Identifier? '}')
+    |   SWITCH parExpression ('{' | '{A}' | '{SCENE' Identifier? '}') switchBlockStatementGroup* switchLabel* ('}' | '{Z}' | '{END' Identifier? '}') #switchStmt
 //    |   SYNCHRONIZED parExpression block
-    |   RETURN expression? ';'
+    |   RETURN expression? ';' #returnStmt
 //    |   THROW expression ';'
-    |   BREAK Identifier? ';'
+    |   BREAK Identifier? ';' #breakStmt
 //    |   CONTINUE Identifier? ';'
-    |   ';'
-    |   statementExpression ';'
-    |   Identifier ':' statement
-    |	outputStatement
-    |	inputStatement
+    |   ';' #semicolonStmt
+    |   statementExpression ';' #exprStmt
+//    |   Identifier ':' statement
+    |	outputStatement ';' #outputStmt
+    |	inputStatement ';' #inputStmt
     ;
 
 //catchClause
@@ -572,13 +572,9 @@ forUpdate
     ;
 
 outputStatement
-	:	PRINT outputValue ('+' outputValue)*
+	:	PRINT expression ('+' expression)*
 	;
-	
-outputValue
-	:	expression
-	;
-	
+
 inputStatement
 	:	SCAN typeType? SCANTO variableDeclaratorId
 	;
@@ -610,7 +606,7 @@ expression
 //    |   expression '.' explicitGenericInvocation
     |   variableExpr '[' expression ']' # arrayExpr
     |   variableExpr '(' expressionList? ')' # functionExpr
-//    |   NEW creator
+    |   NEW creator #arrayInitExpr
 //    |   '(' typeType ')' expression
     |   variableExpr ('++' | '--') # postIncDecExpr
     |   ('+'|'-'|'++'|'--') variableExpr # preIncDecSignExpr
@@ -627,7 +623,7 @@ expression
     |   expression '&&' expression # andExpr
     |   expression '||' expression # orExpr
     |   expression '?' expression ':' expression # oneLineIfExpr
-    |   <assoc=right> variableExpr 
+    |   <assoc=right> equationExpr 
         (   '='
         |   '+='
         |   '-='
@@ -648,6 +644,12 @@ variableExpr
 	:	Identifier
 	|	'*'Identifier
 	;
+	
+equationExpr
+	:	Identifier
+	|	'*'Identifier
+	|	variableExpr '[' expression ']'
+	;
 
 primary
     :   '(' expression ')'
@@ -661,15 +663,14 @@ primary
 //    |   nonWildcardTypeArguments (explicitGenericInvocationSuffix | THIS arguments)
     ;
 
-//creator
-//    :   nonWildcardTypeArguments createdName classCreatorRest
-//    |   createdName (arrayCreatorRest | classCreatorRest)
-//    ;
-//
-//createdName
-//    :   Identifier typeArgumentsOrDiamond? ('.' Identifier typeArgumentsOrDiamond?)*
-//    |   primitiveType
-//    ;
+creator
+    :   createdName (arrayCreatorRest)
+    ;
+
+createdName
+    :   primitiveType 
+    | 	pointerType
+    ;
 //
 //innerCreator
 //    :   Identifier nonWildcardTypeArgumentsOrDiamond? classCreatorRest

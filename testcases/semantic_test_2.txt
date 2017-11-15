@@ -1,7 +1,7 @@
 permanent int FINAL_X = 10;
 
 ACT add starring(int x, int y) {
-	return (x + y);
+	give (x + y);
 }
 
 ACT main starring() {
@@ -16,7 +16,7 @@ ACT main starring() {
 	Say "Value is" +add(x); [comment]: error1
 	
 	FINAL_X++; [comment]: error2
-	FINAL_X += 10; /[comment]: error3
+	FINAL_X += 10; [comment]: error3
 	
 	x = 5 + z; [comment]: error4
 	x = "hello"; [comment]: error5
