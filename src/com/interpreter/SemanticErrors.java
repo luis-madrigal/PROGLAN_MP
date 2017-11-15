@@ -30,6 +30,6 @@ public class SemanticErrors {
 	public static final String ONLY_ONE_CHAR = LINE_INFO + "'char' can only contain one character. Try using 'string' instead";
 	
 	public static void throwError(String error, Object ...args) {
-		Console.instance().err(String.format(error, args));
+		Console.instance().err(String.format(error, args), (int)args[0]);
 	}
 }

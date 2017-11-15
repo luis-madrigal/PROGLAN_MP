@@ -40,6 +40,7 @@ import org.fife.ui.rsyntaxtextarea.Style;
 import org.fife.ui.rsyntaxtextarea.SyntaxScheme;
 import org.fife.ui.rsyntaxtextarea.Token;
 import org.fife.ui.rsyntaxtextarea.TokenMakerFactory;
+import org.fife.ui.rtextarea.RTextScrollPane;
 
 import com.ide.styles.IdeStyle;
 import com.ide.styles.RSyntaxTextAreaManuscript;
@@ -75,7 +76,7 @@ public class Panel implements ActionListener, KeyListener {
 	private JTextPane parsedOut;
 //	private JTextPane console;
 	
-	private JScrollPane inputPane;
+	private RTextScrollPane inputPane;
 	private JScrollPane parsedPane;
 	private JScrollPane treePane;
 	private JScrollPane consolePane;
@@ -197,6 +198,7 @@ public class Panel implements ActionListener, KeyListener {
 		this.codeInput.setBackground(SUBLIME_BG);
 //		this.codeInput.isOpaque();
 		this.codeInput.setCaretColor(Color.WHITE);
+		Console.instance().setCodeInput(codeInput);
 		
 		this.inputLines = new JTextArea("1");
 	      
@@ -226,47 +228,20 @@ public class Panel implements ActionListener, KeyListener {
 			@Override
 			public void insertUpdate(DocumentEvent arg0) {
 				inputLines.setText(getText());
-//				highlight();
 				
 			}
 
 			@Override
 			public void removeUpdate(DocumentEvent arg0) {
 				inputLines.setText(getText());
-//				highlight();
 			}
-			
-//			private void highlight() {
-//				
-//				Runnable doHighlight = new Runnable() {
-//					
-//					@Override
-//					public void run() {
-//						String text = codeInput.getText();
-//
-//			            for (Style style : styles.getStyles()) {
-//			                Pattern pattern = Pattern.compile(style.getRegex());
-//			                Matcher matcher = pattern.matcher(text);
-//
-//			                while (matcher.find()) {
-//			                	System.out.print("Start index: " + matcher.start());
-//			                    System.out.print(" End index: " + matcher.end());
-//			                    System.out.println(" Found: " + matcher.group());
-//			                    
-//			                    codeInput.getStyledDocument().setCharacterAttributes(matcher.start(), matcher.end() - matcher.start(), style.getAttrSet(), true);
-//			                }
-//			            }
-//					}
-//				};
-//				SwingUtilities.invokeLater(doHighlight);
-//			}
 		});
 		
-		this.inputPane = new JScrollPane(this.codeInput);
+		this.inputPane = new RTextScrollPane(this.codeInput);
 		this.inputPane.setPreferredSize(new Dimension((int) Frame.SCREEN_SIZE.getWidth()/2, 150));
 		this.inputPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		this.inputPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
-		this.inputPane.setRowHeaderView(this.inputLines);
+//		this.inputPane.setRowHeaderView(this.inputLines);
 
 		gbc = new GridBagConstraints();
 		gbc.anchor = GridBagConstraints.NORTHWEST;
