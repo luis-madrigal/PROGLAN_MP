@@ -14,7 +14,7 @@ import javax.swing.text.StyledDocument;
 import com.ide.Panel;
 import com.ide.styles.RSyntaxTextAreaManuscript;
 
-public class Console implements MouseListener {
+public class Console {
 	
 	private static Console instance;
 	private JTextPane textPane;
@@ -26,7 +26,6 @@ public class Console implements MouseListener {
 		this.textPane.setForeground(Color.RED);
 		this.textPane.setBackground(Color.WHITE);
 		this.textPane.isOpaque();
-		this.textPane.addMouseListener(this);
 	}
 	
 	public static Console instance() {
@@ -83,35 +82,4 @@ public class Console implements MouseListener {
 	public void setCodeInput(RSyntaxTextAreaManuscript codeInput) {
 		this.codeInput = codeInput;
 	}
-
-	@Override
-	public void mouseClicked(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void mouseEntered(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void mouseExited(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void mousePressed(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void mouseReleased(MouseEvent e) {
-		
-		
-	}
-
 }
