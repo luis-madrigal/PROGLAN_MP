@@ -2,13 +2,13 @@ package com.interpreter.AST;
 
 public enum NodeType{
     //TODO: wala pang structures
-    PROCEDURE,
+    PROCEDURE, PROCEDURE_CALL,
     RETURN,
-    BIN_OP, COMPARE_OP, ASSIGN,
-    UNI_ARITHMETIC, NOT,
-    TER_OP,
+    BIN_ARITHMETIC, BIN_LOGIC, ASSIGN,
+    UNI_ARITHMETIC, UNI_LOGIC,
+    TER_OP, //call onelineif
     WHILE, DO_WHILE, FOR,
     TERMINAL,
-    BRANCH //used as reference for looping
+    BRANCH //used for if-else statements
 
 }

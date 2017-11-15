@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.BitSet;
 import java.util.Stack;
 
+import com.interpreter.AST.ASTBuildVisitor;
 import org.antlr.v4.gui.TreeViewer;
 import org.antlr.v4.runtime.ANTLRErrorListener;
 import org.antlr.v4.runtime.ANTLRInputStream;
@@ -87,7 +88,12 @@ public class ScannerModel {
 		this.tree = parser.compilationUnit();
 		
 		ParseTreeWalker.DEFAULT.walk(new BaseListener(), this.tree);
-		
+
+		ASTBuildVisitor astbv = new ASTBuildVisitor();
+		astbv.visit(tree);
+		System.out.println(astbv.getMethodASTTable().get("main").getProcedureName());
+
+
 //		System.out.println(tree.toStringTree(parser));
 		
 		String tokenized = "";
