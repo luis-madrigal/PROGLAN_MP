@@ -4,13 +4,16 @@ import java.awt.Color;
 import java.awt.Font;
 
 import javax.swing.JTextPane;
+import javax.swing.text.BadLocationException;
 
 import com.ide.Panel;
+import com.ide.styles.RSyntaxTextAreaManuscript;
 
 public class Console {
 	
 	private static Console instance;
 	private JTextPane textPane;
+	private RSyntaxTextAreaManuscript codeInput;
 	
 	private Console(int fontSize) {
 		this.textPane = new JTextPane();
@@ -40,12 +43,27 @@ public class Console {
 		this.textPane.setText(this.textPane.getText() + msg +"\n");
 	}
 	
+	public void err(String msg, int lineNumber) {
+		this.textPane.setText(this.textPane.getText() + msg +"\n");
+		try {
+			this.codeInput.addLineHighlight(lineNumber-1, new Color(255, 0, 0, 100));
+		} catch (BadLocationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
 	public void purge() {
 		this.textPane.setText("");
+		this.codeInput.removeAllLineHighlights();
 	}
 	
 	public JTextPane getTextPane() {
 		return this.textPane;
+	}
+	
+	public void setCodeInput(RSyntaxTextAreaManuscript codeInput) {
+		this.codeInput = codeInput;
 	}
 
 }

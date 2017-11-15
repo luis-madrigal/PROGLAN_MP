@@ -6,6 +6,7 @@ import com.interpreter.Scope;
 import com.parser.ManuScriptParser.FormalParameterContext;
 import com.parser.ManuScriptParser.MethodDeclarationContext;
 import com.utils.Types;
+import com.utils.Utils;
 
 public class MethodContext extends Context{
 	
@@ -25,6 +26,19 @@ public class MethodContext extends Context{
 		}
 		
 		returnType = Types.NULL;
+	}
+	
+	public boolean matchesArgs(MethodDeclarationContext ctx) {
+		ArrayList<String> argTypes = new ArrayList<String>();
+		if(ctx.formalParameters().formalParameterList() != null) {
+			if(ctx.formalParameters().formalParameterList().formalParameter().size() != this.argTypes.size())
+				return false;
+			for (FormalParameterContext fpctx : ctx.formalParameters().formalParameterList().formalParameter()) {
+				argTypes.add(fpctx.typeType().getText());
+			}
+		}
+		
+		return Utils.listEqualsIgnoreOrder(argTypes, this.argTypes);
 	}
 
 	public MethodDeclarationContext getCtx() {

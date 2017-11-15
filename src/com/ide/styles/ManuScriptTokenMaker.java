@@ -69,6 +69,18 @@ public class ManuScriptTokenMaker extends AbstractTokenMaker {
 	                  currentTokenType = Token.COMMENT_EOL;
 	                  break;
 
+	               case '[':
+	            	   String line = "";
+	            	   for(int k = i; k < end; k++) {
+	            		   line += array[k];
+	            	   }
+	            	   if(line.contains("]:")) {
+	            		   currentTokenType = Token.COMMENT_EOL;
+			               break;
+	            	   }
+		                  
+
+		                  
 	               default:
 	                  if (RSyntaxUtilities.isDigit(c)) {
 	                     currentTokenType = Token.LITERAL_NUMBER_DECIMAL_INT;
@@ -101,11 +113,24 @@ public class ManuScriptTokenMaker extends AbstractTokenMaker {
 	                  currentTokenType = Token.LITERAL_STRING_DOUBLE_QUOTE;
 	                  break;
 
-	               case '#':
-	                  addToken(text, currentTokenStart,i-1, Token.WHITESPACE, newStartOffset+currentTokenStart);
-	                  currentTokenStart = i;
-	                  currentTokenType = Token.COMMENT_EOL;
-	                  break;
+	               case '[':
+	            	   String line = "";
+	            	   for(int k = i; k < end; k++) {
+	            		   line += array[k];
+	            	   }
+	            	   System.out.println("ASDF "+line);
+	            	   if(line.contains("]:")) {
+	            		  addToken(text, currentTokenStart,i-1, Token.WHITESPACE, newStartOffset+currentTokenStart);
+	 	                  currentTokenStart = i;
+	 	                  currentTokenType = Token.COMMENT_EOL;
+	 	                  break;
+	            	   }
+		                  
+	            	   
+//	                  addToken(text, currentTokenStart,i-1, Token.WHITESPACE, newStartOffset+currentTokenStart);
+//	                  currentTokenStart = i;
+//	                  currentTokenType = Token.COMMENT_EOL;
+//	                  break;
 
 	               default:   // Add the whitespace token and start anew.
 
@@ -264,10 +289,10 @@ public class ManuScriptTokenMaker extends AbstractTokenMaker {
 	   }
 	   
 
-	   tokenMap.put("[]:", Token.COMMENT_KEYWORD);
-	   tokenMap.put("[Comment]:", Token.COMMENT_KEYWORD);
-	   tokenMap.put("[]*", Token.COMMENT_MULTILINE);
-	   tokenMap.put("*[]", Token.COMMENT_MULTILINE);
+//	   tokenMap.put("[]:", Token.COMMENT_KEYWORD);
+//	   tokenMap.put("[Comment]:", Token.COMMENT_KEYWORD);
+//	   tokenMap.put("[]*", Token.COMMENT_MULTILINE);
+//	   tokenMap.put("*[]", Token.COMMENT_MULTILINE);
 	   
 	   
 	   return tokenMap;
