@@ -1,5 +1,8 @@
 package com.utils;
 
+import java.util.HashSet;
+import java.util.List;
+
 import org.antlr.v4.runtime.RuleContext;
 import org.antlr.v4.runtime.tree.ParseTree;
 
@@ -25,5 +28,9 @@ public class Utils {
 		}
 		
 		return child;
+	}
+	
+	public static <T> boolean listEqualsIgnoreOrder(List<T> list1, List<T> list2) {
+	    return new HashSet<>(list1).equals(new HashSet<>(list2));
 	}
 }

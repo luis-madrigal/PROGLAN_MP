@@ -13,6 +13,8 @@ public class SemanticErrors {
 	public static final String UNDEFINED_METHOD = LINE_INFO + "Undefined method '%s'";
 	public static final String PARAM_COUNT_MISMATCH_G = LINE_INFO + "Method '%s' can only support %d argument/s";
 	public static final String PARAM_COUNT_MISMATCH_L = LINE_INFO + "Method '%s' requires %d argument/s";
+	public static final String INVALID_RETURN_TYPE = LINE_INFO + "Invalid return type for method '%s'. Expecting type '%s'";
+	public static final String DUPLICATE_METHOD = LINE_INFO + "Duplicate method '%s'";
 	
 	//SCOPE
 	public static final String UNDECLARED_VAR = LINE_INFO + "Undeclared variable '%s'";

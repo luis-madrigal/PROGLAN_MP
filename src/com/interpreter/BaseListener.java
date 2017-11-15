@@ -24,6 +24,7 @@ import com.parser.ManuScriptParser.OrExprContext;
 import com.parser.ManuScriptParser.PrimaryContext;
 import com.parser.ManuScriptParser.PrimaryExprContext;
 import com.parser.ManuScriptParser.VariableDeclaratorContext;
+import com.parser.ManuScriptParser.VariableExprContext;
 import com.utils.Console;
 import com.utils.Types;
 import com.utils.Utils;
@@ -67,6 +68,10 @@ public class BaseListener extends ManuScriptBaseListener{
 				}
 		 */
 		String methodName = ctx.Identifier().getText();
+//		if(methodTable.containsKey(methodName) && methodTable.get(methodName).matchesArgs(ctx)) {
+		if(methodTable.containsKey(methodName)) {
+			SemanticErrors.throwError(SemanticErrors.DUPLICATE_METHOD, ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), methodName);
+		}
 		methodTable.put(methodName, new MethodContext(ctx, scopes.peek(), methodName));
 		currentMethod = methodName;
 
@@ -86,6 +91,13 @@ public class BaseListener extends ManuScriptBaseListener{
 				scope.add(varName);
 				getCurrentSymTable().put(varName, new SymbolContext(fpctx.typeType().getText(), scope, varName));
 			}
+		}
+	}
+	
+	@Override public void exitMethodDeclaration(ManuScriptParser.MethodDeclarationContext ctx) {
+		MethodContext mctx = methodTable.get(currentMethod);
+		if(mctx.getReturnType().equals(Types.NULL)) {
+			mctx.setReturnType(Types.VOID);
 		}
 	}
 
@@ -189,14 +201,21 @@ public class BaseListener extends ManuScriptBaseListener{
 	}
 	
 	@Override public void enterReturnStmt(ManuScriptParser.ReturnStmtContext ctx) {
-		
+		MethodContext mctx = methodTable.get(currentMethod);
+		if(mctx.getReturnType().equals(Types.NULL)) {//TODO: bad implementation
+			mctx.setReturnType(this.getExpressionType(ctx.expression()));
+		} else {
+			if(!mctx.getReturnType().equals(this.getExpressionType(ctx.expression()))) {
+				SemanticErrors.throwError(SemanticErrors.INVALID_RETURN_TYPE, ctx.expression().getStart().getLine(), ctx.expression().getStop().getCharPositionInLine(), currentMethod, mctx.getReturnType());
+			}
+		}
+		;
 	}
 	
 	@Override public void enterFunctionExpr(ManuScriptParser.FunctionExprContext ctx) { 
 		String methodName = ctx.variableExpr().getText();
 		int lineNum = ctx.getStart().getLine();
 		int charPosInLine = ctx.getStart().getCharPositionInLine();
-		System.out.println(methodName);
 
 		if(!methodTable.containsKey(methodName)) {
 			Console.instance().err(String.format(SemanticErrors.UNDEFINED_METHOD, lineNum, charPosInLine, methodName));
@@ -237,7 +256,7 @@ public class BaseListener extends ManuScriptBaseListener{
 	
 	@Override
 	public void enterOutputStatement(ManuScriptParser.OutputStatementContext ctx) {
-//		this.expressionChecker(ctx.expression(0));
+		this.expressionChecker(ctx.expression(0));
 	}
 	
 	@Override
@@ -272,6 +291,39 @@ public class BaseListener extends ManuScriptBaseListener{
 		}
 	}
 	
+	private String getExpressionType(ParseTree node) {
+		int i = 0;//TODO: bad implementation
+		while(node.getChild(i) != null) {
+			String type;
+        	if(!(type = getExpressionType(node.getChild(i))).equals(Types.NULL)) {
+        		return type;
+        	}
+        	i++;
+        }
+		
+		String actualType = Types.NULL;
+		
+		if(node.getParent() instanceof LiteralContext) {
+			LiteralContext lctx = (LiteralContext) node.getParent();
+			actualType = LiteralMatcher.instance().getLiteralType(lctx);
+			
+			return actualType;
+		} else if(node.getParent() instanceof PrimaryContext && ((PrimaryContext) node.getParent()).Identifier() != null) {
+			PrimaryContext pctx = (PrimaryContext) node.getParent();
+			String varName = node.getParent().getText();
+			SymbolContext sctx;
+			if((sctx = scopes.peek().checkTables(varName)) != null) {
+				//Existing variable. now check for type mismatch
+				actualType = sctx.getSymbolType();
+			} else {
+				SemanticErrors.throwError(SemanticErrors.UNDECLARED_VAR, pctx.getStart().getLine(), pctx.getStart().getCharPositionInLine(), varName);
+			}
+			return actualType;
+		}
+		
+		return Types.NULL;
+	}
+	
 	private String expressionChecker(ParseTree node, String expectedType) {
 		String finalType = Types.NULL;
     	int i = 0;
@@ -301,8 +353,10 @@ public class BaseListener extends ManuScriptBaseListener{
 				}
 			} else if(node.getParent() instanceof PrimaryContext && ((PrimaryContext) node.getParent()).Identifier() != null) {
 				PrimaryContext pctx = (PrimaryContext) node.getParent();
+				SymbolContext sctx;				
 				String varName = node.getParent().getText();
-				SymbolContext sctx;
+
+				System.out.println(varName+": should be method!!!");
 				if((sctx = scopes.peek().checkTables(varName)) != null) {
 					//Existing variable. now check for type mismatch
 					actualType = sctx.getSymbolType();
@@ -310,6 +364,17 @@ public class BaseListener extends ManuScriptBaseListener{
 						SemanticErrors.throwError(SemanticErrors.TYPE_MISMATCH, pctx.getStart().getLine(), pctx.getStart().getCharPositionInLine(), expectedType);
 				} else {
 					SemanticErrors.throwError(SemanticErrors.UNDECLARED_VAR, pctx.getStart().getLine(), pctx.getStart().getCharPositionInLine(), varName);
+				}
+			} else if(node.getParent() instanceof VariableExprContext) {
+				VariableExprContext vectx = (VariableExprContext) node.getParent();
+				MethodContext mctx;
+				String varName = node.getParent().getText();
+
+				if((mctx = methodTable.get(varName)) != null) {
+					//Existing method. now check for return type
+					actualType = mctx.getReturnType();
+					if(!mctx.getReturnType().equals(expectedType))
+						SemanticErrors.throwError(SemanticErrors.TYPE_MISMATCH, vectx.getStart().getLine(), vectx.getStart().getCharPositionInLine(), expectedType);
 				}
 			}
 //			System.out.println(node.getText());
@@ -406,7 +471,7 @@ public class BaseListener extends ManuScriptBaseListener{
 //	    return true;
 //	}
 	
-	//still not working
+	//TODO: still not working
 	private boolean boolExpressionCheck(ParseTree node, String expectedType) {
 		//expression check left and right side
 		ParseTree leftNode = node.getChild(0);
