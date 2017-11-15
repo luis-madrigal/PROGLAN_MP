@@ -1,7 +1,7 @@
 permanent int FINAL_X = 10;
 
 ACT add starring(int x, int y) {
-	return (x + y);
+	give (x + y);
 }
 
 ACT main starring() {
