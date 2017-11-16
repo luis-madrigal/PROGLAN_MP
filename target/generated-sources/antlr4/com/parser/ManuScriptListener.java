@@ -1,4 +1,4 @@
-// Generated from C:/INTELLIJ Projects/PROGLAN_MP/src/com/parser\ManuScript.g4 by ANTLR 4.7
+// Generated from ManuScript.g4 by ANTLR 4.7
 package com.parser;
 import org.antlr.v4.runtime.tree.ParseTreeListener;
 
@@ -941,4 +941,14 @@ public interface ManuScriptListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitArrayCreatorRest(ManuScriptParser.ArrayCreatorRestContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link ManuScriptParser#arguments}.
+	 * @param ctx the parse tree
+	 */
+	void enterArguments(ManuScriptParser.ArgumentsContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link ManuScriptParser#arguments}.
+	 * @param ctx the parse tree
+	 */
+	void exitArguments(ManuScriptParser.ArgumentsContext ctx);
 }
