@@ -11,7 +11,7 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
     private HashMap<String, ProcedureNode> methodASTTable;
 
     public HashMap<String, ProcedureNode> getMethodASTTable(){
-        return this.getMethodASTTable();
+        return methodASTTable;
     }
 
     public ASTBuildVisitor(){
@@ -21,8 +21,9 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
     @Override
     public AbstractSyntaxTree visitMethodDeclaration(ManuScriptParser.MethodDeclarationContext ctx) {
         ProcedureNode pNode = new ProcedureNode(null,ctx.Identifier().getText());
+        System.out.println("visited method declaration: "+ctx.Identifier().getText());
         pNode.setNodeType(NodeType.PROCEDURE);
-        AbstractSyntaxTree body = visit(ctx.methodBody());
+        AbstractSyntaxTree body = super.visitMethodBody(ctx.methodBody());
         if(body!=null) {
             body.setParent(pNode);
             pNode.addChild(body);
@@ -33,6 +34,7 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
 
     @Override
     public AbstractSyntaxTree visitReturnStmt(ManuScriptParser.ReturnStmtContext ctx) {
+        System.out.println("Visited Return stmt");
         AbstractSyntaxTree node = new AbstractSyntaxTree(null);
         node.setNodeType(NodeType.RETURN);
         AbstractSyntaxTree child = visitChildren(ctx);

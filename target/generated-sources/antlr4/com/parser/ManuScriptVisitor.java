@@ -565,10 +565,4 @@ public interface ManuScriptVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitArrayCreatorRest(ManuScriptParser.ArrayCreatorRestContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link ManuScriptParser#arguments}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitArguments(ManuScriptParser.ArgumentsContext ctx);
 }

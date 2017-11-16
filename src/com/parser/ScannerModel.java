@@ -91,7 +91,7 @@ public class ScannerModel {
 
 		ASTBuildVisitor astbv = new ASTBuildVisitor();
 		astbv.visit(tree);
-		System.out.println(astbv.getMethodASTTable().get("main").getProcedureName());
+		//System.out.println(astbv.getMethodASTTable().get("main").getChild(0).getNodeType());
 
 
 //		System.out.println(tree.toStringTree(parser));
