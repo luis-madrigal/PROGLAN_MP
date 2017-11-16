@@ -92,9 +92,8 @@ public class ScannerModel {
 		ParseTreeWalker.DEFAULT.walk(new BaseListener(), this.tree);
 		
 		ASTBuildVisitor astbv = new ASTBuildVisitor();
-        AbstractSyntaxTree t = astbv.visit(tree);
-
-        System.out.println(astbv.getMethodASTTable().get("main"));
+		astbv.visit(tree);
+		//System.out.println(astbv.getMethodASTTable().get("main").getChild(0).getNodeType());
 
 
 //		System.out.println(tree.toStringTree(parser));
