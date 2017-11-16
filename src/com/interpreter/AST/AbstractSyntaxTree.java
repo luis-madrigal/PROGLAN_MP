@@ -2,6 +2,7 @@ package com.interpreter.AST;
 
 import com.utils.KeyTokens;
 
+import javax.xml.soap.Node;
 import java.util.List;
 
 public class AbstractSyntaxTree {
@@ -25,7 +26,7 @@ public class AbstractSyntaxTree {
         return children.get(index);
     }
 
-    public void addChildren(AbstractSyntaxTree child) {
+    public void addChild(AbstractSyntaxTree child) {
         this.children.add(child);
     }
 
@@ -45,5 +46,11 @@ public class AbstractSyntaxTree {
         this.value = value;
     }
 
+    public NodeType getNodeType() {
+        return nodeType;
+    }
 
+    public void setNodeType(NodeType nodeType){
+        this.nodeType = nodeType;
+    }
 }
