@@ -7,13 +7,11 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
 import javax.swing.JTextPane;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.Style;
-import javax.swing.text.StyleContext;
-import javax.swing.text.StyledDocument;
+import javax.swing.text.*;
 
 import com.ide.Panel;
 import com.ide.styles.RSyntaxTextAreaManuscript;
+import com.ide.styles.Styles;
 
 public class Console {
 	
@@ -36,11 +34,12 @@ public class Console {
 	}
 	
 	public void log(String msg) {
-		this.textPane.setForeground(Panel.SUBLIME_BG);
+		this.textPane.setForeground(Styles.UN_LITERAL_STRING_DOUBLE_QUOTE);
 		this.textPane.setText(this.textPane.getText() + msg);
 	}
 	
 	public void logln(String msg) {
+		this.textPane.setForeground(Styles.UN_LITERAL_STRING_DOUBLE_QUOTE);
 		this.textPane.setText(this.textPane.getText() + msg +"\n");
 	}
 	
@@ -52,7 +51,7 @@ public class Console {
 	public void err(String msg, int lineNumber) {
 		StyledDocument doc = this.textPane.getStyledDocument();
 		Style regularBlue = doc.addStyle("regularBlue"+lineNumber, StyleContext.getDefaultStyleContext().getStyle(StyleContext.DEFAULT_STYLE));
-//		 StyleConstants.setForeground(regularBlue, Color.BLUE);
+		 StyleConstants.setForeground(regularBlue, Color.RED);
 //		 StyleConstants.setUnderline(regularBlue, true);
 		 regularBlue.addAttribute("key", lineNumber);
 		 this.textPane.setCursor(new Cursor(Cursor.HAND_CURSOR));

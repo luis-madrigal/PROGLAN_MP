@@ -526,6 +526,7 @@ public class Panel implements ActionListener, KeyListener, MouseListener {
 	@Override
 	public void mouseReleased(MouseEvent e) {
 		if(e.getSource() == Console.instance().getTextPane()) {
+			System.out.println("Enter");
 			gotoErrorLine(e);
 		}
 		

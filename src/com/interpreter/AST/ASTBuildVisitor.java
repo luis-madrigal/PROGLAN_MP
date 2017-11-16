@@ -1,5 +1,6 @@
 package com.interpreter.AST;
 
+import com.interpreter.modules.Reader;
 import com.interpreter.modules.Writer;
 import com.parser.ManuScriptBaseVisitor;
 import com.parser.ManuScriptParser;
@@ -202,6 +203,16 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
     }
 
     @Override
+    public AbstractSyntaxTree visitInputStatement(ManuScriptParser.InputStatementContext ctx) {
+
+        String a = Reader.readInput();
+
+        Writer.printText(a);
+
+        return super.visitInputStatement(ctx);
+    }
+
+    @Override
     public AbstractSyntaxTree visitFunctionExpr(ManuScriptParser.FunctionExprContext ctx) {
         ProcedureNode node = new ProcedureNode(null, ctx.variableExpr().getText());
         node.setNodeType(NodeType.PROCEDURE_CALL);
@@ -249,6 +260,7 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
     public AbstractSyntaxTree visitLiteral(ManuScriptParser.LiteralContext ctx) {
         TerminalNode literal = new TerminalNode(null, KeyTokens.LITERAL_TYPE.STRING);
         literal.setNodeType(NodeType.LITERAL);
+
         if(ctx.getChild(0) != null) {
             literal.setValue(ctx.getChild(0).getText());
 
