@@ -941,14 +941,4 @@ public interface ManuScriptListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitArrayCreatorRest(ManuScriptParser.ArrayCreatorRestContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link ManuScriptParser#arguments}.
-	 * @param ctx the parse tree
-	 */
-	void enterArguments(ManuScriptParser.ArgumentsContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link ManuScriptParser#arguments}.
-	 * @param ctx the parse tree
-	 */
-	void exitArguments(ManuScriptParser.ArgumentsContext ctx);
 }

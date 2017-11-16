@@ -715,9 +715,9 @@ arrayCreatorRest
 //    |   Identifier arguments
 //    ;
 
-arguments
-    :   '(' expressionList? ')'
-    ;
+//arguments
+//    :   '(' expressionList? ')'
+//    ;
 
 // LEXER
 

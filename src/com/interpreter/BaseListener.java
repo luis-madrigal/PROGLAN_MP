@@ -17,6 +17,7 @@ import com.parser.ManuScriptParser.ArrayInitExprContext;
 import com.parser.ManuScriptParser.ComparisonExprContext;
 import com.parser.ManuScriptParser.EqualityExprContext;
 import com.parser.ManuScriptParser.ExpressionContext;
+import com.parser.ManuScriptParser.ExpressionListContext;
 import com.parser.ManuScriptParser.FormalParameterContext;
 import com.parser.ManuScriptParser.LiteralContext;
 import com.parser.ManuScriptParser.MethodBodyContext;
@@ -333,7 +334,7 @@ public class BaseListener extends ManuScriptBaseListener{
     	    		|| node instanceof AndExprContext
     	    		|| node instanceof OrExprContext) {
         		System.out.println("bool expression detected");
-        	} else {
+        	} else if(!(node instanceof ExpressionListContext)){//TODO: bad implementation
         		finalType = expressionChecker(node.getChild(i), expectedType);
         	}
         	i++;
@@ -356,7 +357,6 @@ public class BaseListener extends ManuScriptBaseListener{
 				SymbolContext sctx;				
 				String varName = node.getParent().getText();
 
-				System.out.println(varName+": should be method!!!");
 				if((sctx = scopes.peek().checkTables(varName)) != null) {
 					//Existing variable. now check for type mismatch
 					actualType = sctx.getSymbolType();
@@ -373,11 +373,12 @@ public class BaseListener extends ManuScriptBaseListener{
 				if((mctx = methodTable.get(varName)) != null) {
 					//Existing method. now check for return type
 					actualType = mctx.getReturnType();
-					if(!mctx.getReturnType().equals(expectedType))
+					if(!actualType.equals(expectedType)) {
 						SemanticErrors.throwError(SemanticErrors.TYPE_MISMATCH, vectx.getStart().getLine(), vectx.getStart().getCharPositionInLine(), expectedType);
+					}
 				}
 			}
-//			System.out.println(node.getText());
+			System.out.println(node.getText());
 			return actualType;
 	    } else if(node instanceof ComparisonExprContext 
 	    		|| node instanceof EqualityExprContext
