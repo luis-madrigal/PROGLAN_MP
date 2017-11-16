@@ -33,7 +33,7 @@ public class Writer {
 	}
 	
 	public static void printText(String output) {
-		Console.instance().log(output);
+		Console.instance().logln(output);
 	}
 	
 }

@@ -535,10 +535,11 @@ public class Panel implements ActionListener, KeyListener, MouseListener {
 		JTextPane textPane = Console.instance().getTextPane();
 		 Element ele = textPane.getStyledDocument().getCharacterElement(textPane.viewToModel(e.getPoint()));
 		 AttributeSet attributeSet = ele.getAttributes();
-		 
+
+		 if(attributeSet != null && attributeSet.getAttribute("key") != null) {
 //		 Integer.parseInt(attributeSet.getAttribute("key").toString());
 
-		 int line = Integer.parseInt(attributeSet.getAttribute("key").toString());
+			 int line = Integer.parseInt(attributeSet.getAttribute("key").toString());
 
 //		 try {
 //			this.codeInput.addLineHighlight(line-1, Color.CYAN);
@@ -548,7 +549,8 @@ public class Panel implements ActionListener, KeyListener, MouseListener {
 //			e1.printStackTrace();
 //		}
 
-		 RXTextUtilities.gotoStartOfLine(codeInput, line);
-		 RXTextUtilities.centerLineInScrollPane(codeInput);
+			 RXTextUtilities.gotoStartOfLine(codeInput, line);
+			 RXTextUtilities.centerLineInScrollPane(codeInput);
+		 }
 	}
 }
