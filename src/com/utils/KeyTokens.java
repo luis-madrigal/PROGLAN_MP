@@ -10,8 +10,7 @@ public class KeyTokens {
             ADD("+"),
             SUB("-"),
             MULT("*"),
-            DIV("/"),
-            ASSIGN("=");
+            DIV("/");
 
             protected String token;
 
@@ -51,8 +50,6 @@ public class KeyTokens {
 
     public static class UNARY {
         public enum Arithmetic_U {
-            POS("+"),
-            NEG("-"),
             INC("++"),
             DEC("--");
 

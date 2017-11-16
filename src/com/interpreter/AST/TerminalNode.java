@@ -8,6 +8,7 @@ import com.utils.KeyTokens;
 public class TerminalNode extends AbstractSyntaxTree {
 
     protected KeyTokens.TERMINAL_TYPE literalType;
+    protected Object value;
 
     public TerminalNode(AbstractSyntaxTree parent, KeyTokens.TERMINAL_TYPE type) {
         super(parent);
