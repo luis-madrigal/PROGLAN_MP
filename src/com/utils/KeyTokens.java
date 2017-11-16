@@ -84,4 +84,8 @@ public class KeyTokens {
     public enum TERMINAL_TYPE{
         VARIABLE, LITERAL;
     }
+
+    public enum LITERAL_TYPE{
+        STRING, INT, FLOAT, CHAR, BOOL, NULL
+    }
 }

@@ -2,6 +2,7 @@ package com.interpreter.AST;
 
 import com.parser.ManuScriptBaseVisitor;
 import com.parser.ManuScriptParser;
+import com.utils.KeyTokens;
 import org.antlr.v4.runtime.tree.RuleNode;
 
 import java.util.ArrayList;
@@ -168,7 +169,7 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
         AbstractSyntaxTree node = new AbstractSyntaxTree(null);
         node.setNodeType(NodeType.ASSIGN);
 
-        AbstractSyntaxTree target = visit(ctx.getParent().getChild(0));
+        AbstractSyntaxTree target = visitChildren(ctx.equationExpr());
         if(target!=null) {
             target.setParent(node);
             node.addChild(target);
@@ -187,12 +188,12 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
         AbstractSyntaxTree node = new AbstractSyntaxTree(null);
         node.setNodeType(NodeType.PRINT);
 
-        //TODO: expressions
         AbstractSyntaxTree output = visitChildren(ctx.expression());
         if(output!=null){
             output.setParent(node);
             node.addChild(output);
         }
+
         return node;
     }
 
@@ -209,6 +210,44 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
         }
 
         return node;
+    }
+
+    @Override
+    public AbstractSyntaxTree visitAddSubExpr(ManuScriptParser.AddSubExprContext ctx) {
+        AbstractSyntaxTree node = new AbstractSyntaxTree(null);
+        node.setNodeType(NodeType.BIN_ARITHMETIC);
+        System.out.println(ctx.getChild(1).getText());
+        node.setValue(ctx.getChild(1).getText());
+
+        AbstractSyntaxTree left = visitChildren(ctx.expression(0));
+        if(left!=null) {
+            left.setParent(node);
+            node.addChild(left);
+        }
+
+        AbstractSyntaxTree right = visitChildren(ctx.expression(1));
+        if(right!=null) {
+            right.setParent(node);
+            node.addChild(right);
+        }
+        
+        
+        return super.visitAddSubExpr(ctx);
+    }
+
+    @Override
+    public AbstractSyntaxTree visitPrimary(ManuScriptParser.PrimaryContext ctx) {
+        //todo: differentiate variable from literals and cast
+        return super.visitPrimary(ctx);
+    }
+
+    @Override
+    public AbstractSyntaxTree visitLiteral(ManuScriptParser.LiteralContext ctx) {
+        TerminalNode literal = new TerminalNode(null, KeyTokens.LITERAL_TYPE.STRING);
+        literal.setNodeType(NodeType.LITERAL);
+        literal.setValue(ctx.getChild(0));
+
+        return super.visitLiteral(ctx);
     }
 }
 
