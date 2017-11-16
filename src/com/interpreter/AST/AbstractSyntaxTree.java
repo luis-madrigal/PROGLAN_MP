@@ -3,6 +3,8 @@ package com.interpreter.AST;
 import com.utils.KeyTokens;
 
 import javax.xml.soap.Node;
+
+import java.util.ArrayList;
 import java.util.List;
 
 public class AbstractSyntaxTree {
@@ -16,6 +18,7 @@ public class AbstractSyntaxTree {
 
     public AbstractSyntaxTree(AbstractSyntaxTree parent){
        this.parent = parent;
+       this.children = new ArrayList<AbstractSyntaxTree>();
     }
 
     public List<AbstractSyntaxTree> getChildren() {

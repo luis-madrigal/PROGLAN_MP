@@ -536,7 +536,7 @@ public class Panel implements ActionListener, KeyListener, MouseListener {
 		 Element ele = textPane.getStyledDocument().getCharacterElement(textPane.viewToModel(e.getPoint()));
 		 AttributeSet attributeSet = ele.getAttributes();
 		 
-		 int line = Integer.parseInt(attributeSet.getAttribute("key").toString());
+//		 int line = Integer.parseInt(attributeSet.getAttribute("key").toString());
 //		 try {
 //			this.codeInput.addLineHighlight(line-1, Color.CYAN);
 //		} catch (NumberFormatException e1) {
@@ -545,7 +545,7 @@ public class Panel implements ActionListener, KeyListener, MouseListener {
 //			e1.printStackTrace();
 //		}
 
-		 RXTextUtilities.gotoStartOfLine(codeInput, line);
-		 RXTextUtilities.centerLineInScrollPane(codeInput);
+//		 RXTextUtilities.gotoStartOfLine(codeInput, line);
+//		 RXTextUtilities.centerLineInScrollPane(codeInput);
 	}
 }

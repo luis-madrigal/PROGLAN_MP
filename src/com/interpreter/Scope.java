@@ -48,4 +48,16 @@ public class Scope extends HashSet<String>{
 	public void addChild(Scope child){
 		children.add(child);
 	}
+
+	public List<Scope> getChildren() {
+		return children;
+	}
+
+	public void setChildren(List<Scope> children) {
+		this.children = children;
+	}
+
+	public void setParent(Scope parent) {
+		this.parent = parent;
+	}
 }
