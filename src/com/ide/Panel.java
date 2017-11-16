@@ -1,5 +1,6 @@
 package com.ide;
 import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
@@ -503,19 +504,37 @@ public class Panel implements ActionListener, KeyListener, MouseListener {
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
-		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
 	public void mouseEntered(MouseEvent e) {
-		// TODO Auto-generated method stub
+
+		if(e.getSource() == Console.instance().getTextPane()) {
+			JTextPane textPane = Console.instance().getTextPane();
+			Element ele = textPane.getStyledDocument().getCharacterElement(textPane.viewToModel(e.getPoint()));
+			AttributeSet attributeSet = ele.getAttributes();
+
+			if(attributeSet != null && attributeSet.getAttribute("key") != null) {
+
+//				Console.instance().getTextPane().setCursor(new Cursor(Cursor.HAND_CURSOR));
+			 }	
+		}
 		
 	}
 
 	@Override
 	public void mouseExited(MouseEvent e) {
-		
+		if(e.getSource() == Console.instance().getTextPane()) {
+			JTextPane textPane = Console.instance().getTextPane();
+			Element ele = textPane.getStyledDocument().getCharacterElement(textPane.viewToModel(e.getPoint()));
+			AttributeSet attributeSet = ele.getAttributes();
+
+			if(attributeSet != null && attributeSet.getAttribute("key") != null) {
+
+				Console.instance().getTextPane().setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+			 }	
+		}		
 	}
 
 	@Override
@@ -534,24 +553,15 @@ public class Panel implements ActionListener, KeyListener, MouseListener {
 	
 	void gotoErrorLine(MouseEvent e) {
 		JTextPane textPane = Console.instance().getTextPane();
-		 Element ele = textPane.getStyledDocument().getCharacterElement(textPane.viewToModel(e.getPoint()));
-		 AttributeSet attributeSet = ele.getAttributes();
+		Element ele = textPane.getStyledDocument().getCharacterElement(textPane.viewToModel(e.getPoint()));
+		AttributeSet attributeSet = ele.getAttributes();
 
-		 if(attributeSet != null && attributeSet.getAttribute("key") != null) {
-//		 Integer.parseInt(attributeSet.getAttribute("key").toString());
+		if(attributeSet != null && attributeSet.getAttribute("key") != null) {
 
-			 int line = Integer.parseInt(attributeSet.getAttribute("key").toString());
+			int line = Integer.parseInt(attributeSet.getAttribute("key").toString());
 
-//		 try {
-//			this.codeInput.addLineHighlight(line-1, Color.CYAN);
-//		} catch (NumberFormatException e1) {
-//			e1.printStackTrace();
-//		} catch (BadLocationException e1) {
-//			e1.printStackTrace();
-//		}
-
-			 RXTextUtilities.gotoStartOfLine(codeInput, line);
-			 RXTextUtilities.centerLineInScrollPane(codeInput);
+			RXTextUtilities.gotoStartOfLine(codeInput, line);
+			RXTextUtilities.centerLineInScrollPane(codeInput);
 		 }
 	}
 }
