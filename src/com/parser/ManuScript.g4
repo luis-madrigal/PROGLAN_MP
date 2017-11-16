@@ -572,7 +572,7 @@ forUpdate
     ;
 
 outputStatement
-	:	PRINT expression ('+' expression)*
+	:	PRINT expression
 	;
 
 inputStatement

@@ -38,11 +38,12 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
         ProcedureNode pNode = new ProcedureNode(null,ctx.Identifier().getText());
         System.out.println("visited method declaration: "+ctx.Identifier().getText());
         pNode.setNodeType(NodeType.PROCEDURE);
-        AbstractSyntaxTree body = visitMethodBody(ctx.methodBody());
-        System.out.println(body.getNodeType());
-        if(body!=null) {
-            body.setParent(pNode);
-            pNode.addChild(body);
+        for(ManuScriptParser.BlockStatementContext bc : ctx.methodBody().block().blockStatement()) {
+            AbstractSyntaxTree body = visitBlockStatement(bc);
+            if (body != null) {
+                body.setParent(pNode);
+                pNode.addChild(body);
+            }
         }
         methodASTTable.put(ctx.Identifier().getText(), pNode);
         return pNode;
@@ -173,6 +174,20 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
         }
         return node;
 
+    }
+
+    @Override
+    public AbstractSyntaxTree visitOutputStatement(ManuScriptParser.OutputStatementContext ctx) {
+        AbstractSyntaxTree node = new AbstractSyntaxTree(null);
+        node.setNodeType(NodeType.PRINT);
+
+        //TODO: expressions
+        AbstractSyntaxTree output = visitChildren(ctx.expression());
+        if(output!=null){
+            output.setParent(node);
+            node.addChild(output);
+        }
+        return node;
     }
 
     @Override

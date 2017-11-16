@@ -257,7 +257,7 @@ public class BaseListener extends ManuScriptBaseListener{
 	
 	@Override
 	public void enterOutputStatement(ManuScriptParser.OutputStatementContext ctx) {
-		this.expressionChecker(ctx.expression(0));
+		this.expressionChecker(ctx.expression());
 	}
 	
 	@Override
