@@ -1,6 +1,7 @@
 package com.utils;
 
 import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.Font;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -53,19 +54,16 @@ public class Console {
 //		 StyleConstants.setForeground(regularBlue, Color.BLUE);
 //		 StyleConstants.setUnderline(regularBlue, true);
 		 regularBlue.addAttribute("key", lineNumber);
+		 this.textPane.setCursor(new Cursor(Cursor.HAND_CURSOR));
 		 try {
 			doc.insertString(doc.getLength(), msg+"\n", regularBlue);
 		} catch (BadLocationException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
-		 
-//		this.textPane.setText(this.textPane.getText() + msg +"\n");
 		try {
 			this.codeInput.addLineHighlight(lineNumber-1, new Color(255, 0, 0, 100));
 		} catch (BadLocationException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
