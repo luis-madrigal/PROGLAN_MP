@@ -24,6 +24,7 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
 import com.interpreter.BaseListener;
+import com.interpreter.CodeGenerator;
 import com.interpreter.Scope;
 import com.parser.ManuScriptLexer;
 import com.parser.ManuScriptParser;
@@ -101,7 +102,9 @@ public class ScannerModel {
 		System.out.println(methodTable.size());
 		
 		ASTBuildVisitor astbv = new ASTBuildVisitor();
-		astbv.visit(tree);
+		AbstractSyntaxTree ast = astbv.visit(tree);
+		
+		new CodeGenerator(ast).generate();
 		//System.out.println(astbv.getMethodASTTable().get("main").getChild(0).getNodeType());
 
 
