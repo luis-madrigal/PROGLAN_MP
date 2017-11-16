@@ -35,6 +35,12 @@ public class BaseListener extends ManuScriptBaseListener{
 	private HashMap<String, MethodContext> methodTable;
 	private String currentMethod;
 	
+	public BaseListener(Scope parentScope, HashMap<String, MethodContext> methodTable) {
+		this.scopes = new Stack<Scope>();;
+		this.scopes.push(parentScope);
+		this.methodTable = methodTable;
+	}
+	
 	public BaseListener() {
 		scopes = new Stack<Scope>();
 		scopes.push(new Scope(null));

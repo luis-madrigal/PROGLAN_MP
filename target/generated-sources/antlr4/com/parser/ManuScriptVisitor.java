@@ -1,4 +1,4 @@
-// Generated from C:/INTELLIJ Projects/PROGLAN_MP/src/com/parser\ManuScript.g4 by ANTLR 4.7
+// Generated from ManuScript.g4 by ANTLR 4.7
 package com.parser;
 import org.antlr.v4.runtime.tree.ParseTreeVisitor;
 
@@ -565,4 +565,10 @@ public interface ManuScriptVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitArrayCreatorRest(ManuScriptParser.ArrayCreatorRestContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link ManuScriptParser#arguments}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitArguments(ManuScriptParser.ArgumentsContext ctx);
 }

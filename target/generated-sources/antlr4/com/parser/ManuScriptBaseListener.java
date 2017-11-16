@@ -1,4 +1,4 @@
-// Generated from C:/INTELLIJ Projects/PROGLAN_MP/src/com/parser\ManuScript.g4 by ANTLR 4.7
+// Generated from ManuScript.g4 by ANTLR 4.7
 package com.parser;
 
 import org.antlr.v4.runtime.ParserRuleContext;
@@ -1067,6 +1067,18 @@ public class ManuScriptBaseListener implements ManuScriptListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitArrayCreatorRest(ManuScriptParser.ArrayCreatorRestContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterArguments(ManuScriptParser.ArgumentsContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitArguments(ManuScriptParser.ArgumentsContext ctx) { }
 
 	/**
 	 * {@inheritDoc}

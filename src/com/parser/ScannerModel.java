@@ -2,9 +2,13 @@ package com.parser;
 import java.util.List;
 import java.util.Arrays;
 import java.util.BitSet;
+import java.util.HashMap;
 import java.util.Stack;
 
 import com.interpreter.AST.ASTBuildVisitor;
+import com.interpreter.AST.AbstractSyntaxTree;
+import com.interpreter.contexts.MethodContext;
+
 import org.antlr.v4.gui.TreeViewer;
 import org.antlr.v4.runtime.ANTLRErrorListener;
 import org.antlr.v4.runtime.ANTLRInputStream;
@@ -20,6 +24,7 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
 import com.interpreter.BaseListener;
+import com.interpreter.Scope;
 import com.parser.ManuScriptLexer;
 import com.parser.ManuScriptParser;
 import com.utils.Console;
@@ -87,8 +92,14 @@ public class ScannerModel {
 		this.ruleNames = Arrays.asList(parser.getRuleNames());
 		this.tree = parser.compilationUnit();
 		
-		ParseTreeWalker.DEFAULT.walk(new BaseListener(), this.tree);
-
+		Scope scope = new Scope(null); //scope of program. contains the symbol tables
+		HashMap<String, MethodContext> methodTable = new HashMap<String, MethodContext>(); //the methods in the program. no overloading
+		
+		ParseTreeWalker.DEFAULT.walk(new BaseListener(scope, methodTable), this.tree);
+		
+		System.out.println(scope.getChildren().size());
+		System.out.println(methodTable.size());
+		
 		ASTBuildVisitor astbv = new ASTBuildVisitor();
 		astbv.visit(tree);
 		//System.out.println(astbv.getMethodASTTable().get("main").getChild(0).getNodeType());

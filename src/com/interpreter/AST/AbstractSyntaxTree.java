@@ -17,7 +17,7 @@ public class AbstractSyntaxTree {
 
     public AbstractSyntaxTree(AbstractSyntaxTree parent){
        this.parent = parent;
-       this.children = new ArrayList<>();
+       this.children = new ArrayList<AbstractSyntaxTree>();
     }
 
     public List<AbstractSyntaxTree> getChildren() {

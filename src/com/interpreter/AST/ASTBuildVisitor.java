@@ -18,6 +18,11 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
     public ASTBuildVisitor(){
         methodASTTable = new HashMap<String, ProcedureNode>();
     }
+    
+	@Override public AbstractSyntaxTree visitCompilationUnit(ManuScriptParser.CompilationUnitContext ctx) { 
+		System.out.println("start AST generation");
+		return visitChildren(ctx); 
+	}
 
     @Override
     protected AbstractSyntaxTree aggregateResult(AbstractSyntaxTree aggregate, AbstractSyntaxTree nextResult) {
@@ -45,6 +50,7 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
                 pNode.addChild(body);
             }
         }
+        System.out.println(ctx.Identifier().getText());
         methodASTTable.put(ctx.Identifier().getText(), pNode);
         return pNode;
     }
