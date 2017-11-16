@@ -2,6 +2,7 @@ package com.interpreter.AST;
 
 import com.parser.ManuScriptBaseVisitor;
 import com.parser.ManuScriptParser;
+import org.antlr.v4.runtime.tree.RuleNode;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -19,11 +20,26 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
     }
 
     @Override
+    protected AbstractSyntaxTree aggregateResult(AbstractSyntaxTree aggregate, AbstractSyntaxTree nextResult) {
+        if(nextResult != null)
+            return nextResult;
+        else
+            return aggregate;
+    }
+
+    /*@Override
+    protected boolean shouldVisitNextChild(RuleNode node, AbstractSyntaxTree currentResult) {
+        if(currentResult.)
+        return true;
+    }*/
+
+    @Override
     public AbstractSyntaxTree visitMethodDeclaration(ManuScriptParser.MethodDeclarationContext ctx) {
         ProcedureNode pNode = new ProcedureNode(null,ctx.Identifier().getText());
         System.out.println("visited method declaration: "+ctx.Identifier().getText());
         pNode.setNodeType(NodeType.PROCEDURE);
-        AbstractSyntaxTree body = super.visitMethodBody(ctx.methodBody());
+        AbstractSyntaxTree body = visitMethodBody(ctx.methodBody());
+        System.out.println(body.getNodeType());
         if(body!=null) {
             body.setParent(pNode);
             pNode.addChild(body);
@@ -33,15 +49,22 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
     }
 
     @Override
+    public AbstractSyntaxTree visitMethodBody(ManuScriptParser.MethodBodyContext ctx) {
+        return super.visitMethodBody(ctx);
+    }
+
+    @Override
     public AbstractSyntaxTree visitReturnStmt(ManuScriptParser.ReturnStmtContext ctx) {
         System.out.println("Visited Return stmt");
         AbstractSyntaxTree node = new AbstractSyntaxTree(null);
         node.setNodeType(NodeType.RETURN);
-        AbstractSyntaxTree child = visitChildren(ctx);
+        System.out.println("preVisit return");
+        AbstractSyntaxTree child = visitChildren(ctx.expression());
         if(child!=null) {
             child.setParent(node);
             node.addChild(child);
         }
+        System.out.println(node.getNodeType());
         return node;
     }
 
