@@ -86,11 +86,11 @@ public class Panel implements ActionListener, KeyListener, MouseListener {
 	private JButton btnScaleUp;
 	private JButton btnScaleDown;
 
-	private final static Color SUBLIME_BG = new Color(39, 40, 34);
-	private final static Color SUBLIME_HIGHLIGHT = new Color(51, 51, 42);
-	private final static Color SUBLIME_KEYWORD = new Color(102, 217, 239);
-	private final static Color SUBLIME_LITERAL = new Color(230, 219, 116);
-	private final static String newline = "\n";
+	public final static Color SUBLIME_BG = new Color(39, 40, 34);
+	public final static Color SUBLIME_HIGHLIGHT = new Color(51, 51, 42);
+	public final static Color SUBLIME_KEYWORD = new Color(102, 217, 239);
+	public final static Color SUBLIME_LITERAL = new Color(230, 219, 116);
+	public final static String newline = "\n";
 	
 	private ScannerModel scanner;
 //	private ParseTreePane parseTreePane;

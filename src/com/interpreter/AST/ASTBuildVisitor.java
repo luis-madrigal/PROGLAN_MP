@@ -1,5 +1,6 @@
 package com.interpreter.AST;
 
+import com.interpreter.modules.Writer;
 import com.parser.ManuScriptBaseVisitor;
 import com.parser.ManuScriptParser;
 import com.utils.KeyTokens;
@@ -188,11 +189,14 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
         AbstractSyntaxTree node = new AbstractSyntaxTree(null);
         node.setNodeType(NodeType.PRINT);
 
+        System.out.println("Entered outputstmt");
         AbstractSyntaxTree output = visitChildren(ctx.expression());
         if(output!=null){
             output.setParent(node);
             node.addChild(output);
+            Writer.printText((String)output.getValue());
         }
+
 
         return node;
     }
@@ -245,9 +249,13 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
     public AbstractSyntaxTree visitLiteral(ManuScriptParser.LiteralContext ctx) {
         TerminalNode literal = new TerminalNode(null, KeyTokens.LITERAL_TYPE.STRING);
         literal.setNodeType(NodeType.LITERAL);
-        literal.setValue(ctx.getChild(0));
+        if(ctx.getChild(0) != null) {
+            literal.setValue(ctx.getChild(0).getText());
 
-        return super.visitLiteral(ctx);
+            return literal;
+        }
+        else
+            return null;
     }
 }
 

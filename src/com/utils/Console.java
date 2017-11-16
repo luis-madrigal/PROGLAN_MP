@@ -36,6 +36,7 @@ public class Console {
 	}
 	
 	public void log(String msg) {
+		this.textPane.setForeground(Panel.SUBLIME_BG);
 		this.textPane.setText(this.textPane.getText() + msg);
 	}
 	
