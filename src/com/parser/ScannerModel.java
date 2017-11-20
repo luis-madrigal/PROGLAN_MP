@@ -104,11 +104,13 @@ public class ScannerModel {
 		//todo: stop from continuing if errors exist
 		//todo: add reference to baselistener then do BaseListener.getScopes and give to ASTBuildVIsitor constructor
 
-		System.out.println("varX child 1: "+scope.getChildren().get(1).getIfInScope("x"));
-		System.out.println("IS IN SCOPE: "+scope.getChildren().get(1).inScope("z"));
+	//	System.out.println("varX child 1: "+scope.getChildren().get(1).getIfInScope("x"));
+	//	System.out.println("IS IN SCOPE: "+scope.getChildren().get(1).inScope("z"));
+		System.out.println("IS IN SCOPE(x): "+scope.getChildren().get(2).inScope("x"));
 
 		ASTBuildVisitor astbv = new ASTBuildVisitor(scope);
 		astbv.visit(tree);
+		astbv.printAST("main");
 
 //		System.out.println(tree.toStringTree(parser));
 		
