@@ -32,6 +32,7 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
         this.curScope = symbolTable;
         this.levelIndexTracker = new ArrayList<>();
         this.levelIndexTracker.add(0);
+        System.out.println("init size: "+levelIndexTracker.size());
         this.lvlIndex = 0;
         this.lvlDepth = 0;
         this.nExitBlock = 0;
@@ -44,7 +45,7 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
 
     @Override public AbstractSyntaxTree visitCompilationUnit(ManuScriptParser.CompilationUnitContext ctx) {
 		System.out.println("start AST generation");
-		return visitChildren(ctx); 
+		return visitChildren(ctx);
 	}
 
     @Override
@@ -71,6 +72,12 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
             result = this.aggregateResult(result, childResult);
         }
 
+        exitBlock();
+
+        return result;
+    }
+
+    private void exitBlock(){
         curScope = curScope.getParent();    //go deeper
         //this.levelIndexTracker.set(lvlDepth,++lvlIndex);    //sets next expected index
         lvlDepth--;
@@ -79,32 +86,50 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
             nExitBlock = 0;
             levelIndexTracker.set(lvlDepth + 1, 0);
         }
-        return result;
     }
 
-    @Override
-    public AbstractSyntaxTree visitBlock(ManuScriptParser.BlockContext ctx) {
+    private void enterBlock(){
         lvlIndex = this.levelIndexTracker.get(lvlDepth);
         curScope = curScope.getChildren().get(lvlIndex);    //go deeper
+        System.out.println("scope: "+lvlIndex);
         this.levelIndexTracker.set(lvlDepth,++lvlIndex);    //sets next expected index
         lvlDepth++;
         if(lvlDepth >= this.levelIndexTracker.size())
             this.levelIndexTracker.add(0);
-
-        return visitBlockChildren(ctx);
     }
 
-    /*@Override
-    protected boolean shouldVisitNextChild(RuleNode node, AbstractSyntaxTree currentResult) {
-        if(currentResult.)
-        return true;
-    }*/
+    @Override
+    public AbstractSyntaxTree visitBlock(ManuScriptParser.BlockContext ctx) {
+        System.out.println("ENTERED BLOCK");
+        enterBlock();
+
+        AbstractSyntaxTree blockNode = new AbstractSyntaxTree(null);
+        blockNode.setNodeType(NodeType.BLOCK);
+        for(ManuScriptParser.BlockStatementContext stmt : ctx.blockStatement()){
+            AbstractSyntaxTree body = visitBlockStatement(stmt);
+            if (body != null) {
+                body.setParent(blockNode);
+                blockNode.addChild(body);
+            }
+        }
+
+        exitBlock();
+        return blockNode;
+    }
 
     @Override
     public AbstractSyntaxTree visitMethodDeclaration(ManuScriptParser.MethodDeclarationContext ctx) {
         ProcedureNode pNode = new ProcedureNode(null,ctx.Identifier().getText());
         System.out.println("visited method declaration: "+ctx.Identifier().getText());
         pNode.setNodeType(NodeType.PROCEDURE);
+
+        AbstractSyntaxTree block = visit(ctx.methodBody().block());
+        if (block != null) {
+            block.setParent(pNode);
+            pNode.addChild(block);
+        }
+
+        /*
         for(ManuScriptParser.BlockStatementContext bc : ctx.methodBody().block().blockStatement()) {
             AbstractSyntaxTree body = visitBlockStatement(bc);
             if (body != null) {
@@ -113,6 +138,7 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
             }
         }
         System.out.println(ctx.Identifier().getText());
+        */
         methodASTTable.put(ctx.Identifier().getText(), pNode);
 
 
@@ -120,22 +146,15 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
     }
 
     @Override
-    public AbstractSyntaxTree visitMethodBody(ManuScriptParser.MethodBodyContext ctx) {
-        return super.visitMethodBody(ctx);
-    }
-
-    @Override
     public AbstractSyntaxTree visitReturnStmt(ManuScriptParser.ReturnStmtContext ctx) {
-        System.out.println("Visited Return stmt");
         AbstractSyntaxTree node = new AbstractSyntaxTree(null);
         node.setNodeType(NodeType.RETURN);
-        System.out.println("preVisit return");
-        AbstractSyntaxTree child = visitChildren(ctx.expression());
+        AbstractSyntaxTree child = visit(ctx.expression());
         if(child!=null) {
             child.setParent(node);
             node.addChild(child);
         }
-        System.out.println(node.getNodeType());
+
         return node;
     }
 
@@ -149,10 +168,11 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
             condition.setParent(node);
             node.addChild(condition);
         }
-        AbstractSyntaxTree block = visitChildren(ctx.statement());
-        if(block!=null) {
-            block.setParent(node);
-            node.addChild(block);
+
+        AbstractSyntaxTree stmt = visit(ctx.statement());
+        if(stmt!=null) {
+            stmt.setParent(node);
+            node.addChild(stmt);
         }
         return node;
     }
@@ -162,10 +182,10 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
         AbstractSyntaxTree node = new AbstractSyntaxTree(null);
         node.setNodeType(NodeType.DO_WHILE);
 
-        AbstractSyntaxTree block = visitChildren(ctx.statement());
-        if(block!=null) {
-            block.setParent(node);
-            node.addChild(block);
+        AbstractSyntaxTree stmt = visit(ctx.statement());
+        if(stmt!=null) {
+            stmt.setParent(node);
+            node.addChild(stmt);
         }
         AbstractSyntaxTree condition = visit(ctx.parExpression().expression());
         if(condition!=null) {
@@ -182,7 +202,7 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
         AbstractSyntaxTree node = new AbstractSyntaxTree(null);
         node.setNodeType(NodeType.FOR);
 
-        AbstractSyntaxTree forInit = visitChildren(ctx.forControl().forInit());
+        AbstractSyntaxTree forInit = visit(ctx.forControl().forInit());
         if( forInit != null ) {
             forInit.setParent(node);
             node.addChild(forInit);
@@ -192,12 +212,12 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
             condition.setParent(node);
             node.addChild(condition);
         }
-        AbstractSyntaxTree forUpdate = visitChildren(ctx.forControl().forUpdate());
+        AbstractSyntaxTree forUpdate = visit(ctx.forControl().forUpdate());
         if( forUpdate != null ) {
             forUpdate.setParent(node);
             node.addChild(forUpdate);
         }
-        AbstractSyntaxTree statement = visitChildren(ctx.statement());
+        AbstractSyntaxTree statement = visit(ctx.statement());
         if(statement!=null) {
             statement.setParent(node);
             node.addChild(statement);
@@ -209,7 +229,7 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
     public AbstractSyntaxTree visitIfElseStmt(ManuScriptParser.IfElseStmtContext ctx) {
         AbstractSyntaxTree node = new AbstractSyntaxTree(null);
         node.setNodeType(NodeType.BRANCH);
-        //todo: must have a way to determine if else block exists
+
         AbstractSyntaxTree condition = visitChildren(ctx.parExpression());
         if(condition!=null) {
             condition.setParent(node);
@@ -520,9 +540,6 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
 
     }
 
-
-
-
     /*
     @Override
     public AbstractSyntaxTree visitPrimary(ManuScriptParser.PrimaryContext ctx) {
@@ -602,8 +619,6 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
             LeafNode literal = new LeafNode(null);
             literal.setNodeType(NodeType.LITERAL);
 
-            System.out.println(type);
-            System.out.println("literal: " + tn);
             literal.setValue(tn.getSymbol().getText());
 
             return literal;
