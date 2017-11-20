@@ -25,7 +25,13 @@ public class Scope extends HashSet<String>{
 		
 		return (parent == null)? false : parent.inScope(varName);
 	}
-	
+
+	public SymbolContext getIfInScope(String varName){
+		if(parent == null)
+			return null;
+		return (symTable.get(varName) != null)? symTable.get(varName) : parent.getIfInScope(varName);
+	}
+
 	public SymbolContext checkTables(String varName) {
 		if(symTable.containsKey(varName))
 			return symTable.get(varName);

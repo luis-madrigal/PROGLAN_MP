@@ -94,16 +94,21 @@ public class ScannerModel {
 		
 		Scope scope = new Scope(null); //scope of program. contains the symbol tables
 		HashMap<String, MethodContext> methodTable = new HashMap<String, MethodContext>(); //the methods in the program. no overloading
-		
+
+
 		ParseTreeWalker.DEFAULT.walk(new BaseListener(scope, methodTable), this.tree);
 		
 		System.out.println(scope.getChildren().size());
 		System.out.println(methodTable.size());
-		
-		ASTBuildVisitor astbv = new ASTBuildVisitor();
-		astbv.visit(tree);
-		//System.out.println(astbv.getMethodASTTable().get("main").getChild(0).getNodeType());
 
+		//todo: stop from continuing if errors exist
+		//todo: add reference to baselistener then do BaseListener.getScopes and give to ASTBuildVIsitor constructor
+
+		System.out.println("varX child 1: "+scope.getChildren().get(1).getIfInScope("x"));
+		System.out.println("IS IN SCOPE: "+scope.getChildren().get(1).inScope("z"));
+
+		ASTBuildVisitor astbv = new ASTBuildVisitor(scope);
+		astbv.visit(tree);
 
 //		System.out.println(tree.toStringTree(parser));
 		

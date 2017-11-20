@@ -5,14 +5,17 @@ import com.utils.KeyTokens;
 /**
  * for terminals (Variables/Literals)
  */
-public class TerminalNode extends AbstractSyntaxTree {
+public class LeafNode extends AbstractSyntaxTree {
 
     protected KeyTokens.LITERAL_TYPE literalType;
     protected Object value;
 
-    public TerminalNode(AbstractSyntaxTree parent, KeyTokens.LITERAL_TYPE type) {
+    public LeafNode(AbstractSyntaxTree parent) {
         super(parent);
-        this.literalType = type;
+    }
+
+    public void setLiteralType(KeyTokens.LITERAL_TYPE literalType) {
+        this.literalType = literalType;
     }
 
     public KeyTokens.LITERAL_TYPE getLiteralType() {
