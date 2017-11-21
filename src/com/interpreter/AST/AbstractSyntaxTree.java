@@ -1,5 +1,6 @@
 package com.interpreter.AST;
 
+import com.interpreter.modules.Writer;
 import com.utils.KeyTokens;
 
 import javax.xml.soap.Node;
@@ -54,5 +55,28 @@ public class AbstractSyntaxTree {
 
     public void setNodeType(NodeType nodeType){
         this.nodeType = nodeType;
+    }
+
+    public void evaluate(AbstractSyntaxTree node) {
+        System.out.println(node.getNodeType());
+        switch(node.getNodeType()) {
+            case PROCEDURE:break;
+            case PROCEDURE_CALL:break;
+            case RETURN:break;
+            case BIN_ARITHMETIC: if(value.equals("+")
+                return break;
+            case BIN_LOGIC: break;
+            case ASSIGN:break;
+            case UNI_ARITHMETIC:break;
+            case UNI_LOGIC:break;
+            case WHILE:break;
+            case DO_WHILE:break;
+            case FOR:break;
+            case TERMINAL:break;
+            case BRANCH:break; //used for if-else statements
+            case PRINT: Writer.printText(node.getValue().toString());break;
+            case SCAN:break;
+            default:break;
+        }
     }
 }
