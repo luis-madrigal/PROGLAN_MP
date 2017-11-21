@@ -104,6 +104,7 @@ public class ScannerModel {
 		ASTBuildVisitor astbv = new ASTBuildVisitor();
 		AbstractSyntaxTree ast = astbv.visit(tree);
 		
+		//TODO: does not start from main yet
 		new CodeGenerator(ast).generate();
 		//System.out.println(astbv.getMethodASTTable().get("main").getChild(0).getNodeType());
 
