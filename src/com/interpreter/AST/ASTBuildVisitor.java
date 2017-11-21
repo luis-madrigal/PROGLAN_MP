@@ -565,7 +565,7 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
         SymbolContext symContext = null;
 
         symContext = curScope.checkTables(ctx.Identifier().getText());
-        String type = symContext.getSymbolType(); //todo: convert to enum?
+        KeyTokens.LITERAL_TYPE type = symContext.getSymbolType(); //todo: convert to enum?
 
         if(symContext != null) {
             variable.setValue(symContext.getIdentifier());
@@ -609,7 +609,7 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
         SymbolContext symContext = null;
 
         symContext = curScope.checkTables(ctx.Identifier().getText());
-        String type = symContext.getSymbolType(); //todo: convert to enum?
+        KeyTokens.LITERAL_TYPE type = symContext.getSymbolType(); //todo: convert to enum?
 
         if(symContext != null) {
             variable.setValue(symContext.getIdentifier());

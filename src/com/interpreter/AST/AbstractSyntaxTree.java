@@ -78,11 +78,11 @@ public class AbstractSyntaxTree {
             case PROCEDURE:break;
             case PROCEDURE_CALL:break;
             case RETURN:break;
-            case BIN_ARITHMETIC: if(value.equals("+")
-                return break;
+//            case BIN_ARITHMETIC: if(value.equals("+")
+//                return break;
             case BIN_LOGIC: break;
             case ASSIGN:break;
-            case UNI_LOGIC:break;
+             case UNI_LOGIC:break;
             case WHILE:break;
             case DO_WHILE:break;
             case FOR:break;
