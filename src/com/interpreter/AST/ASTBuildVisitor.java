@@ -244,10 +244,12 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
             statementIf.setParent(node);
             node.addChild(statementIf);
         }
-        AbstractSyntaxTree statementElse = visit(ctx.statement(1));
-        if(statementElse!=null) {
-            statementElse.setParent(node);
-            node.addChild(statementElse);
+        if(ctx.statement(1) != null) {
+            AbstractSyntaxTree statementElse = visit(ctx.statement(1));
+            if (statementElse != null) {
+                statementElse.setParent(node);
+                node.addChild(statementElse);
+            }
         }
         return node;
     }
@@ -569,6 +571,7 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
 
         if(symContext != null) {
             variable.setValue(symContext.getIdentifier());
+            variable.setLiteralType(symContext.getSymbolType());
             return variable;
         }
         else
@@ -579,18 +582,18 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
     public AbstractSyntaxTree visitPrimary(ManuScriptParser.PrimaryContext ctx) {
 
         if(ctx.Identifier() != null){
-
+            System.out.println("variable found");
             LeafNode variable = new LeafNode(null);
             variable.setNodeType(NodeType.VARIABLE);
             SymbolContext symContext = null;
 
 
             symContext = curScope.checkTables(ctx.Identifier().getText());
-//            String type = symContext.getSymbolType(); //todo: convert to enum?
 
             if(symContext != null){
+                System.out.println("symcontext found");
                 variable.setValue(symContext.getIdentifier());
-
+                variable.setLiteralType(symContext.getSymbolType());
                 return variable;
             }
             else
@@ -613,7 +616,7 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
 
         if(symContext != null) {
             variable.setValue(symContext.getIdentifier());
-
+            variable.setLiteralType(symContext.getSymbolType());
             return variable;
         }
         else
@@ -667,7 +670,7 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
         if(type != null) {
             LeafNode literal = new LeafNode(null);
             literal.setNodeType(NodeType.LITERAL);
-
+            literal.setLiteralType(type);
             literal.setValue(tn.getSymbol().getText());
 
             return literal;

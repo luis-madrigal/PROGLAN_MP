@@ -17,9 +17,9 @@ public class AbstractSyntaxTree {
     protected NodeType nodeType;
     protected Object value;
 
-    public AbstractSyntaxTree(AbstractSyntaxTree parent){
-       this.parent = parent;
-       this.children = new ArrayList<AbstractSyntaxTree>();
+    public AbstractSyntaxTree(AbstractSyntaxTree parent) {
+        this.parent = parent;
+        this.children = new ArrayList<AbstractSyntaxTree>();
     }
 
     public void print() {
@@ -27,13 +27,22 @@ public class AbstractSyntaxTree {
     }
 
     private void print(String prefix, boolean isTail) {
-        System.out.println(prefix + (isTail ? "--------- " : "--------- ") + nodeType);
+
+        if(nodeType == NodeType.VARIABLE){
+            System.out.println(prefix + (isTail ? "└── " : "├── ") + "VAR :"+ ((LeafNode)this).getLiteralType());
+        }
+        else if(nodeType == NodeType.LITERAL){
+            System.out.println(prefix + (isTail ? "└── " : "├── ") + "LIT :"+ ((LeafNode)this).getLiteralType());
+        }
+        else
+            System.out.println(prefix + (isTail ? "└── " : "├── ") + nodeType +"| val: "+value);
         for (int i = 0; i < children.size() - 1; i++) {
             children.get(i).print(prefix + (isTail ? "    " : "--�   "), false);
         }
         if (children.size() > 0) {
             children.get(children.size() - 1)
                     .print(prefix + (isTail ?"    " : "|--   "), true);
+
         }
     }
 
@@ -41,7 +50,7 @@ public class AbstractSyntaxTree {
         return children;
     }
 
-    public AbstractSyntaxTree getChild(int index){
+    public AbstractSyntaxTree getChild(int index) {
         return children.get(index);
     }
 
@@ -57,11 +66,11 @@ public class AbstractSyntaxTree {
         this.parent = parent;
     }
 
-    public Object getValue(){
+    public Object getValue() {
         return value;
     }
 
-    public void setValue(Object value){
+    public void setValue(Object value) {
         this.value = value;
     }
 
@@ -69,7 +78,7 @@ public class AbstractSyntaxTree {
         return nodeType;
     }
 
-    public void setNodeType(NodeType nodeType){
+    public void setNodeType(NodeType nodeType) {
         this.nodeType = nodeType;
     }
 

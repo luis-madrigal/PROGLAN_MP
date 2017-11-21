@@ -134,15 +134,21 @@ public class KeyTokens {
 
     public enum LITERAL_TYPE{//TODO: better implementation
         STRING("string"), INT("int"), FLOAT("float"), CHAR("char"), BOOLEAN("boolean"), NULL("null"), VOID("void");
-    	
+    
     	protected String name;
-    	
+
     	LITERAL_TYPE(String type) {
     		this.name = type;
 		}
-    	
-    	public static LITERAL_TYPE toEnum(String s) {
-    		return valueOf(s.toUpperCase());
-    	}
+ 
+        public static LITERAL_TYPE getEnum(String str) {
+            for (LITERAL_TYPE l : LITERAL_TYPE.values()) {
+                if (str.equalsIgnoreCase(l.name)) {
+                    return l;
+                }
+            }
+            return null;
+        }
+
     }
 }

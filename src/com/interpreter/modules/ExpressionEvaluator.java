@@ -2,127 +2,127 @@ package com.interpreter.modules;
 
 public class ExpressionEvaluator {
 	
-	public static int add(int x, int y) {
+	public static Integer add(Integer x, Integer y) {
 		return x + y;
 	}
 
-	public static int subtract(int x, int y) {
+	public static Integer subtract(Integer x, Integer y) {
 		return x - y;
 	}
 	
-	public static int multiply(int x, int y) {
+	public static Integer multiply(Integer x, Integer y) {
 		return x * y;
 	}
 	
-	public static int divide(int x, int y) {
+	public static Integer divide(Integer x, Integer y) {
 		return x / y;
 	}
 	
-	public static int modulo(int x, int y) {
+	public static Integer modulo(Integer x, Integer y) {
 		return x % y;
 	}
 	
-	public static int postInc(int x) {
+	public static Integer postInc(Integer x) {
 		return x++;
 	}
 	
-	public static int postDec(int x) {
+	public static Integer postDec(Integer x) {
 		return x--;
 	}
 	
-	public static int preInc(int x) {
+	public static Integer preInc(Integer x) {
 		return ++x;
 	}
 	
-	public static int preDec(int x) {
+	public static Integer preDec(Integer x) {
 		return  --x;
 	}
 	
-	public static int negate(int x) {
+	public static Integer negate(Integer x) {
 		return -x;
 	}
 	
-	public static int positive(int x) {
+	public static Integer positive(Integer x) {
 		return +x;
 	}
 	
-	public static float add(float x, float y) {
+	public static Float add(Float x, Float y) {
 		return x + y;
 	}
 	
-	public static float subtract(float x, float y) {
+	public static Float subtract(Float x, Float y) {
 		return x - y;
 	}
 	
-	public static float multiply(float x, float y) {
+	public static Float multiply(Float x, Float y) {
 		return x * y;
 	}
 	
-	public static float divide(float x, float y) {
+	public static Float divide(Float x, Float y) {
 		return x / y;
 	}
 	
-	public static float modulo(float x, float y) {
+	public static Float modulo(Float x, Float y) {
 		return x % y;
 	}
 	
-	public static float postInc(float x) {
+	public static Float postInc(Float x) {
 		return x++;
 	}
 	
-	public static float postDec(float x) {
+	public static Float postDec(Float x) {
 		return x--;
 	}
 	
-	public static float preInc(float x) {
+	public static Float preInc(Float x) {
 		return ++x;
 	}
 	
-	public static float preDec(float x) {
+	public static Float preDec(Float x) {
 		return  --x;
 	}
 	
-	public static float negate(float x) {
+	public static Float negate(Float x) {
 		return -x;
 	}
 	
-	public static float positive(float x) {
+	public static Float positive(Float x) {
 		return +x;
 	}
 	
-	public static int add(char x, char y) {
+	public static Integer add(Character x, Character y) {
 		return x + y;
 	}
 	
-	public static int subtract(char x, char y) {
+	public static Integer subtract(Character x, Character y) {
 		return x - y;
 	}
 	
-	public static int multiply(char x, char y) {
+	public static Integer multiply(Character x, Character y) {
 		return x * y;
 	}
 	
-	public static int divide(char x, char y) {
+	public static Integer divide(Character x, Character y) {
 		return x / y;
 	}
 	
-	public static int modulo(char x, char y) {
+	public static Integer modulo(Character x, Character y) {
 		return x % y;
 	}
 	
-	public static char postInc(char x) {
+	public static Character postInc(Character x) {
 		return x++;
 	}
 	
-	public static char postDec(char x) {
+	public static Character postDec(Character x) {
 		return x--;
 	}
 	
-	public static char preInc(char x) {
+	public static Character preInc(Character x) {
 		return ++x;
 	}
 	
-	public static char preDec(char x) {
+	public static Character preDec(Character x) {
 		return  --x;
 	}
 	
@@ -130,99 +130,99 @@ public class ExpressionEvaluator {
 		return x + y;
 	}
 	
-	public static String concat(String x, int y) {
+	public static String concat(String x, Integer y) {
 		return x + y;
 	}
 	
-	public static String concat(int x, String y) {
+	public static String concat(Integer x, String y) {
 		return x + y;
 	}
 	
-	public static String concat(String x, float y) {
+	public static String concat(String x, Float y) {
 		return x + y;
 	}
 	
-	public static String concat(float x, String y) {
+	public static String concat(Float x, String y) {
 		return x + y;
 	}
 	
-	public static String concat(String x, char y) {
+	public static String concat(String x, Character y) {
 		return x + y;
 	}
 	
-	public static String concat(char x, String y) {
+	public static String concat(Character x, String y) {
 		return x + y;
 	}
 	
-	public static int length(String x) {
+	public static Integer length(String x) {
 		return x.length();
 	}
 	
-	public static boolean negate(boolean x) {
+	public static Boolean negate(Boolean x) {
 		return !x;
 	}
 	
-	public static boolean equal(boolean x, boolean y) {
+	public static Boolean equal(Boolean x, Boolean y) {
 		return x == y;
 	}
 	
-	public static boolean notEqual(boolean x, boolean y) {
+	public static Boolean notEqual(Boolean x, Boolean y) {
 		return x != y;
 	}
 	
-	public static boolean and(boolean x, boolean y) {
+	public static Boolean and(Boolean x, Boolean y) {
 		return x && y;
 	}
 	
-	public static boolean or(boolean x, boolean y) {
+	public static Boolean or(Boolean x, Boolean y) {
 		return x || y;
 	}
 	
-	public static boolean lessThan(int x, int y) {
+	public static Boolean lessThan(Integer x, Integer y) {
 		return x < y;
 	}
 	
-	public static boolean lessThan(float x, float y) {
+	public static Boolean lessThan(Float x, Float y) {
 		return x < y;
 	}
 	
-	public static boolean lessThan(char x, char y) {
+	public static Boolean lessThan(Character x, Character y) {
 		return x < y;
 	}
 	
-	public static boolean lessThanOrEqual(int x, int y) {
+	public static Boolean lessThanOrEqual(Integer x, Integer y) {
 		return x <= y;
 	}
 	
-	public static boolean lessThanOrEqual(float x, float y) {
+	public static Boolean lessThanOrEqual(Float x, Float y) {
 		return x <= y;
 	}
 	
-	public static boolean lessThanOrEqual(char x, char y) {
+	public static Boolean lessThanOrEqual(Character x, Character y) {
 		return x <= y;
 	}
 	
-	public static boolean greaterThan(int x, int y) {
+	public static Boolean greaterThan(Integer x, Integer y) {
 		return x > y;
 	}
 	
-	public static boolean greaterThan(float x, float y) {
+	public static Boolean greaterThan(Float x, Float y) {
 		return x > y;
 	}
 	
-	public static boolean greaterThan(char x, char y) {
+	public static Boolean greaterThan(Character x, Character y) {
 		return x > y;
 	}
 	
-	public static boolean greaterThanOrEqual(int x, int y) {
+	public static Boolean greaterThanOrEqual(Integer x, Integer y) {
 		return x >= y;
 	}
 	
-	public static boolean greaterThanOrEqual(float x, float y) {
+	public static Boolean greaterThanOrEqual(Float x, Float y) {
 		return x >= y;
 	}
 	
-	public static boolean greaterThanOrEqual(char x, char y) {
+	public static Boolean greaterThanOrEqual(Character x, Character y) {
 		return x >= y;
 	}
 }

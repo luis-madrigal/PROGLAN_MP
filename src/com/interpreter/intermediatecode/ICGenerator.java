@@ -44,7 +44,7 @@ public class ICGenerator {
 		}
 	}
 	
-	private String branch(AbstractSyntaxTree node) {
+	private void branch(AbstractSyntaxTree node) {
 		
 	}
 	
