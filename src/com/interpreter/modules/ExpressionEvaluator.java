@@ -126,7 +126,31 @@ public class ExpressionEvaluator {
 		return  --x;
 	}
 	
-	public static String add(String x, String y) {
+	public static String concat(String x, String y) {
+		return x + y;
+	}
+	
+	public static String concat(String x, int y) {
+		return x + y;
+	}
+	
+	public static String concat(int x, String y) {
+		return x + y;
+	}
+	
+	public static String concat(String x, float y) {
+		return x + y;
+	}
+	
+	public static String concat(float x, String y) {
+		return x + y;
+	}
+	
+	public static String concat(String x, char y) {
+		return x + y;
+	}
+	
+	public static String concat(char x, String y) {
 		return x + y;
 	}
 	
