@@ -28,5 +28,9 @@ public class TACUnaryOpStatement extends TACOutputStatement {
 	public void setOperand1(String operand1) {
 		this.operand1 = operand1;
 	}
+	
+	public String toString() {
+		return super.toString() + this.operator.toString() + " " + this.operand1;
+	}
 
 }

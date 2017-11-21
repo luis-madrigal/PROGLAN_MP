@@ -1,10 +1,15 @@
 package com.interpreter.intermediatecode;
 
+import java.util.ArrayList;
+
 public class TACFuncInvokeStatement extends TACOutputStatement{
 	
 	private String methodName;
+	private ArrayList<String> params;
 
-	public TACFuncInvokeStatement() {
+	public TACFuncInvokeStatement(String methodName, ArrayList<String> params) {
+		this.methodName = methodName;
+		this.params = params;
 	}
 	
 	public String getMethodName() {
@@ -13,6 +18,16 @@ public class TACFuncInvokeStatement extends TACOutputStatement{
 
 	public void setMethodName(String methodName) {
 		this.methodName = methodName;
+	}
+	
+	public String toString() {
+		String msg = this.getLabel() + ": call "+this.methodName+": ";
+		for (String param : params) {
+			msg = msg.concat(param + ", ");
+		}
+		msg = msg.substring(0, msg.length()-2);
+		
+		return msg;
 	}
 
 }

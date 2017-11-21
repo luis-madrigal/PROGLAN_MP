@@ -8,4 +8,7 @@ public class TACGotoStatement extends TACStatement {
 		this.jumpDest = jumpDest;
 	}
 
+	public String toString() {
+		return this.getLabel() + ": goto "+this.jumpDest;
+	}
 }

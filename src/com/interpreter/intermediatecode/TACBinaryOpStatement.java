@@ -17,13 +17,7 @@ public class TACBinaryOpStatement extends TACOutputStatement{
 		this.output = null;
 	}
 	
-//	public LeafNode evaluate() {
-//		if(output == null) {
-//			switch(operator) {
-//			
-//			}
-//		}
-//		
-//		return output;
-//	}
+	public String toString() {
+		return super.toString() + this.operand1 + " " + this.operator.toString() + " " + this.operand2;
+	}
 }

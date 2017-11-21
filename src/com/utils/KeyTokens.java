@@ -57,6 +57,13 @@ public class KeyTokens {
         GEQ(">="),
         EQUAL("=="),
         NEQUAL("!="),
+        
+        ASSIGN("="),
+        PLUSASSIGN("+="),
+        SUBASSIGN("-="),
+        MULTASSIGN("*="),
+        DIVASSIGN("/="),
+        MODASSIGN("%="),
 
         AND("&&"),
         OR("||"),
@@ -66,32 +73,34 @@ public class KeyTokens {
 
     	NOT("!");
     	
-    	protected String token;
+    	protected String name;
 
     	OPERATOR(String token) {
-            this.token = token;
+            this.name = token;
         }
 
         @Override
         public String toString() {
-            return this.token;
+            return this.name;
         }
         
-        public static OPERATOR toEnum(String s) {//TODO: inefficient
-        	for(int i = 0; i < values().length; i++) {
-        		if(s.equals(values()[i]))
-        			return values()[i];
-        	}
-        	return null;
+        public static OPERATOR getEnum(String str) {
+            for (OPERATOR o : OPERATOR.values()) {
+                if (str.equalsIgnoreCase(o.name)) {
+                    return o;
+                }
+            }
+            return null;
         }
         
-        public static OPERATOR toEnum(Object ob) {//TODO: inefficient
-        	String s = ob.toString();
-        	for(int i = 0; i < values().length; i++) {
-        		if(s.equals(values()[i]))
-        			return values()[i];
-        	}
-        	return null;
+        public static OPERATOR getEnum(Object ob) {
+        	String str = ob.toString();
+            for (OPERATOR o : OPERATOR.values()) {
+                if (str.equalsIgnoreCase(o.name)) {
+                    return o;
+                }
+            }
+            return null;
         }
     }
 

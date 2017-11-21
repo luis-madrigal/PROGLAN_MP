@@ -115,7 +115,7 @@ public class ScannerModel {
 		astbv.printAST("main");
 		
 		ICGenerator icg = new ICGenerator(astbv.getMethodASTTable().get("main"));
-		
+		icg.print();
 
 //		System.out.println(tree.toStringTree(parser));
 		

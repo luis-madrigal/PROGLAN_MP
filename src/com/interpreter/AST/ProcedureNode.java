@@ -20,15 +20,4 @@ public class ProcedureNode extends AbstractSyntaxTree{
     public void setProcedureName(String name){
         this.procedureName = name;
     }
-
-    @Override
-    public List<AbstractSyntaxTree> getChildren() {
-        return null;
-    }
-
-    @Override
-    public AbstractSyntaxTree getChild(int index) {
-        return null;
-    }
-
 }

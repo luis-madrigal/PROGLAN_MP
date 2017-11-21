@@ -4,7 +4,8 @@ public class TACFuncDeclarationStatement extends TACStatement{
 	
 	private String methodName;
 
-	public TACFuncDeclarationStatement() {
+	public TACFuncDeclarationStatement(String methodName) {
+		this.methodName = methodName;
 	}
 
 	public String getMethodName() {
@@ -13,6 +14,10 @@ public class TACFuncDeclarationStatement extends TACStatement{
 
 	public void setMethodName(String methodName) {
 		this.methodName = methodName;
+	}
+	
+	public String toString() {
+		return this.getLabel() + ": declare " + this.methodName;
 	}
 
 }

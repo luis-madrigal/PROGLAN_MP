@@ -211,34 +211,34 @@ public class Panel implements ActionListener, KeyListener, MouseListener {
 		this.inputLines.setEditable(false);
 		this.inputLines.setMargin(new Insets(0, 5, 0, 5));
 		
-		this.codeInput.getDocument().addDocumentListener(new DocumentListener() {
-			public String getText() {
-				int caretPosition = codeInput.getDocument().getLength();
-				Element root = codeInput.getDocument().getDefaultRootElement();
-				String text = "1" + System.getProperty("line.separator");
-				for(int i = 2; i < root.getElementIndex(caretPosition)+2; i++) {
-					text += i+System.getProperty("line.separator");
-				}
-				
-				return text;
-			}
-
-			@Override
-			public void changedUpdate(DocumentEvent arg0) {
-				inputLines.setText(getText());
-			}
-
-			@Override
-			public void insertUpdate(DocumentEvent arg0) {
-				inputLines.setText(getText());
-				
-			}
-
-			@Override
-			public void removeUpdate(DocumentEvent arg0) {
-				inputLines.setText(getText());
-			}
-		});
+//		this.codeInput.getDocument().addDocumentListener(new DocumentListener() {
+//			public String getText() {
+//				int caretPosition = codeInput.getDocument().getLength();
+//				Element root = codeInput.getDocument().getDefaultRootElement();
+//				String text = "1" + System.getProperty("line.separator");
+//				for(int i = 2; i < root.getElementIndex(caretPosition)+2; i++) {
+//					text += i+System.getProperty("line.separator");
+//				}
+//				
+//				return text;
+//			}
+//
+//			@Override
+//			public void changedUpdate(DocumentEvent arg0) {
+//				inputLines.setText(getText());
+//			}
+//
+//			@Override
+//			public void insertUpdate(DocumentEvent arg0) {
+//				inputLines.setText(getText());
+//				
+//			}
+//
+//			@Override
+//			public void removeUpdate(DocumentEvent arg0) {
+//				inputLines.setText(getText());
+//			}
+//		});
 		
 		this.inputPane = new RTextScrollPane(this.codeInput);
 		this.inputPane.setPreferredSize(new Dimension((int) Frame.SCREEN_SIZE.getWidth()/2, 150));

@@ -1,42 +1,34 @@
 package com.interpreter.intermediatecode;
 
-import com.utils.KeyTokens.OPERATOR;
-
-public class TACIfStatement extends TACStatement{
-	private String condition;
+public class TACLoopStatement extends TACStatement{
+	
 	private String jumpDestTrue;
 	private String jumpDestFalse;
-
-	public TACIfStatement(String operand) {
-		this.condition = operand;
+	private String condition;
+	public TACLoopStatement(String condition) {
+		this.condition = condition;
 	}
-
-	public String getOperand() {
-		return condition;
-	}
-
-	public void setOperand(String operand) {
-		this.condition = operand;
-	}
-
 	public String getJumpDestTrue() {
 		return jumpDestTrue;
 	}
-
 	public void setJumpDestTrue(String jumpDestTrue) {
 		this.jumpDestTrue = jumpDestTrue;
 	}
-
 	public String getJumpDestFalse() {
 		return jumpDestFalse;
 	}
-
 	public void setJumpDestFalse(String jumpDestFalse) {
 		this.jumpDestFalse = jumpDestFalse;
 	}
+	public String getCondition() {
+		return condition;
+	}
+	public void setCondition(String condition) {
+		this.condition = condition;
+	}
 	
 	public String toString() {
-		return this.getLabel() + ": if "+ this.condition + " goto " + this.jumpDestTrue;
+		return this.getLabel() + ": loop " + this.condition + " goto " + this.jumpDestTrue;
 	}
 	
 }

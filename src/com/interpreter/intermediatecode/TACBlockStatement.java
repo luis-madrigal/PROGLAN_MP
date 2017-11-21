@@ -7,5 +7,9 @@ public class TACBlockStatement extends TACStatement{
 	public TACBlockStatement() {
 		this.message = "BLOCK";
 	}
+	
+	public String toString() {
+		return this.getLabel() +": " +this.message;
+	}
 
 }

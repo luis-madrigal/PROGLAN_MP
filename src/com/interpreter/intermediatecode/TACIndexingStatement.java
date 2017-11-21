@@ -25,5 +25,9 @@ public class TACIndexingStatement extends TACOutputStatement {
 	public void setIndex(String index) {
 		this.index = index;
 	}
+	
+	public String toString() {
+		return super.toString() + this.arrayName + "[" + this.index + "]";
+	}
 
 }

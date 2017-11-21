@@ -555,7 +555,7 @@ switchLabel
 
 forControl
     :   enhancedForControl
-    |   forInit? ';' expression? ';' forUpdate?
+    |   forInit ';' expression? ';' forUpdate?
     ;
 
 forInit
