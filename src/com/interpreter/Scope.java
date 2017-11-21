@@ -26,10 +26,19 @@ public class Scope extends HashSet<String>{
 		return (parent == null)? false : parent.inScope(varName);
 	}
 
-	public SymbolContext getIfInScope(String varName){
-		if(parent == null)
-			return null;
-		return (symTable.get(varName) != null)? symTable.get(varName) : parent.getIfInScope(varName);
+	public void print() {
+		print("", true);
+	}
+
+	private void print(String prefix, boolean isTail) {
+		System.out.println(prefix + (isTail ? "└── " : "├── ") + "scope");
+		for (int i = 0; i < children.size() - 1; i++) {
+			children.get(i).print(prefix + (isTail ? "    " : "│   "), false);
+		}
+		if (children.size() > 0) {
+			children.get(children.size() - 1)
+					.print(prefix + (isTail ?"    " : "│   "), true);
+		}
 	}
 
 	public SymbolContext checkTables(String varName) {

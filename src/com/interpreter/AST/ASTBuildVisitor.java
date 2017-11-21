@@ -103,7 +103,6 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
 
     @Override
     public AbstractSyntaxTree visitBlock(ManuScriptParser.BlockContext ctx) {
-        System.out.println("ENTERED BLOCK");
         enterBlock();
 
         AbstractSyntaxTree blockNode = new AbstractSyntaxTree(null);
@@ -585,7 +584,7 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
 
 
             symContext = curScope.checkTables(ctx.Identifier().getText());
-            String type = symContext.getSymbolType(); //todo: convert to enum?
+//            String type = symContext.getSymbolType(); //todo: convert to enum?
 
             if(symContext != null){
                 variable.setValue(symContext.getIdentifier());

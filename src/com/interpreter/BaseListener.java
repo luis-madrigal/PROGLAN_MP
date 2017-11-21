@@ -54,6 +54,7 @@ public class BaseListener extends ManuScriptBaseListener{
 	@Override public void enterBlock(ManuScriptParser.BlockContext ctx) { 
 		if(!(ctx.parent instanceof MethodBodyContext)) {
 			Scope scope = new Scope(scopes.peek());
+			scopes.peek().addChild(scope);
 			scopes.push(scope);
 		}
 	}

@@ -107,6 +107,7 @@ public class ScannerModel {
 	//	System.out.println("varX child 1: "+scope.getChildren().get(1).getIfInScope("x"));
 	//	System.out.println("IS IN SCOPE: "+scope.getChildren().get(1).inScope("z"));
 		System.out.println("IS IN SCOPE(x): "+scope.getChildren().get(2).inScope("x"));
+		scope.print();
 
 		ASTBuildVisitor astbv = new ASTBuildVisitor(scope);
 		astbv.visit(tree);
