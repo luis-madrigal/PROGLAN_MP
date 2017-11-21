@@ -17,9 +17,9 @@ public class AbstractSyntaxTree {
     protected NodeType nodeType;
     protected Object value;
 
-    public AbstractSyntaxTree(AbstractSyntaxTree parent){
-       this.parent = parent;
-       this.children = new ArrayList<AbstractSyntaxTree>();
+    public AbstractSyntaxTree(AbstractSyntaxTree parent) {
+        this.parent = parent;
+        this.children = new ArrayList<AbstractSyntaxTree>();
     }
 
     public void print() {
@@ -33,7 +33,7 @@ public class AbstractSyntaxTree {
         }
         if (children.size() > 0) {
             children.get(children.size() - 1)
-                    .print(prefix + (isTail ?"    " : "│   "), true);
+                    .print(prefix + (isTail ? "    " : "│   "), true);
         }
     }
 
@@ -41,7 +41,7 @@ public class AbstractSyntaxTree {
         return children;
     }
 
-    public AbstractSyntaxTree getChild(int index){
+    public AbstractSyntaxTree getChild(int index) {
         return children.get(index);
     }
 
@@ -57,11 +57,11 @@ public class AbstractSyntaxTree {
         this.parent = parent;
     }
 
-    public Object getValue(){
+    public Object getValue() {
         return value;
     }
 
-    public void setValue(Object value){
+    public void setValue(Object value) {
         this.value = value;
     }
 
@@ -69,7 +69,7 @@ public class AbstractSyntaxTree {
         return nodeType;
     }
 
-    public void setNodeType(NodeType nodeType){
+    public void setNodeType(NodeType nodeType) {
         this.nodeType = nodeType;
     }
 }

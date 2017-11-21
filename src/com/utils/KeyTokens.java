@@ -86,6 +86,12 @@ public class KeyTokens {
     }
 
     public enum LITERAL_TYPE{
-        STRING, INT, FLOAT, CHAR, BOOL, NULL
+        STRING("string"), INT("int"), FLOAT("float"), CHAR("char"), BOOL("boolean"), NULL("null"), VOID("void");
+    	
+    	protected String name;
+    	
+    	LITERAL_TYPE(String type) {
+    		this.name = type;
+		}
     }
 }
