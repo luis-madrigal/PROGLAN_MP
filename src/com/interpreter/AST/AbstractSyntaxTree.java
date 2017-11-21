@@ -27,7 +27,14 @@ public class AbstractSyntaxTree {
     }
 
     private void print(String prefix, boolean isTail) {
-        System.out.println(prefix + (isTail ? "└── " : "├── ") + nodeType);
+        if(nodeType == NodeType.VARIABLE){
+            System.out.println(prefix + (isTail ? "└── " : "├── ") + "VAR :"+ ((LeafNode)this).getLiteralType());
+        }
+        else if(nodeType == NodeType.LITERAL){
+            System.out.println(prefix + (isTail ? "└── " : "├── ") + "LIT :"+ ((LeafNode)this).getLiteralType());
+        }
+        else
+            System.out.println(prefix + (isTail ? "└── " : "├── ") + nodeType +"| val: "+value);
         for (int i = 0; i < children.size() - 1; i++) {
             children.get(i).print(prefix + (isTail ? "    " : "│   "), false);
         }

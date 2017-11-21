@@ -244,10 +244,12 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
             statementIf.setParent(node);
             node.addChild(statementIf);
         }
-        AbstractSyntaxTree statementElse = visit(ctx.statement(1));
-        if(statementElse!=null) {
-            statementElse.setParent(node);
-            node.addChild(statementElse);
+        if(ctx.statement().size() >= 1) {
+            AbstractSyntaxTree statementElse = visit(ctx.statement(1));
+            if (statementElse != null) {
+                statementElse.setParent(node);
+                node.addChild(statementElse);
+            }
         }
         return node;
     }
