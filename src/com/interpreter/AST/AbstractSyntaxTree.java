@@ -82,7 +82,6 @@ public class AbstractSyntaxTree {
                 return break;
             case BIN_LOGIC: break;
             case ASSIGN:break;
-            case UNI_ARITHMETIC:break;
             case UNI_LOGIC:break;
             case WHILE:break;
             case DO_WHILE:break;

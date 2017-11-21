@@ -27,6 +27,7 @@ import com.parser.ManuScriptParser.PrimaryExprContext;
 import com.parser.ManuScriptParser.VariableDeclaratorContext;
 import com.parser.ManuScriptParser.VariableExprContext;
 import com.utils.Console;
+import com.utils.KeyTokens;
 import com.utils.Types;
 import com.utils.Utils;
 
@@ -97,7 +98,7 @@ public class BaseListener extends ManuScriptBaseListener{
 				
 				System.out.println("added "+varName+" from method " +methodName+ " to symbol table");
 				scope.add(varName);
-				getCurrentSymTable().put(varName, new SymbolContext(fpctx.typeType().getText(), scope, varName));
+				getCurrentSymTable().put(varName, new SymbolContext(KeyTokens.LITERAL_TYPE.valueOf(fpctx.typeType().getText()), scope, varName));
 			}
 		}
 	}
@@ -105,12 +106,12 @@ public class BaseListener extends ManuScriptBaseListener{
 	@Override public void exitMethodDeclaration(ManuScriptParser.MethodDeclarationContext ctx) {
 		MethodContext mctx = methodTable.get(currentMethod);
 		if(mctx.getReturnType().equals(Types.NULL)) {
-			mctx.setReturnType(Types.VOID);
+			mctx.setReturnType(KeyTokens.LITERAL_TYPE.VOID);
 		}
 	}
 
 	@Override public void enterFieldDeclaration(ManuScriptParser.FieldDeclarationContext ctx) {
-		String varType = ctx.typeType().getText();
+		KeyTokens.LITERAL_TYPE varType = KeyTokens.LITERAL_TYPE.valueOf(ctx.typeType().getText());
         Scope scope = scopes.peek();
         boolean isConstant = false;
 
@@ -130,10 +131,10 @@ public class BaseListener extends ManuScriptBaseListener{
 						
 						if(acrctx.arrayInitializer() != null) {
 							//array is being initialized
-							this.expressionChecker(acrctx.arrayInitializer(), aictx.creator().createdName().getText());
+							this.expressionChecker(acrctx.arrayInitializer(), KeyTokens.LITERAL_TYPE.valueOf(aictx.creator().createdName().getText()));
 						} else if(acrctx.expression() != null) {
 							//array is being declared TODO: expression(0) can be wrong
-							this.expressionChecker(acrctx.expression(0), aictx.creator().createdName().getText());
+							this.expressionChecker(acrctx.expression(0), KeyTokens.LITERAL_TYPE.valueOf(aictx.creator().createdName().getText()));
 						}
 					} else {
 						this.expressionChecker(vdctx.variableInitializer(), varType);
@@ -141,7 +142,7 @@ public class BaseListener extends ManuScriptBaseListener{
 				}
 				System.out.println("added "+varName+" to symbol table");
 				scope.add(varName);
-				getCurrentSymTable().put(varName, new SymbolContext(ctx.typeType().getText(), scope, varName, isConstant));
+				getCurrentSymTable().put(varName, new SymbolContext(KeyTokens.LITERAL_TYPE.valueOf(ctx.typeType().getText()), scope, varName, isConstant));
 			}
 		}
 	}
@@ -149,7 +150,7 @@ public class BaseListener extends ManuScriptBaseListener{
 	@Override public void exitFieldDeclaration(ManuScriptParser.FieldDeclarationContext ctx) { }
 	
 	@Override public void enterLocalVariableDeclaration(ManuScriptParser.LocalVariableDeclarationContext ctx) { 
-		String varType = ctx.typeType().getText();
+		KeyTokens.LITERAL_TYPE varType = KeyTokens.LITERAL_TYPE.valueOf(ctx.typeType().getText());
         Scope scope = scopes.peek();
         
 		for (VariableDeclaratorContext vdctx : ctx.variableDeclarators().variableDeclarator()) {
@@ -165,10 +166,10 @@ public class BaseListener extends ManuScriptBaseListener{
 						
 						if(acrctx.arrayInitializer() != null) {
 							//array is being initialized
-							this.expressionChecker(acrctx.arrayInitializer(), aictx.creator().createdName().getText());
+							this.expressionChecker(acrctx.arrayInitializer(), KeyTokens.LITERAL_TYPE.valueOf(aictx.creator().createdName().getText()));
 						} else if(acrctx.expression() != null) {
 							//array is being declared TODO: expression(0) can be wrong
-							this.expressionChecker(acrctx.expression(0), aictx.creator().createdName().getText());
+							this.expressionChecker(acrctx.expression(0), KeyTokens.LITERAL_TYPE.valueOf(aictx.creator().createdName().getText()));
 						}
 					} else {
 						this.expressionChecker(vdctx.variableInitializer(), varType);
@@ -176,7 +177,7 @@ public class BaseListener extends ManuScriptBaseListener{
 				}
 				System.out.println("added "+varName+" to symbol table");
 				scope.add(varName);
-				getCurrentSymTable().put(varName, new SymbolContext(ctx.typeType().getText(), scope, varName));
+				getCurrentSymTable().put(varName, new SymbolContext(KeyTokens.LITERAL_TYPE.valueOf(ctx.typeType().getText()), scope, varName));
 			}
 		}
 
@@ -299,17 +300,17 @@ public class BaseListener extends ManuScriptBaseListener{
 		}
 	}
 	
-	private String getExpressionType(ParseTree node) {
+	private KeyTokens.LITERAL_TYPE getExpressionType(ParseTree node) {
 		int i = 0;//TODO: bad implementation
 		while(node.getChild(i) != null) {
-			String type;
+			KeyTokens.LITERAL_TYPE type;
         	if(!(type = getExpressionType(node.getChild(i))).equals(Types.NULL)) {
         		return type;
         	}
         	i++;
         }
 		
-		String actualType = Types.NULL;
+		KeyTokens.LITERAL_TYPE actualType = KeyTokens.LITERAL_TYPE.NULL;
 		
 		if(node.getParent() instanceof LiteralContext) {
 			LiteralContext lctx = (LiteralContext) node.getParent();
@@ -329,11 +330,11 @@ public class BaseListener extends ManuScriptBaseListener{
 			return actualType;
 		}
 		
-		return Types.NULL;
+		return KeyTokens.LITERAL_TYPE.NULL;
 	}
 	
-	private String expressionChecker(ParseTree node, String expectedType) {
-		String finalType = Types.NULL;
+	private KeyTokens.LITERAL_TYPE expressionChecker(ParseTree node, KeyTokens.LITERAL_TYPE expectedType) {
+		KeyTokens.LITERAL_TYPE finalType = KeyTokens.LITERAL_TYPE.NULL;
     	int i = 0;
         while(node.getChild(i) != null) {
         	if(node instanceof ComparisonExprContext 
@@ -349,7 +350,7 @@ public class BaseListener extends ManuScriptBaseListener{
         
 		if (node.getChildCount() == 0) {
 			//check if either literal or variable then check type. return false if mismatch
-			String actualType = Types.NULL;
+			KeyTokens.LITERAL_TYPE actualType = KeyTokens.LITERAL_TYPE.NULL;
 			
 			if(node.getParent() instanceof LiteralContext) {
 				LiteralContext lctx = (LiteralContext) node.getParent();
@@ -398,7 +399,7 @@ public class BaseListener extends ManuScriptBaseListener{
 //	    		this.boolExpressionCheck(node, expectedType);
 //    		return false;
 	    	this.boolExpressionCheck(node, expectedType);
-	    	return Types.BOOLEAN;
+	    	return KeyTokens.LITERAL_TYPE.BOOL;
 	    } 
 		
 		return finalType;
@@ -480,7 +481,7 @@ public class BaseListener extends ManuScriptBaseListener{
 //	}
 	
 	//TODO: still not working
-	private boolean boolExpressionCheck(ParseTree node, String expectedType) {
+	private boolean boolExpressionCheck(ParseTree node, KeyTokens.LITERAL_TYPE expectedType) {
 		//expression check left and right side
 		ParseTree leftNode = node.getChild(0);
 		ParseTree rightNode = node.getChild(2);
@@ -490,8 +491,8 @@ public class BaseListener extends ManuScriptBaseListener{
 			LiteralContext leftCtx = (LiteralContext) Utils.getNthChild(leftNode, 2);
 			LiteralContext rightCtx = (LiteralContext) Utils.getNthChild(rightNode, 2);
 			
-			String leftType = LiteralMatcher.instance().getLiteralType(leftCtx);
-			String rightType = LiteralMatcher.instance().getLiteralType(rightCtx);
+			KeyTokens.LITERAL_TYPE leftType = LiteralMatcher.instance().getLiteralType(leftCtx);
+			KeyTokens.LITERAL_TYPE rightType = LiteralMatcher.instance().getLiteralType(rightCtx);
 			
 			boolean hasError = false;
 			
