@@ -569,7 +569,7 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
 
         if(symContext != null) {
             variable.setValue(symContext.getIdentifier());
-            variable.setLiteralType(KeyTokens.LITERAL_TYPE.valueOf(symContext.getSymbolType()));
+            variable.setLiteralType(symContext.getSymbolType());
             return variable;
         }
         else
@@ -590,7 +590,7 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
 
             if(symContext != null){
                 variable.setValue(symContext.getIdentifier());
-                variable.setLiteralType(KeyTokens.LITERAL_TYPE.valueOf(symContext.getSymbolType()));
+                variable.setLiteralType(symContext.getSymbolType());
                 return variable;
             }
             else
@@ -613,7 +613,7 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
 
         if(symContext != null) {
             variable.setValue(symContext.getIdentifier());
-            variable.setLiteralType(KeyTokens.LITERAL_TYPE.valueOf(symContext.getSymbolType()));
+            variable.setLiteralType(symContext.getSymbolType());
             return variable;
         }
         else
@@ -632,7 +632,7 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
 
         if(symContext != null) {
             variable.setValue(symContext.getIdentifier());
-            variable.setLiteralType(KeyTokens.LITERAL_TYPE.valueOf(symContext.getSymbolType()));
+            variable.setLiteralType(symContext.getSymbolType());
             return variable;
         }
         else

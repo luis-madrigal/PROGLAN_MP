@@ -22,7 +22,7 @@ public class MethodContext extends Context{
 		argTypes = new ArrayList<KeyTokens.LITERAL_TYPE>();
 		if(ctx.formalParameters().formalParameterList() != null) {
 			for (FormalParameterContext fpctx : ctx.formalParameters().formalParameterList().formalParameter()) {
-				argTypes.add(KeyTokens.LITERAL_TYPE.valueOf(fpctx.typeType().getText()));
+				argTypes.add(KeyTokens.LITERAL_TYPE.getEnum(fpctx.typeType().getText()));
 			}
 		}
 		
@@ -35,7 +35,7 @@ public class MethodContext extends Context{
 			if(ctx.formalParameters().formalParameterList().formalParameter().size() != this.argTypes.size())
 				return false;
 			for (FormalParameterContext fpctx : ctx.formalParameters().formalParameterList().formalParameter()) {
-				argTypes.add(KeyTokens.LITERAL_TYPE.valueOf(fpctx.typeType().getText()));
+				argTypes.add(KeyTokens.LITERAL_TYPE.getEnum(fpctx.typeType().getText()));
 			}
 		}
 		

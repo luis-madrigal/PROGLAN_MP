@@ -98,7 +98,7 @@ public class BaseListener extends ManuScriptBaseListener{
 				
 				System.out.println("added "+varName+" from method " +methodName+ " to symbol table");
 				scope.add(varName);
-				getCurrentSymTable().put(varName, new SymbolContext(KeyTokens.LITERAL_TYPE.valueOf(fpctx.typeType().getText()), scope, varName));
+				getCurrentSymTable().put(varName, new SymbolContext(KeyTokens.LITERAL_TYPE.getEnum(fpctx.typeType().getText()), scope, varName));
 			}
 		}
 	}
@@ -111,7 +111,7 @@ public class BaseListener extends ManuScriptBaseListener{
 	}
 
 	@Override public void enterFieldDeclaration(ManuScriptParser.FieldDeclarationContext ctx) {
-		KeyTokens.LITERAL_TYPE varType = KeyTokens.LITERAL_TYPE.valueOf(ctx.typeType().getText());
+		KeyTokens.LITERAL_TYPE varType = KeyTokens.LITERAL_TYPE.getEnum(ctx.typeType().getText());
         Scope scope = scopes.peek();
         boolean isConstant = false;
 
@@ -131,10 +131,10 @@ public class BaseListener extends ManuScriptBaseListener{
 						
 						if(acrctx.arrayInitializer() != null) {
 							//array is being initialized
-							this.expressionChecker(acrctx.arrayInitializer(), KeyTokens.LITERAL_TYPE.valueOf(aictx.creator().createdName().getText()));
+							this.expressionChecker(acrctx.arrayInitializer(), KeyTokens.LITERAL_TYPE.getEnum(aictx.creator().createdName().getText()));
 						} else if(acrctx.expression() != null) {
 							//array is being declared TODO: expression(0) can be wrong
-							this.expressionChecker(acrctx.expression(0), KeyTokens.LITERAL_TYPE.valueOf(aictx.creator().createdName().getText()));
+							this.expressionChecker(acrctx.expression(0), KeyTokens.LITERAL_TYPE.getEnum(aictx.creator().createdName().getText()));
 						}
 					} else {
 						this.expressionChecker(vdctx.variableInitializer(), varType);
@@ -142,7 +142,7 @@ public class BaseListener extends ManuScriptBaseListener{
 				}
 				System.out.println("added "+varName+" to symbol table");
 				scope.add(varName);
-				getCurrentSymTable().put(varName, new SymbolContext(KeyTokens.LITERAL_TYPE.valueOf(ctx.typeType().getText()), scope, varName, isConstant));
+				getCurrentSymTable().put(varName, new SymbolContext(KeyTokens.LITERAL_TYPE.getEnum(ctx.typeType().getText()), scope, varName, isConstant));
 			}
 		}
 	}
@@ -150,7 +150,7 @@ public class BaseListener extends ManuScriptBaseListener{
 	@Override public void exitFieldDeclaration(ManuScriptParser.FieldDeclarationContext ctx) { }
 	
 	@Override public void enterLocalVariableDeclaration(ManuScriptParser.LocalVariableDeclarationContext ctx) { 
-		KeyTokens.LITERAL_TYPE varType = KeyTokens.LITERAL_TYPE.valueOf(ctx.typeType().getText());
+		KeyTokens.LITERAL_TYPE varType = KeyTokens.LITERAL_TYPE.getEnum(ctx.typeType().getText());
         Scope scope = scopes.peek();
         
 		for (VariableDeclaratorContext vdctx : ctx.variableDeclarators().variableDeclarator()) {
@@ -166,10 +166,10 @@ public class BaseListener extends ManuScriptBaseListener{
 						
 						if(acrctx.arrayInitializer() != null) {
 							//array is being initialized
-							this.expressionChecker(acrctx.arrayInitializer(), KeyTokens.LITERAL_TYPE.valueOf(aictx.creator().createdName().getText()));
+							this.expressionChecker(acrctx.arrayInitializer(), KeyTokens.LITERAL_TYPE.getEnum(aictx.creator().createdName().getText()));
 						} else if(acrctx.expression() != null) {
 							//array is being declared TODO: expression(0) can be wrong
-							this.expressionChecker(acrctx.expression(0), KeyTokens.LITERAL_TYPE.valueOf(aictx.creator().createdName().getText()));
+							this.expressionChecker(acrctx.expression(0), KeyTokens.LITERAL_TYPE.getEnum(aictx.creator().createdName().getText()));
 						}
 					} else {
 						this.expressionChecker(vdctx.variableInitializer(), varType);
@@ -177,7 +177,7 @@ public class BaseListener extends ManuScriptBaseListener{
 				}
 				System.out.println("added "+varName+" to symbol table");
 				scope.add(varName);
-				getCurrentSymTable().put(varName, new SymbolContext(KeyTokens.LITERAL_TYPE.valueOf(ctx.typeType().getText()), scope, varName));
+				getCurrentSymTable().put(varName, new SymbolContext(KeyTokens.LITERAL_TYPE.getEnum(ctx.typeType().getText()), scope, varName));
 			}
 		}
 
