@@ -632,7 +632,7 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
 
         if(symContext != null) {
             variable.setValue(symContext.getIdentifier());
-
+            variable.setLiteralType(symContext.getSymbolType());
             return variable;
         }
         else
