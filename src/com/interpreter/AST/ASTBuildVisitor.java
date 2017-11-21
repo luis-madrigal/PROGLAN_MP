@@ -244,7 +244,7 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
             statementIf.setParent(node);
             node.addChild(statementIf);
         }
-        if(ctx.statement().size() >= 1) {
+        if(ctx.statement(1) != null) {
             AbstractSyntaxTree statementElse = visit(ctx.statement(1));
             if (statementElse != null) {
                 statementElse.setParent(node);
@@ -582,7 +582,7 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
     public AbstractSyntaxTree visitPrimary(ManuScriptParser.PrimaryContext ctx) {
 
         if(ctx.Identifier() != null){
-
+            System.out.println("variable found");
             LeafNode variable = new LeafNode(null);
             variable.setNodeType(NodeType.VARIABLE);
             SymbolContext symContext = null;
@@ -591,6 +591,7 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
             symContext = curScope.checkTables(ctx.Identifier().getText());
 
             if(symContext != null){
+                System.out.println("symcontext found");
                 variable.setValue(symContext.getIdentifier());
                 variable.setLiteralType(symContext.getSymbolType());
                 return variable;
