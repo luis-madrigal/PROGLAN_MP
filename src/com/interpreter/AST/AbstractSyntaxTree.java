@@ -1,5 +1,6 @@
 package com.interpreter.AST;
 
+import com.interpreter.modules.ExpressionEvaluator;
 import com.interpreter.modules.Writer;
 import com.utils.KeyTokens;
 
@@ -72,23 +73,26 @@ public class AbstractSyntaxTree {
         this.nodeType = nodeType;
     }
 
-    public void evaluate(AbstractSyntaxTree node) {
-        System.out.println(node.getNodeType());
-        switch(node.getNodeType()) {
+    public Object evaluate() {
+        switch(getNodeType()) {
             case PROCEDURE:break;
             case PROCEDURE_CALL:break;
             case RETURN:break;
-//            case BIN_ARITHMETIC: if(value.equals("+")
-//                return break;
+            case BIN_ARITHMETIC:
+                if(value.equals("+"))
+                    return ExpressionEvaluator.add(children.get(0).evaluate(),children.get(1).evaluate());
+                    break;
             case BIN_LOGIC: break;
             case ASSIGN:break;
-             case UNI_LOGIC:break;
+            case UNIPOST_ARITHMETIC: break;
+            case UNIPRE_ARITHMETIC: break;
+            case UNI_LOGIC:break;
             case WHILE:break;
             case DO_WHILE:break;
             case FOR:break;
             case TERMINAL:break;
             case BRANCH:break; //used for if-else statements
-            case PRINT: Writer.printText(node.getValue().toString());break;
+            case PRINT: Writer.printText(getValue().toString());break;
             case SCAN:break;
             default:break;
         }
