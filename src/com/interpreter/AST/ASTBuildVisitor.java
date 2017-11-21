@@ -123,7 +123,7 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
     public AbstractSyntaxTree visitMethodDeclaration(ManuScriptParser.MethodDeclarationContext ctx) {
         ProcedureNode pNode = new ProcedureNode(null,ctx.Identifier().getText());
         System.out.println("visited method declaration: "+ctx.Identifier().getText());
-        pNode.setNodeType(NodeType.PROCEDURE);
+        pNode.setNodeType(NodeType.FUNCTION_DECLARATION);
 
         AbstractSyntaxTree block = visit(ctx.methodBody().block());
         if (block != null) {
@@ -303,7 +303,7 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
     @Override
     public AbstractSyntaxTree visitFunctionExpr(ManuScriptParser.FunctionExprContext ctx) {
         ProcedureNode node = new ProcedureNode(null, ctx.variableExpr().getText());
-        node.setNodeType(NodeType.PROCEDURE_CALL);
+        node.setNodeType(NodeType.FUNCTION_INVOKE);
         for(ManuScriptParser.ExpressionContext c : ctx.expressionList().expression()){
             AbstractSyntaxTree param = visit(c);
             if(param != null) {
@@ -649,7 +649,7 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
         }
         else if(ctx.BooleanLiteral() != null) {
             tn = ctx.BooleanLiteral();
-            type = KeyTokens.LITERAL_TYPE.BOOL;
+            type = KeyTokens.LITERAL_TYPE.BOOLEAN;
         }
         else if(ctx.IntegerLiteral() != null) {
             tn = ctx.IntegerLiteral();

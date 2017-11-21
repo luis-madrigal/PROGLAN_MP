@@ -8,6 +8,7 @@ import java.util.Stack;
 import com.interpreter.AST.ASTBuildVisitor;
 import com.interpreter.AST.AbstractSyntaxTree;
 import com.interpreter.contexts.MethodContext;
+import com.interpreter.intermediatecode.ICGenerator;
 
 import org.antlr.v4.gui.TreeViewer;
 import org.antlr.v4.runtime.ANTLRErrorListener;
@@ -112,6 +113,9 @@ public class ScannerModel {
 		ASTBuildVisitor astbv = new ASTBuildVisitor(scope);
 		astbv.visit(tree);
 		astbv.printAST("main");
+		
+		ICGenerator icg = new ICGenerator(astbv.getMethodASTTable().get("main"));
+		
 
 //		System.out.println(tree.toStringTree(parser));
 		

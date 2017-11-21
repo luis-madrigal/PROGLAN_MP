@@ -1,7 +1,5 @@
 package com.utils;
 
-import sun.rmi.runtime.Log;
-
 public class KeyTokens {
 
     //Binary Operators
@@ -47,6 +45,55 @@ public class KeyTokens {
             }
         }
     }
+    
+    public enum OPERATOR {
+    	ADD("+"),
+        SUB("-"),
+        MULT("*"),
+        DIV("/"),
+    	LESS("<"),
+        LEQ("<="),
+        GREATER(">"),
+        GEQ(">="),
+        EQUAL("=="),
+        NEQUAL("!="),
+
+        AND("&&"),
+        OR("||"),
+    	
+    	INC("++"),
+        DEC("--"),
+
+    	NOT("!");
+    	
+    	protected String token;
+
+    	OPERATOR(String token) {
+            this.token = token;
+        }
+
+        @Override
+        public String toString() {
+            return this.token;
+        }
+        
+        public static OPERATOR toEnum(String s) {//TODO: inefficient
+        	for(int i = 0; i < values().length; i++) {
+        		if(s.equals(values()[i]))
+        			return values()[i];
+        	}
+        	return null;
+        }
+        
+        public static OPERATOR toEnum(Object ob) {//TODO: inefficient
+        	String s = ob.toString();
+        	for(int i = 0; i < values().length; i++) {
+        		if(s.equals(values()[i]))
+        			return values()[i];
+        	}
+        	return null;
+        }
+    }
 
     public static class UNARY {
         public enum Arithmetic_U {
@@ -85,13 +132,17 @@ public class KeyTokens {
         VARIABLE, LITERAL;
     }
 
-    public enum LITERAL_TYPE{
-        STRING("string"), INT("int"), FLOAT("float"), CHAR("char"), BOOL("boolean"), NULL("null"), VOID("void");
+    public enum LITERAL_TYPE{//TODO: better implementation
+        STRING("string"), INT("int"), FLOAT("float"), CHAR("char"), BOOLEAN("boolean"), NULL("null"), VOID("void");
     	
     	protected String name;
     	
     	LITERAL_TYPE(String type) {
     		this.name = type;
 		}
+    	
+    	public static LITERAL_TYPE toEnum(String s) {
+    		return valueOf(s.toUpperCase());
+    	}
     }
 }

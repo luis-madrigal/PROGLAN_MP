@@ -3,7 +3,7 @@ package com.interpreter.AST;
 public enum NodeType{
     //TODO: wala pang structures
     BLOCK,
-    PROCEDURE, PROCEDURE_CALL,
+    FUNCTION_DECLARATION, FUNCTION_INVOKE,
     RETURN,
     BIN_ARITHMETIC, BIN_LOGIC, ASSIGN,
     ARRAY_ACCESS,

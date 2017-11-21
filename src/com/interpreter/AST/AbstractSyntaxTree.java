@@ -27,13 +27,13 @@ public class AbstractSyntaxTree {
     }
 
     private void print(String prefix, boolean isTail) {
-        System.out.println(prefix + (isTail ? "└── " : "├── ") + nodeType);
+        System.out.println(prefix + (isTail ? "--------- " : "--------- ") + nodeType);
         for (int i = 0; i < children.size() - 1; i++) {
-            children.get(i).print(prefix + (isTail ? "    " : "│   "), false);
+            children.get(i).print(prefix + (isTail ? "    " : "--�   "), false);
         }
         if (children.size() > 0) {
             children.get(children.size() - 1)
-                    .print(prefix + (isTail ?"    " : "│   "), true);
+                    .print(prefix + (isTail ?"    " : "|--   "), true);
         }
     }
 
@@ -75,12 +75,12 @@ public class AbstractSyntaxTree {
 
     public Object evaluate() {
         switch(getNodeType()) {
-            case PROCEDURE:break;
-            case PROCEDURE_CALL:break;
+            case FUNCTION_DECLARATION:break;
+            case FUNCTION_INVOKE:break;
             case RETURN:break;
             case BIN_ARITHMETIC:
-                if(value.equals("+"))
-                    return ExpressionEvaluator.add(children.get(0).evaluate(),children.get(1).evaluate());
+//                if(value.equals("+"))
+//                    return ExpressionEvaluator.add(children.get(0).evaluate(),children.get(1).evaluate());
                     break;
             case BIN_LOGIC: break;
             case ASSIGN:break;
@@ -96,5 +96,6 @@ public class AbstractSyntaxTree {
             case SCAN:break;
             default:break;
         }
+		return null;
     }
 }

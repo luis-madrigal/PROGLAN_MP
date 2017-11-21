@@ -31,8 +31,8 @@ public class CodeGenerator {
     private void evaluate(AbstractSyntaxTree node) {
         System.out.println(node.getNodeType());
         switch(node.getNodeType()) {
-            case PROCEDURE:break;
-            case PROCEDURE_CALL:break;
+            case FUNCTION_DECLARATION:break;
+            case FUNCTION_INVOKE:break;
             case RETURN:break;
             case BIN_ARITHMETIC:break;
             case BIN_LOGIC:break;
