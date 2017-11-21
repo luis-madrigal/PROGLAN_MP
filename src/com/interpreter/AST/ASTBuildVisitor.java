@@ -47,7 +47,7 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
     }
 
     @Override public AbstractSyntaxTree visitCompilationUnit(ManuScriptParser.CompilationUnitContext ctx) {
-		System.out.println("start AST generation");
+
 		return visitChildren(ctx);
 	}
 
@@ -151,7 +151,9 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
     public AbstractSyntaxTree visitReturnStmt(ManuScriptParser.ReturnStmtContext ctx) {
         AbstractSyntaxTree node = new AbstractSyntaxTree(null);
         node.setNodeType(NodeType.RETURN);
+
         AbstractSyntaxTree child = visit(ctx.expression());
+
         if(child!=null) {
             child.setParent(node);
             node.addChild(child);
