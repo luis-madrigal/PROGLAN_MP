@@ -1,22 +1,26 @@
 package com.interpreter.tac;
 
+import com.interpreter.AST.NodeType;
+import com.interpreter.tac.operands.Operand;
+
 public class TACReturnStatement extends TACStatement{
 
-	private String expression;
+	private Operand expression;
 
-	public TACReturnStatement(String expression) {
+	public TACReturnStatement(NodeType type, Operand expression) {
+		super(type);
 		this.expression = expression;
 	}
 
-	public String getExpression() {
+	public Operand getExpression() {
 		return expression;
 	}
 
-	public void setExpression(String expression) {
+	public void setExpression(Operand expression) {
 		this.expression = expression;
 	}
 	
 	public String toString() {
-		return this.getLabel() + ": return " + this.expression;
+		return this.getLabel() + ": return " + this.expression.toString();
 	}
 }

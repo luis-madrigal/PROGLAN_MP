@@ -36,4 +36,12 @@ public class SymbolContext extends Context{
 	public void setConstant(boolean isConstant) {
 		this.isConstant = isConstant;
 	}
+
+	public Object getValue() {
+		return value;
+	}
+
+	public void setValue(Object value) {
+		this.value = value;
+	}
 }

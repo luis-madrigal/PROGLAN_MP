@@ -1,11 +1,15 @@
 package com.interpreter.tac;
 
+import com.interpreter.AST.NodeType;
+import com.interpreter.tac.operands.Operand;
+
 public class TACLoopStatement extends TACStatement{
 	
 	private String jumpDestTrue;
 	private String jumpDestFalse;
-	private String condition;
-	public TACLoopStatement(String condition) {
+	private Operand condition;
+	public TACLoopStatement(NodeType type, Operand condition) {
+		super(type);
 		this.condition = condition;
 	}
 	public String getJumpDestTrue() {
@@ -20,15 +24,15 @@ public class TACLoopStatement extends TACStatement{
 	public void setJumpDestFalse(String jumpDestFalse) {
 		this.jumpDestFalse = jumpDestFalse;
 	}
-	public String getCondition() {
+	public Operand getCondition() {
 		return condition;
 	}
-	public void setCondition(String condition) {
+	public void setCondition(Operand condition) {
 		this.condition = condition;
 	}
 	
 	public String toString() {
-		return this.getLabel() + ": loop " + this.condition + " goto " + this.jumpDestTrue + " else goto " + this.jumpDestFalse;
+		return this.getLabel() + ": loop " + this.condition.toString() + " goto " + this.jumpDestTrue + " else goto " + this.jumpDestFalse;
 	}
 	
 }

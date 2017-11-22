@@ -1,10 +1,13 @@
 package com.interpreter.tac;
 
+import com.interpreter.AST.NodeType;
+
 public class TACFuncDeclarationStatement extends TACStatement{
 	
 	private String methodName;
 
-	public TACFuncDeclarationStatement(String methodName) {
+	public TACFuncDeclarationStatement(NodeType type, String methodName) {
+		super(type);
 		this.methodName = methodName;
 	}
 

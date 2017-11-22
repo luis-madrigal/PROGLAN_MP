@@ -1,16 +1,18 @@
 package com.interpreter.tac;
 
-import com.interpreter.AST.LeafNode;
+import com.interpreter.AST.NodeType;
+import com.interpreter.tac.operands.Operand;
 import com.utils.KeyTokens.OPERATOR;
 
 public class TACBinaryOpStatement extends TACOutputStatement{
 	
 	private OPERATOR operator;
-	private LeafNode output;
-	private String operand1;
-	private String operand2;
+	private Operand output;
+	private Operand operand1;
+	private Operand operand2;
 	
-	public TACBinaryOpStatement(OPERATOR operator, String operand1, String operand2) {
+	public TACBinaryOpStatement(NodeType type, OPERATOR operator, Operand operand1, Operand operand2) {
+		super(type);
 		this.operator = operator;
 		this.operand1 = operand1;
 		this.operand2 = operand2;
@@ -18,6 +20,6 @@ public class TACBinaryOpStatement extends TACOutputStatement{
 	}
 	
 	public String toString() {
-		return super.toString() + this.operand1 + " " + this.operator.toString() + " " + this.operand2;
+		return super.toString() + this.operand1.toString() + " " + this.operator.toString() + " " + this.operand2.toString();
 	}
 }

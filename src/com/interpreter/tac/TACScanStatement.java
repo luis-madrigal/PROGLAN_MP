@@ -1,11 +1,13 @@
 package com.interpreter.tac;
 
+import com.interpreter.AST.NodeType;
+
 public class TACScanStatement extends TACStatement{
 	
 	private String variable;
 
-	public TACScanStatement(String variable) {
-		super();
+	public TACScanStatement(NodeType type, String variable) {
+		super(type);
 		this.variable = variable;
 	}
 

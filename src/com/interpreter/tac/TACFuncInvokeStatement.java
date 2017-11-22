@@ -2,12 +2,16 @@ package com.interpreter.tac;
 
 import java.util.ArrayList;
 
+import com.interpreter.AST.NodeType;
+import com.interpreter.tac.operands.Operand;
+
 public class TACFuncInvokeStatement extends TACOutputStatement{
 	
 	private String methodName;
-	private ArrayList<String> params;
+	private ArrayList<Operand> params;
 
-	public TACFuncInvokeStatement(String methodName, ArrayList<String> params) {
+	public TACFuncInvokeStatement(NodeType type, String methodName, ArrayList<Operand> params) {
+		super(type);
 		this.methodName = methodName;
 		this.params = params;
 	}
@@ -22,12 +26,20 @@ public class TACFuncInvokeStatement extends TACOutputStatement{
 	
 	public String toString() {
 		String msg = super.toString() + " call "+this.methodName+": ";
-		for (String param : params) {
-			msg = msg.concat(param + ", ");
+		for (Operand param : params) {
+			msg = msg.concat(param.toString() + ", ");
 		}
 		msg = msg.substring(0, msg.length()-2);
 		
 		return msg;
+	}
+
+	public ArrayList<Operand> getParams() {
+		return params;
+	}
+
+	public void setParams(ArrayList<Operand> params) {
+		this.params = params;
 	}
 
 }

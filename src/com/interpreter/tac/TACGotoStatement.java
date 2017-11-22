@@ -1,15 +1,18 @@
 package com.interpreter.tac;
 
+import com.interpreter.AST.NodeType;
+
 public class TACGotoStatement extends TACStatement {
 	
 	private String jumpDest;
 	
-	public TACGotoStatement(String jumpDest) {
+	public TACGotoStatement(NodeType type, String jumpDest) {
+		super(type);
 		this.jumpDest = jumpDest;
 	}
 	
-	public TACGotoStatement() {
-		
+	public TACGotoStatement(NodeType type) {
+		super(type);
 	}
 
 	public String getJumpDest() {
