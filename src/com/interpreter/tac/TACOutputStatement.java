@@ -23,5 +23,7 @@ public abstract class TACOutputStatement extends TACStatement {
 	public String toString() {
 		return this.getLabel() + ": " + this.outputRegister + " := ";
 	}
+	
+	
 
 }

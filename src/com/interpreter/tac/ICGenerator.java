@@ -18,10 +18,15 @@ public class ICGenerator {
 	private int registerCount;
 	private int labelCount; //TODO: each instruction has label (not sure)
 	
+	public ICGenerator() {
+		this.registerCount = 0;
+		this.labelCount = 0;
+	}
+	
 	public ArrayList<TACStatement> generateICode(AbstractSyntaxTree tree) {
 		this.tac = new ArrayList<TACStatement>();
-		registerCount = 0;
-		labelCount = 0;
+//		registerCount = 0;
+//		labelCount = 0;
 		this.storeStatement(tree);
 		return this.tac;
 	}
