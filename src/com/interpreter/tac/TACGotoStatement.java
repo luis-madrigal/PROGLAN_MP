@@ -1,4 +1,4 @@
-package com.interpreter.intermediatecode;
+package com.interpreter.tac;
 
 public class TACGotoStatement extends TACStatement {
 	

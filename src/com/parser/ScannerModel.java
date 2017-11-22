@@ -8,7 +8,7 @@ import java.util.Stack;
 import com.interpreter.AST.ASTBuildVisitor;
 import com.interpreter.AST.AbstractSyntaxTree;
 import com.interpreter.contexts.MethodContext;
-import com.interpreter.intermediatecode.ICGenerator;
+import com.interpreter.tac.ICGenerator;
 
 import org.antlr.v4.gui.TreeViewer;
 import org.antlr.v4.runtime.ANTLRErrorListener;

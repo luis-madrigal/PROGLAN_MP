@@ -1,4 +1,4 @@
-package com.interpreter.intermediatecode;
+package com.interpreter.tac;
 
 import com.interpreter.AST.LeafNode;
 import com.utils.KeyTokens.OPERATOR;

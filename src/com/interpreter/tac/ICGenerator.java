@@ -1,4 +1,4 @@
-package com.interpreter.intermediatecode;
+package com.interpreter.tac;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -11,8 +11,8 @@ import com.utils.KeyTokens.OPERATOR;
 
 public class ICGenerator {
 	
-	private final String label = "L";
-	private final String register = "T";
+	private static final String LABEL_ALIAS = "L";
+	private static final String REGISTER_ALIAS = "T";
 	
 	private ArrayList<TACStatement> tac;
 	private int registerCount;
@@ -62,9 +62,9 @@ public class ICGenerator {
 		this.addStatement(stmt);
 		this.storeExpression(node.getChild(2));
 		this.storeStatement(node.getChild(3));
-		this.addStatement(new TACGotoStatement(this.label+currentLblCount));
-		stmt.setJumpDestTrue(this.label+currentLblCount);
-		stmt.setJumpDestFalse(this.label+(this.labelCount+1));
+		this.addStatement(new TACGotoStatement(ICGenerator.LABEL_ALIAS+currentLblCount));
+		stmt.setJumpDestTrue(ICGenerator.LABEL_ALIAS+currentLblCount);
+		stmt.setJumpDestFalse(ICGenerator.LABEL_ALIAS+(this.labelCount+1));
 	}
 	
 	private void doWhileStmt(AbstractSyntaxTree node) {
@@ -72,8 +72,8 @@ public class ICGenerator {
 		this.storeStatement(node.getChild(0));
 		TACLoopStatement stmt = new TACLoopStatement(this.storeExpression(node.getChild(1)));
 		this.addStatement(stmt);
-		stmt.setJumpDestTrue(this.label+currentLblCount);
-		stmt.setJumpDestFalse(this.label+(this.labelCount+1));
+		stmt.setJumpDestTrue(ICGenerator.LABEL_ALIAS+currentLblCount);
+		stmt.setJumpDestFalse(ICGenerator.LABEL_ALIAS+(this.labelCount+1));
 	}
 	
 	private void whileStmt(AbstractSyntaxTree node) {
@@ -81,9 +81,9 @@ public class ICGenerator {
 		TACLoopStatement stmt = new TACLoopStatement(this.storeExpression(node.getChild(0)));
 		this.addStatement(stmt);
 		this.storeStatement(node.getChild(1));
-		this.addStatement(new TACGotoStatement(this.label+currentLblCount)); //check condition if still true
-		stmt.setJumpDestTrue(this.label+currentLblCount);
-		stmt.setJumpDestFalse(this.label+(this.labelCount+1));
+		this.addStatement(new TACGotoStatement(ICGenerator.LABEL_ALIAS+currentLblCount)); //check condition if still true
+		stmt.setJumpDestTrue(ICGenerator.LABEL_ALIAS+currentLblCount);
+		stmt.setJumpDestFalse(ICGenerator.LABEL_ALIAS+(this.labelCount+1));
 	}
 	
 	private void branch(AbstractSyntaxTree node) {
@@ -92,7 +92,7 @@ public class ICGenerator {
 		for(int i = 1; i < node.getChildren().size(); i++) {
 			this.storeStatement(node.getChild(i));
 		}
-		this.addStatement(new TACGotoStatement(this.label+this.labelCount));
+		this.addStatement(new TACGotoStatement(ICGenerator.LABEL_ALIAS+this.labelCount));
 	}
 	
 	private String storeExpression(AbstractSyntaxTree node) {
@@ -105,7 +105,8 @@ public class ICGenerator {
 			switch(n.getNodeType()) {
 			case VARIABLE: 
 			case LITERAL: return n.getValue().toString();
-			case ASSIGN:
+			case ASSIGN: TACAssignStatement aStmt = new TACAssignStatement(OPERATOR.getEnum(n.getValue()), this.storeExpression(n.getChild(0)), this.storeExpression(n.getChild(1)));
+						 this.addAssignStatement(aStmt); break;
 			case BIN_ARITHMETIC:
 			case BIN_LOGIC: stmt = new TACBinaryOpStatement(OPERATOR.getEnum(n.getValue()), this.storeExpression(n.getChild(0)), this.storeExpression(n.getChild(1)));
 							this.addOutputStatement(stmt);
@@ -141,16 +142,30 @@ public class ICGenerator {
 		this.addOutputStatement(stmt);
 	}
 	
+	private void addAssignStatement(TACAssignStatement stmt) {
+		switch (stmt.getOperator()) {
+		case ASSIGN:
+			break;
+		default:
+			TACBinaryOpStatement binOp = new TACBinaryOpStatement(OPERATOR.getOpOfAssign(stmt.getOperator()), stmt.getVariable(), stmt.getValue());
+			this.addOutputStatement(binOp);
+			stmt.setOperator(OPERATOR.ASSIGN);
+			stmt.setValue(binOp.getOutputRegister());
+			break;
+		}
+		this.addStatement(stmt);
+	}
+	
 	private void addOutputStatement(TACOutputStatement stmt) {
 		this.registerCount++;
-		stmt.setOutputRegister(this.register+this.registerCount);
+		stmt.setOutputRegister(ICGenerator.REGISTER_ALIAS+this.registerCount);
 		this.addStatement(stmt);
 	}
 	
 	private void addStatement(TACStatement stmt) {
 		this.labelCount++;
 		this.tac.add(stmt);
-		stmt.setLabel(this.label+this.labelCount);
+		stmt.setLabel(ICGenerator.LABEL_ALIAS+this.labelCount);
 	}
 	
 	public void print() {
