@@ -1,5 +1,6 @@
 package com.parser;
 import java.util.List;
+import java.util.Map;
 import java.util.Arrays;
 import java.util.BitSet;
 import java.util.HashMap;
@@ -7,6 +8,7 @@ import java.util.Stack;
 
 import com.interpreter.AST.ASTBuildVisitor;
 import com.interpreter.AST.AbstractSyntaxTree;
+import com.interpreter.AST.ProcedureNode;
 import com.interpreter.contexts.MethodContext;
 import com.interpreter.tac.ICGenerator;
 
@@ -114,9 +116,14 @@ public class ScannerModel {
 		astbv.visit(tree);
 		astbv.printAST("main");
 		
-		ICGenerator icg = new ICGenerator(astbv.getMethodASTTable().get("main"));
-		icg.print();
-
+		ICGenerator icg = new ICGenerator();
+		
+		for (Map.Entry<String, ProcedureNode> entry : astbv.getMethodASTTable().entrySet()) {
+			System.out.println("GENERATE ICODE FOR: "+entry.getKey());
+			icg.generateICode(entry.getValue());
+			icg.print();
+		}
+		
 //		System.out.println(tree.toStringTree(parser));
 		
 		String tokenized = "";

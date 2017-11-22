@@ -28,7 +28,7 @@ public class TACLoopStatement extends TACStatement{
 	}
 	
 	public String toString() {
-		return this.getLabel() + ": loop " + this.condition + " goto " + this.jumpDestTrue;
+		return this.getLabel() + ": loop " + this.condition + " goto " + this.jumpDestTrue + " else goto " + this.jumpDestFalse;
 	}
 	
 }

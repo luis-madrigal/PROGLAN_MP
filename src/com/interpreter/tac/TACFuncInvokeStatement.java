@@ -21,7 +21,7 @@ public class TACFuncInvokeStatement extends TACOutputStatement{
 	}
 	
 	public String toString() {
-		String msg = this.getLabel() + ": call "+this.methodName+": ";
+		String msg = super.toString() + " call "+this.methodName+": ";
 		for (String param : params) {
 			msg = msg.concat(param + ", ");
 		}

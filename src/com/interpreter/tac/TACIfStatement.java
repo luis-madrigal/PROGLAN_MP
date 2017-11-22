@@ -36,7 +36,7 @@ public class TACIfStatement extends TACStatement{
 	}
 	
 	public String toString() {
-		return this.getLabel() + ": if "+ this.condition + " goto " + this.jumpDestTrue;
+		return this.getLabel() + ": if "+ this.condition + " goto " + this.jumpDestTrue + " else goto " + this.jumpDestFalse;
 	}
 	
 }

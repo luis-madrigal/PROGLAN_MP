@@ -18,11 +18,12 @@ public class ICGenerator {
 	private int registerCount;
 	private int labelCount; //TODO: each instruction has label (not sure)
 	
-	public ICGenerator(AbstractSyntaxTree tree) {
-		tac = new ArrayList<TACStatement>();
+	public ArrayList<TACStatement> generateICode(AbstractSyntaxTree tree) {
+		this.tac = new ArrayList<TACStatement>();
 		registerCount = 0;
 		labelCount = 0;
 		this.storeStatement(tree);
+		return this.tac;
 	}
 	
 	public void storeStatement(AbstractSyntaxTree node) {
@@ -40,9 +41,9 @@ public class ICGenerator {
 			case FOR: this.forStmt(n); flag = false; break;
 			case BLOCK: this.addStatement(new TACBlockStatement()); break; //TODO: distinguish between enter and exit
 			case FUNCTION_DECLARATION: this.addStatement(new TACFuncDeclarationStatement(((ProcedureNode)n).getProcedureName())); break;
-			case RETURN: break;
-			case PRINT: this.addStatement(new TACPrintStatement(this.storeExpression(n))); break;
-			case SCAN: break;
+			case RETURN: this.addStatement(new TACReturnStatement(this.storeExpression(n))); flag = false;break;
+			case PRINT: this.addStatement(new TACPrintStatement(this.storeExpression(n))); flag = false; break;
+			case SCAN: this.addStatement(new TACScanStatement(n.getChild(0).getValue().toString())); flag = false; break;
 			default:
 				break;
 			}
@@ -60,10 +61,10 @@ public class ICGenerator {
 		int currentLblCount = this.labelCount + 1;
 		TACLoopStatement stmt = new TACLoopStatement(this.storeExpression(node.getChild(1)));
 		this.addStatement(stmt);
+		stmt.setJumpDestTrue(ICGenerator.LABEL_ALIAS+(this.labelCount+1));
 		this.storeExpression(node.getChild(2));
 		this.storeStatement(node.getChild(3));
 		this.addStatement(new TACGotoStatement(ICGenerator.LABEL_ALIAS+currentLblCount));
-		stmt.setJumpDestTrue(ICGenerator.LABEL_ALIAS+currentLblCount);
 		stmt.setJumpDestFalse(ICGenerator.LABEL_ALIAS+(this.labelCount+1));
 	}
 	
@@ -80,19 +81,28 @@ public class ICGenerator {
 		int currentLblCount = this.labelCount + 1;
 		TACLoopStatement stmt = new TACLoopStatement(this.storeExpression(node.getChild(0)));
 		this.addStatement(stmt);
+		stmt.setJumpDestTrue(ICGenerator.LABEL_ALIAS+(this.labelCount+1));
 		this.storeStatement(node.getChild(1));
 		this.addStatement(new TACGotoStatement(ICGenerator.LABEL_ALIAS+currentLblCount)); //check condition if still true
-		stmt.setJumpDestTrue(ICGenerator.LABEL_ALIAS+currentLblCount);
 		stmt.setJumpDestFalse(ICGenerator.LABEL_ALIAS+(this.labelCount+1));
 	}
 	
 	private void branch(AbstractSyntaxTree node) {
 		TACIfStatement stmt = new TACIfStatement(this.storeExpression(node.getChild(0)));
+		TACGotoStatement gotoStmt = new TACGotoStatement();
 		this.addStatement(stmt);
-		for(int i = 1; i < node.getChildren().size(); i++) {
-			this.storeStatement(node.getChild(i));
+		stmt.setJumpDestTrue(ICGenerator.LABEL_ALIAS+(this.labelCount+1));
+		
+		this.storeStatement(node.getChild(1));
+//		this.addStatement(new TACGotoStatement(ICGenerator.LABEL_ALIAS+(this.labelCount-1)));
+		this.addStatement(gotoStmt);
+		stmt.setJumpDestFalse(ICGenerator.LABEL_ALIAS+(this.labelCount+1));
+
+		for(int i = 2; i < node.getChildren().size(); i++) {
+			this.storeStatement(node.getChild(i));	
 		}
-		this.addStatement(new TACGotoStatement(ICGenerator.LABEL_ALIAS+this.labelCount));
+		
+		gotoStmt.setJumpDest(ICGenerator.LABEL_ALIAS+(this.labelCount+1));
 	}
 	
 	private String storeExpression(AbstractSyntaxTree node) {
@@ -119,7 +129,7 @@ public class ICGenerator {
 			case ARRAY_ACCESS: stmt = new TACIndexingStatement(this.storeExpression(n.getChild(0)), this.storeExpression(n.getChild(1)));
 							   this.addOutputStatement(stmt);
 							   return stmt.getOutputRegister();
-			case FUNCTION_INVOKE: this.funcInvoke(n); break;
+			case FUNCTION_INVOKE: return this.funcInvoke(n); 
 			default:
 				break;
 			}
@@ -131,7 +141,7 @@ public class ICGenerator {
 		return "";
 	}
 	
-	private void funcInvoke(AbstractSyntaxTree node) {
+	private String funcInvoke(AbstractSyntaxTree node) {
 		ProcedureNode pNode = (ProcedureNode) node;
 		ArrayList<String> params = new ArrayList<String>();
 		for (AbstractSyntaxTree astNode : node.getChildren()) {
@@ -140,6 +150,8 @@ public class ICGenerator {
 		
 		TACFuncInvokeStatement stmt = new TACFuncInvokeStatement(pNode.getProcedureName(), params);
 		this.addOutputStatement(stmt);
+		
+		return stmt.getOutputRegister();
 	}
 	
 	private void addAssignStatement(TACAssignStatement stmt) {
