@@ -239,6 +239,11 @@ public class Panel implements ActionListener, KeyListener, MouseListener {
 		        (int)horizontalHeight
 		));
 		
+		this.inputPane.getVerticalScrollBar().setPreferredSize(new Dimension(
+		        (int)horizontalHeight,
+		        (int)inputPane.getVerticalScrollBar().getPreferredSize().getWidth()
+		));
+
 		gbc = new GridBagConstraints();
 		gbc.anchor = GridBagConstraints.NORTHWEST;
 		gbc.fill = GridBagConstraints.BOTH;
@@ -284,6 +289,12 @@ public class Panel implements ActionListener, KeyListener, MouseListener {
 		        (int)horizontalHeight
 		));
 		
+		this.parsedPane.getVerticalScrollBar().setPreferredSize(new Dimension(
+		        (int)horizontalHeight,
+		        (int)parsedPane.getVerticalScrollBar().getPreferredSize().getHeight()
+		));
+		
+		
 		// For three address code
 		this.threeACOut = new JTextPane();
         this.threeACOut.setFont(new Font("Consolas", 150, baseFontSize));
@@ -306,6 +317,11 @@ public class Panel implements ActionListener, KeyListener, MouseListener {
 		        (int)horizontalHeight
 		));
 		
+		this.threeACPane.getVerticalScrollBar().setPreferredSize(new Dimension(
+		        (int)horizontalHeight,
+		        (int)threeACPane.getVerticalScrollBar().getPreferredSize().getHeight()
+		));
+		
 		this.treePane = new JScrollPane(); //TODO: do parse tree
 		this.treePane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		this.treePane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
@@ -317,6 +333,11 @@ public class Panel implements ActionListener, KeyListener, MouseListener {
 		this.treePane.getHorizontalScrollBar().setPreferredSize(new Dimension(
 		        (int)treePane.getHorizontalScrollBar().getPreferredSize().getWidth(),
 		        (int)horizontalHeight
+		));
+
+		this.treePane.getVerticalScrollBar().setPreferredSize(new Dimension(
+		        (int)horizontalHeight,
+		        (int)treePane.getVerticalScrollBar().getPreferredSize().getHeight()
 		));
 		
 		JPanel parentPane = new JPanel();
