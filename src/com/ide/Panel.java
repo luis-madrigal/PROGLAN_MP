@@ -17,6 +17,7 @@ import java.beans.PropertyChangeListener;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -28,6 +29,7 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextPane;
 import javax.swing.ScrollPaneConstants;
+import javax.swing.UIManager;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.AttributeSet;
@@ -99,6 +101,36 @@ public class Panel implements ActionListener, KeyListener, MouseListener {
 	public static int baseFontSize = (int) Frame.SCREEN_SIZE.getHeight() / 60;
 	
 	public Panel() {
+		// Remove JTabbedPane "Borders"
+		UIManager.getDefaults().put("TabbedPane.contentBorderInsets", new Insets(0,0,0,0));
+		UIManager.getDefaults().put("TabbedPane.tabsOverlapBorder", true);
+
+	
+		UIManager.getDefaults().put("SplitPane.border", BorderFactory.createEmptyBorder());
+		UIManager.getDefaults().put("SplitPane.contentBorderInsets", new Insets(0,0,0,0));
+		
+		UIManager.put("TabbedPane.selected", Styles.SKY_BLUE);
+		
+		UIManager.getLookAndFeelDefaults().put("TabbedPane:TabbedPaneTab[Enabled].backgroundPainter", new BackgroundPainter(Color.WHITE));
+        UIManager.getLookAndFeelDefaults().put("TabbedPane:TabbedPaneTab[Enabled+MouseOver].backgroundPainter", new BackgroundPainter(Color.WHITE));
+        UIManager.getLookAndFeelDefaults().put("TabbedPane:TabbedPaneTab[Enabled+Pressed].backgroundPainter", new BackgroundPainter(Color.WHITE));
+        UIManager.getLookAndFeelDefaults().put("TabbedPane:TabbedPaneTab[Focused+MouseOver+Selected].backgroundPainter", new BackgroundPainter(Color.WHITE));
+        UIManager.getLookAndFeelDefaults().put("TabbedPane:TabbedPaneTab[Focused+Pressed+Selected].backgroundPainter", new BackgroundPainter(Color.WHITE));
+        UIManager.getLookAndFeelDefaults().put("TabbedPane:TabbedPaneTab[Focused+Selected].backgroundPainter", new BackgroundPainter(Color.GRAY));
+        UIManager.getLookAndFeelDefaults().put("TabbedPane:TabbedPaneTab[MouseOver+Selected].backgroundPainter", new BackgroundPainter(Color.WHITE));
+        UIManager.getLookAndFeelDefaults().put("TabbedPane:TabbedPaneTab[Pressed+Selected].backgroundPainter", new BackgroundPainter(Color.WHITE));
+        UIManager.getLookAndFeelDefaults().put("TabbedPane:TabbedPaneTab[Selected].backgroundPainter", new BackgroundPainter(Color.WHITE));
+		
+        
+        UIManager.put("TabbedPane.borderHightlightColor", Color.WHITE);
+        UIManager.put("TabbedPane.darkShadow", Color.WHITE);
+        UIManager.put("TabbedPane.shadow", Color.WHITE);
+        UIManager.put("TabbedPane.light", Color.WHITE);
+        UIManager.put("TabbedPane.highlight", Color.WHITE);
+        UIManager.put("TabbedPane.focus", Color.WHITE);
+        UIManager.put("TabbedPane.selectHighlight", Color.WHITE);
+        
+        
 		this.styles = new Styles();
 		//-----------------------Syntax Highlighting (for output) TO REMOVE----------------------------------
 		SimpleAttributeSet attrKeyword = new SimpleAttributeSet();
@@ -408,6 +440,13 @@ public class Panel implements ActionListener, KeyListener, MouseListener {
 		//Scanner for input string
 		this.scanner = new ScannerModel();
 		
+		this.topSplitPane.setDividerSize(1);
+		this.topSplitPane.setBackground(Color.WHITE);
+		this.topSplitPane.setContinuousLayout(true);
+		
+		this.bottomSplitPane.setDividerSize(1);
+		this.bottomSplitPane.setBackground(Color.WHITE);
+		this.bottomSplitPane.setContinuousLayout(true);
 		
 	}
 	
