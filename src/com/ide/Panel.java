@@ -17,6 +17,7 @@ import java.beans.PropertyChangeListener;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -28,8 +29,7 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextPane;
 import javax.swing.ScrollPaneConstants;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
+import javax.swing.UIManager;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.DefaultStyledDocument;
@@ -48,6 +48,7 @@ import org.fife.ui.rtextarea.RTextScrollPane;
 import com.ide.styles.IdeStyle;
 import com.ide.styles.RSyntaxTextAreaManuscript;
 import com.ide.styles.Styles;
+import com.override.CustomScrollBarUISky;
 import com.parser.ScannerModel;
 import com.utils.Console;
 
@@ -64,23 +65,21 @@ public class Panel implements ActionListener, KeyListener, MouseListener {
 	private JLabel lblConsole;
 	
 	private JTextArea inputLines;
-//	private JTextArea outputLines;
 	
 	private JSplitPane topSplitPane;
 	private JSplitPane bottomSplitPane;
 	
-//	private JPanel topPane;
 	private JPanel bottomPane;
-//	private JPanel parseTreePane;
-	
 	private JTabbedPane outputTabs;
 	
 	private RSyntaxTextAreaManuscript codeInput;
 	private JTextPane parsedOut;
-//	private JTextPane console;
+	private JTextPane threeACOut;
+
 	
 	private RTextScrollPane inputPane;
 	private JScrollPane parsedPane;
+	private JScrollPane threeACPane;
 	private JScrollPane treePane;
 	private JScrollPane consolePane;
 
@@ -94,11 +93,40 @@ public class Panel implements ActionListener, KeyListener, MouseListener {
 	public final static String newline = "\n";
 	
 	private ScannerModel scanner;
-//	private ParseTreePane parseTreePane;
-	
+
 	public static int baseFontSize = (int) Frame.SCREEN_SIZE.getHeight() / 60;
 	
 	public Panel() {
+		// Remove JTabbedPane "Borders"
+		UIManager.getDefaults().put("TabbedPane.contentBorderInsets", new Insets(0,0,0,0));
+		UIManager.getDefaults().put("TabbedPane.tabsOverlapBorder", true);
+
+	
+		UIManager.getDefaults().put("SplitPane.border", BorderFactory.createEmptyBorder());
+		UIManager.getDefaults().put("SplitPane.contentBorderInsets", new Insets(0,0,0,0));
+		
+		UIManager.put("TabbedPane.selected", Styles.SKY_BLUE);
+		
+		UIManager.getLookAndFeelDefaults().put("TabbedPane:TabbedPaneTab[Enabled].backgroundPainter", new BackgroundPainter(Color.WHITE));
+        UIManager.getLookAndFeelDefaults().put("TabbedPane:TabbedPaneTab[Enabled+MouseOver].backgroundPainter", new BackgroundPainter(Color.WHITE));
+        UIManager.getLookAndFeelDefaults().put("TabbedPane:TabbedPaneTab[Enabled+Pressed].backgroundPainter", new BackgroundPainter(Color.WHITE));
+        UIManager.getLookAndFeelDefaults().put("TabbedPane:TabbedPaneTab[Focused+MouseOver+Selected].backgroundPainter", new BackgroundPainter(Color.WHITE));
+        UIManager.getLookAndFeelDefaults().put("TabbedPane:TabbedPaneTab[Focused+Pressed+Selected].backgroundPainter", new BackgroundPainter(Color.WHITE));
+        UIManager.getLookAndFeelDefaults().put("TabbedPane:TabbedPaneTab[Focused+Selected].backgroundPainter", new BackgroundPainter(Color.GRAY));
+        UIManager.getLookAndFeelDefaults().put("TabbedPane:TabbedPaneTab[MouseOver+Selected].backgroundPainter", new BackgroundPainter(Color.WHITE));
+        UIManager.getLookAndFeelDefaults().put("TabbedPane:TabbedPaneTab[Pressed+Selected].backgroundPainter", new BackgroundPainter(Color.WHITE));
+        UIManager.getLookAndFeelDefaults().put("TabbedPane:TabbedPaneTab[Selected].backgroundPainter", new BackgroundPainter(Color.WHITE));
+		
+        
+        UIManager.put("TabbedPane.borderHightlightColor", Color.WHITE);
+        UIManager.put("TabbedPane.darkShadow", Color.WHITE);
+        UIManager.put("TabbedPane.shadow", Color.WHITE);
+        UIManager.put("TabbedPane.light", Color.WHITE);
+        UIManager.put("TabbedPane.highlight", Color.WHITE);
+        UIManager.put("TabbedPane.focus", Color.WHITE);
+        UIManager.put("TabbedPane.selectHighlight", Color.WHITE);
+        
+        
 		this.styles = new Styles();
 		//-----------------------Syntax Highlighting (for output) TO REMOVE----------------------------------
 		SimpleAttributeSet attrKeyword = new SimpleAttributeSet();
@@ -107,9 +135,6 @@ public class Panel implements ActionListener, KeyListener, MouseListener {
         
         SimpleAttributeSet attrLiteral = new SimpleAttributeSet();
         attrLiteral.addAttribute(StyleConstants.Foreground, SUBLIME_LITERAL);
-        
-//        SimpleAttributeSet attrDefault = new SimpleAttributeSet();
-//        attrLiteral.addAttribute(StyleConstants.Foreground, Color.WHITE);
         
 
         
@@ -120,21 +145,6 @@ public class Panel implements ActionListener, KeyListener, MouseListener {
                 super.insertString(offset, str, a);
 
                 String text = getText(0, getLength());
-//                setCharacterAttributes(0, getLength(), attrDefault, false);
-
-//                Pattern pattern = Pattern.compile("\\s(" +Tokens.KEYWORDS+ ")>");
-//                Matcher matcher = pattern.matcher(text);
-//                
-//                while(matcher.find()) {
-//                	setCharacterAttributes(matcher.start(), matcher.end() - matcher.start() - 1, attrKeyword, false);
-//                }
-//                
-//                pattern = Pattern.compile("\"(.*)\"");
-//                matcher = pattern.matcher(text);
-//                
-//                while(matcher.find()) {
-//                	setCharacterAttributes(matcher.start(), matcher.end() - matcher.start(), attrLiteral, false);
-//                }
                 for (IdeStyle style : styles.getStyles()) {
 	                Pattern pattern = Pattern.compile(style.getRegex());
 	                Matcher matcher = pattern.matcher(text);
@@ -211,40 +221,28 @@ public class Panel implements ActionListener, KeyListener, MouseListener {
 		this.inputLines.setEditable(false);
 		this.inputLines.setMargin(new Insets(0, 5, 0, 5));
 		
-//		this.codeInput.getDocument().addDocumentListener(new DocumentListener() {
-//			public String getText() {
-//				int caretPosition = codeInput.getDocument().getLength();
-//				Element root = codeInput.getDocument().getDefaultRootElement();
-//				String text = "1" + System.getProperty("line.separator");
-//				for(int i = 2; i < root.getElementIndex(caretPosition)+2; i++) {
-//					text += i+System.getProperty("line.separator");
-//				}
-//				
-//				return text;
-//			}
-//
-//			@Override
-//			public void changedUpdate(DocumentEvent arg0) {
-//				inputLines.setText(getText());
-//			}
-//
-//			@Override
-//			public void insertUpdate(DocumentEvent arg0) {
-//				inputLines.setText(getText());
-//				
-//			}
-//
-//			@Override
-//			public void removeUpdate(DocumentEvent arg0) {
-//				inputLines.setText(getText());
-//			}
-//		});
-		
 		this.inputPane = new RTextScrollPane(this.codeInput);
 		this.inputPane.setPreferredSize(new Dimension((int) Frame.SCREEN_SIZE.getWidth()/2, 150));
 		this.inputPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		this.inputPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
 //		this.inputPane.setRowHeaderView(this.inputLines);
+		this.inputPane.getVerticalScrollBar().setUI(new CustomScrollBarUISky());
+		this.inputPane.getHorizontalScrollBar().setUI(new CustomScrollBarUISky());
+		this.inputPane.getTextArea().setFadeCurrentLineHighlight(true);
+//		this.inputPane.getTextArea().setCurrentLineHighlightColor(Styles.UN_HIGHLIGHT);
+		this.inputPane.getTextArea().setSelectionColor(Styles.UN_HIGHLIGHT);
+		this.inputPane.setBorder(null);
+		int horizontalHeight = 10;
+		
+		this.inputPane.getHorizontalScrollBar().setPreferredSize(new Dimension(
+		        (int)inputPane.getHorizontalScrollBar().getPreferredSize().getWidth(),
+		        (int)horizontalHeight
+		));
+		
+		this.inputPane.getVerticalScrollBar().setPreferredSize(new Dimension(
+		        (int)horizontalHeight,
+		        (int)inputPane.getVerticalScrollBar().getPreferredSize().getWidth()
+		));
 
 		gbc = new GridBagConstraints();
 		gbc.anchor = GridBagConstraints.NORTHWEST;
@@ -281,11 +279,66 @@ public class Panel implements ActionListener, KeyListener, MouseListener {
 		this.parsedPane = new JScrollPane(this.parsedOut);
 		this.parsedPane.setPreferredSize(new Dimension((int) Frame.SCREEN_SIZE.getWidth()/2, 150));
 		this.parsedPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		
+		this.parsedPane.getVerticalScrollBar().setUI(new CustomScrollBarUISky());
+		this.parsedPane.getHorizontalScrollBar().setUI(new CustomScrollBarUISky());
+		this.parsedPane.setBorder(null);
 	
+		this.parsedPane.getHorizontalScrollBar().setPreferredSize(new Dimension(
+		        (int)parsedPane.getHorizontalScrollBar().getPreferredSize().getWidth(),
+		        (int)horizontalHeight
+		));
+		
+		this.parsedPane.getVerticalScrollBar().setPreferredSize(new Dimension(
+		        (int)horizontalHeight,
+		        (int)parsedPane.getVerticalScrollBar().getPreferredSize().getHeight()
+		));
+		
+		
+		// For three address code
+		this.threeACOut = new JTextPane();
+        this.threeACOut.setFont(new Font("Consolas", 150, baseFontSize));
+        this.threeACOut.setEditable(false);
+        this.threeACOut.setForeground(Color.WHITE);
+        this.threeACOut.setBackground(SUBLIME_BG);
+        this.threeACOut.isOpaque();
+		
+        
+		this.threeACPane = new JScrollPane(this.threeACOut);
+		this.threeACPane.setPreferredSize(new Dimension((int) Frame.SCREEN_SIZE.getWidth()/2, 150));
+		this.threeACPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+	
+		this.threeACPane.getVerticalScrollBar().setUI(new CustomScrollBarUISky());
+		this.threeACPane.getHorizontalScrollBar().setUI(new CustomScrollBarUISky());
+		this.threeACPane.setBorder(null);
+	
+		this.threeACPane.getHorizontalScrollBar().setPreferredSize(new Dimension(
+		        (int)threeACPane.getHorizontalScrollBar().getPreferredSize().getWidth(),
+		        (int)horizontalHeight
+		));
+		
+		this.threeACPane.getVerticalScrollBar().setPreferredSize(new Dimension(
+		        (int)horizontalHeight,
+		        (int)threeACPane.getVerticalScrollBar().getPreferredSize().getHeight()
+		));
+		
 		this.treePane = new JScrollPane(); //TODO: do parse tree
 		this.treePane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		this.treePane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
 		
+		this.treePane.getVerticalScrollBar().setUI(new CustomScrollBarUISky());
+		this.treePane.getHorizontalScrollBar().setUI(new CustomScrollBarUISky());
+		this.treePane.setBorder(null);
+	
+		this.treePane.getHorizontalScrollBar().setPreferredSize(new Dimension(
+		        (int)treePane.getHorizontalScrollBar().getPreferredSize().getWidth(),
+		        (int)horizontalHeight
+		));
+
+		this.treePane.getVerticalScrollBar().setPreferredSize(new Dimension(
+		        (int)horizontalHeight,
+		        (int)treePane.getVerticalScrollBar().getPreferredSize().getHeight()
+		));
 		
 		JPanel parentPane = new JPanel();
 		parentPane.setLayout(new BoxLayout(parentPane, BoxLayout.Y_AXIS));
@@ -328,6 +381,8 @@ public class Panel implements ActionListener, KeyListener, MouseListener {
 		this.outputTabs = new JTabbedPane();
 		this.outputTabs.add("Parsed Out", this.parsedPane);
 		this.outputTabs.add("Parse Tree", parentPane);
+		this.outputTabs.add("Three Address Code", this.threeACPane);
+
 		
 		parentPane.setSize(outputTabs.getWidth(), 40);
 		
@@ -362,15 +417,6 @@ public class Panel implements ActionListener, KeyListener, MouseListener {
 		gbc.weightx = 1;
 		gbc.weighty = 1;
 		this.bottomPane.add(this.lblConsole, gbc);
-//		this.pnlMain.add(this.lblConsole, gbc);
-		
-//		this.console = new JTextPane();
-////        this.parsedOut.setSize(30, 50);
-//        this.console.setFont(new Font("Consolas", 150, baseFontSize));
-//        this.console.setEditable(false);
-//        this.console.setForeground(Color.RED);
-//        this.console.setBackground(Color.WHITE);
-//        this.console.isOpaque();
 				
 		this.consolePane = new JScrollPane(Console.instance().getTextPane());
 		this.consolePane.setPreferredSize(new Dimension(350, 150));
@@ -408,9 +454,20 @@ public class Panel implements ActionListener, KeyListener, MouseListener {
 		//Scanner for input string
 		this.scanner = new ScannerModel();
 		
+		this.topSplitPane.setDividerSize(1);
+		this.topSplitPane.setBackground(Color.WHITE);
+		this.topSplitPane.setContinuousLayout(true);
+		
+		this.bottomSplitPane.setDividerSize(1);
+		this.bottomSplitPane.setBackground(Color.WHITE);
+		this.bottomSplitPane.setContinuousLayout(true);
 		
 	}
 	
+	public void generateThreeAddressCode() {
+		this.threeACOut.setText(this.scanner.getIcg().getPrintText());
+		
+	}
 	/*
 	 * TODO: SyntaxHighlighting
 	 * Specify the color for a Token type here using syntaxScheme.
@@ -451,9 +508,11 @@ public class Panel implements ActionListener, KeyListener, MouseListener {
 			this.scanner.generateTree(); // Required to do this
 			this.treePane.setViewportView(this.scanner.getTree());			
 			
+			this.generateThreeAddressCode();
 //			this.console.setText(this.console.getText() + this.scanner.getMessage());			
 			this.codeInput.selectAll();
 			this.parsedOut.setCaretPosition(parsedOut.getDocument().getLength());
+		
 		}
 		
 		if(e.getSource() == this.btnScaleUp) {

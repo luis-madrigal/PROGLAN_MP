@@ -10,10 +10,13 @@ import com.utils.Tokens;
 
 public class Styles {
 	
+
 	public final static Color SUBLIME_KEYWORD = new Color(102, 217, 239);
 	public final static Color SUBLIME_LITERAL = new Color(230, 219, 116);
+	public final static Color SUBLIME_LINE_NUMBER = new Color(153, 153, 153);
 	
-	
+	public final static Color SKY_BLUE = new Color(32, 227, 255, 200);
+	public final static Color UN_HIGHLIGHT = new Color(64, 64, 64);
 	public final static Color UN_LITERAL_STRING_DOUBLE_QUOTE = new Color(23, 198, 163);
 	public final static Color UN_VARIABLE = new Color(82, 227, 246);
 
@@ -23,7 +26,7 @@ public class Styles {
 	
 	public final static Color UN_OPERATOR = Color.WHITE;
 	public final static Color UN_SEPARATOR = new Color(97, 187, 229);
-	
+		
 	public final static Color UN_CONSOLE_LOG = new Color(0, 168, 133);
 	public final static Color UN_CONSOLE_ERR = Color.RED;
 	

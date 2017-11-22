@@ -190,6 +190,14 @@ public class ICGenerator {
 			System.out.println(tacStatement.toString());
 		}
 	}
+	
+	public String getPrintText() {
+		String strTac = "";
+		for (TACStatement tacStatement : tac) {
+			strTac += tacStatement.toString()+"\n";
+		}
+		return strTac;
+	}
 
 	public ArrayList<TACStatement> getTac() {
 		return tac;

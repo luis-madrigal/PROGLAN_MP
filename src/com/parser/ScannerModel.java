@@ -41,7 +41,7 @@ public class ScannerModel {
 	private ParseTree tree;
 	private List<String> ruleNames;
 	private TreeViewer treeViewer;
-	
+	private ICGenerator icg;
 	public String getTokens(String input) {
 		ANTLRInputStream istream = new ANTLRInputStream(input);
 		
@@ -110,7 +110,7 @@ public class ScannerModel {
 
 	//	System.out.println("varX child 1: "+scope.getChildren().get(1).getIfInScope("x"));
 	//	System.out.println("IS IN SCOPE: "+scope.getChildren().get(1).inScope("z"));
-		System.out.println("IS IN SCOPE(x): "+scope.getChildren().get(2).inScope("x"));
+//		System.out.println("IS IN SCOPE(x): "+scope.getChildren().get(2).inScope("x"));
 		scope.print();
 
 		ASTBuildVisitor astbv = new ASTBuildVisitor(scope);
@@ -119,6 +119,7 @@ public class ScannerModel {
 		
 		CodeGenerator codegen = new CodeGenerator(astbv.getMethodASTTable());
 		codegen.run();
+
 //		System.out.println(tree.toStringTree(parser));
 		
 		String tokenized = "";
@@ -129,6 +130,14 @@ public class ScannerModel {
 		}
 
 		return tokenized;
+	}
+
+	public ICGenerator getIcg() {
+		return icg;
+	}
+
+	public void setIcg(ICGenerator icg) {
+		this.icg = icg;
 	}
 
 	public String getTokenClass(String displayName) {
