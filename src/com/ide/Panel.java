@@ -285,7 +285,7 @@ public class Panel implements ActionListener, KeyListener, MouseListener {
 		));
 		
 		// For three address code
-		this.threeACOut = new JTextPane(doc);
+		this.threeACOut = new JTextPane();
         this.threeACOut.setFont(new Font("Consolas", 150, baseFontSize));
         this.threeACOut.setEditable(false);
         this.threeACOut.setForeground(Color.WHITE);
@@ -443,6 +443,10 @@ public class Panel implements ActionListener, KeyListener, MouseListener {
 		
 	}
 	
+	public void generateThreeAddressCode() {
+		this.threeACOut.setText(this.scanner.getIcg().getPrintText());
+		
+	}
 	/*
 	 * TODO: SyntaxHighlighting
 	 * Specify the color for a Token type here using syntaxScheme.
@@ -483,9 +487,11 @@ public class Panel implements ActionListener, KeyListener, MouseListener {
 			this.scanner.generateTree(); // Required to do this
 			this.treePane.setViewportView(this.scanner.getTree());			
 			
+			this.generateThreeAddressCode();
 //			this.console.setText(this.console.getText() + this.scanner.getMessage());			
 			this.codeInput.selectAll();
 			this.parsedOut.setCaretPosition(parsedOut.getDocument().getLength());
+		
 		}
 		
 		if(e.getSource() == this.btnScaleUp) {
