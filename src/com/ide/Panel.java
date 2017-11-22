@@ -74,7 +74,7 @@ public class Panel implements ActionListener, KeyListener, MouseListener {
 	
 	private RSyntaxTextAreaManuscript codeInput;
 	private JTextPane parsedOut;
-	private JTextPane threeACOut;
+	public static JTextPane threeACOut; //TODO: bad implementation
 
 	
 	private RTextScrollPane inputPane;
@@ -464,10 +464,10 @@ public class Panel implements ActionListener, KeyListener, MouseListener {
 		
 	}
 	
-	public void generateThreeAddressCode() {
-		this.threeACOut.setText(this.scanner.getIcg().getPrintText());
-		
-	}
+//	public static void generateThreeAddressCode(String str) {
+//		threeACOut.setText(this.scanner.getIcg().getPrintText());
+//		
+//	}
 	/*
 	 * TODO: SyntaxHighlighting
 	 * Specify the color for a Token type here using syntaxScheme.
@@ -508,7 +508,7 @@ public class Panel implements ActionListener, KeyListener, MouseListener {
 			this.scanner.generateTree(); // Required to do this
 			this.treePane.setViewportView(this.scanner.getTree());			
 			
-			this.generateThreeAddressCode();
+//			this.generateThreeAddressCode();
 //			this.console.setText(this.console.getText() + this.scanner.getMessage());			
 			this.codeInput.selectAll();
 			this.parsedOut.setCaretPosition(parsedOut.getDocument().getLength());

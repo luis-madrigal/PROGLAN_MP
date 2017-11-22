@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.ide.Panel;
 import com.interpreter.AST.ProcedureNode;
 import com.interpreter.tac.ICGenerator;
 import com.interpreter.tac.TACStatement;
@@ -18,7 +19,8 @@ public class CodeGenerator {
 		ICGenerator icg = new ICGenerator();
 		
 		for (Map.Entry<String, ProcedureNode> entry : methodASTTable.entrySet()) {
-			System.out.println("GENERATE ICODE FOR: "+entry.getKey());
+			Panel.threeACOut.setText(Panel.threeACOut.getText() + "ICODE FOR: "+entry.getKey() + "\n");
+//			System.out.println("GENERATE ICODE FOR: "+entry.getKey());
 			
 			this.methodICodes.put(entry.getKey(), this.convertToMap(icg.generateICode(entry.getValue())));
 			icg.print();

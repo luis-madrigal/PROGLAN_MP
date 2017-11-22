@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Stack;
 
+import com.ide.Panel;
 import com.interpreter.AST.AbstractSyntaxTree;
 import com.interpreter.AST.ProcedureNode;
 import com.utils.KeyTokens.OPERATOR;
@@ -187,8 +188,10 @@ public class ICGenerator {
 	
 	public void print() {
 		for (TACStatement tacStatement : tac) {
-			System.out.println(tacStatement.toString());
+//			System.out.println(tacStatement.toString());
+			Panel.threeACOut.setText(Panel.threeACOut.getText() + tacStatement.toString() + "\n");
 		}
+		Panel.threeACOut.setText(Panel.threeACOut.getText() + "\n");
 	}
 	
 	public String getPrintText() {
