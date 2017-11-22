@@ -13,6 +13,7 @@ import org.antlr.v4.runtime.tree.TerminalNode;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
 
@@ -108,10 +109,22 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
         AbstractSyntaxTree blockNode = new AbstractSyntaxTree(null);
         blockNode.setNodeType(NodeType.BLOCK);
         for(ManuScriptParser.BlockStatementContext stmt : ctx.blockStatement()){
-            AbstractSyntaxTree body = visitBlockStatement(stmt);
-            if (body != null) {
-                body.setParent(blockNode);
-                blockNode.addChild(body);
+            if(stmt.localVariableDeclarationStatement() != null){
+                List<ManuScriptParser.VariableDeclaratorContext> varDecs = stmt.localVariableDeclarationStatement().localVariableDeclaration().variableDeclarators().variableDeclarator();
+                for(ManuScriptParser.VariableDeclaratorContext varCtx : varDecs){
+                    AbstractSyntaxTree varDec = visit(varCtx);
+                    if (varDec != null) {
+                        varDec.setParent(blockNode);
+                        blockNode.addChild(varDec);
+                    }
+                }
+            }
+            else {
+                AbstractSyntaxTree body = visitBlockStatement(stmt);
+                if (body != null) {
+                    body.setParent(blockNode);
+                    blockNode.addChild(body);
+                }
             }
         }
 
@@ -262,10 +275,9 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
         node.setNodeType(NodeType.PRINT);
 
         AbstractSyntaxTree output = visit(ctx.expression());
-        if(output!=null){   //todo: to remove; create better implementation on astanalyzer
+        if(output!=null){
             output.setParent(node);
             node.addChild(output);
-            Writer.printText((String)output.getValue());
         }
 
 
@@ -274,13 +286,23 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
 
     @Override
     public AbstractSyntaxTree visitInputStatement(ManuScriptParser.InputStatementContext ctx) {
+        AbstractSyntaxTree node = new AbstractSyntaxTree(null);
+        node.setNodeType(NodeType.SCAN);
 
-        String a = Reader.readInput();
+        AbstractSyntaxTree scanTo = visit(ctx.variableDeclaratorId());
+        if(scanTo != null){
+            scanTo.setParent(node);
+            node.addChild(scanTo);
+        }
 
-        Writer.printText(a);
-
-        return super.visitInputStatement(ctx);
+        if(ctx.typeType() != null) {
+            System.out.println("Scan type: "+ ctx.typeType().getText());
+            node.setValue(ctx.typeType().getText());
+        }
+        return node;
     }
+
+
 
     @Override
     public AbstractSyntaxTree visitArrayExpr(ManuScriptParser.ArrayExprContext ctx) {
@@ -519,7 +541,7 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
     @Override
     public AbstractSyntaxTree visitVariableDeclarator(ManuScriptParser.VariableDeclaratorContext ctx) {
         AbstractSyntaxTree node = new AbstractSyntaxTree(null);
-        node.setNodeType(NodeType.ASSIGN);
+        node.setNodeType(NodeType.VAR_DECLARE);   //TODO: add nodetype if not assign
         node.setValue(ctx.getChild(1));
 
         AbstractSyntaxTree var = visit(ctx.variableDeclaratorId());
@@ -529,6 +551,7 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
         }
 
         if(ctx.variableInitializer() != null) {
+            node.setNodeType(NodeType.ASSIGN);
             AbstractSyntaxTree value = visit(ctx.variableInitializer());
             if (value != null) {
                 value.setParent(node);
