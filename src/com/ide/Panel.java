@@ -55,6 +55,8 @@ import com.utils.Console;
 
 
 public class Panel implements ActionListener, KeyListener, MouseListener {
+	private Frame frameParent;
+
 	private JPanel pnlMain;
 	private JButton btnRun;
 	
@@ -97,6 +99,7 @@ public class Panel implements ActionListener, KeyListener, MouseListener {
 	public static int baseFontSize = (int) Frame.SCREEN_SIZE.getHeight() / 60;
 	
 	public Panel() {
+		
 		// Remove JTabbedPane "Borders"
 		UIManager.getDefaults().put("TabbedPane.contentBorderInsets", new Insets(0,0,0,0));
 		UIManager.getDefaults().put("TabbedPane.tabsOverlapBorder", true);
@@ -464,6 +467,22 @@ public class Panel implements ActionListener, KeyListener, MouseListener {
 		
 	}
 	
+	public RSyntaxTextAreaManuscript getCodeInput() {
+		return codeInput;
+	}
+
+	public void setCodeInput(RSyntaxTextAreaManuscript codeInput) {
+		this.codeInput = codeInput;
+	}
+
+	public JTextArea getInputLines() {
+		return inputLines;
+	}
+
+	public void setInputLines(JTextArea inputLines) {
+		this.inputLines = inputLines;
+	}
+
 	public void generateThreeAddressCode() {
 		this.threeACOut.setText(this.scanner.getIcg().getPrintText());
 		
@@ -622,5 +641,13 @@ public class Panel implements ActionListener, KeyListener, MouseListener {
 			RXTextUtilities.gotoStartOfLine(codeInput, line);
 			RXTextUtilities.centerLineInScrollPane(codeInput);
 		 }
+	}
+
+	public Frame getFrameParent() {
+		return frameParent;
+	}
+
+	public void setFrameParent(Frame frameParent) {
+		this.frameParent = frameParent;
 	}
 }

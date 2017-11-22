@@ -3,7 +3,6 @@ package com.interpreter;
 import java.util.HashMap;
 import java.util.Stack;
 
-import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.ParseTree;
 
 import com.interpreter.contexts.MethodContext;
