@@ -25,7 +25,7 @@ public class MethodContext extends Context{
 				argTypes.add(KeyTokens.LITERAL_TYPE.getEnum(fpctx.typeType().getText()));
 			}
 		}
-		
+
 		returnType = KeyTokens.LITERAL_TYPE.NULL;
 	}
 	
