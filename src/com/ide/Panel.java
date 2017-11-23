@@ -621,10 +621,10 @@ public class Panel implements ActionListener, KeyListener, MouseListener {
 		this.inputLines = inputLines;
 	}
 
-	public void generateThreeAddressCode() {
-		threeACOut.setText(this.scanner.getIcg().getPrintText());
-		
-	}
+//	public void generateThreeAddressCode() {
+//		threeACOut.setText(this.scanner.getIcg().getPrintText());
+//		
+//	}
 	/*
 	 * TODO: SyntaxHighlighting
 	 * Specify the color for a Token type here using syntaxScheme.
@@ -665,7 +665,7 @@ public class Panel implements ActionListener, KeyListener, MouseListener {
 			this.scanner.generateTree(); // Required to do this
 			this.treePane.setViewportView(this.scanner.getTree());			
 			
-			this.generateThreeAddressCode();
+//			this.generateThreeAddressCode();
 //			this.console.setText(this.console.getText() + this.scanner.getMessage());			
 			this.codeInput.selectAll();
 			this.parsedOut.setCaretPosition(parsedOut.getDocument().getLength());
