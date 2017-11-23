@@ -43,8 +43,9 @@ public class TextFileHandler {
 		String strLine;
 	    BufferedReader loadFile;
 		try {
-			checkFile("autosave");
-			loadFile = new BufferedReader(new FileReader(filename+".txt"));
+			checkExtension(filename);
+			// TODO: Check for override
+			loadFile = new BufferedReader(new FileReader(filename));
 			
 			// Remove the blank line
 		    loadFile.readLine(); 
@@ -61,6 +62,12 @@ public class TextFileHandler {
 		}
 	    
 	    return strFile;
+	}
+	
+	public void checkExtension(String strFilename) {
+		if(!strFilename.contains(".txt")) {
+			strFilename += ".txt";
+		}
 	}
 	
 	public void checkFile(String strFilename) {

@@ -59,7 +59,8 @@ import com.utils.Console;
 public class Panel implements ActionListener, KeyListener, MouseListener {
 	private Frame frameParent;
 	private DialogSave dlgSave;
-
+	private DialogOpen dlgOpen;
+	
 	private TextFileHandler textFileHandler;
 	
 	private JPanel pnlMain;
@@ -603,6 +604,10 @@ public class Panel implements ActionListener, KeyListener, MouseListener {
 		this.dlgSave.setProgressColor(FrameStatic.clrLightBlue);
 		this.dlgSave.getBtnSave().addMouseListener(this);
 		
+		this.dlgOpen = new DialogOpen();
+		this.dlgOpen.setProgressColor(FrameStatic.clrLightBlue);
+		this.dlgOpen.getBtnOpen().addMouseListener(this);
+		
 	}
 	
 	public RSyntaxTextAreaManuscript getCodeInput() {
@@ -766,20 +771,22 @@ public class Panel implements ActionListener, KeyListener, MouseListener {
 		}
 		
 		if(e.getSource() == btnSave) {
-			// TODO: Open Save Dialog
-			System.out.println("Save");
 			this.dlgSave.show(pnlMain);	
 
 		}
 		
 		if(e.getSource() == btnLoad) {
-			// TODO Open Load Dialog
-			System.out.println("Load");
+			this.dlgOpen.show(pnlMain);	
 		}
 		
 		if(e.getSource() == this.dlgSave.getBtnSave()) {
 			createSaveFile(this.dlgSave.getTxtfFilename().getText());
 			this.dlgSave.close();
+		}
+		
+		if(e.getSource() == this.dlgOpen.getBtnOpen()) {
+			loadTextFile(this.dlgOpen.getTxtfFilename().getText());
+			this.dlgOpen.close();
 		}
 		
 	}
@@ -789,6 +796,12 @@ public class Panel implements ActionListener, KeyListener, MouseListener {
 		this.textFileHandler.save(strFilename, strFile);
 	}
 	
+	public void loadTextFile(String strFilename) {
+		
+		String strFile = this.textFileHandler.load(strFilename);
+		this.codeInput.setText(strFile);
+	}
+
 	void gotoErrorLine(MouseEvent e) {
 		JTextPane textPane = Console.instance().getTextPane();
 		Element ele = textPane.getStyledDocument().getCharacterElement(textPane.viewToModel(e.getPoint()));
