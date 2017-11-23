@@ -1,7 +1,6 @@
 package com.ide;
 
 import java.awt.Color;
-import java.awt.Toolkit;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
@@ -13,7 +12,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 
-public class DialogProcess extends JDialog implements MouseListener {
+public class DialogSave extends JDialog implements MouseListener {
 	private static final long serialVersionUID = 1L;
 	public static final String MSG_START = "STARTING... ";
 	public static final String MSG_PROCESS = "PROCESSING: ";
@@ -23,7 +22,7 @@ public class DialogProcess extends JDialog implements MouseListener {
 	
 	private JLabel lblBackground;
 	private JButton btnClose;
-	private JButton lblMessage;
+	private JButton btnSave;
 	private JButton btnCancel;
 	
 	private JLabel lblTotal;
@@ -36,7 +35,7 @@ public class DialogProcess extends JDialog implements MouseListener {
 	private DialogConfirm dlgConfirm;
 //	private SwingWorker<Void, ProcessNode> swProcess;
 	
-	public DialogProcess() {
+	public DialogSave() {
 		FrameStatic.initDialog(this, 340, 90, Color.WHITE, true, false, false);
 //		this.setModalityType(ModalityType.APPLICATION_MODAL);
 		this.setUndecorated(true);
@@ -44,7 +43,7 @@ public class DialogProcess extends JDialog implements MouseListener {
 		this.initComponents();
 		
 		this.add(btnCancel);
-		this.add(lblMessage);
+		this.add(btnSave);
 		this.add(lblTotal);
 		this.add(pnlProgressBar);
 		this.add(btnClose);
@@ -87,16 +86,16 @@ public class DialogProcess extends JDialog implements MouseListener {
 		
 		width = 80;//pnlProgressBar.getWidth();
 		height = 20;
-		lblMessage = new JButton("SAVE");
+		btnSave = new JButton("SAVE");
 //		FrameStatic.initButtons(lblMessage, FrameStatic.fntDefault12, FrameStatic.clrAutomatic, pnlProgressBar.getX(), pnlProgressBar.getY()+pnlProgressBar.getHeight(), width, height);
-		FrameStatic.initButtons(lblMessage, Color.WHITE,  pnlProgressBar.getX()+pnlProgressBar.getWidth()-width, pnlProgressBar.getY()+pnlProgressBar.getHeight()+5, width, height, this);
-		lblMessage.setFont(FrameStatic.fntDefault12_BOLD);
-		lblMessage.setRolloverEnabled(false);
+		FrameStatic.initButtons(btnSave, Color.WHITE,  pnlProgressBar.getX()+pnlProgressBar.getWidth()-width, pnlProgressBar.getY()+pnlProgressBar.getHeight()+5, width, height, this);
+		btnSave.setFont(FrameStatic.fntDefault12_BOLD);
+		btnSave.setRolloverEnabled(false);
 		
 		width = this.getWidth()/4;
 		height = 22;
 		btnClose = new JButton("Close");
-		FrameStatic.initButtons(btnClose, Color.WHITE, (this.getWidth()-width)/2, lblMessage.getY()+5, width, height, this);
+		FrameStatic.initButtons(btnClose, Color.WHITE, (this.getWidth()-width)/2, btnSave.getY()+5, width, height, this);
 
 		JLabel lblLabel = new JLabel();
 		FrameStatic.initLabel(lblLabel, FrameStatic.fntDefault12,
@@ -118,17 +117,33 @@ public class DialogProcess extends JDialog implements MouseListener {
 		dlgConfirm.close();
 	}
 	
-	public void show(String message, JComponent parent) {
+	public JButton getBtnSave() {
+		return btnSave;
+	}
+
+	public void setBtnSave(JButton btnSave) {
+		this.btnSave = btnSave;
+	}
+
+	public void show(JComponent parent) {
 //		this.swProcess = swProcess;
 		this.setLocationRelativeTo(parent);
 		this.btnClose.setVisible(false);
-		this.lblMessage.setVisible(true);
+		this.btnSave.setVisible(true);
 //		this.lblMessage.setText(message);
 		this.setBounds(this.getX(), this.getY()-30, this.getWidth(), this.getHeight());
 		this.setVisible(true);
 	}
 	
 	
+	public JTextField getTxtfFilename() {
+		return txtfFilename;
+	}
+
+	public void setTxtfFilename(JTextField txtfFilename) {
+		this.txtfFilename = txtfFilename;
+	}
+
 	public void close() {
 		this.setVisible(false);
 		refresh();

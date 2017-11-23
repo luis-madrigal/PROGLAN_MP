@@ -51,13 +51,16 @@ import com.ide.styles.RSyntaxTextAreaManuscript;
 import com.ide.styles.Styles;
 import com.override.CustomScrollBarUISky;
 import com.parser.ScannerModel;
+import com.save.TextFileHandler;
 import com.utils.Console;
 
 
 
 public class Panel implements ActionListener, KeyListener, MouseListener {
 	private Frame frameParent;
-	private DialogProcess dlgProcess;
+	private DialogSave dlgSave;
+
+	private TextFileHandler textFileHandler;
 	
 	private JPanel pnlMain;
 	private JPanel pnlMenu;
@@ -135,7 +138,8 @@ public class Panel implements ActionListener, KeyListener, MouseListener {
         UIManager.put("TabbedPane.focus", Color.WHITE);
         UIManager.put("TabbedPane.selectHighlight", Color.WHITE);
         
-        
+
+		this.textFileHandler = new TextFileHandler();
 		this.styles = new Styles();
 		//-----------------------Syntax Highlighting (for output) TO REMOVE----------------------------------
 		SimpleAttributeSet attrKeyword = new SimpleAttributeSet();
@@ -387,15 +391,15 @@ public class Panel implements ActionListener, KeyListener, MouseListener {
 		
 		
 		// For three address code
-		this.threeACOut = new JTextPane();
-        this.threeACOut.setFont(new Font("Consolas", 150, baseFontSize));
-        this.threeACOut.setEditable(false);
-        this.threeACOut.setForeground(Color.WHITE);
-        this.threeACOut.setBackground(SUBLIME_BG);
-        this.threeACOut.isOpaque();
+		threeACOut = new JTextPane();
+        threeACOut.setFont(new Font("Consolas", 150, baseFontSize));
+        threeACOut.setEditable(false);
+        threeACOut.setForeground(Color.WHITE);
+        threeACOut.setBackground(SUBLIME_BG);
+        threeACOut.isOpaque();
 		
         
-		this.threeACPane = new JScrollPane(this.threeACOut);
+		this.threeACPane = new JScrollPane(threeACOut);
 		this.threeACPane.setPreferredSize(new Dimension((int) Frame.SCREEN_SIZE.getWidth()/2, 150));
 		this.threeACPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 	
@@ -595,8 +599,9 @@ public class Panel implements ActionListener, KeyListener, MouseListener {
 		this.bottomSplitPane.setBackground(Color.WHITE);
 		this.bottomSplitPane.setContinuousLayout(true);
 
-		this.dlgProcess = new DialogProcess();
-		this.dlgProcess.setProgressColor(FrameStatic.clrLightBlue);
+		this.dlgSave = new DialogSave();
+		this.dlgSave.setProgressColor(FrameStatic.clrLightBlue);
+		this.dlgSave.getBtnSave().addMouseListener(this);
 		
 	}
 	
@@ -617,7 +622,7 @@ public class Panel implements ActionListener, KeyListener, MouseListener {
 	}
 
 	public void generateThreeAddressCode() {
-		this.threeACOut.setText(this.scanner.getIcg().getPrintText());
+		threeACOut.setText(this.scanner.getIcg().getPrintText());
 		
 	}
 	/*
@@ -763,7 +768,7 @@ public class Panel implements ActionListener, KeyListener, MouseListener {
 		if(e.getSource() == btnSave) {
 			// TODO: Open Save Dialog
 			System.out.println("Save");
-			this.dlgProcess.show(DialogProcess.MSG_START, pnlMain);	
+			this.dlgSave.show(pnlMain);	
 
 		}
 		
@@ -772,6 +777,16 @@ public class Panel implements ActionListener, KeyListener, MouseListener {
 			System.out.println("Load");
 		}
 		
+		if(e.getSource() == this.dlgSave.getBtnSave()) {
+			createSaveFile(this.dlgSave.getTxtfFilename().getText());
+			this.dlgSave.close();
+		}
+		
+	}
+	public void createSaveFile(String strFilename) {
+		
+		String strFile = this.codeInput.getText();
+		this.textFileHandler.save(strFilename, strFile);
 	}
 	
 	void gotoErrorLine(MouseEvent e) {
