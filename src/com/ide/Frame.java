@@ -5,6 +5,7 @@ import java.awt.Toolkit;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 
+import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 
 import com.save.TextFileHandler;
@@ -31,6 +32,10 @@ public class Frame implements WindowListener {
 		
 		this.frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		this.frame.addWindowListener(this);
+		
+		ImageIcon icon = new ImageIcon(getClass().getClassLoader().getResource("res/ico_frame.png"));
+		this.frame.setIconImage(icon.getImage());
+	
 		
 	}
 

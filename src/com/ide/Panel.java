@@ -187,18 +187,18 @@ public class Panel implements ActionListener, KeyListener, MouseListener {
 		
 		gbc = new GridBagConstraints();
 		gbc.anchor = GridBagConstraints.NORTHWEST;
-		gbc.fill = GridBagConstraints.VERTICAL;
+		gbc.fill = GridBagConstraints.BOTH;
 
 //		gbc.gridwidth = 0;
 //		gbc.gridx = 1;
 //		gbc.gridy = 0;
 //		
-		gbc.gridwidth = 0;
+		gbc.gridwidth = 2;
 		gbc.gridheight = 0;
-		gbc.gridx = 1;
+		gbc.gridx = 0;
 		gbc.gridy = 0;
-		gbc.insets = new Insets(0, 10, 10, 0);
-		gbc.weightx = 1;
+		gbc.insets = new Insets(0, 0, 0, 1185);
+		gbc.weightx = 0.5;
 		gbc.weighty = 0.5;
 
 		this.pnlMenu = new JPanel();
@@ -214,27 +214,52 @@ public class Panel implements ActionListener, KeyListener, MouseListener {
 		this.btnRun = new JButton();
 		this.btnRun.setFocusable(false);
 		this.btnRun.addActionListener(this);
-		
        
 		btnRun.setBackground(Color.WHITE);
         btnRun.setBorder(null);
-        btnRun.setIcon(new ImageIcon(getClass().getClassLoader().getResource("res//ico_subtract_off.png")));
-        btnRun.setRolloverIcon(new ImageIcon(getClass().getClassLoader().getResource("res/ico_subtract_on.png")));
-        btnRun.setPressedIcon(new ImageIcon(getClass().getClassLoader().getResource("res/ico_subtract_on.png")));
+        btnRun.setIcon(new ImageIcon(getClass().getClassLoader().getResource("res/ico_play_off.png")));
+        btnRun.setRolloverIcon(new ImageIcon(getClass().getClassLoader().getResource("res/ico_play_on.png")));
+        btnRun.setPressedIcon(new ImageIcon(getClass().getClassLoader().getResource("res/ico_play_on.png")));
         btnRun.setFocusable(false);
-		
-		
-//		btnRun.setSize(btnRun.getWidth(), 100);
-//		btnRun.setBounds(1366-30, 0, 30, 30);
+		btnRun.getInsets().set(5, 0, 0, 0);
+
+		btnRun.setSize(50, 35);
+		btnRun.setPreferredSize(btnRun.getSize());
+		btnRun.setBounds(-10, 40, btnRun.getWidth(), btnRun.getHeight());
 		pnlMenu.add(btnRun);
-		/*
-		JButton tempButton;
-		tempButton = new JButton("\u25B6");
-		tempButton.setFocusable(false);
-		tempButton.addActionListener(this);
-		pnlMenu.add(tempButton);
-		*/
-		
+
+
+		JButton btnLoad = new JButton();
+		btnLoad.setFocusable(false);
+		btnLoad.addActionListener(this);
+		btnLoad.setBorder(null);
+		btnLoad.setBackground(Color.WHITE);
+		btnLoad.setIcon(new ImageIcon(getClass().getClassLoader().getResource("res/ico_open_off.png")));
+		btnLoad.setRolloverIcon(new ImageIcon(getClass().getClassLoader().getResource("res/ico_open_on.png")));
+		btnLoad.setPressedIcon(new ImageIcon(getClass().getClassLoader().getResource("res/ico_open_on.png")));
+		btnLoad.setFocusable(false);
+		btnLoad.getInsets().set(30, 0, 0, 0);
+
+		btnLoad.setSize(50, 35);
+		btnLoad.setPreferredSize(btnLoad.getSize());
+		pnlMenu.add(btnLoad);
+
+
+		JButton btnSave = new JButton();
+		btnSave.setFocusable(false);
+		btnSave.addActionListener(this);
+		btnSave.setBorder(null);
+		btnSave.setBackground(Color.WHITE);
+		btnSave.setIcon(new ImageIcon(getClass().getClassLoader().getResource("res/ico_save_off.png")));
+		btnSave.setRolloverIcon(new ImageIcon(getClass().getClassLoader().getResource("res/ico_save_on.png")));
+		btnSave.setPressedIcon(new ImageIcon(getClass().getClassLoader().getResource("res/ico_save_on.png")));
+		btnSave.setFocusable(false);
+		btnSave.getInsets().set(30, 0, 0, 0);
+
+		btnSave.setSize(50, 35);
+		btnSave.setPreferredSize(btnSave.getSize());
+		pnlMenu.add(btnSave);
+				
 		this.pnlMain.add(this.pnlMenu, gbc);
 		
 		//Code Input
@@ -428,7 +453,7 @@ public class Panel implements ActionListener, KeyListener, MouseListener {
         this.btnScaleDown = new JButton();
         btnScaleDown.setBackground(Color.WHITE);
         btnScaleDown.setBorder(null);
-        btnScaleDown.setIcon(new ImageIcon(getClass().getClassLoader().getResource("res//ico_subtract_off.png")));
+        btnScaleDown.setIcon(new ImageIcon(getClass().getClassLoader().getResource("res/ico_subtract_off.png")));
         btnScaleDown.setRolloverIcon(new ImageIcon(getClass().getClassLoader().getResource("res/ico_subtract_on.png")));
         btnScaleDown.setPressedIcon(new ImageIcon(getClass().getClassLoader().getResource("res/ico_subtract_on.png")));
         btnScaleDown.setFocusable(false);
@@ -455,19 +480,41 @@ public class Panel implements ActionListener, KeyListener, MouseListener {
 		
 		this.inputPaneParent = new JPanel();
 		this.inputPaneParent.setLayout(new BoxLayout(inputPaneParent, BoxLayout.Y_AXIS));
-
-		JLabel lblInput = new JLabel();
+		inputPaneParent.setOpaque(false);
+		inputPaneParent.setBackground(FrameStatic.clrTransparent);
+		JPanel lblInput = new JPanel();
 //		lblInput.setFont(FrameStatic.fntGothamLight20);
-		lblInput.setSize(lblInput.getWidth(), 21);
+		lblInput.setBackground(FrameStatic.clrTransparent);
+		
+		lblInput.setSize(900, 21);
 		lblInput.setPreferredSize(lblInput.getSize());
-		lblInput.setHorizontalAlignment(JLabel.LEFT);
+		lblInput.setMinimumSize(new Dimension(210, lblInput.getHeight()));
+		lblInput.setMaximumSize(lblInput.getSize());
+//		lblInput.setHorizontalAlignment(JLabel.LEFT);
+//		lblInput.setLayout(new FlowLayout());
+		lblInput.setOpaque(false);
+		lblInput.setLayout(null);
+
+//		int offsetX = 5;
+
+//		btnRun.setLocation(0, 0);
+//		lblInput.add(btnRun);
+//		
+//		btnLoad.setLocation(btnRun.getX()+btnRun.getWidth()+offsetX, 0);
+//		lblInput.add(btnLoad);
+//		
+//		btnSave.setLocation(btnLoad.getX()+btnLoad.getWidth()+offsetX, 0);
+//		lblInput.add(btnSave);
+
+		
+		
 		this.inputPaneParent.add(lblInput);
 		this.inputPaneParent.add(this.inputPane);
-		this.inputPaneParent.setBackground(Color.WHITE);
 		
 		this.topSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
 		this.topSplitPane.setLeftComponent(this.inputPaneParent);
-		
+		topSplitPane.setBackground(FrameStatic.clrTransparent);
+		topSplitPane.setOpaque(false);
 		topSplitPane.setResizeWeight(1.0);
 //		((JScrollPane)topSplitPane.getLeftComponent()).setBounds(0, 30, topSplitPane.getLeftComponent().getWidth(),
 //				topSplitPane.getLeftComponent().getHeight());
@@ -523,7 +570,9 @@ public class Panel implements ActionListener, KeyListener, MouseListener {
 		this.bottomSplitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
 		this.bottomSplitPane.setTopComponent(this.topSplitPane);
 		this.bottomSplitPane.setBottomComponent(this.bottomPane);
-		this.bottomSplitPane.setDividerLocation((int) Frame.SCREEN_SIZE.getHeight()-350);
+		this.bottomSplitPane.setDividerLocation((int) Frame.SCREEN_SIZE.getHeight()-300);
+		bottomSplitPane.setOpaque(false);
+		bottomSplitPane.setBackground(FrameStatic.clrTransparent);
 		gbc = new GridBagConstraints();
 		gbc.anchor = GridBagConstraints.NORTHEAST;
 		gbc.fill = GridBagConstraints.BOTH;
