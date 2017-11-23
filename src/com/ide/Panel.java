@@ -57,7 +57,8 @@ import com.utils.Console;
 
 public class Panel implements ActionListener, KeyListener, MouseListener {
 	private Frame frameParent;
-
+	private DialogProcess dlgProcess;
+	
 	private JPanel pnlMain;
 	private JPanel pnlMenu;
 	private JButton btnRun;
@@ -174,26 +175,11 @@ public class Panel implements ActionListener, KeyListener, MouseListener {
 		
 		
 		
-		//Run Button
-		
-//		gbc = new GridBagConstraints();
-//		gbc.anchor = GridBagConstraints.WEST;
-//		gbc.fill = GridBagConstraints.BOTH;
-//		gbc.gridwidth = 1;
-//		gbc.gridx = 0;
-//		gbc.gridy = 0;
-////		gbc.insets = new Insets(10, 10, 10, 0);
-//		gbc.insets = new Insets(10, 10, 0, 0);
-//		gbc.weightx = 1.0;
-		
+		//Run Button		
 		gbc = new GridBagConstraints();
 		gbc.anchor = GridBagConstraints.NORTHWEST;
 		gbc.fill = GridBagConstraints.BOTH;
 
-//		gbc.gridwidth = 0;
-//		gbc.gridx = 1;
-//		gbc.gridy = 0;
-//		
 		gbc.gridwidth = 1;
 		gbc.gridheight = 0;
 		gbc.gridx = 0;
@@ -234,12 +220,14 @@ public class Panel implements ActionListener, KeyListener, MouseListener {
 		this.btnLoad = new JButton();
 		btnLoad.setFocusable(false);
 		btnLoad.addActionListener(this);
+		btnLoad.addMouseListener(this);
 //		btnLoad.setBorder(null);
 		btnLoad.setBorder(FrameStatic.brdrBarUn);
 		btnLoad.setBackground(Color.WHITE);
 		btnLoad.setIcon(new ImageIcon(getClass().getClassLoader().getResource("res/ico_open_off.png")));
 		btnLoad.setRolloverIcon(new ImageIcon(getClass().getClassLoader().getResource("res/ico_open_on.png")));
 		btnLoad.setPressedIcon(new ImageIcon(getClass().getClassLoader().getResource("res/ico_open_on.png")));
+
 		btnLoad.setFocusable(false);
 		btnLoad.getInsets().set(30, 0, 0, 0);
 
@@ -251,6 +239,7 @@ public class Panel implements ActionListener, KeyListener, MouseListener {
 		this.btnSave = new JButton();
 		btnSave.setFocusable(false);
 		btnSave.addActionListener(this);
+		btnSave.addMouseListener(this);
 //		btnSave.setBorder(null);
 		btnSave.setBorder(FrameStatic.brdrBarUn);
 		btnSave.setBackground(Color.WHITE);
@@ -606,6 +595,9 @@ public class Panel implements ActionListener, KeyListener, MouseListener {
 		this.bottomSplitPane.setBackground(Color.WHITE);
 		this.bottomSplitPane.setContinuousLayout(true);
 
+		this.dlgProcess = new DialogProcess();
+		this.dlgProcess.setProgressColor(FrameStatic.clrLightBlue);
+		
 	}
 	
 	public RSyntaxTextAreaManuscript getCodeInput() {
@@ -766,6 +758,18 @@ public class Panel implements ActionListener, KeyListener, MouseListener {
 		if(e.getSource() == Console.instance().getTextPane()) {
 			System.out.println("Enter");
 			gotoErrorLine(e);
+		}
+		
+		if(e.getSource() == btnSave) {
+			// TODO: Open Save Dialog
+			System.out.println("Save");
+			this.dlgProcess.show(DialogProcess.MSG_START, pnlMain);	
+
+		}
+		
+		if(e.getSource() == btnLoad) {
+			// TODO Open Load Dialog
+			System.out.println("Load");
 		}
 		
 	}
