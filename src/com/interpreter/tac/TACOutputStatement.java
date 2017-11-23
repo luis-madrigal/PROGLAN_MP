@@ -1,27 +1,37 @@
 package com.interpreter.tac;
 
+import com.interpreter.AST.NodeType;
+import com.interpreter.tac.operands.Register;
+
 public abstract class TACOutputStatement extends TACStatement {
 	
-	private String outputRegister;
+	private Register outputRegister;
 
-	public TACOutputStatement(String outputRegister) {
+	public TACOutputStatement(NodeType type, Register outputRegister) {
+		super(type);
 		this.outputRegister = outputRegister;
 	}
 	
-	public TACOutputStatement() {
-		
+	public TACOutputStatement(NodeType type) {
+		super(type);
+	}
+	
+	public Object evaluate() {
+		return this.outputRegister.getValue();
 	}
 
-	public String getOutputRegister() {
+	public Register getOutputRegister() {
 		return outputRegister;
 	}
 
-	public void setOutputRegister(String outputRegister) {
+	public void setOutputRegister(Register outputRegister) {
 		this.outputRegister = outputRegister;
 	}
 	
 	public String toString() {
-		return this.getLabel() + ": " + this.outputRegister + " := ";
+		return this.getLabel() + ": " + this.outputRegister.getName() + " := ";
 	}
+	
+	
 
 }

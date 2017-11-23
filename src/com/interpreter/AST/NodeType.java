@@ -2,7 +2,7 @@ package com.interpreter.AST;
 
 public enum NodeType{
     //TODO: wala pang structures
-    BLOCK,
+    BLOCK, GOTO,
     FUNCTION_DECLARATION, FUNCTION_INVOKE,
     RETURN,
     VAR_DECLARE,

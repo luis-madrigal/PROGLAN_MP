@@ -43,4 +43,12 @@ public class SymbolContext extends Context{
 	public void setOther(GenericInfo other) {
 		this.other = other;
 	}
+
+	public Object getValue() {
+		return value;
+	}
+
+	public void setValue(Object value) {
+		this.value = value;
+	}
 }

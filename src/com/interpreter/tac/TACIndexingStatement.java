@@ -1,11 +1,15 @@
 package com.interpreter.tac;
 
+import com.interpreter.AST.NodeType;
+import com.interpreter.tac.operands.Operand;
+
 public class TACIndexingStatement extends TACOutputStatement {
 	
 	private String arrayName;
-	private String index;
+	private Operand index;
 
-	public TACIndexingStatement(String arrayName, String index) {
+	public TACIndexingStatement(NodeType type, String arrayName, Operand index) {
+		super(type);
 		this.arrayName = arrayName;
 		this.index = index;
 	}
@@ -18,16 +22,16 @@ public class TACIndexingStatement extends TACOutputStatement {
 		this.arrayName = arrayName;
 	}
 
-	public String getIndex() {
+	public Operand getIndex() {
 		return index;
 	}
 
-	public void setIndex(String index) {
+	public void setIndex(Operand index) {
 		this.index = index;
 	}
 	
 	public String toString() {
-		return super.toString() + this.arrayName + "[" + this.index + "]";
+		return super.toString() + this.arrayName + "[" + this.index.toString() + "]";
 	}
 
 }

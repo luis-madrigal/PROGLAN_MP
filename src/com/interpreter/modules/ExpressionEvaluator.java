@@ -1,6 +1,32 @@
 package com.interpreter.modules;
 
+import com.interpreter.matchers.LiteralMatcher;
+import com.utils.KeyTokens.LITERAL_TYPE;
+
 public class ExpressionEvaluator {
+	
+	public static Object add(Object x, Object y) {
+		LITERAL_TYPE xType = LiteralMatcher.instance().getLiteralType(x);
+		LITERAL_TYPE yType = LiteralMatcher.instance().getLiteralType(y);
+
+		if(xType.equals(LITERAL_TYPE.INT) && yType.equals(LITERAL_TYPE.INT)) {
+			return ExpressionEvaluator.add((Integer)x, (Integer)y);
+		}
+		
+		if(xType.equals(LITERAL_TYPE.CHAR) && yType.equals(LITERAL_TYPE.CHAR)) {
+			return ExpressionEvaluator.add((Character)x, (Character)y);
+		}
+		
+		if(xType.equals(LITERAL_TYPE.FLOAT) && yType.equals(LITERAL_TYPE.FLOAT)) {
+			return ExpressionEvaluator.add((Float)x, (Float)y);
+		}
+		
+		if(xType.equals(LITERAL_TYPE.STRING) && yType.equals(LITERAL_TYPE.STRING)) {
+			return ExpressionEvaluator.concat(x.toString(), y.toString());
+		}
+		
+		return null;
+	}
 	
 	public static Integer add(Integer x, Integer y) {
 		return x + y;

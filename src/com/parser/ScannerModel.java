@@ -1,5 +1,6 @@
 package com.parser;
 import java.util.List;
+import java.util.Map;
 import java.util.Arrays;
 import java.util.BitSet;
 import java.util.HashMap;
@@ -7,6 +8,8 @@ import java.util.Stack;
 
 import com.interpreter.AST.ASTBuildVisitor;
 import com.interpreter.AST.AbstractSyntaxTree;
+import com.interpreter.AST.ProcedureNode;
+import com.interpreter.codegen.CodeGenerator;
 import com.interpreter.contexts.MethodContext;
 import com.interpreter.tac.ICGenerator;
 
@@ -114,8 +117,8 @@ public class ScannerModel {
 		astbv.visit(tree);
 		astbv.printAST("main");
 		
-		this.icg = new ICGenerator(astbv.getMethodASTTable().get("main"));
-		this.icg.print();
+		CodeGenerator codegen = new CodeGenerator(astbv.getMethodASTTable(), methodTable);
+		codegen.run();
 
 //		System.out.println(tree.toStringTree(parser));
 		

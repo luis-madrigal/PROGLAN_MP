@@ -81,7 +81,7 @@ public class Panel implements ActionListener, KeyListener, MouseListener {
 	
 	private RSyntaxTextAreaManuscript codeInput;
 	private JTextPane parsedOut;
-	private JTextPane threeACOut;
+	public static JTextPane threeACOut;
 
 
 	private JPanel inputPaneParent;

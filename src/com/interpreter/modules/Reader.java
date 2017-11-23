@@ -4,7 +4,7 @@ import javax.swing.JOptionPane;
 
 public class Reader {
 
-	public static String readInput(){
+	public static Object readInput(){
 		String input = JOptionPane.showInputDialog("Enter Input: ");
 		return input;
 	}

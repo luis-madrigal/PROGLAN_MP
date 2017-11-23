@@ -10,25 +10,29 @@ import com.utils.Types;
 import com.utils.Utils;
 
 public class MethodContext extends Context{
-	
+
 	private MethodDeclarationContext ctx;
-	private ArrayList<String> argTypes;
+	private ArrayList<String> argTypes;//TODO: bad implementation
+	private ArrayList<String> args;
+
 	private String returnType;
 
 	public MethodContext(MethodDeclarationContext ctx, Scope scope, String identifier) {
 		super(identifier, scope);
 		this.ctx = ctx;
 
-		argTypes = new ArrayList<>();
+		argTypes = new ArrayList<String>();
+		args = new ArrayList<String>();
 		if(ctx.formalParameters().formalParameterList() != null) {
 			for (FormalParameterContext fpctx : ctx.formalParameters().formalParameterList().formalParameter()) {
 				argTypes.add(fpctx.typeType().getText());
+				args.add(fpctx.variableDeclaratorId().getText());
 			}
 		}
 
 		returnType = "null";
 	}
-	
+
 	public boolean matchesArgs(MethodDeclarationContext ctx) {
 		ArrayList<String> argTypes = new ArrayList<>();
 		if(ctx.formalParameters().formalParameterList() != null) {
@@ -38,7 +42,7 @@ public class MethodContext extends Context{
 				argTypes.add(fpctx.typeType().getText());
 			}
 		}
-		
+
 		return Utils.listEqualsIgnoreOrder(argTypes, this.argTypes);
 	}
 
@@ -64,6 +68,14 @@ public class MethodContext extends Context{
 
 	public void setReturnType(String returnType) {
 		this.returnType = returnType;
+	}
+
+	public ArrayList<String> getArgs() {
+		return args;
+	}
+
+	public void setArgs(ArrayList<String> args) {
+		this.args = args;
 	}
 
 }
