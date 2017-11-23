@@ -118,7 +118,6 @@ public class ManuScriptTokenMaker extends AbstractTokenMaker {
 	            	   for(int k = i; k < end; k++) {
 	            		   line += array[k];
 	            	   }
-	            	   System.out.println("ASDF "+line);
 	            	   if(line.contains("]:")) {
 	            		  addToken(text, currentTokenStart,i-1, Token.WHITESPACE, newStartOffset+currentTokenStart);
 	 	                  currentTokenStart = i;
