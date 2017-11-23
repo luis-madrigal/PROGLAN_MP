@@ -28,16 +28,6 @@ public interface ManuScriptListener extends ParseTreeListener {
 	 */
 	void exitBodyDeclaration(ManuScriptParser.BodyDeclarationContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link ManuScriptParser#variableModifier}.
-	 * @param ctx the parse tree
-	 */
-	void enterVariableModifier(ManuScriptParser.VariableModifierContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link ManuScriptParser#variableModifier}.
-	 * @param ctx the parse tree
-	 */
-	void exitVariableModifier(ManuScriptParser.VariableModifierContext ctx);
-	/**
 	 * Enter a parse tree produced by {@link ManuScriptParser#typeBound}.
 	 * @param ctx the parse tree
 	 */
@@ -227,36 +217,6 @@ public interface ManuScriptListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitStructDeclaration(ManuScriptParser.StructDeclarationContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link ManuScriptParser#qualifierSpecifierList}.
-	 * @param ctx the parse tree
-	 */
-	void enterQualifierSpecifierList(ManuScriptParser.QualifierSpecifierListContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link ManuScriptParser#qualifierSpecifierList}.
-	 * @param ctx the parse tree
-	 */
-	void exitQualifierSpecifierList(ManuScriptParser.QualifierSpecifierListContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link ManuScriptParser#qualifierList}.
-	 * @param ctx the parse tree
-	 */
-	void enterQualifierList(ManuScriptParser.QualifierListContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link ManuScriptParser#qualifierList}.
-	 * @param ctx the parse tree
-	 */
-	void exitQualifierList(ManuScriptParser.QualifierListContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link ManuScriptParser#qualifier}.
-	 * @param ctx the parse tree
-	 */
-	void enterQualifier(ManuScriptParser.QualifierContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link ManuScriptParser#qualifier}.
-	 * @param ctx the parse tree
-	 */
-	void exitQualifier(ManuScriptParser.QualifierContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link ManuScriptParser#structDeclaratorList}.
 	 * @param ctx the parse tree

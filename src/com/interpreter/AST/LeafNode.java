@@ -7,18 +7,18 @@ import com.utils.KeyTokens;
  */
 public class LeafNode extends AbstractSyntaxTree {
 
-    protected KeyTokens.LITERAL_TYPE literalType;
+    protected String literalType;
     protected Object value;
 
     public LeafNode(AbstractSyntaxTree parent) {
         super(parent);
     }
 
-    public void setLiteralType(KeyTokens.LITERAL_TYPE literalType) {
+    public void setLiteralType(String literalType) {
         this.literalType = literalType;
     }
 
-    public KeyTokens.LITERAL_TYPE getLiteralType() {
+    public String getLiteralType() {
         return literalType;
     }
 
