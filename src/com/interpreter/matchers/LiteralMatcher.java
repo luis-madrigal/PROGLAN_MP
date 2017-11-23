@@ -46,20 +46,28 @@ public class LiteralMatcher {
 	public Object parseAttempt(Object ob) {//TODO: bad implementation
 		try {
 			Integer x = Integer.parseInt(ob.toString());
+			System.out.println("----------INTEGER----------");
 			return x;
 		}catch(Exception e){
 			try {
 				Float x = Float.parseFloat(ob.toString());
+				System.out.println("----------Float----------");
 				return x;
 			}catch(Exception e1){
 				try {
-					Boolean x = Boolean.parseBoolean(ob.toString());
+					Boolean x = (Boolean) ob;
+					System.out.println("----------Boolean----------");
 					return x;
 				}catch(Exception e2) {
-					if(parseChar(ob.toString()) != null)
+					if(parseChar(ob.toString()) != null) {
+						System.out.println("----------Char----------");
 						return parseChar(ob.toString());
-					else
-						return ob.toString().substring(1).substring(0, ob.toString().length()-1);
+					}
+					else {
+
+						System.out.println("----------String----------");
+						return ob.toString().substring(1).substring(0, ob.toString().length()-2);
+					}
 				}
 			}
 		}

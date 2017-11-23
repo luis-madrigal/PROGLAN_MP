@@ -74,8 +74,8 @@ public class ICGenerator {
 			case FOR: this.forStmt(n); flag = false; break;
 			case BLOCK: break;
 			case FUNCTION_DECLARATION: this.declareFunc(n); this.addStatement(new TACFuncDeclarationStatement(n.getNodeType(), ((ProcedureNode)n).getProcedureName())); break;
-			case RETURN: this.addStatement(new TACReturnStatement(n.getNodeType(), this.storeExpression(n))); flag = false;break;
-			case PRINT: this.addStatement(new TACPrintStatement(n.getNodeType(), this.storeExpression(n))); flag = false; break;
+			case RETURN: this.addStatement(new TACReturnStatement(n.getNodeType(), this.storeExpression(n.getChild(0)))); flag = false;break;
+			case PRINT: this.addStatement(new TACPrintStatement(n.getNodeType(), this.storeExpression(n.getChild(0)))); flag = false; break;
 			case SCAN: this.addStatement(new TACScanStatement(n.getNodeType(), n.getChild(0).getValue().toString())); flag = false; break;
 			default:
 				break;
@@ -136,18 +136,17 @@ public class ICGenerator {
 	}
 	
 	private void forStmt(AbstractSyntaxTree node) {
-		this.storeExpression(node.getChild(0));
-		
+		this.enterBlock();
+		this.storeStatement(node.getChild(0));
 		int currentLblCount = this.labelCount + 1;
 		TACLoopStatement stmt = new TACLoopStatement(node.getNodeType(), this.storeExpression(node.getChild(1)));
 		this.addStatement(stmt);
-		this.enterBlock();
-		stmt.setJumpDestTrue(ICGenerator.LABEL_ALIAS+(this.labelCount));
+		stmt.setJumpDestTrue(ICGenerator.LABEL_ALIAS+(this.labelCount+1));
 		this.storeExpression(node.getChild(2));
 		this.storeStatement(node.getChild(3));
-		this.exitBlock();
 		this.addStatement(new TACGotoStatement(NodeType.GOTO, ICGenerator.LABEL_ALIAS+currentLblCount));
-		stmt.setJumpDestFalse(ICGenerator.LABEL_ALIAS+(this.labelCount+1));
+		this.exitBlock();
+		stmt.setJumpDestFalse(ICGenerator.LABEL_ALIAS+(this.labelCount));
 	}
 	
 	private void doWhileStmt(AbstractSyntaxTree node) {

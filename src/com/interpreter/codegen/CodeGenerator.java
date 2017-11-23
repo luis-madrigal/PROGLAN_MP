@@ -33,6 +33,7 @@ import com.interpreter.tac.operands.Operand;
 import com.interpreter.tac.operands.OperandTypes;
 import com.interpreter.tac.operands.Register;
 import com.interpreter.tac.operands.Variable;
+import com.utils.KeyTokens.LITERAL_TYPE;
 import com.utils.KeyTokens.OPERATOR;
 
 public class CodeGenerator {
@@ -45,8 +46,10 @@ public class CodeGenerator {
 	private Scope currentScope;
 	private String currentMethod;
 	private Stack<Scope> prevBlocks;
+	private HashMap<String, MethodContext> methodTable;
 	
 	public CodeGenerator(HashMap<String, ProcedureNode> methodASTTable, HashMap<String, MethodContext> methodTable) {
+		this.methodTable = methodTable;
 		this.methodICodes = new HashMap<String, ArrayList<TACStatement>>();
 		this.labelMap = new HashMap<String, TACStatement>();
 		this.variables = new HashMap<String, Scope>();
@@ -62,6 +65,12 @@ public class CodeGenerator {
 			this.variables.put(entry.getKey(), icg.getScope());
 			this.addToLabelMap(this.methodICodes.get(entry.getKey()));
 			icg.print();
+			
+			ArrayList<String> args = methodTable.get(entry.getKey()).getArgs();
+			ArrayList<LITERAL_TYPE> argTypes = methodTable.get(entry.getKey()).getArgTypes();
+			for(int i = 0; i < args.size(); i++) {
+				this.variables.get(entry.getKey()).addToScope(new SymbolContext(argTypes.get(i), icg.getScope(), args.get(i)));
+			}
 		}
 		
 	}
@@ -73,17 +82,27 @@ public class CodeGenerator {
 		this.run(methodICodes.get(currentMethod));
 	}
 	
-	private Object run(ArrayList<TACStatement> icode, Operand ...args) {//TODO: store the arguments in variables
+	private Object run(ArrayList<TACStatement> icode, Object ...args) {
 		String pointer = icode.get(0).getLabel();
 		int pointerCount = Integer.parseInt(icode.get(0).getLabel().substring(1));
 		TACStatement stmt = null;
+		this.prevBlocks.push(null);
 		
-		while(!this.labelMap.get(pointer).getType().equals(NodeType.RETURN) || this.labelMap.containsKey(pointer)) {
+		ArrayList<String> fnArgs = this.methodTable.get(currentMethod).getArgs();
+		for(int i = 0; i < args.length; i++) {
+			this.variables.get(currentMethod).findVar(fnArgs.get(i)).setValue(args[i]);
+		}
+		do {
 			System.out.println(pointer);
 			stmt = this.labelMap.get(pointer);
 			pointerCount = this.evaluate(stmt, pointerCount);
 			pointer = ICGenerator.LABEL_ALIAS+pointerCount;
+		}while(this.labelMap.containsKey(pointer) && !this.labelMap.get(pointer).getType().equals(NodeType.RETURN));
+		
+		while(this.prevBlocks.peek() != null) {
+			this.prevBlocks.pop();
 		}
+		this.prevBlocks.pop();
 		
 		if(stmt.getType().equals(NodeType.RETURN)) {
 			TACReturnStatement rStmt = (TACReturnStatement) stmt;
@@ -117,7 +136,13 @@ public class CodeGenerator {
 			this.currentMethod = stmt.getMethodName();
 			this.parentScope = this.variables.get(currentMethod);
 			Register r = new Register(OperandTypes.REGISTER, stmt.getOutputRegister().getName());
-			Object value = this.run(this.methodICodes.get(stmt.getMethodName()), stmt.getParams().toArray(new Operand[stmt.getParams().size()])); 
+			
+			Object[] params = new Object[stmt.getParams().size()];
+			for(int i = 0; i < stmt.getParams().size(); i++) {
+				params[i] = this.getValue(stmt.getParams().get(i));
+			}
+			
+			Object value = this.run(this.methodICodes.get(stmt.getMethodName()), params); 
 			r.setValue(value);
 			this.registers.put(r.getName(), r);
 			pointerCount++;
@@ -239,7 +264,6 @@ public class CodeGenerator {
 	private Object getValue(Operand operand) {
 		switch (operand.getOperandType()) {
 		case REGISTER:
-			System.out.println("in reg");
 			Register r = (Register) operand;
 			System.out.println(this.registers.containsKey(r.getName()));
 			return this.registers.get(r.getName()).getValue();
@@ -247,6 +271,7 @@ public class CodeGenerator {
 			return operand.getValue();
 		case VARIABLE:
 			Variable v = (Variable) operand;
+			System.out.println(v.getAlias());
 			return this.currentScope.findVar(v.getAlias()).getValue();
 		default:
 			return null;

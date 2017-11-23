@@ -21,7 +21,15 @@ public class Scope extends HashSet<String>{
 	}
 	
 	public SymbolContext findVar(String varName) {
-		return this.symTable.get(varName);
+		System.out.println("find var with name: "+varName);
+		if(this.symTable.containsKey(varName))
+			return this.symTable.get(varName);
+		else if(parent != null)
+			return this.parent.findVar(varName);
+		else {
+			System.out.println("not existing var");
+			return null;
+		}
 	}
 	
 	public Scope findWithLabel(String label) {
