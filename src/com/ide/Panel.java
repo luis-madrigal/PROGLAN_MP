@@ -211,11 +211,21 @@ public class Panel implements ActionListener, KeyListener, MouseListener {
 //		pnlMenu.setPreferredSize(new Dimension(1920, 100));
 //		pnlMenu.setMinimumSize(new Dimension(1920, 100));
 		
-		this.btnRun = new JButton("\u25B6");
+		this.btnRun = new JButton();
 		this.btnRun.setFocusable(false);
 		this.btnRun.addActionListener(this);
+		
+       
+		btnRun.setBackground(Color.WHITE);
+        btnRun.setBorder(null);
+        btnRun.setIcon(new ImageIcon(getClass().getClassLoader().getResource("res//ico_subtract_off.png")));
+        btnRun.setRolloverIcon(new ImageIcon(getClass().getClassLoader().getResource("res/ico_subtract_on.png")));
+        btnRun.setPressedIcon(new ImageIcon(getClass().getClassLoader().getResource("res/ico_subtract_on.png")));
+        btnRun.setFocusable(false);
+		
+		
 //		btnRun.setSize(btnRun.getWidth(), 100);
-		btnRun.setBounds(1366-30, 0, 30, 30);
+//		btnRun.setBounds(1366-30, 0, 30, 30);
 		pnlMenu.add(btnRun);
 		/*
 		JButton tempButton;
@@ -260,6 +270,7 @@ public class Panel implements ActionListener, KeyListener, MouseListener {
 		this.codeInput.setBackground(SUBLIME_BG);
 //		this.codeInput.isOpaque();
 		this.codeInput.setCaretColor(Color.WHITE);
+		this.codeInput.setMargin(new Insets(5, 5, 0, 0));
 		Console.instance().setCodeInput(codeInput);
 		Console.instance().getTextPane().addMouseListener(this);
 		
@@ -417,7 +428,7 @@ public class Panel implements ActionListener, KeyListener, MouseListener {
         this.btnScaleDown = new JButton();
         btnScaleDown.setBackground(Color.WHITE);
         btnScaleDown.setBorder(null);
-        btnScaleDown.setIcon(new ImageIcon(getClass().getClassLoader().getResource("res/ico_subtract_off.png")));
+        btnScaleDown.setIcon(new ImageIcon(getClass().getClassLoader().getResource("res//ico_subtract_off.png")));
         btnScaleDown.setRolloverIcon(new ImageIcon(getClass().getClassLoader().getResource("res/ico_subtract_on.png")));
         btnScaleDown.setPressedIcon(new ImageIcon(getClass().getClassLoader().getResource("res/ico_subtract_on.png")));
         btnScaleDown.setFocusable(false);
