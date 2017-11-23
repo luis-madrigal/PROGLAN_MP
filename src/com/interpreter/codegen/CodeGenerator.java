@@ -158,6 +158,7 @@ public class CodeGenerator {
 			break;
 		case BRANCH:
 			TACIfStatement ifStmt = (TACIfStatement) statement;
+			System.out.println("==="+Boolean.parseBoolean(this.getValue(ifStmt.getOperand()).toString()));
 			if(Boolean.parseBoolean(this.getValue(ifStmt.getOperand()).toString())) {
 				pointerCount = ifStmt.getJumpDestTrueInt();
 			} else
@@ -228,7 +229,7 @@ public class CodeGenerator {
 		Object op2Value = this.getValue(operand2);
 		
 		System.out.println(op1Value + " " + operator.toString() + " " +op2Value);
-		
+
 		switch (operator) {
 		case ADD: return ExpressionEvaluator.add(op1Value, op2Value);
 		case SUB: return ExpressionEvaluator.subtract(op1Value, op2Value);
@@ -265,7 +266,8 @@ public class CodeGenerator {
 		switch (operand.getOperandType()) {
 		case REGISTER:
 			Register r = (Register) operand;
-			System.out.println(this.registers.containsKey(r.getName()));
+//			System.out.println(this.registers.containsKey(r.getName()));
+			System.out.println("+++++++++++++++"+this.registers.get(r.getName()).getValue());
 			return this.registers.get(r.getName()).getValue();
 		case LITERAL:
 			return operand.getValue();
