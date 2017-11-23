@@ -551,7 +551,7 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
         }
 
         if(ctx.variableInitializer() != null) {
-            node.setNodeType(NodeType.ASSIGN);
+//            node.setNodeType(NodeType.ASSIGN);
             AbstractSyntaxTree value = visit(ctx.variableInitializer());
             if (value != null) {
                 value.setParent(node);

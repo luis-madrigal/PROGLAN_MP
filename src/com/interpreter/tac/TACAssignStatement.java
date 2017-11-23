@@ -2,15 +2,16 @@ package com.interpreter.tac;
 
 import com.interpreter.AST.NodeType;
 import com.interpreter.tac.operands.Operand;
+import com.interpreter.tac.operands.Variable;
 import com.utils.KeyTokens.OPERATOR;
 
 public class TACAssignStatement extends TACStatement{
 	
 	private OPERATOR operator;
-	private Operand variable;
+	private Variable variable;
 	private Operand value;
 
-	public TACAssignStatement(NodeType type, OPERATOR operator, Operand variable, Operand value) {
+	public TACAssignStatement(NodeType type, OPERATOR operator, Variable variable, Operand value) {
 		super(type);
 		this.operator = operator;
 		this.variable = variable;
@@ -25,11 +26,11 @@ public class TACAssignStatement extends TACStatement{
 		this.operator = operator;
 	}
 
-	public Operand getVariable() {
+	public Variable getVariable() {
 		return variable;
 	}
 
-	public void setVariable(Operand variable) {
+	public void setVariable(Variable variable) {
 		this.variable = variable;
 	}
 

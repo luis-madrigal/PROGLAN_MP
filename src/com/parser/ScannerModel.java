@@ -117,7 +117,7 @@ public class ScannerModel {
 		astbv.visit(tree);
 		astbv.printAST("main");
 		
-		CodeGenerator codegen = new CodeGenerator(astbv.getMethodASTTable());
+		CodeGenerator codegen = new CodeGenerator(astbv.getMethodASTTable(), methodTable);
 		codegen.run();
 
 //		System.out.println(tree.toStringTree(parser));

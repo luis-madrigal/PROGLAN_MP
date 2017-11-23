@@ -1,6 +1,7 @@
 package com.interpreter.tac;
 
 import com.interpreter.AST.NodeType;
+import com.interpreter.modules.ExpressionEvaluator;
 import com.interpreter.tac.operands.Operand;
 import com.utils.KeyTokens.OPERATOR;
 
@@ -21,5 +22,37 @@ public class TACBinaryOpStatement extends TACOutputStatement{
 	
 	public String toString() {
 		return super.toString() + this.operand1.toString() + " " + this.operator.toString() + " " + this.operand2.toString();
+	}
+
+	public OPERATOR getOperator() {
+		return operator;
+	}
+
+	public void setOperator(OPERATOR operator) {
+		this.operator = operator;
+	}
+
+	public Operand getOutput() {
+		return output;
+	}
+
+	public void setOutput(Operand output) {
+		this.output = output;
+	}
+
+	public Operand getOperand1() {
+		return operand1;
+	}
+
+	public void setOperand1(Operand operand1) {
+		this.operand1 = operand1;
+	}
+
+	public Operand getOperand2() {
+		return operand2;
+	}
+
+	public void setOperand2(Operand operand2) {
+		this.operand2 = operand2;
 	}
 }

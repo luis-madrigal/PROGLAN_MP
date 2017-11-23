@@ -37,6 +37,14 @@ public class TACIfStatement extends TACStatement{
 		this.jumpDestFalse = jumpDestFalse;
 	}
 	
+	public int getJumpDestTrueInt() {
+		return Integer.parseInt(this.jumpDestTrue.substring(1, this.jumpDestTrue.length()));
+	}
+	
+	public int getJumpDestFalseInt() {
+		return Integer.parseInt(this.jumpDestFalse.substring(1, this.jumpDestFalse.length()));
+	}
+	
 	public String toString() {
 		return this.getLabel() + ": if "+ this.condition.toString() + " goto " + this.jumpDestTrue + " else goto " + this.jumpDestFalse;
 	}

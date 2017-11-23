@@ -12,7 +12,9 @@ import com.utils.Utils;
 public class MethodContext extends Context{
 	
 	private MethodDeclarationContext ctx;
-	private ArrayList<KeyTokens.LITERAL_TYPE> argTypes;
+	private ArrayList<KeyTokens.LITERAL_TYPE> argTypes;//TODO: bad implementation
+	private ArrayList<String> args;
+	
 	private KeyTokens.LITERAL_TYPE returnType;
 
 	public MethodContext(MethodDeclarationContext ctx, Scope scope, String identifier) {
@@ -20,9 +22,11 @@ public class MethodContext extends Context{
 		this.ctx = ctx;
 
 		argTypes = new ArrayList<KeyTokens.LITERAL_TYPE>();
+		args = new ArrayList<String>();
 		if(ctx.formalParameters().formalParameterList() != null) {
 			for (FormalParameterContext fpctx : ctx.formalParameters().formalParameterList().formalParameter()) {
 				argTypes.add(KeyTokens.LITERAL_TYPE.getEnum(fpctx.typeType().getText()));
+				args.add(fpctx.variableDeclaratorId().getText());
 			}
 		}
 
@@ -64,6 +68,14 @@ public class MethodContext extends Context{
 
 	public void setReturnType(KeyTokens.LITERAL_TYPE returnType) {
 		this.returnType = returnType;
+	}
+
+	public ArrayList<String> getArgs() {
+		return args;
+	}
+
+	public void setArgs(ArrayList<String> args) {
+		this.args = args;
 	}
 
 }

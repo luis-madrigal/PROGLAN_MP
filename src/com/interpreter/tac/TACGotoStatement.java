@@ -19,13 +19,13 @@ public class TACGotoStatement extends TACStatement {
 		return jumpDest;
 	}
 
-
-
 	public void setJumpDest(String jumpDest) {
 		this.jumpDest = jumpDest;
 	}
 
-
+	public int getJumpDestInt() {
+		return Integer.parseInt(this.jumpDest.substring(1, this.jumpDest.length()));
+	}
 
 	public String toString() {
 		return this.getLabel() + ": goto "+this.jumpDest;
