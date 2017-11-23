@@ -1,0 +1,10 @@
+ACT main starring() {
+	char cmd;
+
+	rehearse {
+		Say "Enter a letter: ";
+		Write to cmd;
+	}
+	when(cmd != 'Z')
+
+}

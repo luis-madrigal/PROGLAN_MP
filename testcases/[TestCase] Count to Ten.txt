@@ -1,0 +1,8 @@
+ACT main starring () {
+	int count = 1;
+
+	when(count < 11) {
+		Say "Count is: "+count;
+		count++;
+	}
+}

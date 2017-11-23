@@ -1,0 +1,25 @@
+ACT computeGrades starring (float grades) {
+	float sum = 0;
+	float n = grades.length;
+
+	replay(int i = 0; i < n; i++) {
+		sum += grades[i];
+	}
+
+	give sum/n;
+}
+
+ACT main starring () {
+	String name;
+	float grades[] = new float[5];
+	float GPA;
+
+	Say "Please enter your full name:";
+	Write to name;
+
+	Say "Enter your grades:";
+	Write to grades; [Comment: Automatic loop?]
+
+	GPA = computeGrades(grades);
+	Say "Your GPA is "+GPA;
+}
