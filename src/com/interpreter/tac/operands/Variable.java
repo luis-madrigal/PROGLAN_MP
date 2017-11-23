@@ -16,5 +16,8 @@ public class Variable extends Operand{
 		this.alias = alias;
 	}
 	
+	public String toString() {
+		return this.alias;
+	}
 	
 }

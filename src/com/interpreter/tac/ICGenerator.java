@@ -92,6 +92,12 @@ public class ICGenerator {
 		SymbolContext ctx = new SymbolContext(lNode.getLiteralType(), this.currentScope, lNode.getValue().toString());
 		this.addStatement(new TACVariableDeclaration(n.getNodeType(), ctx));
 		this.currentScope.addToScope(ctx);
+		
+		if(n.getValue() != null) {
+			Operand value = this.storeExpression(n.getChild(1));
+			TACAssignStatement aStmt = new TACAssignStatement(NodeType.ASSIGN, OPERATOR.getEnum(n.getValue()), new Variable(OperandTypes.VARIABLE, value, lNode.getValue().toString()), value);
+			this.addAssignStatement(aStmt);
+		}
 	}
 	
 	private void declareFunc(AbstractSyntaxTree n) {

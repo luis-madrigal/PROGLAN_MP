@@ -28,6 +28,7 @@ import com.interpreter.tac.TACPrintStatement;
 import com.interpreter.tac.TACReturnStatement;
 import com.interpreter.tac.TACScanStatement;
 import com.interpreter.tac.TACStatement;
+import com.interpreter.tac.TACUnaryOpStatement;
 import com.interpreter.tac.operands.Operand;
 import com.interpreter.tac.operands.OperandTypes;
 import com.interpreter.tac.operands.Register;
@@ -141,6 +142,7 @@ public class CodeGenerator {
 		case DO_WHILE:
 		case FOR:
 			TACLoopStatement loopStmt = (TACLoopStatement) statement;
+			System.out.println(loopStmt.getCondition().toString());
 			if(Boolean.parseBoolean(this.getValue(loopStmt.getCondition()).toString())) {
 				pointerCount = loopStmt.getJumpDestTrueInt();
 			} else
@@ -169,6 +171,13 @@ public class CodeGenerator {
 					Register rb = ((TACOutputStatement) statement).getOutputRegister();
 					this.registers.put(rb.getName(), rb);
 					this.registers.get(rb.getName()).setValue(this.binOpEval(binOp.getOperator(), binOp.getOperand1(), binOp.getOperand2())); break;
+				case UNIPRE_ARITHMETIC:
+				case UNIPOST_ARITHMETIC:
+				case UNI_LOGIC:
+					TACUnaryOpStatement unOp = (TACUnaryOpStatement) statement;
+					Register rb1 = ((TACOutputStatement) statement).getOutputRegister();
+					this.registers.put(rb1.getName(), rb1);
+					this.registers.get(rb1.getName()).setValue(this.unOpEval(unOp.getOperator(), unOp.getOperand1())); break;
 				default:
 					break;
 				}
@@ -193,15 +202,17 @@ public class CodeGenerator {
 		Object op1Value = this.getValue(operand1);
 		Object op2Value = this.getValue(operand2);
 		
+		System.out.println(op1Value + " " + operator.toString() + " " +op2Value);
+		
 		switch (operator) {
 		case ADD: return ExpressionEvaluator.add(op1Value, op2Value);
-		case SUB: 
-		case DIV:
-		case MULT:
-		case LESS:
-		case LEQ:
-		case GREATER:
-		case GEQ:
+		case SUB: return ExpressionEvaluator.subtract(op1Value, op2Value);
+		case DIV: return ExpressionEvaluator.divide(op1Value, op2Value);
+		case MULT: return ExpressionEvaluator.multiply(op1Value, op2Value);
+		case LESS: return ExpressionEvaluator.lessThan(op1Value, op2Value);
+		case LEQ: return ExpressionEvaluator.lessThanOrEqual(op1Value, op2Value);
+		case GREATER: return ExpressionEvaluator.greaterThan(op1Value, op2Value);
+		case GEQ: return ExpressionEvaluator.greaterThanOrEqual(op1Value, op2Value);
 		case EQUAL: return ExpressionEvaluator.equal((Boolean)op1Value, (Boolean)op2Value);
 		case NEQUAL: return ExpressionEvaluator.notEqual((Boolean)op1Value, (Boolean)op2Value);
 		case AND: return ExpressionEvaluator.and((Boolean)op1Value, (Boolean)op2Value);
@@ -211,10 +222,26 @@ public class CodeGenerator {
 		}
 	}
 	
+	private Object unOpEval(OPERATOR operator, Operand operand) {
+		Object opValue = this.getValue(operand);
+		
+		switch (operator) {
+		case INC: return ExpressionEvaluator.preInc(opValue);
+		case DEC: return ExpressionEvaluator.preDec(opValue);
+		case NOT: return ExpressionEvaluator.negate((Boolean)opValue);
+		case ADD: return ExpressionEvaluator.positive(opValue);
+		case SUB: return ExpressionEvaluator.negate(opValue);
+		default:
+			return null;
+		}
+	}
+	
 	private Object getValue(Operand operand) {
 		switch (operand.getOperandType()) {
 		case REGISTER:
+			System.out.println("in reg");
 			Register r = (Register) operand;
+			System.out.println(this.registers.containsKey(r.getName()));
 			return this.registers.get(r.getName()).getValue();
 		case LITERAL:
 			return operand.getValue();
