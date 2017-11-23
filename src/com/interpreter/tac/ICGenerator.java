@@ -20,6 +20,7 @@ import com.interpreter.tac.operands.Operand;
 import com.interpreter.tac.operands.OperandTypes;
 import com.interpreter.tac.operands.Register;
 import com.interpreter.tac.operands.Variable;
+import com.utils.KeyTokens.LITERAL_TYPE;
 import com.utils.KeyTokens.OPERATOR;
 
 public class ICGenerator {
@@ -34,6 +35,7 @@ public class ICGenerator {
 	private Stack<Scope> scopes;
 	private Scope currentScope;
 	private HashMap<String, MethodContext> methodTable;
+	private Stack<TACStatement> toAdd;
 	
 	public ICGenerator(HashMap<String, MethodContext> methodTable) {
 		this.registerCount = 0;
@@ -43,6 +45,7 @@ public class ICGenerator {
 	
 	public ArrayList<TACStatement> generateICode(AbstractSyntaxTree tree) {
 		this.tac = new ArrayList<TACStatement>();
+		this.toAdd = new Stack<TACStatement>();
 		this.scopes = new Stack<Scope>();
 		Scope s = new Scope(null);
 		this.scopes.push(s);
@@ -60,14 +63,16 @@ public class ICGenerator {
 		while (!queue.isEmpty()) {
 			AbstractSyntaxTree n = queue.poll();
 			switch(n.getNodeType()) {
-			case VAR_DECLARE: this.declareVar(n); break;
+			case UNIPOST_ARITHMETIC:
+			case UNIPRE_ARITHMETIC:
 			case ASSIGN: this.storeExpression(n); flag = false; break;
+			case VAR_DECLARE: this.declareVar(n); break;
 			case FUNCTION_INVOKE: this.storeExpression(n); flag = false; break;
 			case BRANCH: this.branch(n); flag = false; break;
 			case WHILE: this.whileStmt(n); flag = false; break;
 			case DO_WHILE: this.doWhileStmt(n); flag = false; break;
 			case FOR: this.forStmt(n); flag = false; break;
-			case BLOCK: break; //TODO: distinguish between enter and exit
+			case BLOCK: break;
 			case FUNCTION_DECLARATION: this.declareFunc(n); this.addStatement(new TACFuncDeclarationStatement(n.getNodeType(), ((ProcedureNode)n).getProcedureName())); break;
 			case RETURN: this.addStatement(new TACReturnStatement(n.getNodeType(), this.storeExpression(n))); flag = false;break;
 			case PRINT: this.addStatement(new TACPrintStatement(n.getNodeType(), this.storeExpression(n))); flag = false; break;
@@ -137,7 +142,7 @@ public class ICGenerator {
 		TACLoopStatement stmt = new TACLoopStatement(node.getNodeType(), this.storeExpression(node.getChild(1)));
 		this.addStatement(stmt);
 		this.enterBlock();
-		stmt.setJumpDestTrue(ICGenerator.LABEL_ALIAS+(this.labelCount+1));
+		stmt.setJumpDestTrue(ICGenerator.LABEL_ALIAS+(this.labelCount));
 		this.storeExpression(node.getChild(2));
 		this.storeStatement(node.getChild(3));
 		this.exitBlock();
@@ -147,13 +152,13 @@ public class ICGenerator {
 	
 	private void doWhileStmt(AbstractSyntaxTree node) {
 		this.enterBlock();
-		int currentLblCount = this.labelCount + 1;
+		int currentLblCount = this.labelCount;
 		this.storeStatement(node.getChild(0));
+		this.exitBlock();
 		TACLoopStatement stmt = new TACLoopStatement(node.getNodeType(), this.storeExpression(node.getChild(1)));
 		this.addStatement(stmt);
 		stmt.setJumpDestTrue(ICGenerator.LABEL_ALIAS+currentLblCount);
 		stmt.setJumpDestFalse(ICGenerator.LABEL_ALIAS+(this.labelCount+1));
-		this.exitBlock();
 	}
 	
 	private void whileStmt(AbstractSyntaxTree node) {
@@ -161,7 +166,7 @@ public class ICGenerator {
 		TACLoopStatement stmt = new TACLoopStatement(node.getNodeType(), this.storeExpression(node.getChild(0)));
 		this.addStatement(stmt);
 		this.enterBlock();
-		stmt.setJumpDestTrue(ICGenerator.LABEL_ALIAS+(this.labelCount+1));
+		stmt.setJumpDestTrue(ICGenerator.LABEL_ALIAS+(this.labelCount));
 		this.storeStatement(node.getChild(1));
 		this.exitBlock();
 		this.addStatement(new TACGotoStatement(NodeType.GOTO, ICGenerator.LABEL_ALIAS+currentLblCount)); //check condition if still true
@@ -173,7 +178,7 @@ public class ICGenerator {
 		TACGotoStatement gotoStmt = new TACGotoStatement(NodeType.GOTO);
 		this.addStatement(stmt);
 		this.enterBlock();
-		stmt.setJumpDestTrue(ICGenerator.LABEL_ALIAS+(this.labelCount+1));
+		stmt.setJumpDestTrue(ICGenerator.LABEL_ALIAS+(this.labelCount));
 		
 		this.storeStatement(node.getChild(1));
 //		this.addStatement(new TACGotoStatement(ICGenerator.LABEL_ALIAS+(this.labelCount-1)));
@@ -182,7 +187,14 @@ public class ICGenerator {
 		stmt.setJumpDestFalse(ICGenerator.LABEL_ALIAS+(this.labelCount+1));
 
 		for(int i = 2; i < node.getChildren().size(); i++) {
-			this.storeStatement(node.getChild(i));	
+			if(node.getChild(i).getNodeType().equals(NodeType.BLOCK)) { //ELSE STMT
+				this.enterBlock();
+				this.storeStatement(node.getChild(i));	
+				this.exitBlock();
+			} else {
+				this.storeStatement(node.getChild(i));
+			}
+			
 		}
 		
 		gotoStmt.setJumpDest(ICGenerator.LABEL_ALIAS+(this.labelCount+1));
@@ -217,7 +229,7 @@ public class ICGenerator {
 				queue.add(child);
 			}
 		}
-		
+
 		return null;
 	}
 	
@@ -247,10 +259,65 @@ public class ICGenerator {
 	}
 	
 	private Register addOutputStatement(TACOutputStatement stmt) {
+		switch(stmt.getType()) {
+		case UNIPRE_ARITHMETIC:
+		case UNIPOST_ARITHMETIC:
+			TACUnaryOpStatement unOp = (TACUnaryOpStatement) stmt;
+			return this.convertUnaryOp(unOp);
+		default:
+			this.registerCount++;
+			Register r = new Register(OperandTypes.REGISTER, ICGenerator.REGISTER_ALIAS+this.registerCount);
+			stmt.setOutputRegister(r);
+			this.addStatement(stmt);
+			return r;
+		}
+		
+	}
+		
+	private Register convertUnaryOp(TACUnaryOpStatement stmt) {
+		Register r = null;
 		this.registerCount++;
-		Register r = new Register(OperandTypes.REGISTER, ICGenerator.REGISTER_ALIAS+this.registerCount);
-		stmt.setOutputRegister(r);
-		this.addStatement(stmt);
+		r = new Register(OperandTypes.REGISTER, ICGenerator.REGISTER_ALIAS+this.registerCount);
+		switch (stmt.getType()) {
+		case UNIPRE_ARITHMETIC:
+			switch (stmt.getOperator()) {
+			case INC: 
+				TACBinaryOpStatement binOp = new TACBinaryOpStatement(NodeType.BIN_ARITHMETIC, OPERATOR.ADD, stmt.getOperand1(), new Literal(OperandTypes.LITERAL, new Integer(1), LITERAL_TYPE.INT));
+				binOp.setOutputRegister(r);
+				this.addStatement(binOp);
+				TACAssignStatement assign = new TACAssignStatement(NodeType.ASSIGN, OPERATOR.ASSIGN, (Variable)stmt.getOperand1(), r);
+				this.addAssignStatement(assign);
+				break;
+			case DEC:
+				TACBinaryOpStatement binOp2 = new TACBinaryOpStatement(NodeType.BIN_ARITHMETIC, OPERATOR.SUB, stmt.getOperand1(), new Literal(OperandTypes.LITERAL, new Integer(1), LITERAL_TYPE.INT));
+				binOp2.setOutputRegister(r);
+				this.addStatement(binOp2);
+				TACAssignStatement assign2 = new TACAssignStatement(NodeType.ASSIGN, OPERATOR.ASSIGN, (Variable)stmt.getOperand1(), r);
+				this.addAssignStatement(assign2);
+				break;
+			case ADD:
+			case SUB:
+				stmt.setOutputRegister(r);
+				this.addStatement(stmt);
+			default:
+				break;
+			} break;
+		case UNIPOST_ARITHMETIC:
+			switch (stmt.getOperator()) {
+			case INC:
+			case DEC:
+				TACUnaryOpStatement unOp = new TACUnaryOpStatement(NodeType.UNIPRE_ARITHMETIC, stmt.getOperator(), stmt.getOperand1());
+				stmt.setOperator(OPERATOR.ADD);
+				stmt.setOutputRegister(r);
+				this.addStatement(stmt);
+				this.convertUnaryOp(unOp);
+				break;
+			default:
+				break;
+			} break;
+		default:
+			break;
+		}
 		
 		return r;
 	}

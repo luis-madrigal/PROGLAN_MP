@@ -52,10 +52,15 @@ public class LiteralMatcher {
 				Float x = Float.parseFloat(ob.toString());
 				return x;
 			}catch(Exception e1){
-				if(parseChar(ob.toString()) != null)
-					return parseChar(ob.toString());
-				else
-					return ob.toString().substring(1).substring(0, ob.toString().length()-1);
+				try {
+					Boolean x = Boolean.parseBoolean(ob.toString());
+					return x;
+				}catch(Exception e2) {
+					if(parseChar(ob.toString()) != null)
+						return parseChar(ob.toString());
+					else
+						return ob.toString().substring(1).substring(0, ob.toString().length()-1);
+				}
 			}
 		}
 	}
