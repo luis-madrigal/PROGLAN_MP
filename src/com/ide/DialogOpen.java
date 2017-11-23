@@ -1,29 +1,26 @@
 package com.ide;
 
 import java.awt.Color;
-import java.awt.Toolkit;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.io.File;
 
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
+import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 
-public class DialogProcess extends JDialog implements MouseListener {
+public class DialogOpen extends JDialog implements MouseListener {
 	private static final long serialVersionUID = 1L;
-	public static final String MSG_START = "STARTING... ";
-	public static final String MSG_PROCESS = "PROCESSING: ";
 
-	public static final String MSG_EXPORT = "EXPORTING: ";
-	public static final String MSG_COMPLETE = "COMPLETE";
-	
+	private JFileChooser flchFFT1;
 	private JLabel lblBackground;
 	private JButton btnClose;
-	private JButton lblMessage;
+	private JButton btnOpen;
 	private JButton btnCancel;
 	
 	private JLabel lblTotal;
@@ -36,7 +33,7 @@ public class DialogProcess extends JDialog implements MouseListener {
 	private DialogConfirm dlgConfirm;
 //	private SwingWorker<Void, ProcessNode> swProcess;
 	
-	public DialogProcess() {
+	public DialogOpen() {
 		FrameStatic.initDialog(this, 340, 90, Color.WHITE, true, false, false);
 //		this.setModalityType(ModalityType.APPLICATION_MODAL);
 		this.setUndecorated(true);
@@ -44,7 +41,7 @@ public class DialogProcess extends JDialog implements MouseListener {
 		this.initComponents();
 		
 		this.add(btnCancel);
-		this.add(lblMessage);
+		this.add(btnOpen);
 		this.add(lblTotal);
 		this.add(pnlProgressBar);
 		this.add(btnClose);
@@ -87,16 +84,16 @@ public class DialogProcess extends JDialog implements MouseListener {
 		
 		width = 80;//pnlProgressBar.getWidth();
 		height = 20;
-		lblMessage = new JButton("SAVE");
+		btnOpen = new JButton("SAVE");
 //		FrameStatic.initButtons(lblMessage, FrameStatic.fntDefault12, FrameStatic.clrAutomatic, pnlProgressBar.getX(), pnlProgressBar.getY()+pnlProgressBar.getHeight(), width, height);
-		FrameStatic.initButtons(lblMessage, Color.WHITE,  pnlProgressBar.getX()+pnlProgressBar.getWidth()-width, pnlProgressBar.getY()+pnlProgressBar.getHeight()+5, width, height, this);
-		lblMessage.setFont(FrameStatic.fntDefault12_BOLD);
-		lblMessage.setRolloverEnabled(false);
+		FrameStatic.initButtons(btnOpen, Color.WHITE,  pnlProgressBar.getX()+pnlProgressBar.getWidth()-width, pnlProgressBar.getY()+pnlProgressBar.getHeight()+5, width, height, this);
+		btnOpen.setFont(FrameStatic.fntDefault12_BOLD);
+		btnOpen.setRolloverEnabled(false);
 		
 		width = this.getWidth()/4;
 		height = 22;
 		btnClose = new JButton("Close");
-		FrameStatic.initButtons(btnClose, Color.WHITE, (this.getWidth()-width)/2, lblMessage.getY()+5, width, height, this);
+		FrameStatic.initButtons(btnClose, Color.WHITE, (this.getWidth()-width)/2, btnOpen.getY()+5, width, height, this);
 
 		JLabel lblLabel = new JLabel();
 		FrameStatic.initLabel(lblLabel, FrameStatic.fntDefault12,
@@ -113,22 +110,45 @@ public class DialogProcess extends JDialog implements MouseListener {
 		btnCancel.setFont(FrameStatic.fntDefault12);
 		btnCancel.setForeground(FrameStatic.clrWhite);
 		
+
+		File dirWorking = new File(System.getProperty("user.home"));
+		
+		this.flchFFT1 = new JFileChooser();		
+		this.flchFFT1.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+		this.flchFFT1.setCurrentDirectory(dirWorking);
+		
 		this.dlgConfirm = new DialogConfirm(170);
 		dlgConfirm.getBtnYes().addMouseListener(this);
 		dlgConfirm.close();
 	}
 	
-	public void show(String message, JComponent parent) {
+	public JButton getBtnSave() {
+		return btnOpen;
+	}
+
+	public void setBtnSave(JButton btnSave) {
+		this.btnOpen = btnSave;
+	}
+
+	public void show(JComponent parent) {
 //		this.swProcess = swProcess;
 		this.setLocationRelativeTo(parent);
 		this.btnClose.setVisible(false);
-		this.lblMessage.setVisible(true);
+		this.btnOpen.setVisible(true);
 //		this.lblMessage.setText(message);
 		this.setBounds(this.getX(), this.getY()-30, this.getWidth(), this.getHeight());
 		this.setVisible(true);
 	}
 	
 	
+	public JTextField getTxtfFilename() {
+		return txtfFilename;
+	}
+
+	public void setTxtfFilename(JTextField txtfFilename) {
+		this.txtfFilename = txtfFilename;
+	}
+
 	public void close() {
 		this.setVisible(false);
 		refresh();
