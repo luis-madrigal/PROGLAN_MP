@@ -10,39 +10,39 @@ import com.utils.Types;
 import com.utils.Utils;
 
 public class MethodContext extends Context{
-	
+
 	private MethodDeclarationContext ctx;
-	private ArrayList<KeyTokens.LITERAL_TYPE> argTypes;//TODO: bad implementation
+	private ArrayList<String> argTypes;//TODO: bad implementation
 	private ArrayList<String> args;
-	
-	private KeyTokens.LITERAL_TYPE returnType;
+
+	private String returnType;
 
 	public MethodContext(MethodDeclarationContext ctx, Scope scope, String identifier) {
 		super(identifier, scope);
 		this.ctx = ctx;
 
-		argTypes = new ArrayList<KeyTokens.LITERAL_TYPE>();
+		argTypes = new ArrayList<String>();
 		args = new ArrayList<String>();
 		if(ctx.formalParameters().formalParameterList() != null) {
 			for (FormalParameterContext fpctx : ctx.formalParameters().formalParameterList().formalParameter()) {
-				argTypes.add(KeyTokens.LITERAL_TYPE.getEnum(fpctx.typeType().getText()));
+				argTypes.add(fpctx.typeType().getText());
 				args.add(fpctx.variableDeclaratorId().getText());
 			}
 		}
 
-		returnType = KeyTokens.LITERAL_TYPE.NULL;
+		returnType = "null";
 	}
-	
+
 	public boolean matchesArgs(MethodDeclarationContext ctx) {
-		ArrayList<KeyTokens.LITERAL_TYPE> argTypes = new ArrayList<KeyTokens.LITERAL_TYPE>();
+		ArrayList<String> argTypes = new ArrayList<>();
 		if(ctx.formalParameters().formalParameterList() != null) {
 			if(ctx.formalParameters().formalParameterList().formalParameter().size() != this.argTypes.size())
 				return false;
 			for (FormalParameterContext fpctx : ctx.formalParameters().formalParameterList().formalParameter()) {
-				argTypes.add(KeyTokens.LITERAL_TYPE.getEnum(fpctx.typeType().getText()));
+				argTypes.add(fpctx.typeType().getText());
 			}
 		}
-		
+
 		return Utils.listEqualsIgnoreOrder(argTypes, this.argTypes);
 	}
 
@@ -54,19 +54,19 @@ public class MethodContext extends Context{
 		this.ctx = ctx;
 	}
 
-	public ArrayList<KeyTokens.LITERAL_TYPE> getArgTypes() {
+	public ArrayList<String> getArgTypes() {
 		return argTypes;
 	}
 
-	public void setArgTypes(ArrayList<KeyTokens.LITERAL_TYPE> argTypes) {
+	public void setArgTypes(ArrayList<String> argTypes) {
 		this.argTypes = argTypes;
 	}
 
-	public KeyTokens.LITERAL_TYPE getReturnType() {
+	public String getReturnType() {
 		return returnType;
 	}
 
-	public void setReturnType(KeyTokens.LITERAL_TYPE returnType) {
+	public void setReturnType(String returnType) {
 		this.returnType = returnType;
 	}
 

@@ -1,4 +1,5 @@
 package com.ide;
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
@@ -50,13 +51,23 @@ import com.ide.styles.RSyntaxTextAreaManuscript;
 import com.ide.styles.Styles;
 import com.override.CustomScrollBarUISky;
 import com.parser.ScannerModel;
+import com.save.TextFileHandler;
 import com.utils.Console;
 
 
 
 public class Panel implements ActionListener, KeyListener, MouseListener {
+	private Frame frameParent;
+	private DialogSave dlgSave;
+
+	private TextFileHandler textFileHandler;
+	
 	private JPanel pnlMain;
+	private JPanel pnlMenu;
 	private JButton btnRun;
+	private JButton btnLoad;
+	private JButton btnSave;
+
 	
 	private Styles styles;
 	
@@ -74,9 +85,10 @@ public class Panel implements ActionListener, KeyListener, MouseListener {
 	
 	private RSyntaxTextAreaManuscript codeInput;
 	private JTextPane parsedOut;
-	public static JTextPane threeACOut; //TODO: bad implementation
+	public static JTextPane threeACOut;
 
-	
+
+	private JPanel inputPaneParent;
 	private RTextScrollPane inputPane;
 	private JScrollPane parsedPane;
 	private JScrollPane threeACPane;
@@ -97,6 +109,7 @@ public class Panel implements ActionListener, KeyListener, MouseListener {
 	public static int baseFontSize = (int) Frame.SCREEN_SIZE.getHeight() / 60;
 	
 	public Panel() {
+		
 		// Remove JTabbedPane "Borders"
 		UIManager.getDefaults().put("TabbedPane.contentBorderInsets", new Insets(0,0,0,0));
 		UIManager.getDefaults().put("TabbedPane.tabsOverlapBorder", true);
@@ -106,7 +119,6 @@ public class Panel implements ActionListener, KeyListener, MouseListener {
 		UIManager.getDefaults().put("SplitPane.contentBorderInsets", new Insets(0,0,0,0));
 		
 		UIManager.put("TabbedPane.selected", Styles.SKY_BLUE);
-		
 		UIManager.getLookAndFeelDefaults().put("TabbedPane:TabbedPaneTab[Enabled].backgroundPainter", new BackgroundPainter(Color.WHITE));
         UIManager.getLookAndFeelDefaults().put("TabbedPane:TabbedPaneTab[Enabled+MouseOver].backgroundPainter", new BackgroundPainter(Color.WHITE));
         UIManager.getLookAndFeelDefaults().put("TabbedPane:TabbedPaneTab[Enabled+Pressed].backgroundPainter", new BackgroundPainter(Color.WHITE));
@@ -126,7 +138,8 @@ public class Panel implements ActionListener, KeyListener, MouseListener {
         UIManager.put("TabbedPane.focus", Color.WHITE);
         UIManager.put("TabbedPane.selectHighlight", Color.WHITE);
         
-        
+
+		this.textFileHandler = new TextFileHandler();
 		this.styles = new Styles();
 		//-----------------------Syntax Highlighting (for output) TO REMOVE----------------------------------
 		SimpleAttributeSet attrKeyword = new SimpleAttributeSet();
@@ -166,35 +179,112 @@ public class Panel implements ActionListener, KeyListener, MouseListener {
 		
 		
 		
-		//Run Button
-		this.btnRun = new JButton("\u25B6");
+		//Run Button		
 		gbc = new GridBagConstraints();
-		gbc.anchor = GridBagConstraints.WEST;
-		gbc.fill = GridBagConstraints.NONE;
+		gbc.anchor = GridBagConstraints.NORTHWEST;
+		gbc.fill = GridBagConstraints.BOTH;
+
 		gbc.gridwidth = 1;
+		gbc.gridheight = 0;
 		gbc.gridx = 0;
 		gbc.gridy = 0;
-		gbc.insets = new Insets(10, 10, 10, 0);
+		gbc.insets = new Insets(0, 0, 0, 0);
 		gbc.weightx = 1;
+		gbc.weighty = 0.5;
+
+		this.pnlMenu = new JPanel();
+//		pnlMenu.setBackground(FrameStatic.clrTransparent);
+		pnlMenu.setOpaque(false);
+//		pnlMenu.setBackground(FrameStatic.clrAccent);
+		pnlMenu.setLayout(null);
+//		pnlMenu.setMaximumSize(new Dimension(1920, 100));
+//		pnlMenu.setSize(new Dimension(1920, 100));
+//		pnlMenu.setPreferredSize(new Dimension(1920, 100));
+		pnlMenu.setMinimumSize(new Dimension(400, 100));
+		
+		this.btnRun = new JButton();
 		this.btnRun.setFocusable(false);
 		this.btnRun.addActionListener(this);
-		this.pnlMain.add(this.btnRun, gbc);
+       
+		btnRun.setBackground(Color.WHITE);
+//        btnRun.setBorder(null);
+		btnRun.setBorder(FrameStatic.brdrBarUn);
+		btnRun.setIcon(new ImageIcon(getClass().getClassLoader().getResource("res/ico_play_off.png")));
+        btnRun.setRolloverIcon(new ImageIcon(getClass().getClassLoader().getResource("res/ico_play_on.png")));
+        btnRun.setPressedIcon(new ImageIcon(getClass().getClassLoader().getResource("res/ico_play_on.png")));
+        btnRun.setFocusable(false);
+		btnRun.getInsets().set(5, 0, 0, 0);
+
+		btnRun.setSize(40, 35);
+		btnRun.setPreferredSize(btnRun.getSize());
+//		btnRun.setBounds(-10, 40, btnRun.getWidth(), btnRun.getHeight());
+		pnlMenu.add(btnRun);
+
+
+		this.btnLoad = new JButton();
+		btnLoad.setFocusable(false);
+		btnLoad.addActionListener(this);
+		btnLoad.addMouseListener(this);
+//		btnLoad.setBorder(null);
+		btnLoad.setBorder(FrameStatic.brdrBarUn);
+		btnLoad.setBackground(Color.WHITE);
+		btnLoad.setIcon(new ImageIcon(getClass().getClassLoader().getResource("res/ico_open_off.png")));
+		btnLoad.setRolloverIcon(new ImageIcon(getClass().getClassLoader().getResource("res/ico_open_on.png")));
+		btnLoad.setPressedIcon(new ImageIcon(getClass().getClassLoader().getResource("res/ico_open_on.png")));
+
+		btnLoad.setFocusable(false);
+		btnLoad.getInsets().set(30, 0, 0, 0);
+
+		btnLoad.setSize(40, 35);
+		btnLoad.setPreferredSize(btnLoad.getSize());
+		pnlMenu.add(btnLoad);
+
+
+		this.btnSave = new JButton();
+		btnSave.setFocusable(false);
+		btnSave.addActionListener(this);
+		btnSave.addMouseListener(this);
+//		btnSave.setBorder(null);
+		btnSave.setBorder(FrameStatic.brdrBarUn);
+		btnSave.setBackground(Color.WHITE);
+		btnSave.setIcon(new ImageIcon(getClass().getClassLoader().getResource("res/ico_save_off.png")));
+		btnSave.setRolloverIcon(new ImageIcon(getClass().getClassLoader().getResource("res/ico_save_on.png")));
+		btnSave.setPressedIcon(new ImageIcon(getClass().getClassLoader().getResource("res/ico_save_on.png")));
+		btnSave.setFocusable(false);
+		btnSave.getInsets().set(30, 0, 0, 0);
+
+		btnSave.setSize(40, 35);
+		btnSave.setPreferredSize(btnSave.getSize());
+		pnlMenu.add(btnSave);
+				
 		
+
+		int offsetX = 7;
+
+//		btnRun.setLocation(10, 6);
+		btnRun.setLocation(20, 6);
+		btnLoad.setLocation(btnRun.getX()+btnRun.getWidth()+offsetX, btnRun.getY());
+		btnSave.setLocation(btnLoad.getX()+btnLoad.getWidth()+offsetX, btnRun.getY());
+		this.pnlMain.add(this.pnlMenu, gbc);
 		
 		//Code Input
 		this.lblCodeInput = new JLabel("Code Input:");
 		this.lblCodeInput.setFont(new Font("Segoe UI", 150, baseFontSize));
 		this.lblCodeInput.setForeground(Color.BLACK);
+		this.lblCodeInput.setBackground(Color.GRAY);
+		this.lblCodeInput.setOpaque(true);
+		this.lblCodeInput.setLayout(new BorderLayout());
 		gbc = new GridBagConstraints();
 		gbc.anchor = GridBagConstraints.NORTHWEST;
-		gbc.fill = GridBagConstraints.NONE;
-		gbc.gridwidth = 3;
+		gbc.fill = GridBagConstraints.VERTICAL;
+		gbc.gridwidth = 1;
+		gbc.gridheight = 1;
 		gbc.gridx = 0;
-		gbc.gridy = 1;
-		gbc.insets = new Insets(0, 10, 0, 0);
-		gbc.weightx = 1;
-		gbc.weighty = 1;
-		this.pnlMain.add(this.lblCodeInput, gbc);
+		gbc.gridy = 0;
+		gbc.insets = new Insets(5, 10, 0, 0);
+		gbc.weightx = 1.0;
+		gbc.weighty = 0;
+//		this.pnlMain.add(this.lblCodeInput, gbc);
 		
 		this.codeInput = new RSyntaxTextAreaManuscript();
 		this.codeInput.setSyntaxScheme(getExpressionColorScheme(this.codeInput.getSyntaxScheme()));
@@ -210,6 +300,7 @@ public class Panel implements ActionListener, KeyListener, MouseListener {
 		this.codeInput.setBackground(SUBLIME_BG);
 //		this.codeInput.isOpaque();
 		this.codeInput.setCaretColor(Color.WHITE);
+		this.codeInput.setMargin(new Insets(5, 5, 0, 0));
 		Console.instance().setCodeInput(codeInput);
 		Console.instance().getTextPane().addMouseListener(this);
 		
@@ -223,6 +314,10 @@ public class Panel implements ActionListener, KeyListener, MouseListener {
 		
 		this.inputPane = new RTextScrollPane(this.codeInput);
 		this.inputPane.setPreferredSize(new Dimension((int) Frame.SCREEN_SIZE.getWidth()/2, 150));
+//		this.inputPane.setSize(new Dimension((int) Frame.SCREEN_SIZE.getWidth()/2, 150));
+//		this.inputPane.setMaximumSize(new Dimension((int) Frame.SCREEN_SIZE.getWidth()/2, 150));
+//		this.inputPane.setMinimumSize(new Dimension((int) Frame.SCREEN_SIZE.getWidth()/2, 150));
+		
 		this.inputPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		this.inputPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
 //		this.inputPane.setRowHeaderView(this.inputLines);
@@ -296,15 +391,15 @@ public class Panel implements ActionListener, KeyListener, MouseListener {
 		
 		
 		// For three address code
-		this.threeACOut = new JTextPane();
-        this.threeACOut.setFont(new Font("Consolas", 150, baseFontSize));
-        this.threeACOut.setEditable(false);
-        this.threeACOut.setForeground(Color.WHITE);
-        this.threeACOut.setBackground(SUBLIME_BG);
-        this.threeACOut.isOpaque();
+		threeACOut = new JTextPane();
+        threeACOut.setFont(new Font("Consolas", 150, baseFontSize));
+        threeACOut.setEditable(false);
+        threeACOut.setForeground(Color.WHITE);
+        threeACOut.setBackground(SUBLIME_BG);
+        threeACOut.isOpaque();
 		
         
-		this.threeACPane = new JScrollPane(this.threeACOut);
+		this.threeACPane = new JScrollPane(threeACOut);
 		this.threeACPane.setPreferredSize(new Dimension((int) Frame.SCREEN_SIZE.getWidth()/2, 150));
 		this.threeACPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 	
@@ -349,9 +444,11 @@ public class Panel implements ActionListener, KeyListener, MouseListener {
         this.btnScaleUp = new JButton();
         btnScaleUp.setBackground(Color.WHITE);
         btnScaleUp.setBorder(null);
-        btnScaleUp.setIcon(new ImageIcon("res/ico_add_off.png"));
-        btnScaleUp.setRolloverIcon(new ImageIcon("res/ico_add_on.png"));
-        btnScaleUp.setPressedIcon(new ImageIcon("res/ico_add_on.png"));
+        
+        // TODO Proper res retrieval
+        btnScaleUp.setIcon(new ImageIcon(getClass().getClassLoader().getResource("res/ico_add_off.png")));
+        btnScaleUp.setRolloverIcon(new ImageIcon(getClass().getClassLoader().getResource("res/ico_add_on.png")));
+        btnScaleUp.setPressedIcon(new ImageIcon(getClass().getClassLoader().getResource("res/ico_add_on.png")));
         btnScaleUp.setFocusable(false);
         
 		this.btnScaleUp.setBounds(3, 3, 30, 30);
@@ -361,9 +458,9 @@ public class Panel implements ActionListener, KeyListener, MouseListener {
         this.btnScaleDown = new JButton();
         btnScaleDown.setBackground(Color.WHITE);
         btnScaleDown.setBorder(null);
-        btnScaleDown.setIcon(new ImageIcon("res/ico_subtract_off.png"));
-        btnScaleDown.setRolloverIcon(new ImageIcon("res/ico_subtract_on.png"));
-        btnScaleDown.setPressedIcon(new ImageIcon("res/ico_subtract_on.png"));
+        btnScaleDown.setIcon(new ImageIcon(getClass().getClassLoader().getResource("res/ico_subtract_off.png")));
+        btnScaleDown.setRolloverIcon(new ImageIcon(getClass().getClassLoader().getResource("res/ico_subtract_on.png")));
+        btnScaleDown.setPressedIcon(new ImageIcon(getClass().getClassLoader().getResource("res/ico_subtract_on.png")));
         btnScaleDown.setFocusable(false);
         
 		this.btnScaleDown.setBounds(38, 3, 30, 30);
@@ -381,22 +478,58 @@ public class Panel implements ActionListener, KeyListener, MouseListener {
 		this.outputTabs = new JTabbedPane();
 		this.outputTabs.add("Parsed Out", this.parsedPane);
 		this.outputTabs.add("Parse Tree", parentPane);
-		this.outputTabs.add("Three Address Code", this.threeACPane);
+		this.outputTabs.add("3 Address Code", this.threeACPane);
 
-		
+		this.outputTabs.setFont(FrameStatic.fntDefault);
+		outputTabs.setBackground(Color.WHITE);
 		parentPane.setSize(outputTabs.getWidth(), 40);
 		
+		this.inputPaneParent = new JPanel();
+		this.inputPaneParent.setLayout(new BoxLayout(inputPaneParent, BoxLayout.Y_AXIS));
+		inputPaneParent.setOpaque(false);
+		inputPaneParent.setBackground(FrameStatic.clrTransparent);
+		JPanel lblInput = new JPanel();
+//		lblInput.setFont(FrameStatic.fntGothamLight20);
+		lblInput.setBackground(FrameStatic.clrTransparent);
+		
+		lblInput.setSize(900, 20);
+		lblInput.setPreferredSize(lblInput.getSize());
+		lblInput.setMinimumSize(new Dimension(210, lblInput.getHeight()));
+		lblInput.setMaximumSize(lblInput.getSize());
+//		lblInput.setHorizontalAlignment(JLabel.LEFT);
+//		lblInput.setLayout(new FlowLayout());
+		lblInput.setOpaque(false);
+		lblInput.setLayout(null);
+
+
+		
+		
+		this.inputPaneParent.add(lblInput);
+		this.inputPaneParent.add(this.inputPane);
+		
 		this.topSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
-		this.topSplitPane.setLeftComponent(this.inputPane);
+		this.topSplitPane.setLeftComponent(this.inputPaneParent);
+		topSplitPane.setBackground(FrameStatic.clrTransparent);
+		topSplitPane.setOpaque(false);
+		topSplitPane.setResizeWeight(1.0);
+//		((JScrollPane)topSplitPane.getLeftComponent()).setBounds(0, 30, topSplitPane.getLeftComponent().getWidth(),
+//				topSplitPane.getLeftComponent().getHeight());
+//		
+//		((JScrollPane)topSplitPane.getLeftComponent()).setLocation(0, 50);
+		
+		
+		
+//		topSplitPane.getLeftComponent().setBounds(0, 0, topSplitPane.getLeftComponent().getWidth(),
+//				topSplitPane.getLeftComponent().getHeight());
 		this.topSplitPane.setRightComponent(this.outputTabs);
-		this.topSplitPane.setDividerLocation((int) Frame.SCREEN_SIZE.getWidth()/2);
+		this.topSplitPane.setDividerLocation((int) Frame.SCREEN_SIZE.getWidth()-440);
 		gbc = new GridBagConstraints();
 		gbc.anchor = GridBagConstraints.NORTHEAST;
 		gbc.fill = GridBagConstraints.BOTH;
 		gbc.gridwidth = 6;
 		gbc.gridx = 0;
 		gbc.gridy = 1;
-		gbc.insets = new Insets(30, 10, 10, 10);
+		gbc.insets = new Insets(30, 100, 10, 10);
 		this.pnlMain.add(this.topSplitPane, gbc);
 		
 		this.bottomPane = new JPanel();
@@ -405,7 +538,9 @@ public class Panel implements ActionListener, KeyListener, MouseListener {
 		this.bottomPane.isOpaque();
 		
 		this.lblConsole = new JLabel("Console:");
-		this.lblConsole.setFont(new Font("Segoe UI", 150, baseFontSize));
+//		this.lblConsole.setFont(new Font("Segoe UI", 150, baseFontSize));
+		this.lblConsole.setFont(FrameStatic.fntDefault);
+		lblConsole.setVerticalAlignment(JLabel.BOTTOM);
 		this.lblConsole.setForeground(Color.BLACK);
 		gbc = new GridBagConstraints();
 		gbc.anchor = GridBagConstraints.NORTHWEST;
@@ -413,7 +548,7 @@ public class Panel implements ActionListener, KeyListener, MouseListener {
 		gbc.gridwidth = 3;
 		gbc.gridx = 0;
 		gbc.gridy = 0;
-		gbc.insets = new Insets(0, 10, 0, 0);
+		gbc.insets = new Insets(10, 10, 0, 0);
 		gbc.weightx = 1;
 		gbc.weighty = 1;
 		this.bottomPane.add(this.lblConsole, gbc);
@@ -433,7 +568,9 @@ public class Panel implements ActionListener, KeyListener, MouseListener {
 		this.bottomSplitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
 		this.bottomSplitPane.setTopComponent(this.topSplitPane);
 		this.bottomSplitPane.setBottomComponent(this.bottomPane);
-		this.bottomSplitPane.setDividerLocation((int) Frame.SCREEN_SIZE.getHeight()/2);
+		this.bottomSplitPane.setDividerLocation((int) Frame.SCREEN_SIZE.getHeight()-300);
+		bottomSplitPane.setOpaque(false);
+		bottomSplitPane.setBackground(FrameStatic.clrTransparent);
 		gbc = new GridBagConstraints();
 		gbc.anchor = GridBagConstraints.NORTHEAST;
 		gbc.fill = GridBagConstraints.BOTH;
@@ -454,20 +591,40 @@ public class Panel implements ActionListener, KeyListener, MouseListener {
 		//Scanner for input string
 		this.scanner = new ScannerModel();
 		
-		this.topSplitPane.setDividerSize(1);
+		this.topSplitPane.setDividerSize(2);
 		this.topSplitPane.setBackground(Color.WHITE);
 		this.topSplitPane.setContinuousLayout(true);
 		
-		this.bottomSplitPane.setDividerSize(1);
+		this.bottomSplitPane.setDividerSize(2);
 		this.bottomSplitPane.setBackground(Color.WHITE);
 		this.bottomSplitPane.setContinuousLayout(true);
+
+		this.dlgSave = new DialogSave();
+		this.dlgSave.setProgressColor(FrameStatic.clrLightBlue);
+		this.dlgSave.getBtnSave().addMouseListener(this);
 		
 	}
 	
-//	public static void generateThreeAddressCode(String str) {
-//		threeACOut.setText(this.scanner.getIcg().getPrintText());
-//		
-//	}
+	public RSyntaxTextAreaManuscript getCodeInput() {
+		return codeInput;
+	}
+
+	public void setCodeInput(RSyntaxTextAreaManuscript codeInput) {
+		this.codeInput = codeInput;
+	}
+
+	public JTextArea getInputLines() {
+		return inputLines;
+	}
+
+	public void setInputLines(JTextArea inputLines) {
+		this.inputLines = inputLines;
+	}
+
+	public void generateThreeAddressCode() {
+		threeACOut.setText(this.scanner.getIcg().getPrintText());
+		
+	}
 	/*
 	 * TODO: SyntaxHighlighting
 	 * Specify the color for a Token type here using syntaxScheme.
@@ -508,7 +665,7 @@ public class Panel implements ActionListener, KeyListener, MouseListener {
 			this.scanner.generateTree(); // Required to do this
 			this.treePane.setViewportView(this.scanner.getTree());			
 			
-//			this.generateThreeAddressCode();
+			this.generateThreeAddressCode();
 //			this.console.setText(this.console.getText() + this.scanner.getMessage());			
 			this.codeInput.selectAll();
 			this.parsedOut.setCaretPosition(parsedOut.getDocument().getLength());
@@ -608,6 +765,28 @@ public class Panel implements ActionListener, KeyListener, MouseListener {
 			gotoErrorLine(e);
 		}
 		
+		if(e.getSource() == btnSave) {
+			// TODO: Open Save Dialog
+			System.out.println("Save");
+			this.dlgSave.show(pnlMain);	
+
+		}
+		
+		if(e.getSource() == btnLoad) {
+			// TODO Open Load Dialog
+			System.out.println("Load");
+		}
+		
+		if(e.getSource() == this.dlgSave.getBtnSave()) {
+			createSaveFile(this.dlgSave.getTxtfFilename().getText());
+			this.dlgSave.close();
+		}
+		
+	}
+	public void createSaveFile(String strFilename) {
+		
+		String strFile = this.codeInput.getText();
+		this.textFileHandler.save(strFilename, strFile);
 	}
 	
 	void gotoErrorLine(MouseEvent e) {
@@ -622,5 +801,13 @@ public class Panel implements ActionListener, KeyListener, MouseListener {
 			RXTextUtilities.gotoStartOfLine(codeInput, line);
 			RXTextUtilities.centerLineInScrollPane(codeInput);
 		 }
+	}
+
+	public Frame getFrameParent() {
+		return frameParent;
+	}
+
+	public void setFrameParent(Frame frameParent) {
+		this.frameParent = frameParent;
 	}
 }

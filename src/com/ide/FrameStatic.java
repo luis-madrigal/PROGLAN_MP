@@ -5,6 +5,7 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Image;
+import java.awt.LayoutManager;
 import java.awt.Rectangle;
 import java.awt.event.ItemListener;
 import java.awt.event.MouseListener;
@@ -80,7 +81,7 @@ public class FrameStatic extends JFrame {
 	public static Color clrMinValueUn = new Color(31, 150, 168, 230);
 	public static Color clrMaxValueUn = new Color(44, 234, 226, 220);
 	
-	public static Color clrBarBorderUn = new Color(66, 184, 192, 190); //new Color(49, 185, 183, 255);
+	public static Color clrBarBorderUn = new Color(81, 119, 144, 255);// new Color(66, 184, 192, 190); //
 	public static Color clrMinBorderUn = new Color(39, 158, 163, 255);
 	public static Color clrMaxBorderUn = new Color(20, 215, 204, 255);
 	
@@ -276,10 +277,14 @@ public class FrameStatic extends JFrame {
 
 	public static Color clrMarkFeat = new Color(140, 140, 140, 128);
 	
-	public static Font fntDefault = new Font("Arial", Font.PLAIN, 14);
+	public static Font fntDefault = new Font("Arial", Font.PLAIN, 13);
 	public static Font fntDefault12 = new Font("Arial", Font.PLAIN, 12);
 	public static Font fntDefault11 = new Font("Arial", Font.PLAIN, 11);
 	public static Font fntDefault10 = new Font("Arial", Font.PLAIN, 10);
+	
+
+	public static Font fntDefault13_BOLD = new Font("Arial", Font.BOLD, 13);
+	public static Font fntDefault12_BOLD = new Font("Arial", Font.BOLD, 12);
 	
 	public static Font fntGothamLight8 = new Font("GOTHAM-LIGHT", Font.PLAIN, 8);
 	public static Font fntGothamLight12 = new Font("GOTHAM-LIGHT", Font.PLAIN, 12);
@@ -326,16 +331,24 @@ public class FrameStatic extends JFrame {
 		panel.setVisible(true);
 	}
 	
+	
 	public static void initPanel(JPanel panel, Color color, int width, int height) {
-		
-		panel.setLayout(null);
 		panel.setOpaque(true);
 		panel.setBackground(color);
 		
 		panel.setBounds(0, 0, width, height);
 		panel.setFocusable(true);
 		panel.setVisible(true);
+			
 	}
+		
+	
+	public static void initPanel(JPanel panel, Color color, int width, int height, LayoutManager layout) {
+		panel.setLayout(layout);
+		initPanel(panel, color, width, height);
+	}
+
+		
 	public static void initLayeredPane(JLayeredPane panel, Color color, int width, int height) {
 		
 		panel.setLayout(null);

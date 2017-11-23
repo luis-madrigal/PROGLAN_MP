@@ -208,7 +208,7 @@ public class ICGenerator {
 			AbstractSyntaxTree n = queue.poll();
 			switch(n.getNodeType()) {
 			case VARIABLE: return new Variable(OperandTypes.VARIABLE, n.getValue(), n.getValue().toString());
-			case LITERAL: return new Literal(OperandTypes.LITERAL, LiteralMatcher.instance().parseAttempt(n.getValue()), ((LeafNode)n).getLiteralType());
+			case LITERAL: return new Literal(OperandTypes.LITERAL, LiteralMatcher.instance().parseAttempt(n.getValue()), LITERAL_TYPE.getEnum(((LeafNode)n).getLiteralType()));
 			case ASSIGN: TACAssignStatement aStmt = new TACAssignStatement(node.getNodeType(), OPERATOR.getEnum(n.getValue()), (Variable)this.storeExpression(n.getChild(0)), this.storeExpression(n.getChild(1)));
 						 this.addAssignStatement(aStmt); break;
 			case BIN_ARITHMETIC:

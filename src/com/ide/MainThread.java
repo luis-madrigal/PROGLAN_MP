@@ -7,6 +7,6 @@ public class MainThread extends Thread {
 		super.run();
 		Panel pnlScanner = new Panel();
 		Frame frameScanner = new Frame();
-		frameScanner.showGUI(pnlScanner.getUI());
+		frameScanner.showGUI(frameScanner, pnlScanner);
 	}
 }

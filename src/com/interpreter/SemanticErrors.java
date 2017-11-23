@@ -5,7 +5,11 @@ import com.utils.Console;
 public class SemanticErrors {
 	
 	private static final String LINE_INFO = "line %d:%d ";
-	
+
+	//STRUCTURES
+	public static final String UNDEFINED_STRUCT = LINE_INFO + "Undefined structure '%s'";
+	public static final String DUPLICATE_STRUCT = LINE_INFO + "Duplicate structure '%s'";
+
 	//TYPE MISMATCH
 	public static final String TYPE_MISMATCH = LINE_INFO + "Type mismatch. Value should be of type '%s'";
 	public static final String METHOD_ARG_MISMATCH = LINE_INFO + "Type mismatch. Argument '%s' should be of type '%s'";

@@ -15,18 +15,18 @@ public class LiteralMatcher {
 		
 	}
 	
-	public KeyTokens.LITERAL_TYPE getLiteralType(LiteralContext ctx) {
+	public String getLiteralType(LiteralContext ctx) {
 		if(ctx.IntegerLiteral() != null)
-			return KeyTokens.LITERAL_TYPE.INT;
+			return "int";
 		if(ctx.CharacterLiteral() != null)
-			return KeyTokens.LITERAL_TYPE.CHAR;
+			return "char";
 		if(ctx.StringLiteral() != null)
-			return KeyTokens.LITERAL_TYPE.STRING;
+			return "string";
 		if(ctx.FloatingPointLiteral() != null)
-			return KeyTokens.LITERAL_TYPE.FLOAT;
+			return "float";
 		if(ctx.BooleanLiteral() != null)
-			return KeyTokens.LITERAL_TYPE.BOOLEAN;
-		return KeyTokens.LITERAL_TYPE.NULL;
+			return "boolean";
+		return "null";
 	}
 	
 	public KeyTokens.LITERAL_TYPE getLiteralType(Object ob) {

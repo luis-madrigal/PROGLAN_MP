@@ -559,7 +559,7 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
             }
         }
 
-        
+
         return node;
     }
 
@@ -591,7 +591,7 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
         SymbolContext symContext = null;
 
         symContext = curScope.checkTables(ctx.Identifier().getText());
-        KeyTokens.LITERAL_TYPE type = symContext.getSymbolType(); //todo: convert to enum?
+        String type = symContext.getSymbolType(); //todo: convert to enum?
 
         if(symContext != null) {
             variable.setValue(symContext.getIdentifier());
@@ -636,7 +636,7 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
         SymbolContext symContext = null;
 
         symContext = curScope.checkTables(ctx.Identifier().getText());
-        KeyTokens.LITERAL_TYPE type = symContext.getSymbolType(); //todo: convert to enum?
+        String type = symContext.getSymbolType(); //todo: convert to enum?
 
         if(symContext != null) {
             variable.setValue(symContext.getIdentifier());
@@ -669,26 +669,26 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
     @Override
     public AbstractSyntaxTree visitLiteral(ManuScriptParser.LiteralContext ctx) {
         TerminalNode tn = null;
-        KeyTokens.LITERAL_TYPE type = null;
+        String type = null;
         if(ctx.StringLiteral() != null) {
             tn = ctx.StringLiteral();
-            type = KeyTokens.LITERAL_TYPE.STRING;
+            type = "string";
         }
         else if(ctx.BooleanLiteral() != null) {
             tn = ctx.BooleanLiteral();
-            type = KeyTokens.LITERAL_TYPE.BOOLEAN;
+            type = "boolean";
         }
         else if(ctx.IntegerLiteral() != null) {
             tn = ctx.IntegerLiteral();
-            type = KeyTokens.LITERAL_TYPE.INT;
+            type = "int";
         }
         else if(ctx.CharacterLiteral() != null) {
             tn = ctx.CharacterLiteral();
-            type = KeyTokens.LITERAL_TYPE.CHAR;
+            type = "char";
         }
         else if(ctx.FloatingPointLiteral() != null) {
             tn = ctx.FloatingPointLiteral();
-            type = KeyTokens.LITERAL_TYPE.FLOAT;
+            type = "float";
         }
 
         if(type != null) {

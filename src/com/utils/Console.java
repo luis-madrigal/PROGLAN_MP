@@ -59,7 +59,6 @@ public class Console {
 	/**
 	 * @see public void err(String msg, int lineNumber)
 	 * @param msg
-	 * @param lineNumber
 	 */
 	public void err(String msg) {
 		StyledDocument doc = this.textPane.getStyledDocument();
@@ -72,7 +71,7 @@ public class Console {
 			e.printStackTrace();
 		}
 	}
-	
+
 	/**
 	 * Preferred function 
 	 * @param msg
