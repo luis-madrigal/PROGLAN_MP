@@ -193,23 +193,23 @@ public class Panel implements ActionListener, KeyListener, MouseListener {
 //		gbc.gridx = 1;
 //		gbc.gridy = 0;
 //		
-		gbc.gridwidth = 2;
+		gbc.gridwidth = 1;
 		gbc.gridheight = 0;
 		gbc.gridx = 0;
 		gbc.gridy = 0;
-		gbc.insets = new Insets(0, 0, 0, 1185);
-		gbc.weightx = 0.5;
+		gbc.insets = new Insets(0, 0, 0, 0);
+		gbc.weightx = 1;
 		gbc.weighty = 0.5;
 
 		this.pnlMenu = new JPanel();
-		pnlMenu.setBackground(FrameStatic.clrTransparent);
+//		pnlMenu.setBackground(FrameStatic.clrTransparent);
 		pnlMenu.setOpaque(false);
-		
-//		pnlMenu.setLayout(null);
+//		pnlMenu.setBackground(FrameStatic.clrAccent);
+		pnlMenu.setLayout(null);
 //		pnlMenu.setMaximumSize(new Dimension(1920, 100));
 //		pnlMenu.setSize(new Dimension(1920, 100));
 //		pnlMenu.setPreferredSize(new Dimension(1920, 100));
-//		pnlMenu.setMinimumSize(new Dimension(1920, 100));
+		pnlMenu.setMinimumSize(new Dimension(400, 100));
 		
 		this.btnRun = new JButton();
 		this.btnRun.setFocusable(false);
@@ -225,7 +225,7 @@ public class Panel implements ActionListener, KeyListener, MouseListener {
 
 		btnRun.setSize(50, 35);
 		btnRun.setPreferredSize(btnRun.getSize());
-		btnRun.setBounds(-10, 40, btnRun.getWidth(), btnRun.getHeight());
+//		btnRun.setBounds(-10, 40, btnRun.getWidth(), btnRun.getHeight());
 		pnlMenu.add(btnRun);
 
 
@@ -260,6 +260,13 @@ public class Panel implements ActionListener, KeyListener, MouseListener {
 		btnSave.setPreferredSize(btnSave.getSize());
 		pnlMenu.add(btnSave);
 				
+		
+
+		int offsetX = 5;
+
+		btnRun.setLocation(6, 6);
+		btnLoad.setLocation(btnRun.getX()+btnRun.getWidth()+offsetX, btnRun.getY());
+		btnSave.setLocation(btnLoad.getX()+btnLoad.getWidth()+offsetX, btnRun.getY());
 		this.pnlMain.add(this.pnlMenu, gbc);
 		
 		//Code Input
@@ -495,16 +502,6 @@ public class Panel implements ActionListener, KeyListener, MouseListener {
 		lblInput.setOpaque(false);
 		lblInput.setLayout(null);
 
-//		int offsetX = 5;
-
-//		btnRun.setLocation(0, 0);
-//		lblInput.add(btnRun);
-//		
-//		btnLoad.setLocation(btnRun.getX()+btnRun.getWidth()+offsetX, 0);
-//		lblInput.add(btnLoad);
-//		
-//		btnSave.setLocation(btnLoad.getX()+btnLoad.getWidth()+offsetX, 0);
-//		lblInput.add(btnSave);
 
 		
 		
