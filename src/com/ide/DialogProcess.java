@@ -128,18 +128,9 @@ public class DialogProcess extends JDialog implements MouseListener {
 		this.setVisible(true);
 	}
 	
-	public void complete() {
-		this.lblMessage.setVisible(false);
-		this.btnClose.setVisible(true);
-		Toolkit.getDefaultToolkit().beep();
-	}
 	
 	public void close() {
 		this.setVisible(false);
-		this.lblMessage.setText("");
-		this.lblTotal.setText("");
-		lblProgress.setBounds(0, 0, 0, lblProgress.getHeight());
-		
 		refresh();
 	}
 	
@@ -151,15 +142,6 @@ public class DialogProcess extends JDialog implements MouseListener {
 		this.dlgConfirm.show(this.lblBackground);
 	}
 	
-	public void updateMessage(String message, int current) {
-		int maxWidth = pnlProgressBar.getWidth();
-
-		lblMessage.setText(message);
-		lblTotal.setText(current+"/"+this.total);
-		lblProgress.setBounds(0, 0, (current*maxWidth)/this.total, lblProgress.getHeight());
-		
-		repaint();
-	}
 	
 	public void setProgressColor(Color color) {
 //		this.lblProgress.setBackground(color);
