@@ -3,7 +3,6 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -62,6 +61,9 @@ public class Panel implements ActionListener, KeyListener, MouseListener {
 	private JPanel pnlMain;
 	private JPanel pnlMenu;
 	private JButton btnRun;
+	private JButton btnLoad;
+	private JButton btnSave;
+
 	
 	private Styles styles;
 	
@@ -229,7 +231,7 @@ public class Panel implements ActionListener, KeyListener, MouseListener {
 		pnlMenu.add(btnRun);
 
 
-		JButton btnLoad = new JButton();
+		this.btnLoad = new JButton();
 		btnLoad.setFocusable(false);
 		btnLoad.addActionListener(this);
 //		btnLoad.setBorder(null);
@@ -246,7 +248,7 @@ public class Panel implements ActionListener, KeyListener, MouseListener {
 		pnlMenu.add(btnLoad);
 
 
-		JButton btnSave = new JButton();
+		this.btnSave = new JButton();
 		btnSave.setFocusable(false);
 		btnSave.addActionListener(this);
 //		btnSave.setBorder(null);

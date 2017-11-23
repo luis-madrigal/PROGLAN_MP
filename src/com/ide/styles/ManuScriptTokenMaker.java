@@ -254,7 +254,6 @@ public class ManuScriptTokenMaker extends AbstractTokenMaker {
 	}
 	
 	/*
-	 * TODO: SyntaxHighlighting
 	 * Assign a token type to a String using tokenMap.put(<String>, <Token.TYPE>).
 	 */
 	@Override
@@ -270,28 +269,19 @@ public class ManuScriptTokenMaker extends AbstractTokenMaker {
 		   token = keywords[i].trim().replace("\\", "");
 		   if(!token.isEmpty())
 			   tokenMap.put(token, Token.RESERVED_WORD);
-//		   System.out.println(token);
 	   }
 	   
 	   for(int i = 0; i < operators.length; i++) {
 		   token = operators[i].trim().replace("\\", "");
 		   if(!token.isEmpty())
 			   tokenMap.put(token, Token.OPERATOR);
-//		   System.out.println(token);
 	   }
 	   
 	   for(int i = 0; i < separators.length; i++) {
 		   token = separators[i].trim().replace("\\", "");
 		   if(!token.isEmpty())
 			   tokenMap.put(token, Token.SEPARATOR);
-//		   System.out.println(token);
 	   }
-	   
-
-//	   tokenMap.put("[]:", Token.COMMENT_KEYWORD);
-//	   tokenMap.put("[Comment]:", Token.COMMENT_KEYWORD);
-//	   tokenMap.put("[]*", Token.COMMENT_MULTILINE);
-//	   tokenMap.put("*[]", Token.COMMENT_MULTILINE);
 	   
 	   
 	   return tokenMap;

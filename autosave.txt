@@ -1,1 +1,15 @@
 
+ACT main starring() {
+ 	int x = 0;
+ 	float _veryWeirdIdentifier567 = 999.9f;
+ 	boolean y = (5 > 4 && true) || (false && !(x==0));
+ 	int[] myArray = new int[10];
+
+ 	Say "What is input: ";
+ 	Write to x;
+ 	Say "Input: "+x;
+
+ 	replay(int i = 0; i < 5; i++) {
+ 		Say "Hello World";
+ 	}
+ }
