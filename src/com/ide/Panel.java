@@ -113,7 +113,6 @@ public class Panel implements ActionListener, KeyListener, MouseListener {
 		UIManager.getDefaults().put("SplitPane.contentBorderInsets", new Insets(0,0,0,0));
 		
 		UIManager.put("TabbedPane.selected", Styles.SKY_BLUE);
-		
 		UIManager.getLookAndFeelDefaults().put("TabbedPane:TabbedPaneTab[Enabled].backgroundPainter", new BackgroundPainter(Color.WHITE));
         UIManager.getLookAndFeelDefaults().put("TabbedPane:TabbedPaneTab[Enabled+MouseOver].backgroundPainter", new BackgroundPainter(Color.WHITE));
         UIManager.getLookAndFeelDefaults().put("TabbedPane:TabbedPaneTab[Enabled+Pressed].backgroundPainter", new BackgroundPainter(Color.WHITE));
@@ -216,14 +215,15 @@ public class Panel implements ActionListener, KeyListener, MouseListener {
 		this.btnRun.addActionListener(this);
        
 		btnRun.setBackground(Color.WHITE);
-        btnRun.setBorder(null);
-        btnRun.setIcon(new ImageIcon(getClass().getClassLoader().getResource("res/ico_play_off.png")));
+//        btnRun.setBorder(null);
+		btnRun.setBorder(FrameStatic.brdrBarUn);
+		btnRun.setIcon(new ImageIcon(getClass().getClassLoader().getResource("res/ico_play_off.png")));
         btnRun.setRolloverIcon(new ImageIcon(getClass().getClassLoader().getResource("res/ico_play_on.png")));
         btnRun.setPressedIcon(new ImageIcon(getClass().getClassLoader().getResource("res/ico_play_on.png")));
         btnRun.setFocusable(false);
 		btnRun.getInsets().set(5, 0, 0, 0);
 
-		btnRun.setSize(50, 35);
+		btnRun.setSize(40, 35);
 		btnRun.setPreferredSize(btnRun.getSize());
 //		btnRun.setBounds(-10, 40, btnRun.getWidth(), btnRun.getHeight());
 		pnlMenu.add(btnRun);
@@ -232,7 +232,8 @@ public class Panel implements ActionListener, KeyListener, MouseListener {
 		JButton btnLoad = new JButton();
 		btnLoad.setFocusable(false);
 		btnLoad.addActionListener(this);
-		btnLoad.setBorder(null);
+//		btnLoad.setBorder(null);
+		btnLoad.setBorder(FrameStatic.brdrBarUn);
 		btnLoad.setBackground(Color.WHITE);
 		btnLoad.setIcon(new ImageIcon(getClass().getClassLoader().getResource("res/ico_open_off.png")));
 		btnLoad.setRolloverIcon(new ImageIcon(getClass().getClassLoader().getResource("res/ico_open_on.png")));
@@ -240,7 +241,7 @@ public class Panel implements ActionListener, KeyListener, MouseListener {
 		btnLoad.setFocusable(false);
 		btnLoad.getInsets().set(30, 0, 0, 0);
 
-		btnLoad.setSize(50, 35);
+		btnLoad.setSize(40, 35);
 		btnLoad.setPreferredSize(btnLoad.getSize());
 		pnlMenu.add(btnLoad);
 
@@ -248,7 +249,8 @@ public class Panel implements ActionListener, KeyListener, MouseListener {
 		JButton btnSave = new JButton();
 		btnSave.setFocusable(false);
 		btnSave.addActionListener(this);
-		btnSave.setBorder(null);
+//		btnSave.setBorder(null);
+		btnSave.setBorder(FrameStatic.brdrBarUn);
 		btnSave.setBackground(Color.WHITE);
 		btnSave.setIcon(new ImageIcon(getClass().getClassLoader().getResource("res/ico_save_off.png")));
 		btnSave.setRolloverIcon(new ImageIcon(getClass().getClassLoader().getResource("res/ico_save_on.png")));
@@ -256,15 +258,16 @@ public class Panel implements ActionListener, KeyListener, MouseListener {
 		btnSave.setFocusable(false);
 		btnSave.getInsets().set(30, 0, 0, 0);
 
-		btnSave.setSize(50, 35);
+		btnSave.setSize(40, 35);
 		btnSave.setPreferredSize(btnSave.getSize());
 		pnlMenu.add(btnSave);
 				
 		
 
-		int offsetX = 5;
+		int offsetX = 7;
 
-		btnRun.setLocation(6, 6);
+//		btnRun.setLocation(10, 6);
+		btnRun.setLocation(20, 6);
 		btnLoad.setLocation(btnRun.getX()+btnRun.getWidth()+offsetX, btnRun.getY());
 		btnSave.setLocation(btnLoad.getX()+btnLoad.getWidth()+offsetX, btnRun.getY());
 		this.pnlMain.add(this.pnlMenu, gbc);
@@ -480,9 +483,10 @@ public class Panel implements ActionListener, KeyListener, MouseListener {
 		this.outputTabs = new JTabbedPane();
 		this.outputTabs.add("Parsed Out", this.parsedPane);
 		this.outputTabs.add("Parse Tree", parentPane);
-		this.outputTabs.add("Three Address Code", this.threeACPane);
+		this.outputTabs.add("3 Address Code", this.threeACPane);
 
-		
+		this.outputTabs.setFont(FrameStatic.fntDefault);
+		outputTabs.setBackground(Color.WHITE);
 		parentPane.setSize(outputTabs.getWidth(), 40);
 		
 		this.inputPaneParent = new JPanel();
@@ -493,7 +497,7 @@ public class Panel implements ActionListener, KeyListener, MouseListener {
 //		lblInput.setFont(FrameStatic.fntGothamLight20);
 		lblInput.setBackground(FrameStatic.clrTransparent);
 		
-		lblInput.setSize(900, 21);
+		lblInput.setSize(900, 20);
 		lblInput.setPreferredSize(lblInput.getSize());
 		lblInput.setMinimumSize(new Dimension(210, lblInput.getHeight()));
 		lblInput.setMaximumSize(lblInput.getSize());
@@ -539,7 +543,9 @@ public class Panel implements ActionListener, KeyListener, MouseListener {
 		this.bottomPane.isOpaque();
 		
 		this.lblConsole = new JLabel("Console:");
-		this.lblConsole.setFont(new Font("Segoe UI", 150, baseFontSize));
+//		this.lblConsole.setFont(new Font("Segoe UI", 150, baseFontSize));
+		this.lblConsole.setFont(FrameStatic.fntDefault);
+		lblConsole.setVerticalAlignment(JLabel.BOTTOM);
 		this.lblConsole.setForeground(Color.BLACK);
 		gbc = new GridBagConstraints();
 		gbc.anchor = GridBagConstraints.NORTHWEST;
@@ -547,7 +553,7 @@ public class Panel implements ActionListener, KeyListener, MouseListener {
 		gbc.gridwidth = 3;
 		gbc.gridx = 0;
 		gbc.gridy = 0;
-		gbc.insets = new Insets(0, 10, 0, 0);
+		gbc.insets = new Insets(10, 10, 0, 0);
 		gbc.weightx = 1;
 		gbc.weighty = 1;
 		this.bottomPane.add(this.lblConsole, gbc);

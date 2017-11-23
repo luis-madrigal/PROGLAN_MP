@@ -81,7 +81,7 @@ public class FrameStatic extends JFrame {
 	public static Color clrMinValueUn = new Color(31, 150, 168, 230);
 	public static Color clrMaxValueUn = new Color(44, 234, 226, 220);
 	
-	public static Color clrBarBorderUn = new Color(66, 184, 192, 190); //new Color(49, 185, 183, 255);
+	public static Color clrBarBorderUn = new Color(81, 119, 144, 255);// new Color(66, 184, 192, 190); //
 	public static Color clrMinBorderUn = new Color(39, 158, 163, 255);
 	public static Color clrMaxBorderUn = new Color(20, 215, 204, 255);
 	
@@ -277,7 +277,7 @@ public class FrameStatic extends JFrame {
 
 	public static Color clrMarkFeat = new Color(140, 140, 140, 128);
 	
-	public static Font fntDefault = new Font("Arial", Font.PLAIN, 14);
+	public static Font fntDefault = new Font("Arial", Font.PLAIN, 13);
 	public static Font fntDefault12 = new Font("Arial", Font.PLAIN, 12);
 	public static Font fntDefault11 = new Font("Arial", Font.PLAIN, 11);
 	public static Font fntDefault10 = new Font("Arial", Font.PLAIN, 10);
