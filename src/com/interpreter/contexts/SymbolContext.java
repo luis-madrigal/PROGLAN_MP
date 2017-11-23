@@ -2,29 +2,30 @@ package com.interpreter.contexts;
 
 import com.interpreter.Scope;
 import com.parser.ManuScriptParser.LocalVariableDeclarationContext;
+import com.utils.KeyTokens;
 import com.utils.Types;
 
 public class SymbolContext extends Context{
 	
-	private String type;
+	private KeyTokens.LITERAL_TYPE type;
 	private boolean isConstant = false;
 	private Object value;
 	private int arraySize; //TODO: bad implementation. arraySize is null if symbol is not an array
 		
-	public SymbolContext(String type, Scope scope, String identifier) {
+	public SymbolContext(KeyTokens.LITERAL_TYPE type, Scope scope, String identifier) {
 		super(identifier, scope);
 		this.type = type;
 		this.value = Types.NULL;
 	}
 	
-	public SymbolContext(String type, Scope scope, String identifier, boolean isConstant) {
+	public SymbolContext(KeyTokens.LITERAL_TYPE type, Scope scope, String identifier, boolean isConstant) {
 		super(identifier, scope);
 		this.type = type;
 		this.isConstant = isConstant;
 		this.value = Types.NULL;
 	}
 
-	public String getSymbolType() {
+	public KeyTokens.LITERAL_TYPE getSymbolType() {
 		return this.type;
 	}
 
@@ -34,5 +35,13 @@ public class SymbolContext extends Context{
 
 	public void setConstant(boolean isConstant) {
 		this.isConstant = isConstant;
+	}
+
+	public Object getValue() {
+		return value;
+	}
+
+	public void setValue(Object value) {
+		this.value = value;
 	}
 }

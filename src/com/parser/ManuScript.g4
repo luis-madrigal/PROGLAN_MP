@@ -555,7 +555,7 @@ switchLabel
 
 forControl
     :   enhancedForControl
-    |   forInit? ';' expression? ';' forUpdate?
+    |   forInit ';' expression? ';' forUpdate?
     ;
 
 forInit
@@ -572,7 +572,7 @@ forUpdate
     ;
 
 outputStatement
-	:	PRINT expression ('+' expression)*
+	:	PRINT expression
 	;
 
 inputStatement

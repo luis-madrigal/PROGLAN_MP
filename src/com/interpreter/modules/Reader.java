@@ -3,7 +3,12 @@ package com.interpreter.modules;
 import javax.swing.JOptionPane;
 
 public class Reader {
-	
+
+	public static Object readInput(){
+		String input = JOptionPane.showInputDialog("Enter Input: ");
+		return input;
+	}
+
 	public static int readIntegerInput(String msg) {
 		String input = JOptionPane.showInputDialog(msg);
 		return Integer.parseInt(input);
