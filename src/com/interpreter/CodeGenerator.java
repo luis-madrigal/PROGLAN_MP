@@ -1,8 +1,6 @@
 package com.interpreter;
 
 import com.interpreter.AST.AbstractSyntaxTree;
-import com.interpreter.AST.LeafNode;
-import com.interpreter.modules.Writer;
 
 import java.util.HashMap;
 

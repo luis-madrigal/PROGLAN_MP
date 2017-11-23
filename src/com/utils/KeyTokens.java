@@ -102,6 +102,11 @@ public class KeyTokens {
             }
             return null;
         }
+        
+        public static OPERATOR getOpOfAssign(OPERATOR op) {
+        	String str = op.toString().substring(0, 1);
+        	return OPERATOR.getEnum(str);
+        }
     }
 
     public static class UNARY {
