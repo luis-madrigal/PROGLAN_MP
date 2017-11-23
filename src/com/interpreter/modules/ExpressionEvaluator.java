@@ -8,7 +8,7 @@ public class ExpressionEvaluator {
 	public static Object add(Object x, Object y) {
 		LITERAL_TYPE xType = LiteralMatcher.instance().getLiteralType(x);
 		LITERAL_TYPE yType = LiteralMatcher.instance().getLiteralType(y);
-
+		
 		if(xType.equals(LITERAL_TYPE.INT) && yType.equals(LITERAL_TYPE.INT)) {
 			return ExpressionEvaluator.add((Integer)x, (Integer)y);
 		}
@@ -21,8 +21,120 @@ public class ExpressionEvaluator {
 			return ExpressionEvaluator.add((Float)x, (Float)y);
 		}
 		
-		if(xType.equals(LITERAL_TYPE.STRING) && yType.equals(LITERAL_TYPE.STRING)) {
-			return ExpressionEvaluator.concat(x.toString(), y.toString());
+		if(xType.equals(LITERAL_TYPE.INT) && yType.equals(LITERAL_TYPE.FLOAT)) {
+			return ExpressionEvaluator.add((Integer)x, (Float)y);
+		}
+		
+		if(xType.equals(LITERAL_TYPE.FLOAT) && yType.equals(LITERAL_TYPE.INT)) {
+			return ExpressionEvaluator.add((Float)x, (Integer)y);
+		}
+		
+		return ExpressionEvaluator.concat(x.toString(), y.toString());
+	}
+	
+	public static Object subtract(Object x, Object y) {
+		LITERAL_TYPE xType = LiteralMatcher.instance().getLiteralType(x);
+		LITERAL_TYPE yType = LiteralMatcher.instance().getLiteralType(y);
+		
+		if(xType.equals(LITERAL_TYPE.INT) && yType.equals(LITERAL_TYPE.INT)) {
+			return ExpressionEvaluator.subtract((Integer)x, (Integer)y);
+		}
+		
+		if(xType.equals(LITERAL_TYPE.CHAR) && yType.equals(LITERAL_TYPE.CHAR)) {
+			return ExpressionEvaluator.subtract((Character)x, (Character)y);
+		}
+		
+		if(xType.equals(LITERAL_TYPE.FLOAT) && yType.equals(LITERAL_TYPE.FLOAT)) {
+			return ExpressionEvaluator.subtract((Float)x, (Float)y);
+		}
+		
+		if(xType.equals(LITERAL_TYPE.INT) && yType.equals(LITERAL_TYPE.FLOAT)) {
+			return ExpressionEvaluator.subtract((Integer)x, (Float)y);
+		}
+		
+		if(xType.equals(LITERAL_TYPE.FLOAT) && yType.equals(LITERAL_TYPE.INT)) {
+			return ExpressionEvaluator.subtract((Float)x, (Integer)y);
+		}
+		
+		return null;
+	}
+	
+	public static Object multiply(Object x, Object y) {
+		LITERAL_TYPE xType = LiteralMatcher.instance().getLiteralType(x);
+		LITERAL_TYPE yType = LiteralMatcher.instance().getLiteralType(y);
+		
+		if(xType.equals(LITERAL_TYPE.INT) && yType.equals(LITERAL_TYPE.INT)) {
+			return ExpressionEvaluator.multiply((Integer)x, (Integer)y);
+		}
+		
+		if(xType.equals(LITERAL_TYPE.CHAR) && yType.equals(LITERAL_TYPE.CHAR)) {
+			return ExpressionEvaluator.multiply((Character)x, (Character)y);
+		}
+		
+		if(xType.equals(LITERAL_TYPE.FLOAT) && yType.equals(LITERAL_TYPE.FLOAT)) {
+			return ExpressionEvaluator.multiply((Float)x, (Float)y);
+		}
+		
+		if(xType.equals(LITERAL_TYPE.INT) && yType.equals(LITERAL_TYPE.FLOAT)) {
+			return ExpressionEvaluator.multiply((Integer)x, (Float)y);
+		}
+		
+		if(xType.equals(LITERAL_TYPE.FLOAT) && yType.equals(LITERAL_TYPE.INT)) {
+			return ExpressionEvaluator.multiply((Float)x, (Integer)y);
+		}
+		
+		return null;
+	}
+	
+	public static Object divide(Object x, Object y) {
+		LITERAL_TYPE xType = LiteralMatcher.instance().getLiteralType(x);
+		LITERAL_TYPE yType = LiteralMatcher.instance().getLiteralType(y);
+		
+		if(xType.equals(LITERAL_TYPE.INT) && yType.equals(LITERAL_TYPE.INT)) {
+			return ExpressionEvaluator.divide((Integer)x, (Integer)y);
+		}
+		
+		if(xType.equals(LITERAL_TYPE.CHAR) && yType.equals(LITERAL_TYPE.CHAR)) {
+			return ExpressionEvaluator.divide((Character)x, (Character)y);
+		}
+		
+		if(xType.equals(LITERAL_TYPE.FLOAT) && yType.equals(LITERAL_TYPE.FLOAT)) {
+			return ExpressionEvaluator.divide((Float)x, (Float)y);
+		}
+		
+		if(xType.equals(LITERAL_TYPE.INT) && yType.equals(LITERAL_TYPE.FLOAT)) {
+			return ExpressionEvaluator.divide((Integer)x, (Float)y);
+		}
+		
+		if(xType.equals(LITERAL_TYPE.FLOAT) && yType.equals(LITERAL_TYPE.INT)) {
+			return ExpressionEvaluator.divide((Float)x, (Integer)y);
+		}
+		
+		return null;
+	}
+	
+	public static Object modulo(Object x, Object y) {
+		LITERAL_TYPE xType = LiteralMatcher.instance().getLiteralType(x);
+		LITERAL_TYPE yType = LiteralMatcher.instance().getLiteralType(y);
+		
+		if(xType.equals(LITERAL_TYPE.INT) && yType.equals(LITERAL_TYPE.INT)) {
+			return ExpressionEvaluator.modulo((Integer)x, (Integer)y);
+		}
+		
+		if(xType.equals(LITERAL_TYPE.CHAR) && yType.equals(LITERAL_TYPE.CHAR)) {
+			return ExpressionEvaluator.modulo((Character)x, (Character)y);
+		}
+		
+		if(xType.equals(LITERAL_TYPE.FLOAT) && yType.equals(LITERAL_TYPE.FLOAT)) {
+			return ExpressionEvaluator.modulo((Float)x, (Float)y);
+		}
+		
+		if(xType.equals(LITERAL_TYPE.INT) && yType.equals(LITERAL_TYPE.FLOAT)) {
+			return ExpressionEvaluator.modulo((Integer)x, (Float)y);
+		}
+		
+		if(xType.equals(LITERAL_TYPE.FLOAT) && yType.equals(LITERAL_TYPE.INT)) {
+			return ExpressionEvaluator.modulo((Float)x, (Integer)y);
 		}
 		
 		return null;
@@ -31,8 +143,24 @@ public class ExpressionEvaluator {
 	public static Integer add(Integer x, Integer y) {
 		return x + y;
 	}
+	
+	public static Float add(Float x, Integer y) {
+		return x + y;
+	}
+	
+	public static Float add(Integer x, Float y) {
+		return x + y;
+	}
 
 	public static Integer subtract(Integer x, Integer y) {
+		return x - y;
+	}
+	
+	public static Float subtract(Float x, Integer y) {
+		return x - y;
+	}
+	
+	public static Float subtract(Integer x, Float y) {
 		return x - y;
 	}
 	
@@ -40,11 +168,35 @@ public class ExpressionEvaluator {
 		return x * y;
 	}
 	
+	public static Float multiply(Float x, Integer y) {
+		return x * y;
+	}
+	
+	public static Float multiply(Integer x, Float y) {
+		return x * y;
+	}
+	
 	public static Integer divide(Integer x, Integer y) {
 		return x / y;
 	}
 	
+	public static Float divide(Float x, Integer y) {
+		return x / y;
+	}
+	
+	public static Float divide(Integer x, Float y) {
+		return x / y;
+	}
+	
 	public static Integer modulo(Integer x, Integer y) {
+		return x % y;
+	}
+	
+	public static Float modulo(Float x, Integer y) {
+		return x % y;
+	}
+	
+	public static Float modulo(Integer x, Float y) {
 		return x % y;
 	}
 	
@@ -156,29 +308,29 @@ public class ExpressionEvaluator {
 		return x + y;
 	}
 	
-	public static String concat(String x, Integer y) {
-		return x + y;
-	}
-	
-	public static String concat(Integer x, String y) {
-		return x + y;
-	}
-	
-	public static String concat(String x, Float y) {
-		return x + y;
-	}
-	
-	public static String concat(Float x, String y) {
-		return x + y;
-	}
-	
-	public static String concat(String x, Character y) {
-		return x + y;
-	}
-	
-	public static String concat(Character x, String y) {
-		return x + y;
-	}
+//	public static String concat(String x, Integer y) {
+//		return x + y;
+//	}
+//	
+//	public static String concat(Integer x, String y) {
+//		return x + y;
+//	}
+//	
+//	public static String concat(String x, Float y) {
+//		return x + y;
+//	}
+//	
+//	public static String concat(Float x, String y) {
+//		return x + y;
+//	}
+//	
+//	public static String concat(String x, Character y) {
+//		return x + y;
+//	}
+//	
+//	public static String concat(Character x, String y) {
+//		return x + y;
+//	}
 	
 	public static Integer length(String x) {
 		return x.length();

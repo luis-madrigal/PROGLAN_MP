@@ -157,6 +157,9 @@ public class CodeGenerator {
 			this.currentScope.findVar(scanStmt.getVariable()).setValue(LiteralMatcher.instance().parseAttempt(scanVal));
 			pointerCount++;
 			break;
+		case VAR_DECLARE:
+			pointerCount++;
+			break;
 		default:
 			if(statement instanceof TACOutputStatement) {
 				switch (statement.getType()) {
@@ -192,7 +195,7 @@ public class CodeGenerator {
 		
 		switch (operator) {
 		case ADD: return ExpressionEvaluator.add(op1Value, op2Value);
-		case SUB:
+		case SUB: 
 		case DIV:
 		case MULT:
 		case LESS:

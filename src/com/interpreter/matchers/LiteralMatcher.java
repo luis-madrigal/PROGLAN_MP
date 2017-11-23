@@ -55,12 +55,12 @@ public class LiteralMatcher {
 				if(parseChar(ob.toString()) != null)
 					return parseChar(ob.toString());
 				else
-					return ob.toString();
+					return ob.toString().substring(1).substring(0, ob.toString().length()-1);
 			}
 		}
 	}
 	
-	private Object parseChar(String s) {
+	private Character parseChar(String s) {
 		if(s.substring(0, 1).equals("'") && s.substring(s.length()-1).equals("'"))
 			return new Character(s.charAt(1));
 		return null;
