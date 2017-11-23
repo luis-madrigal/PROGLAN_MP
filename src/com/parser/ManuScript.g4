@@ -87,10 +87,12 @@ bodyDeclaration
 //        )
 //    ;
 
+/*
 variableModifier
-    :   'final'
+    :   FINAL
 //    |   annotation
     ;
+    */
 
 //classDeclaration
 //    :   STARTING classOrInterfaceModifier? CLASS Identifier typeParameters?
@@ -160,6 +162,7 @@ memberDeclaration
     :   methodDeclaration
 //    |   genericMethodDeclaration
     |   fieldDeclaration
+    |   structDefinition
 //    |   constructorDeclaration
 //    |   genericConstructorDeclaration
 //    |   interfaceDeclaration
@@ -325,9 +328,10 @@ structDeclarationList
     ;
 
 structDeclaration
-    :   qualifierSpecifierList structDeclaratorList ';'
+    :  typeType structDeclaratorList ';'
+    // qualifierSpecifierList structDeclaratorList ';'
     ;
-
+/*
 qualifierSpecifierList
     :   qualifierList? typeType
     ;
@@ -337,9 +341,9 @@ qualifierList
     ;
 
 qualifier
-    :   STATIC
-    |   FINAL
+    :   FINAL
     ;
+*/
 
 structDeclaratorList
     :   structDeclarator*
@@ -380,11 +384,11 @@ formalParameterList
     ;
 
 formalParameter
-    :   variableModifier* typeType variableDeclaratorId
+    :   typeType variableDeclaratorId
     ;
 
 lastFormalParameter
-    :   variableModifier* typeType '...' variableDeclaratorId
+    :   typeType '...' variableDeclaratorId
     ;
 
 methodBody
@@ -555,7 +559,7 @@ switchLabel
 
 forControl
     :   enhancedForControl
-    |   forInit? ';' expression? ';' forUpdate?
+    |   forInit ';' expression? ';' forUpdate?
     ;
 
 forInit
@@ -564,7 +568,8 @@ forInit
     ;
 
 enhancedForControl
-    :   variableModifier* typeType variableDeclaratorId ':' expression
+    :   typeType variableDeclaratorId ':' expression
+   // variableModifier* typeType variableDeclaratorId ':' expression
     ;
 
 forUpdate
@@ -572,7 +577,7 @@ forUpdate
     ;
 
 outputStatement
-	:	PRINT expression ('+' expression)*
+	:	PRINT expression
 	;
 
 inputStatement

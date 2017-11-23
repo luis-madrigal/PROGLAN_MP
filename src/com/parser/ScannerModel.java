@@ -1,5 +1,6 @@
 package com.parser;
 import java.util.List;
+import java.util.Map;
 import java.util.Arrays;
 import java.util.BitSet;
 import java.util.HashMap;
@@ -7,7 +8,10 @@ import java.util.Stack;
 
 import com.interpreter.AST.ASTBuildVisitor;
 import com.interpreter.AST.AbstractSyntaxTree;
+import com.interpreter.AST.ProcedureNode;
+import com.interpreter.codegen.CodeGenerator;
 import com.interpreter.contexts.MethodContext;
+import com.interpreter.tac.ICGenerator;
 
 import org.antlr.v4.gui.TreeViewer;
 import org.antlr.v4.runtime.ANTLRErrorListener;
@@ -37,7 +41,7 @@ public class ScannerModel {
 	private ParseTree tree;
 	private List<String> ruleNames;
 	private TreeViewer treeViewer;
-	
+	private ICGenerator icg;
 	public String getTokens(String input) {
 		ANTLRInputStream istream = new ANTLRInputStream(input);
 		
@@ -94,16 +98,27 @@ public class ScannerModel {
 		
 		Scope scope = new Scope(null); //scope of program. contains the symbol tables
 		HashMap<String, MethodContext> methodTable = new HashMap<String, MethodContext>(); //the methods in the program. no overloading
-		
+
+
 		ParseTreeWalker.DEFAULT.walk(new BaseListener(scope, methodTable), this.tree);
 		
 		System.out.println(scope.getChildren().size());
 		System.out.println(methodTable.size());
-		
-		ASTBuildVisitor astbv = new ASTBuildVisitor();
-		astbv.visit(tree);
-		//System.out.println(astbv.getMethodASTTable().get("main").getChild(0).getNodeType());
 
+		//todo: stop from continuing if errors exist
+		//todo: add reference to baselistener then do BaseListener.getScopes and give to ASTBuildVIsitor constructor
+
+	//	System.out.println("varX child 1: "+scope.getChildren().get(1).getIfInScope("x"));
+	//	System.out.println("IS IN SCOPE: "+scope.getChildren().get(1).inScope("z"));
+//		System.out.println("IS IN SCOPE(x): "+scope.getChildren().get(2).inScope("x"));
+		scope.print();
+
+		ASTBuildVisitor astbv = new ASTBuildVisitor(scope);
+		astbv.visit(tree);
+		astbv.printAST("main");
+		
+		CodeGenerator codegen = new CodeGenerator(astbv.getMethodASTTable(), methodTable);
+		codegen.run();
 
 //		System.out.println(tree.toStringTree(parser));
 		
@@ -115,6 +130,14 @@ public class ScannerModel {
 		}
 
 		return tokenized;
+	}
+
+	public ICGenerator getIcg() {
+		return icg;
+	}
+
+	public void setIcg(ICGenerator icg) {
+		this.icg = icg;
 	}
 
 	public String getTokenClass(String displayName) {

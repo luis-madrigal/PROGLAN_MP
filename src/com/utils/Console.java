@@ -1,19 +1,14 @@
 package com.utils;
 
 import java.awt.Color;
-import java.awt.Cursor;
 import java.awt.Font;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 
 import javax.swing.JTextPane;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.Style;
-import javax.swing.text.StyleContext;
-import javax.swing.text.StyledDocument;
+import javax.swing.text.*;
 
 import com.ide.Panel;
 import com.ide.styles.RSyntaxTextAreaManuscript;
+import com.ide.styles.Styles;
 
 public class Console {
 	
@@ -36,27 +31,60 @@ public class Console {
 	}
 	
 	public void log(String msg) {
-		this.textPane.setText(this.textPane.getText() + msg);
+	
+		StyledDocument doc = this.textPane.getStyledDocument();
+		Style styleLog = doc.addStyle("styleLog", StyleContext.getDefaultStyleContext().getStyle(StyleContext.DEFAULT_STYLE));
+		StyleConstants.setForeground(styleLog, Styles.UN_CONSOLE_LOG);
+		styleLog.addAttribute("log", "Log");
+		try {
+			doc.insertString(doc.getLength(), msg, styleLog);
+		} catch (BadLocationException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	public void logln(String msg) {
-		this.textPane.setText(this.textPane.getText() + msg +"\n");
+		StyledDocument doc = this.textPane.getStyledDocument();
+		Style styleLog = doc.addStyle("styleLog", StyleContext.getDefaultStyleContext().getStyle(StyleContext.DEFAULT_STYLE));
+		StyleConstants.setForeground(styleLog, Styles.UN_CONSOLE_LOG);
+		styleLog.addAttribute("log", "Log");
+		try {
+			doc.insertString(doc.getLength(), msg+"\n", styleLog);
+		} catch (BadLocationException e) {
+			e.printStackTrace();
+		}
 	}
 	
-	//TODO: messages called here are supposed to be red
+
+	/**
+	 * @see public void err(String msg, int lineNumber)
+	 * @param msg
+	 */
 	public void err(String msg) {
-		this.textPane.setText(this.textPane.getText() + msg + "\n");
+		StyledDocument doc = this.textPane.getStyledDocument();
+		Style styleError = doc.addStyle("styleError", StyleContext.getDefaultStyleContext().getStyle(StyleContext.DEFAULT_STYLE));
+		StyleConstants.setForeground(styleError, Styles.UN_CONSOLE_ERR);
+		styleError.addAttribute("key", "Error");
+		try {
+			doc.insertString(doc.getLength(), msg+"\n", styleError);
+		} catch (BadLocationException e) {
+			e.printStackTrace();
+		}
 	}
-	
+
+	/**
+	 * Preferred function 
+	 * @param msg
+	 * @param lineNumber
+	 */
 	public void err(String msg, int lineNumber) {
 		StyledDocument doc = this.textPane.getStyledDocument();
-		Style regularBlue = doc.addStyle("regularBlue"+lineNumber, StyleContext.getDefaultStyleContext().getStyle(StyleContext.DEFAULT_STYLE));
-//		 StyleConstants.setForeground(regularBlue, Color.BLUE);
-//		 StyleConstants.setUnderline(regularBlue, true);
-		 regularBlue.addAttribute("key", lineNumber);
-		 this.textPane.setCursor(new Cursor(Cursor.HAND_CURSOR));
-		 try {
-			doc.insertString(doc.getLength(), msg+"\n", regularBlue);
+		Style styleError = doc.addStyle("styleError"+lineNumber, StyleContext.getDefaultStyleContext().getStyle(StyleContext.DEFAULT_STYLE));
+		StyleConstants.setForeground(styleError, Styles.UN_CONSOLE_ERR);
+		StyleConstants.setUnderline(styleError, true);
+		styleError.addAttribute("key", lineNumber);
+		try {
+			doc.insertString(doc.getLength(), msg+"\n", styleError);
 		} catch (BadLocationException e) {
 			e.printStackTrace();
 		}

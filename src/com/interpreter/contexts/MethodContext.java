@@ -5,13 +5,16 @@ import java.util.ArrayList;
 import com.interpreter.Scope;
 import com.parser.ManuScriptParser.FormalParameterContext;
 import com.parser.ManuScriptParser.MethodDeclarationContext;
+import com.utils.KeyTokens;
 import com.utils.Types;
 import com.utils.Utils;
 
 public class MethodContext extends Context{
-	
+
 	private MethodDeclarationContext ctx;
-	private ArrayList<String> argTypes;
+	private ArrayList<String> argTypes;//TODO: bad implementation
+	private ArrayList<String> args;
+
 	private String returnType;
 
 	public MethodContext(MethodDeclarationContext ctx, Scope scope, String identifier) {
@@ -19,17 +22,19 @@ public class MethodContext extends Context{
 		this.ctx = ctx;
 
 		argTypes = new ArrayList<String>();
+		args = new ArrayList<String>();
 		if(ctx.formalParameters().formalParameterList() != null) {
 			for (FormalParameterContext fpctx : ctx.formalParameters().formalParameterList().formalParameter()) {
 				argTypes.add(fpctx.typeType().getText());
+				args.add(fpctx.variableDeclaratorId().getText());
 			}
 		}
-		
-		returnType = Types.NULL;
+
+		returnType = "null";
 	}
-	
+
 	public boolean matchesArgs(MethodDeclarationContext ctx) {
-		ArrayList<String> argTypes = new ArrayList<String>();
+		ArrayList<String> argTypes = new ArrayList<>();
 		if(ctx.formalParameters().formalParameterList() != null) {
 			if(ctx.formalParameters().formalParameterList().formalParameter().size() != this.argTypes.size())
 				return false;
@@ -37,7 +42,7 @@ public class MethodContext extends Context{
 				argTypes.add(fpctx.typeType().getText());
 			}
 		}
-		
+
 		return Utils.listEqualsIgnoreOrder(argTypes, this.argTypes);
 	}
 
@@ -63,6 +68,14 @@ public class MethodContext extends Context{
 
 	public void setReturnType(String returnType) {
 		this.returnType = returnType;
+	}
+
+	public ArrayList<String> getArgs() {
+		return args;
+	}
+
+	public void setArgs(ArrayList<String> args) {
+		this.args = args;
 	}
 
 }

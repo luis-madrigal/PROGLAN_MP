@@ -6,10 +6,10 @@ import com.utils.Types;
 
 public class SymbolContext extends Context{
 	
-	private String type;
-	private boolean isConstant = false;
-	private Object value;
-	private int arraySize; //TODO: bad implementation. arraySize is null if symbol is not an array
+	protected String type;	//the type of the variable itself
+	protected boolean isConstant = false;
+	protected Object value;	//todo: is this needed?
+	protected GenericInfo other; //pointer if symbol is array/struct/pointer type
 		
 	public SymbolContext(String type, Scope scope, String identifier) {
 		super(identifier, scope);
@@ -34,5 +34,21 @@ public class SymbolContext extends Context{
 
 	public void setConstant(boolean isConstant) {
 		this.isConstant = isConstant;
+	}
+
+	public Object getOther() {
+		return other;
+	}
+
+	public void setOther(GenericInfo other) {
+		this.other = other;
+	}
+
+	public Object getValue() {
+		return value;
+	}
+
+	public void setValue(Object value) {
+		this.value = value;
 	}
 }

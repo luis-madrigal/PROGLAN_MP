@@ -9,6 +9,7 @@ import com.interpreter.contexts.SymbolContext;
 
 public class Scope extends HashSet<String>{
 	
+	private String label;
 	private Scope parent;
 	private HashMap<String, SymbolContext> symTable;
 	private List<Scope> children;
@@ -19,13 +20,56 @@ public class Scope extends HashSet<String>{
 		children = new ArrayList<>();
 	}
 	
+	public SymbolContext findVar(String varName) {
+		return this.symTable.get(varName);
+	}
+	
+	public Scope findWithLabel(String label) {
+		System.out.println("looking for: "+label+" in "+this.label);
+		if(this.parent != null && this.label.equals(label)) {
+			return this;
+		}
+		else {
+			for (Scope scope : children) {
+				Scope s;
+				if((s = scope.findWithLabel(label)) != null) {
+					System.out.println("found");
+					return s;
+				} else
+					System.out.println("not found");
+			}
+		}
+		System.out.println("nothing");
+		return null;
+	}
+	
+	public void addToScope(SymbolContext ctx) {
+		this.symTable.put(ctx.getIdentifier(), ctx);
+		System.out.println("add "+ctx.getIdentifier()+" to scope");
+	}
+	
 	public boolean inScope(String varName) {
 		if(super.contains(varName))
 			return true;
 		
 		return (parent == null)? false : parent.inScope(varName);
 	}
-	
+
+	public void print() {
+		print("", true);
+	}
+
+	private void print(String prefix, boolean isTail) {
+		System.out.println(prefix + (isTail ? "└── " : "├── ") + "scope");
+		for (int i = 0; i < children.size() - 1; i++) {
+			children.get(i).print(prefix + (isTail ? "    " : "│   "), false);
+		}
+		if (children.size() > 0) {
+			children.get(children.size() - 1)
+					.print(prefix + (isTail ?"    " : "│   "), true);
+		}
+	}
+
 	public SymbolContext checkTables(String varName) {
 		if(symTable.containsKey(varName))
 			return symTable.get(varName);
@@ -59,5 +103,13 @@ public class Scope extends HashSet<String>{
 
 	public void setParent(Scope parent) {
 		this.parent = parent;
+	}
+
+	public String getLabel() {
+		return label;
+	}
+
+	public void setLabel(String label) {
+		this.label = label;
 	}
 }

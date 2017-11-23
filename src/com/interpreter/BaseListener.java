@@ -1,9 +1,9 @@
 package com.interpreter;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Stack;
 
-import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.ParseTree;
 
 import com.interpreter.contexts.MethodContext;
@@ -54,12 +54,31 @@ public class BaseListener extends ManuScriptBaseListener{
 	@Override public void enterBlock(ManuScriptParser.BlockContext ctx) { 
 		if(!(ctx.parent instanceof MethodBodyContext)) {
 			Scope scope = new Scope(scopes.peek());
+			scopes.peek().addChild(scope);
 			scopes.push(scope);
 		}
 	}
 	
-	@Override public void exitBlock(ManuScriptParser.BlockContext ctx) { 
+	@Override public void exitBlock(ManuScriptParser.BlockContext ctx) {
 		scopes.pop();
+	}
+
+	@Override
+	public void enterStructDefinition(ManuScriptParser.StructDefinitionContext ctx) {
+		String name = ctx.getChild(1).getText();
+
+		if(getCurrentSymTable().containsKey(name)){
+			SemanticErrors.throwError(SemanticErrors.DUPLICATE_STRUCT, ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), name);
+		}
+		ArrayList<SymbolContext> members = new ArrayList<>();
+		for(ManuScriptParser.StructDeclarationContext strCtx : ctx.structDeclarationList().structDeclaration()){
+			if(strCtx.typeType().structType() != null){
+				if(!getCurrentSymTable().containsKey(strCtx.typeType().structType().Identifier().getText())){
+					SemanticErrors.throwError(SemanticErrors.UNDEFINED_STRUCT, ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), name);
+				}
+
+			}
+		}
 	}
 
 	@Override public void enterMethodDeclaration(ManuScriptParser.MethodDeclarationContext ctx) {
@@ -93,9 +112,12 @@ public class BaseListener extends ManuScriptBaseListener{
 		if(ctx.formalParameters().formalParameterList() != null) {
 			for (FormalParameterContext fpctx : ctx.formalParameters().formalParameterList().formalParameter()) {
 				String varName = fpctx.variableDeclaratorId().getText();
-				
+
 				System.out.println("added "+varName+" from method " +methodName+ " to symbol table");
 				scope.add(varName);
+				if(getCurrentSymTable().containsKey(varName)){
+					SemanticErrors.throwError(SemanticErrors.DUPLICATE_VAR, ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), varName);
+				}
 				getCurrentSymTable().put(varName, new SymbolContext(fpctx.typeType().getText(), scope, varName));
 			}
 		}
@@ -104,7 +126,7 @@ public class BaseListener extends ManuScriptBaseListener{
 	@Override public void exitMethodDeclaration(ManuScriptParser.MethodDeclarationContext ctx) {
 		MethodContext mctx = methodTable.get(currentMethod);
 		if(mctx.getReturnType().equals(Types.NULL)) {
-			mctx.setReturnType(Types.VOID);
+			mctx.setReturnType("void");
 		}
 	}
 
@@ -140,6 +162,7 @@ public class BaseListener extends ManuScriptBaseListener{
 				}
 				System.out.println("added "+varName+" to symbol table");
 				scope.add(varName);
+
 				getCurrentSymTable().put(varName, new SymbolContext(ctx.typeType().getText(), scope, varName, isConstant));
 			}
 		}
@@ -175,6 +198,7 @@ public class BaseListener extends ManuScriptBaseListener{
 				}
 				System.out.println("added "+varName+" to symbol table");
 				scope.add(varName);
+
 				getCurrentSymTable().put(varName, new SymbolContext(ctx.typeType().getText(), scope, varName));
 			}
 		}
@@ -263,7 +287,7 @@ public class BaseListener extends ManuScriptBaseListener{
 	
 	@Override
 	public void enterOutputStatement(ManuScriptParser.OutputStatementContext ctx) {
-		this.expressionChecker(ctx.expression(0));
+		this.expressionChecker(ctx.expression());
 	}
 	
 	@Override
@@ -308,7 +332,7 @@ public class BaseListener extends ManuScriptBaseListener{
         	i++;
         }
 		
-		String actualType = Types.NULL;
+		String actualType = "null";
 		
 		if(node.getParent() instanceof LiteralContext) {
 			LiteralContext lctx = (LiteralContext) node.getParent();
@@ -328,11 +352,11 @@ public class BaseListener extends ManuScriptBaseListener{
 			return actualType;
 		}
 		
-		return Types.NULL;
+		return "null";
 	}
 	
 	private String expressionChecker(ParseTree node, String expectedType) {
-		String finalType = Types.NULL;
+		String finalType = "null";
     	int i = 0;
         while(node.getChild(i) != null) {
         	if(node instanceof ComparisonExprContext 
@@ -348,7 +372,7 @@ public class BaseListener extends ManuScriptBaseListener{
         
 		if (node.getChildCount() == 0) {
 			//check if either literal or variable then check type. return false if mismatch
-			String actualType = Types.NULL;
+			String actualType = "null";
 			
 			if(node.getParent() instanceof LiteralContext) {
 				LiteralContext lctx = (LiteralContext) node.getParent();
@@ -397,7 +421,7 @@ public class BaseListener extends ManuScriptBaseListener{
 //	    		this.boolExpressionCheck(node, expectedType);
 //    		return false;
 	    	this.boolExpressionCheck(node, expectedType);
-	    	return Types.BOOLEAN;
+	    	return "boolean";
 	    } 
 		
 		return finalType;

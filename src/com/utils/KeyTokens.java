@@ -1,7 +1,5 @@
 package com.utils;
 
-import sun.rmi.runtime.Log;
-
 public class KeyTokens {
 
     //Binary Operators
@@ -47,6 +45,69 @@ public class KeyTokens {
             }
         }
     }
+    
+    public enum OPERATOR {
+    	ADD("+"),
+        SUB("-"),
+        MULT("*"),
+        DIV("/"),
+    	LESS("<"),
+        LEQ("<="),
+        GREATER(">"),
+        GEQ(">="),
+        EQUAL("=="),
+        NEQUAL("!="),
+        
+        ASSIGN("="),
+        PLUSASSIGN("+="),
+        SUBASSIGN("-="),
+        MULTASSIGN("*="),
+        DIVASSIGN("/="),
+        MODASSIGN("%="),
+
+        AND("&&"),
+        OR("||"),
+    	
+    	INC("++"),
+        DEC("--"),
+
+    	NOT("!");
+    	
+    	protected String name;
+
+    	OPERATOR(String token) {
+            this.name = token;
+        }
+
+        @Override
+        public String toString() {
+            return this.name;
+        }
+        
+        public static OPERATOR getEnum(String str) {
+            for (OPERATOR o : OPERATOR.values()) {
+                if (str.equalsIgnoreCase(o.name)) {
+                    return o;
+                }
+            }
+            return null;
+        }
+        
+        public static OPERATOR getEnum(Object ob) {
+        	String str = ob.toString();
+            for (OPERATOR o : OPERATOR.values()) {
+                if (str.equalsIgnoreCase(o.name)) {
+                    return o;
+                }
+            }
+            return null;
+        }
+        
+        public static OPERATOR getOpOfAssign(OPERATOR op) {
+        	String str = op.toString().substring(0, 1);
+        	return OPERATOR.getEnum(str);
+        }
+    }
 
     public static class UNARY {
         public enum Arithmetic_U {
@@ -83,5 +144,25 @@ public class KeyTokens {
 
     public enum TERMINAL_TYPE{
         VARIABLE, LITERAL;
+    }
+
+    public enum LITERAL_TYPE{//TODO: better implementation
+        STRING("string"), INT("int"), FLOAT("float"), CHAR("char"), BOOLEAN("boolean"), NULL("null"), VOID("void");
+    
+    	protected String name;
+
+    	LITERAL_TYPE(String type) {
+    		this.name = type;
+		}
+ 
+        public static LITERAL_TYPE getEnum(String str) {
+            for (LITERAL_TYPE l : LITERAL_TYPE.values()) {
+                if (str.equalsIgnoreCase(l.name)) {
+                    return l;
+                }
+            }
+            return null;
+        }
+
     }
 }

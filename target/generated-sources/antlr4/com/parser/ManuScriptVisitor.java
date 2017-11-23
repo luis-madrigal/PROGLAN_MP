@@ -23,12 +23,6 @@ public interface ManuScriptVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitBodyDeclaration(ManuScriptParser.BodyDeclarationContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link ManuScriptParser#variableModifier}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitVariableModifier(ManuScriptParser.VariableModifierContext ctx);
-	/**
 	 * Visit a parse tree produced by {@link ManuScriptParser#typeBound}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -142,24 +136,6 @@ public interface ManuScriptVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitStructDeclaration(ManuScriptParser.StructDeclarationContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link ManuScriptParser#qualifierSpecifierList}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitQualifierSpecifierList(ManuScriptParser.QualifierSpecifierListContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link ManuScriptParser#qualifierList}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitQualifierList(ManuScriptParser.QualifierListContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link ManuScriptParser#qualifier}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitQualifier(ManuScriptParser.QualifierContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link ManuScriptParser#structDeclaratorList}.
 	 * @param ctx the parse tree
