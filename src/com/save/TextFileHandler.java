@@ -13,11 +13,7 @@ public class TextFileHandler {
 		try {
 			saveFile = new FileWriter(filename+".txt");
 
-
-		    // Write the data to the file.
-		    saveFile.write("\n"); // Always insert a blank line
-		    
-
+		    saveFile.write("\n"); // Always insert a blank line 
 		    saveFile.write(strFile);
 
 		    saveFile.close();

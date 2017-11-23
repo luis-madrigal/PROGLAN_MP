@@ -1,7 +1,9 @@
 package com.ide;
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -58,6 +60,7 @@ public class Panel implements ActionListener, KeyListener, MouseListener {
 	private Frame frameParent;
 
 	private JPanel pnlMain;
+	private JPanel pnlMenu;
 	private JButton btnRun;
 	
 	private Styles styles;
@@ -78,7 +81,8 @@ public class Panel implements ActionListener, KeyListener, MouseListener {
 	private JTextPane parsedOut;
 	private JTextPane threeACOut;
 
-	
+
+	private JPanel inputPaneParent;
 	private RTextScrollPane inputPane;
 	private JScrollPane parsedPane;
 	private JScrollPane threeACPane;
@@ -170,34 +174,77 @@ public class Panel implements ActionListener, KeyListener, MouseListener {
 		
 		
 		//Run Button
-		this.btnRun = new JButton("\u25B6");
+		
+//		gbc = new GridBagConstraints();
+//		gbc.anchor = GridBagConstraints.WEST;
+//		gbc.fill = GridBagConstraints.BOTH;
+//		gbc.gridwidth = 1;
+//		gbc.gridx = 0;
+//		gbc.gridy = 0;
+////		gbc.insets = new Insets(10, 10, 10, 0);
+//		gbc.insets = new Insets(10, 10, 0, 0);
+//		gbc.weightx = 1.0;
+		
 		gbc = new GridBagConstraints();
-		gbc.anchor = GridBagConstraints.WEST;
-		gbc.fill = GridBagConstraints.NONE;
-		gbc.gridwidth = 1;
-		gbc.gridx = 0;
+		gbc.anchor = GridBagConstraints.NORTHWEST;
+		gbc.fill = GridBagConstraints.VERTICAL;
+
+//		gbc.gridwidth = 0;
+//		gbc.gridx = 1;
+//		gbc.gridy = 0;
+//		
+		gbc.gridwidth = 0;
+		gbc.gridheight = 0;
+		gbc.gridx = 1;
 		gbc.gridy = 0;
-		gbc.insets = new Insets(10, 10, 10, 0);
+		gbc.insets = new Insets(0, 10, 10, 0);
 		gbc.weightx = 1;
+		gbc.weighty = 0.5;
+
+		this.pnlMenu = new JPanel();
+		pnlMenu.setBackground(FrameStatic.clrTransparent);
+		pnlMenu.setOpaque(false);
+		
+//		pnlMenu.setLayout(null);
+//		pnlMenu.setMaximumSize(new Dimension(1920, 100));
+//		pnlMenu.setSize(new Dimension(1920, 100));
+//		pnlMenu.setPreferredSize(new Dimension(1920, 100));
+//		pnlMenu.setMinimumSize(new Dimension(1920, 100));
+		
+		this.btnRun = new JButton("\u25B6");
 		this.btnRun.setFocusable(false);
 		this.btnRun.addActionListener(this);
-		this.pnlMain.add(this.btnRun, gbc);
+//		btnRun.setSize(btnRun.getWidth(), 100);
+		btnRun.setBounds(1366-30, 0, 30, 30);
+		pnlMenu.add(btnRun);
+		/*
+		JButton tempButton;
+		tempButton = new JButton("\u25B6");
+		tempButton.setFocusable(false);
+		tempButton.addActionListener(this);
+		pnlMenu.add(tempButton);
+		*/
 		
+		this.pnlMain.add(this.pnlMenu, gbc);
 		
 		//Code Input
 		this.lblCodeInput = new JLabel("Code Input:");
 		this.lblCodeInput.setFont(new Font("Segoe UI", 150, baseFontSize));
 		this.lblCodeInput.setForeground(Color.BLACK);
+		this.lblCodeInput.setBackground(Color.GRAY);
+		this.lblCodeInput.setOpaque(true);
+		this.lblCodeInput.setLayout(new BorderLayout());
 		gbc = new GridBagConstraints();
 		gbc.anchor = GridBagConstraints.NORTHWEST;
-		gbc.fill = GridBagConstraints.NONE;
-		gbc.gridwidth = 3;
+		gbc.fill = GridBagConstraints.VERTICAL;
+		gbc.gridwidth = 1;
+		gbc.gridheight = 1;
 		gbc.gridx = 0;
-		gbc.gridy = 1;
-		gbc.insets = new Insets(0, 10, 0, 0);
-		gbc.weightx = 1;
-		gbc.weighty = 1;
-		this.pnlMain.add(this.lblCodeInput, gbc);
+		gbc.gridy = 0;
+		gbc.insets = new Insets(5, 10, 0, 0);
+		gbc.weightx = 1.0;
+		gbc.weighty = 0;
+//		this.pnlMain.add(this.lblCodeInput, gbc);
 		
 		this.codeInput = new RSyntaxTextAreaManuscript();
 		this.codeInput.setSyntaxScheme(getExpressionColorScheme(this.codeInput.getSyntaxScheme()));
@@ -226,6 +273,10 @@ public class Panel implements ActionListener, KeyListener, MouseListener {
 		
 		this.inputPane = new RTextScrollPane(this.codeInput);
 		this.inputPane.setPreferredSize(new Dimension((int) Frame.SCREEN_SIZE.getWidth()/2, 150));
+//		this.inputPane.setSize(new Dimension((int) Frame.SCREEN_SIZE.getWidth()/2, 150));
+//		this.inputPane.setMaximumSize(new Dimension((int) Frame.SCREEN_SIZE.getWidth()/2, 150));
+//		this.inputPane.setMinimumSize(new Dimension((int) Frame.SCREEN_SIZE.getWidth()/2, 150));
+		
 		this.inputPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		this.inputPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
 //		this.inputPane.setRowHeaderView(this.inputLines);
@@ -352,9 +403,11 @@ public class Panel implements ActionListener, KeyListener, MouseListener {
         this.btnScaleUp = new JButton();
         btnScaleUp.setBackground(Color.WHITE);
         btnScaleUp.setBorder(null);
-        btnScaleUp.setIcon(new ImageIcon("res/ico_add_off.png"));
-        btnScaleUp.setRolloverIcon(new ImageIcon("res/ico_add_on.png"));
-        btnScaleUp.setPressedIcon(new ImageIcon("res/ico_add_on.png"));
+        
+        // TODO Proper res retrieval
+        btnScaleUp.setIcon(new ImageIcon(getClass().getClassLoader().getResource("res/ico_add_off.png")));
+        btnScaleUp.setRolloverIcon(new ImageIcon(getClass().getClassLoader().getResource("res/ico_add_on.png")));
+        btnScaleUp.setPressedIcon(new ImageIcon(getClass().getClassLoader().getResource("res/ico_add_on.png")));
         btnScaleUp.setFocusable(false);
         
 		this.btnScaleUp.setBounds(3, 3, 30, 30);
@@ -364,9 +417,9 @@ public class Panel implements ActionListener, KeyListener, MouseListener {
         this.btnScaleDown = new JButton();
         btnScaleDown.setBackground(Color.WHITE);
         btnScaleDown.setBorder(null);
-        btnScaleDown.setIcon(new ImageIcon("res/ico_subtract_off.png"));
-        btnScaleDown.setRolloverIcon(new ImageIcon("res/ico_subtract_on.png"));
-        btnScaleDown.setPressedIcon(new ImageIcon("res/ico_subtract_on.png"));
+        btnScaleDown.setIcon(new ImageIcon(getClass().getClassLoader().getResource("res/ico_subtract_off.png")));
+        btnScaleDown.setRolloverIcon(new ImageIcon(getClass().getClassLoader().getResource("res/ico_subtract_on.png")));
+        btnScaleDown.setPressedIcon(new ImageIcon(getClass().getClassLoader().getResource("res/ico_subtract_on.png")));
         btnScaleDown.setFocusable(false);
         
 		this.btnScaleDown.setBounds(38, 3, 30, 30);
@@ -389,17 +442,40 @@ public class Panel implements ActionListener, KeyListener, MouseListener {
 		
 		parentPane.setSize(outputTabs.getWidth(), 40);
 		
+		this.inputPaneParent = new JPanel();
+		this.inputPaneParent.setLayout(new BoxLayout(inputPaneParent, BoxLayout.Y_AXIS));
+
+		JLabel lblInput = new JLabel();
+//		lblInput.setFont(FrameStatic.fntGothamLight20);
+		lblInput.setSize(lblInput.getWidth(), 21);
+		lblInput.setPreferredSize(lblInput.getSize());
+		lblInput.setHorizontalAlignment(JLabel.LEFT);
+		this.inputPaneParent.add(lblInput);
+		this.inputPaneParent.add(this.inputPane);
+		this.inputPaneParent.setBackground(Color.WHITE);
+		
 		this.topSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
-		this.topSplitPane.setLeftComponent(this.inputPane);
+		this.topSplitPane.setLeftComponent(this.inputPaneParent);
+		
+		topSplitPane.setResizeWeight(1.0);
+//		((JScrollPane)topSplitPane.getLeftComponent()).setBounds(0, 30, topSplitPane.getLeftComponent().getWidth(),
+//				topSplitPane.getLeftComponent().getHeight());
+//		
+//		((JScrollPane)topSplitPane.getLeftComponent()).setLocation(0, 50);
+		
+		
+		
+//		topSplitPane.getLeftComponent().setBounds(0, 0, topSplitPane.getLeftComponent().getWidth(),
+//				topSplitPane.getLeftComponent().getHeight());
 		this.topSplitPane.setRightComponent(this.outputTabs);
-		this.topSplitPane.setDividerLocation((int) Frame.SCREEN_SIZE.getWidth()/2);
+		this.topSplitPane.setDividerLocation((int) Frame.SCREEN_SIZE.getWidth()-440);
 		gbc = new GridBagConstraints();
 		gbc.anchor = GridBagConstraints.NORTHEAST;
 		gbc.fill = GridBagConstraints.BOTH;
 		gbc.gridwidth = 6;
 		gbc.gridx = 0;
 		gbc.gridy = 1;
-		gbc.insets = new Insets(30, 10, 10, 10);
+		gbc.insets = new Insets(30, 100, 10, 10);
 		this.pnlMain.add(this.topSplitPane, gbc);
 		
 		this.bottomPane = new JPanel();
@@ -436,7 +512,7 @@ public class Panel implements ActionListener, KeyListener, MouseListener {
 		this.bottomSplitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
 		this.bottomSplitPane.setTopComponent(this.topSplitPane);
 		this.bottomSplitPane.setBottomComponent(this.bottomPane);
-		this.bottomSplitPane.setDividerLocation((int) Frame.SCREEN_SIZE.getHeight()/2);
+		this.bottomSplitPane.setDividerLocation((int) Frame.SCREEN_SIZE.getHeight()-350);
 		gbc = new GridBagConstraints();
 		gbc.anchor = GridBagConstraints.NORTHEAST;
 		gbc.fill = GridBagConstraints.BOTH;
@@ -457,14 +533,14 @@ public class Panel implements ActionListener, KeyListener, MouseListener {
 		//Scanner for input string
 		this.scanner = new ScannerModel();
 		
-		this.topSplitPane.setDividerSize(1);
+		this.topSplitPane.setDividerSize(2);
 		this.topSplitPane.setBackground(Color.WHITE);
 		this.topSplitPane.setContinuousLayout(true);
 		
-		this.bottomSplitPane.setDividerSize(1);
+		this.bottomSplitPane.setDividerSize(2);
 		this.bottomSplitPane.setBackground(Color.WHITE);
 		this.bottomSplitPane.setContinuousLayout(true);
-		
+
 	}
 	
 	public RSyntaxTextAreaManuscript getCodeInput() {

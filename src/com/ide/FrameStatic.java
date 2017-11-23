@@ -5,6 +5,7 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Image;
+import java.awt.LayoutManager;
 import java.awt.Rectangle;
 import java.awt.event.ItemListener;
 import java.awt.event.MouseListener;
@@ -326,16 +327,24 @@ public class FrameStatic extends JFrame {
 		panel.setVisible(true);
 	}
 	
+	
 	public static void initPanel(JPanel panel, Color color, int width, int height) {
-		
-		panel.setLayout(null);
 		panel.setOpaque(true);
 		panel.setBackground(color);
 		
 		panel.setBounds(0, 0, width, height);
 		panel.setFocusable(true);
 		panel.setVisible(true);
+			
 	}
+		
+	
+	public static void initPanel(JPanel panel, Color color, int width, int height, LayoutManager layout) {
+		panel.setLayout(layout);
+		initPanel(panel, color, width, height);
+	}
+
+		
 	public static void initLayeredPane(JLayeredPane panel, Color color, int width, int height) {
 		
 		panel.setLayout(null);
