@@ -20,6 +20,7 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
     private Scope curScope;
 
     private ArrayList<Integer> levelIndexTracker;
+    private ProcedureNode fieldDecNode;
     private int lvlDepth;
     private int lvlIndex;
     private int nExitBlock;
@@ -37,6 +38,10 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
         this.lvlIndex = 0;
         this.lvlDepth = 0;
         this.nExitBlock = 0;
+
+        this.fieldDecNode = new ProcedureNode(null,"%FIELD");
+        this.fieldDecNode.setNodeType(NodeType.FIELD_DEC);
+        methodASTTable.put(fieldDecNode.procedureName,fieldDecNode);
     }
 
     public HashMap<String, ProcedureNode> getMethodASTTable() {
@@ -46,11 +51,6 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
     public void printAST(String rootName){
         methodASTTable.get(rootName).print();
     }
-
-    @Override public AbstractSyntaxTree visitCompilationUnit(ManuScriptParser.CompilationUnitContext ctx) {
-
-		return visitChildren(ctx);
-	}
 
     @Override
     protected AbstractSyntaxTree aggregateResult(AbstractSyntaxTree aggregate, AbstractSyntaxTree nextResult) {
@@ -100,6 +100,19 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
         lvlDepth++;
         if(lvlDepth >= this.levelIndexTracker.size())
             this.levelIndexTracker.add(0);
+    }
+
+    @Override
+    public AbstractSyntaxTree visitFieldDeclaration(ManuScriptParser.FieldDeclarationContext ctx) {
+        for(ManuScriptParser.VariableDeclaratorContext vCtx : ctx.variableDeclarators().variableDeclarator()){
+                AbstractSyntaxTree fieldDec = visit(vCtx);
+                if(fieldDec != null){
+                    fieldDec.setParent(fieldDecNode);
+                    fieldDecNode.addChild(fieldDec);
+            }
+        }
+
+        return super.visitFieldDeclaration(ctx);
     }
 
     @Override
@@ -594,7 +607,7 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
         String type = symContext.getSymbolType(); //todo: convert to enum?
 
         if(symContext != null) {
-            variable.setValue(symContext.getIdentifier());
+            variable.setValue(symContext);
             variable.setLiteralType(symContext.getSymbolType());
             return variable;
         }
@@ -616,7 +629,7 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
 
             if(symContext != null){
                 System.out.println("symcontext found");
-                variable.setValue(symContext.getIdentifier());
+                variable.setValue(symContext);
                 variable.setLiteralType(symContext.getSymbolType());
                 return variable;
             }
@@ -639,7 +652,7 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
         String type = symContext.getSymbolType(); //todo: convert to enum?
 
         if(symContext != null) {
-            variable.setValue(symContext.getIdentifier());
+            variable.setValue(symContext);
             variable.setLiteralType(symContext.getSymbolType());
             return variable;
         }
@@ -658,7 +671,7 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
         System.out.println(symContext.getSymbolType());
 
         if(symContext != null) {
-            variable.setValue(symContext.getIdentifier());
+            variable.setValue(symContext);
             variable.setLiteralType(symContext.getSymbolType());
             return variable;
         }

@@ -1,4 +1,4 @@
-// Generated from ManuScript.g4 by ANTLR 4.7
+// Generated from C:/INTELLIJ Projects/PROGLAN_MP/src/com/parser\ManuScript.g4 by ANTLR 4.7
 package com.parser;
 
 import org.antlr.v4.runtime.ParserRuleContext;
@@ -71,6 +71,30 @@ public class ManuScriptBaseListener implements ManuScriptListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitMemberDeclaration(ManuScriptParser.MemberDeclarationContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterStartFieldStruct(ManuScriptParser.StartFieldStructContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitStartFieldStruct(ManuScriptParser.StartFieldStructContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterStartMethodDeclaration(ManuScriptParser.StartMethodDeclarationContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitStartMethodDeclaration(ManuScriptParser.StartMethodDeclarationContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -947,6 +971,18 @@ public class ManuScriptBaseListener implements ManuScriptListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitAndExpr(ManuScriptParser.AndExprContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterStructExpr(ManuScriptParser.StructExprContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitStructExpr(ManuScriptParser.StructExprContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

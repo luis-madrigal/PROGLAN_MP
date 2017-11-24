@@ -1,15 +1,32 @@
 
+permanent int FINAL_X = 10;
+permanent int FINAL_Z = 5;
+
+composition abc{
+int a;
+}
+
+ACT add starring(int x, int y) {
+	give (x + y);
+}
+
+ACT asd starring(int o){
+	int z;
+}
+
 ACT main starring() {
- 	int x = 0;
- 	float _veryWeirdIdentifier567 = 999.9f;
- 	boolean y = (5 > 4 && true) || (false && !(x==0));
- 	int[] myArray = new int[10];
+	int x = 0;
+	int y = 0;
 
- 	Say "What is input: ";
- 	Write to x;
- 	Say "Input: "+x;
+	Say 5 + ( 7  + 8 ) + "Ay lmao";
+	Say 5 +  7  + 8  + "Ay lmao2";
+	
+	Say "Enter value for X: ";
+	Write to x;
+	Say "Enter value for Y: ";
+	Write to y;
 
- 	replay(int i = 0; i < 5; i++) {
- 		Say "Hello World";
- 	}
- }
+	Say "Value is" +add(x,y);
+	
+	Say x;
+}
