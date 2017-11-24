@@ -13,6 +13,7 @@ public class CodeGeneratorThread extends Thread {
 	public CodeGeneratorThread(ASTBuildVisitor astbv, HashMap<String, MethodContext> methodTable) {
 		this.astbv = astbv;
 		this.methodTable = methodTable;
+		
 	}
 	
 	@Override

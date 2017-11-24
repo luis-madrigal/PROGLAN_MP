@@ -268,9 +268,9 @@ public class Panel implements ActionListener, KeyListener, MouseListener {
 //		btnWatch.setBorder(null);
 		btnWatch.setBorder(FrameStatic.brdrBarUn);
 		btnWatch.setBackground(Color.WHITE);
-		btnWatch.setIcon(new ImageIcon(getClass().getClassLoader().getResource("res/ico_save_off.png")));
-		btnWatch.setRolloverIcon(new ImageIcon(getClass().getClassLoader().getResource("res/ico_save_on.png")));
-		btnWatch.setPressedIcon(new ImageIcon(getClass().getClassLoader().getResource("res/ico_save_on.png")));
+		btnWatch.setIcon(new ImageIcon(getClass().getClassLoader().getResource("res/ico_watch_off.png")));
+		btnWatch.setRolloverIcon(new ImageIcon(getClass().getClassLoader().getResource("res/ico_watch_on.png")));
+		btnWatch.setPressedIcon(new ImageIcon(getClass().getClassLoader().getResource("res/ico_watch_on.png")));
 		btnWatch.setFocusable(false);
 		btnWatch.getInsets().set(30, 0, 0, 0);
 
