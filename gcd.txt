@@ -1,10 +1,5 @@
 
 permanent int FINAL_X = 10;
-permanent int FINAL_Z = 5;
-
-composition abc{
-int a;
-}
 
 ACT gcd starring (int p, int q) {
 	if(q == 0) give p;

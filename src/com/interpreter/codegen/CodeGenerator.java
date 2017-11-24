@@ -127,7 +127,7 @@ public class CodeGenerator {
 		if(this.labelMap.containsKey(pointer) && this.labelMap.get(pointer).getType().equals(NodeType.RETURN)) {
 			stmt = this.labelMap.get(pointer);
 			TACReturnStatement rStmt = (TACReturnStatement) stmt;
-//			System.out.println("RETURN: "+this.getValue(rStmt.getExpression()));
+			System.out.println("RETURN: "+this.getValue(registers, rStmt.getExpression()));
 			return this.getValue(registers, rStmt.getExpression());
 		} else
 			return null;
@@ -264,6 +264,7 @@ public class CodeGenerator {
 		case SUB: return ExpressionEvaluator.subtract(op1Value, op2Value);
 		case DIV: return ExpressionEvaluator.divide(op1Value, op2Value);
 		case MULT: return ExpressionEvaluator.multiply(op1Value, op2Value);
+		case MOD: return ExpressionEvaluator.modulo(op1Value, op2Value);
 		case LESS: return ExpressionEvaluator.lessThan(op1Value, op2Value);
 		case LEQ: return ExpressionEvaluator.lessThanOrEqual(op1Value, op2Value);
 		case GREATER: return ExpressionEvaluator.greaterThan(op1Value, op2Value);
