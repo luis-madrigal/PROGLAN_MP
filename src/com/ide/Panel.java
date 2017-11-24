@@ -89,12 +89,13 @@ public class Panel implements ActionListener, KeyListener, MouseListener {
 	private RSyntaxTextAreaManuscript codeInput;
 	private JTextPane parsedOut;
 	public static JTextPane threeACOut;
-
+	public static JTextPane watchOut;
 
 	private JPanel inputPaneParent;
 	private RTextScrollPane inputPane;
 	private JScrollPane parsedPane;
 	private JScrollPane threeACPane;
+	private JScrollPane watchPane;
 	private JScrollPane treePane;
 	private JScrollPane consolePane;
 
@@ -456,6 +457,33 @@ public class Panel implements ActionListener, KeyListener, MouseListener {
 		        (int)treePane.getVerticalScrollBar().getPreferredSize().getHeight()
 		));
 		
+		// For watch variables
+		watchOut = new JTextPane();
+		watchOut.setFont(new Font("Consolas", 150, baseFontSize));
+		watchOut.setEditable(false);
+		watchOut.setForeground(Color.WHITE);
+		watchOut.setBackground(SUBLIME_BG);
+        watchOut.isOpaque();
+		        
+		this.watchPane = new JScrollPane(watchOut);
+		this.watchPane.setPreferredSize(new Dimension((int) Frame.SCREEN_SIZE.getWidth()/2, 150));
+		this.watchPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+	
+		this.watchPane.getVerticalScrollBar().setUI(new CustomScrollBarUISky());
+		this.watchPane.getHorizontalScrollBar().setUI(new CustomScrollBarUISky());
+		this.watchPane.setBorder(null);
+	
+		this.watchPane.getHorizontalScrollBar().setPreferredSize(new Dimension(
+		        (int)watchPane.getHorizontalScrollBar().getPreferredSize().getWidth(),
+		        (int)horizontalHeight
+		));
+		
+		this.watchPane.getVerticalScrollBar().setPreferredSize(new Dimension(
+		        (int)horizontalHeight,
+		        (int)watchPane.getVerticalScrollBar().getPreferredSize().getHeight()
+		));
+		
+		
 		JPanel parentPane = new JPanel();
 		parentPane.setLayout(new BoxLayout(parentPane, BoxLayout.Y_AXIS));
 		
@@ -500,6 +528,8 @@ public class Panel implements ActionListener, KeyListener, MouseListener {
 		this.outputTabs.add("3 Address Code", this.threeACPane);
 //		this.outputTabs.add("Parsed Out", this.parsedPane);
 		this.outputTabs.add("Parse Tree", parentPane);
+
+		this.outputTabs.add("Watch", this.watchPane);
 
 		this.outputTabs.setFont(FrameStatic.fntDefault);
 		outputTabs.setBackground(Color.WHITE);
