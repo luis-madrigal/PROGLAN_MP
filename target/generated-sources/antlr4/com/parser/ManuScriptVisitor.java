@@ -41,6 +41,18 @@ public interface ManuScriptVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitMemberDeclaration(ManuScriptParser.MemberDeclarationContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link ManuScriptParser#startFieldStruct}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitStartFieldStruct(ManuScriptParser.StartFieldStructContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link ManuScriptParser#startMethodDeclaration}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitStartMethodDeclaration(ManuScriptParser.StartMethodDeclarationContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link ManuScriptParser#methodDeclaration}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -505,6 +517,12 @@ public interface ManuScriptVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitAndExpr(ManuScriptParser.AndExprContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link ManuScriptParser#structExpr}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitStructExpr(ManuScriptParser.StructExprContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link ManuScriptParser#variableExpr}.
 	 * @param ctx the parse tree

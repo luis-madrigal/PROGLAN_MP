@@ -6,6 +6,11 @@ public class SemanticErrors {
 	
 	private static final String LINE_INFO = "line %d:%d ";
 
+	//ARRAY
+	public static final String OUT_OF_BOUNDS = LINE_INFO + "Array index out of bounds. index: %s ; array length: %s";
+	public static final String INVALID_DIMS = LINE_INFO + "Array invalid dimensions. # specified dim: %s ; # correct dim: %s";
+
+
 	//STRUCTURES
 	public static final String UNDEFINED_STRUCT = LINE_INFO + "Undefined structure '%s'";
 	public static final String DUPLICATE_STRUCT = LINE_INFO + "Duplicate structure '%s'";

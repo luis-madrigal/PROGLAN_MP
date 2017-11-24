@@ -76,6 +76,30 @@ public class ManuScriptBaseListener implements ManuScriptListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterStartFieldStruct(ManuScriptParser.StartFieldStructContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitStartFieldStruct(ManuScriptParser.StartFieldStructContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterStartMethodDeclaration(ManuScriptParser.StartMethodDeclarationContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitStartMethodDeclaration(ManuScriptParser.StartMethodDeclarationContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterMethodDeclaration(ManuScriptParser.MethodDeclarationContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -947,6 +971,18 @@ public class ManuScriptBaseListener implements ManuScriptListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitAndExpr(ManuScriptParser.AndExprContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterStructExpr(ManuScriptParser.StructExprContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitStructExpr(ManuScriptParser.StructExprContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

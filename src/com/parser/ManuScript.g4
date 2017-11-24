@@ -49,7 +49,7 @@ compilationUnit
     ;
 
 bodyDeclaration
-	:	(memberDeclaration)*
+	:	memberDeclaration
 	;
 //packageDeclaration
 //    :   PACKAGE qualifiedName ';'
@@ -159,10 +159,8 @@ typeList
 //    ;
 
 memberDeclaration
-    :   methodDeclaration
+    :   startFieldStruct*   startMethodDeclaration
 //    |   genericMethodDeclaration
-    |   fieldDeclaration
-    |   structDefinition
 //    |   constructorDeclaration
 //    |   genericConstructorDeclaration
 //    |   interfaceDeclaration
@@ -171,6 +169,14 @@ memberDeclaration
 //    |   enumDeclaration
     ;
 
+startFieldStruct
+    :   fieldDeclaration
+    |   structDefinition
+    ;
+
+startMethodDeclaration
+    :   methodDeclaration   (methodDeclaration)*
+    ;
 /* We use rule this even for void methods which cannot have [] after parameters.
    This simplifies grammar and we can consider void to be a type, which
    renders the [] matching as a context-sensitive issue or a semantic check
@@ -558,8 +564,7 @@ switchLabel
     ;
 
 forControl
-    :   enhancedForControl
-    |   forInit ';' expression? ';' forUpdate?
+    :   forInit ';' expression? ';' forUpdate?
     ;
 
 forInit
@@ -644,7 +649,13 @@ expression
         )
         expression # assignExpr
     ;
-    
+
+structExpr
+    :   Identifier
+    |   structExpr '.' Identifier
+    |   structExpr '->' Identifier
+    ;
+
 variableExpr
 	:	Identifier
 	|	'*'Identifier

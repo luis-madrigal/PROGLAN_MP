@@ -58,6 +58,26 @@ public interface ManuScriptListener extends ParseTreeListener {
 	 */
 	void exitMemberDeclaration(ManuScriptParser.MemberDeclarationContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link ManuScriptParser#startFieldStruct}.
+	 * @param ctx the parse tree
+	 */
+	void enterStartFieldStruct(ManuScriptParser.StartFieldStructContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link ManuScriptParser#startFieldStruct}.
+	 * @param ctx the parse tree
+	 */
+	void exitStartFieldStruct(ManuScriptParser.StartFieldStructContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link ManuScriptParser#startMethodDeclaration}.
+	 * @param ctx the parse tree
+	 */
+	void enterStartMethodDeclaration(ManuScriptParser.StartMethodDeclarationContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link ManuScriptParser#startMethodDeclaration}.
+	 * @param ctx the parse tree
+	 */
+	void exitStartMethodDeclaration(ManuScriptParser.StartMethodDeclarationContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link ManuScriptParser#methodDeclaration}.
 	 * @param ctx the parse tree
 	 */
@@ -841,6 +861,16 @@ public interface ManuScriptListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitAndExpr(ManuScriptParser.AndExprContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link ManuScriptParser#structExpr}.
+	 * @param ctx the parse tree
+	 */
+	void enterStructExpr(ManuScriptParser.StructExprContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link ManuScriptParser#structExpr}.
+	 * @param ctx the parse tree
+	 */
+	void exitStructExpr(ManuScriptParser.StructExprContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link ManuScriptParser#variableExpr}.
 	 * @param ctx the parse tree
