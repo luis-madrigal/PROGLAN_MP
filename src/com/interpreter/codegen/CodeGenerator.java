@@ -49,6 +49,7 @@ public class CodeGenerator {
 	private String currentMethod;
 	private Stack<Scope> prevBlocks;
 	private HashMap<String, MethodContext> methodTable;
+	private boolean isRunning;
 	
 	public CodeGenerator(HashMap<String, ProcedureNode> methodASTTable, HashMap<String, MethodContext> methodTable) {
 		this.methodTable = methodTable;
@@ -57,6 +58,7 @@ public class CodeGenerator {
 		this.variables = new HashMap<String, Scope>();
 		this.registers = new HashMap<String, Register>();
 		this.prevBlocks = new Stack<Scope>();
+		this.isRunning = true;
 		ICGenerator icg = new ICGenerator(methodTable);
 		
 		Panel.threeACOut.setText("");
@@ -112,7 +114,7 @@ public class CodeGenerator {
 			stmt = this.labelMap.get(pointer);
 			pointerCount = this.evaluate(methodScope, registers, stmt, pointerCount);
 			pointer = ICGenerator.LABEL_ALIAS+pointerCount;
-		}while(!this.labelMap.get(pointer).getType().equals(NodeType.FUNCTION_END) && !this.labelMap.get(pointer).getType().equals(NodeType.RETURN));
+		}while(!this.labelMap.get(pointer).getType().equals(NodeType.FUNCTION_END) && !this.labelMap.get(pointer).getType().equals(NodeType.RETURN) && this.isRunning);
 		
 		while(this.prevBlocks.peek() != null) {
 			this.prevBlocks.pop();
@@ -202,9 +204,14 @@ public class CodeGenerator {
 			break;
 		case SCAN:
 			TACScanStatement scanStmt = (TACScanStatement) statement;
-			Object scanVal = Reader.readInput();
-			this.currentScope.findVar(scanStmt.getVariable()).setValue(LiteralMatcher.instance().parseAttempt(scanVal));
-			pointerCount++;
+			SymbolContext ctx = this.currentScope.findVar(scanStmt.getVariable());
+			Object scanVal = Reader.readInput(ctx.getSymbolType());
+			if(scanVal == null)
+				this.isRunning = false;
+			else {
+				ctx.setValue(scanVal);
+				pointerCount++;
+			}
 			break;
 		case VAR_DECLARE:
 			pointerCount++;
@@ -304,18 +311,4 @@ public class CodeGenerator {
 		}
 	}
 	
-//	private void setValue(Operand operand) {
-//		switch (operand.getOperandType()) {
-//		case REGISTER:
-//			Register r = (Register) operand;
-//			this.registers.put(r.getName(), r);
-//		case LITERAL:
-//			return operand.getValue();
-//		case VARIABLE:
-//			Variable v = (Variable) operand;
-//			return this.currentScope.findVar(v.getAlias());
-//		default:
-//			return null;
-//		}
-//	}
 }

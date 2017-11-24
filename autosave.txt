@@ -1,6 +1,5 @@
 
 ACT main starring() {
-<<<<<<< HEAD
 	char cmd;
 
 	rehearse {
@@ -10,18 +9,3 @@ ACT main starring() {
 	when(cmd != 'Z')
 
 }
-=======
- 	int x = 0;
- 	float _veryWeirdIdentifier567 = 999.9f;
- 	boolean y = (5 > 4 && true) || (false && !(x==0));
- 	int[] myArray = new int[10];
-
- 	Say "What is input: ";
- 	Write to x;
- 	Say "Input: "+x;
-
- 	replay(int i = 0; i < 5; i++) {
- 		Say "Hello World";
- 	}
- }
->>>>>>> 0ab32310c39d9a28caa5fe85a3d64089d2b5b27d

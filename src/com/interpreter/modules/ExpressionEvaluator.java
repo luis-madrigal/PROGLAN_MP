@@ -386,30 +386,6 @@ public class ExpressionEvaluator {
 		return x + y;
 	}
 	
-//	public static String concat(String x, Integer y) {
-//		return x + y;
-//	}
-//	
-//	public static String concat(Integer x, String y) {
-//		return x + y;
-//	}
-//	
-//	public static String concat(String x, Float y) {
-//		return x + y;
-//	}
-//	
-//	public static String concat(Float x, String y) {
-//		return x + y;
-//	}
-//	
-//	public static String concat(String x, Character y) {
-//		return x + y;
-//	}
-//	
-//	public static String concat(Character x, String y) {
-//		return x + y;
-//	}
-	
 	public static Integer length(String x) {
 		return x.length();
 	}
@@ -640,7 +616,7 @@ public class ExpressionEvaluator {
 	}
 	
 	public static Boolean equal(Character x, Character y) {
-		return x == y;
+		return x.charValue() == y.charValue();
 	}
 	
 	public static Boolean equal(Character x, Integer y) {
@@ -684,7 +660,7 @@ public class ExpressionEvaluator {
 	}
 	
 	public static Boolean notEqual(Character x, Character y) {
-		return x != y;
+		return x.charValue() != y.charValue();
 	}
 	
 	public static Boolean notEqual(Character x, Integer y) {

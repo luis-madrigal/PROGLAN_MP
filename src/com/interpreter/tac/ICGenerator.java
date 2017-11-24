@@ -30,12 +30,11 @@ public class ICGenerator {
 	
 	private ArrayList<TACStatement> tac;
 	private int registerCount;
-	private int labelCount; //TODO: each instruction has label (not sure)
+	private int labelCount;
 	private AbstractSyntaxTree currentMethodBlock;
 	private Stack<Scope> scopes;
 	private Scope currentScope;
 	private HashMap<String, MethodContext> methodTable;
-	private Stack<TACStatement> toAdd;
 	private String methodName;
 	
 	public ICGenerator(HashMap<String, MethodContext> methodTable) {
@@ -46,7 +45,6 @@ public class ICGenerator {
 	
 	public ArrayList<TACStatement> generateICode(AbstractSyntaxTree tree) {
 		this.tac = new ArrayList<TACStatement>();
-		this.toAdd = new Stack<TACStatement>();
 		this.scopes = new Stack<Scope>();
 		Scope s = new Scope(null);
 		this.scopes.push(s);
