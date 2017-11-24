@@ -1,0 +1,13 @@
+
+permanent int FINAL_X = 10;
+
+ACT factorial starring (int x) {
+	if(x == 1) give 1;
+
+	give x * factorial(x-1);
+}
+
+ACT main starring() {
+	
+	Say factorial(10);
+}

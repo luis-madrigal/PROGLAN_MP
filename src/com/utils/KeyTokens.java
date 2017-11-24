@@ -51,6 +51,7 @@ public class KeyTokens {
         SUB("-"),
         MULT("*"),
         DIV("/"),
+        MOD("%"),
     	LESS("<"),
         LEQ("<="),
         GREATER(">"),
