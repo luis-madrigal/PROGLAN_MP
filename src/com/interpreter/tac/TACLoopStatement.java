@@ -40,7 +40,7 @@ public class TACLoopStatement extends TACStatement{
 	}
 	
 	public String toString() {
-		return this.getLabel() + ": loop " + this.condition.toString() + " goto " + this.jumpDestTrue + " else goto " + this.jumpDestFalse;
+		return this.getLabel() + ": loop " + ((this.condition != null)? this.condition.toString() : "null") + " goto " + this.jumpDestTrue + " else goto " + this.jumpDestFalse;
 	}
 	
 }

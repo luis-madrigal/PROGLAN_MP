@@ -1,11 +1,20 @@
 
+permanent int FINAL_X = 10;
+
+ACT add starring(int x, int y) {
+	give (x + y);
+}
+ACT asd starring(int o){
+	int z;
+}
 ACT main starring() {
-	char cmd;
-
-	rehearse {
-		Say "Enter a letter: ";
-		Write to cmd;
+	
+	replay (int i = 0; i < 10; i++) {
+		replay (int j = 0; j < 10; j++) {
+			replay (int k = 0; k < 10; k++) {
+				Say "i: "+i+", j: "+j+", k: "+k;
+			}
+		}
+		Say "-----------------------------------";
 	}
-	when(cmd != 'Z')
-
 }

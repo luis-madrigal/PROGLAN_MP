@@ -143,8 +143,8 @@ public class ICGenerator {
 		TACLoopStatement stmt = new TACLoopStatement(node.getNodeType(), this.storeExpression(node.getChild(1)));
 		this.addStatement(stmt);
 		stmt.setJumpDestTrue(ICGenerator.LABEL_ALIAS+(this.labelCount+1));
-		this.storeExpression(node.getChild(2));
 		this.storeStatement(node.getChild(3));
+		this.storeExpression(node.getChild(2));
 		this.addStatement(new TACGotoStatement(NodeType.GOTO, ICGenerator.LABEL_ALIAS+currentLblCount));
 		this.exitBlock();
 		stmt.setJumpDestFalse(ICGenerator.LABEL_ALIAS+(this.labelCount));
@@ -252,7 +252,7 @@ public class ICGenerator {
 			TACBinaryOpStatement binOp = new TACBinaryOpStatement(NodeType.BIN_ARITHMETIC, OPERATOR.getOpOfAssign(stmt.getOperator()), stmt.getVariable(), stmt.getValue());
 			this.addOutputStatement(binOp);
 			stmt.setOperator(OPERATOR.ASSIGN);
-			stmt.setValue(new Operand(OperandTypes.REGISTER, binOp.getOutputRegister()));
+			stmt.setValue(new Register(OperandTypes.REGISTER, binOp.getOutputRegister().getName()));
 			break;
 		}
 		this.addStatement(stmt);

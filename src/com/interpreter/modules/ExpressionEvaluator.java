@@ -628,7 +628,7 @@ public class ExpressionEvaluator {
 	}
 	
 	public static Boolean equal(String x, String y) {
-		return x == y;
+		return x.equals(y);
 	}
 	
 	public static Boolean equal(Boolean x, Boolean y) {
@@ -672,7 +672,7 @@ public class ExpressionEvaluator {
 	}
 	
 	public static Boolean notEqual(String x, String y) {
-		return x != y;
+		return !x.equals(y);
 	}
 	
 	public static Boolean notEqual(Boolean x, Boolean y) {
