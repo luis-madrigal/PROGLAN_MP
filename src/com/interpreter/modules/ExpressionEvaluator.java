@@ -543,8 +543,160 @@ public class ExpressionEvaluator {
 		return !x;
 	}
 	
+	public static Object equal(Object x, Object y) {
+		LITERAL_TYPE xType = LiteralMatcher.instance().getLiteralType(x);
+		LITERAL_TYPE yType = LiteralMatcher.instance().getLiteralType(y);
+		
+		if(xType.equals(LITERAL_TYPE.INT)) {
+			if(yType.equals(LITERAL_TYPE.CHAR))
+				return ExpressionEvaluator.equal((Integer) x, (Character)y);
+			if(yType.equals(LITERAL_TYPE.FLOAT))
+				return ExpressionEvaluator.equal((Integer) x, (Float)y);
+			if(yType.equals(LITERAL_TYPE.INT))
+				return ExpressionEvaluator.equal((Integer) x, (Integer)y);
+		}
+		if(xType.equals(LITERAL_TYPE.CHAR)) {
+			if(yType.equals(LITERAL_TYPE.INT))
+				return ExpressionEvaluator.equal((Character) x, (Integer)y);
+			if(yType.equals(LITERAL_TYPE.FLOAT))
+				return ExpressionEvaluator.equal((Character) x, (Float)y);
+			if(yType.equals(LITERAL_TYPE.CHAR))
+				return ExpressionEvaluator.equal((Character) x, (Character)y);
+		}
+		if(xType.equals(LITERAL_TYPE.FLOAT)) {
+			if(yType.equals(LITERAL_TYPE.CHAR))
+				return ExpressionEvaluator.equal((Float) x, (Character)y);
+			if(yType.equals(LITERAL_TYPE.INT))
+				return ExpressionEvaluator.equal((Float) x, (Integer)y);
+			if(yType.equals(LITERAL_TYPE.FLOAT))
+				return ExpressionEvaluator.equal((Float) x, (Float)y);
+		}
+		if(xType.equals(LITERAL_TYPE.STRING) && yType.equals(LITERAL_TYPE.STRING))
+			return ExpressionEvaluator.equal((String)x, (String)y);
+		
+		if(xType.equals(LITERAL_TYPE.BOOLEAN) && yType.equals(LITERAL_TYPE.BOOLEAN))
+			return ExpressionEvaluator.equal((Boolean)x, (Boolean)y);
+		return null;
+	}
+	
+	public static Object notEqual(Object x, Object y) {
+		LITERAL_TYPE xType = LiteralMatcher.instance().getLiteralType(x);
+		LITERAL_TYPE yType = LiteralMatcher.instance().getLiteralType(y);
+		
+		if(xType.equals(LITERAL_TYPE.INT)) {
+			if(yType.equals(LITERAL_TYPE.CHAR))
+				return ExpressionEvaluator.notEqual((Integer) x, (Character)y);
+			if(yType.equals(LITERAL_TYPE.FLOAT))
+				return ExpressionEvaluator.notEqual((Integer) x, (Float)y);
+			if(yType.equals(LITERAL_TYPE.INT))
+				return ExpressionEvaluator.notEqual((Integer) x, (Integer)y);
+		}
+		if(xType.equals(LITERAL_TYPE.CHAR)) {
+			if(yType.equals(LITERAL_TYPE.INT))
+				return ExpressionEvaluator.notEqual((Character) x, (Integer)y);
+			if(yType.equals(LITERAL_TYPE.FLOAT))
+				return ExpressionEvaluator.notEqual((Character) x, (Float)y);
+			if(yType.equals(LITERAL_TYPE.CHAR))
+				return ExpressionEvaluator.notEqual((Character) x, (Character)y);
+		}
+		if(xType.equals(LITERAL_TYPE.FLOAT)) {
+			if(yType.equals(LITERAL_TYPE.CHAR))
+				return ExpressionEvaluator.notEqual((Float) x, (Character)y);
+			if(yType.equals(LITERAL_TYPE.INT))
+				return ExpressionEvaluator.notEqual((Float) x, (Integer)y);
+			if(yType.equals(LITERAL_TYPE.FLOAT))
+				return ExpressionEvaluator.notEqual((Float) x, (Float)y);
+		}
+		if(xType.equals(LITERAL_TYPE.STRING) && yType.equals(LITERAL_TYPE.STRING))
+			return ExpressionEvaluator.notEqual((String)x, (String)y);
+		
+		if(xType.equals(LITERAL_TYPE.BOOLEAN) && yType.equals(LITERAL_TYPE.BOOLEAN))
+			return ExpressionEvaluator.notEqual((Boolean)x, (Boolean)y);
+		return null;
+	}
+	
+	public static Boolean equal(Integer x, Integer y) {
+		return x == y;
+	}
+	
+	public static Boolean equal(Integer x, Float y) {
+		return x.intValue() == y.floatValue();
+	}
+	
+	public static Boolean equal(Integer x, Character y) {
+		return x.intValue() == y.charValue();
+	}
+	
+	public static Boolean equal(Float x, Float y) {
+		return x == y;
+	}
+	
+	public static Boolean equal(Float x, Integer y) {
+		return x.floatValue() == y.intValue();
+	}
+	
+	public static Boolean equal(Float x, Character y) {
+		return x.floatValue() == y.charValue();
+	}
+	
+	public static Boolean equal(Character x, Character y) {
+		return x == y;
+	}
+	
+	public static Boolean equal(Character x, Integer y) {
+		return x.charValue() == y.intValue();
+	}
+	
+	public static Boolean equal(Character x, Float y) {
+		return x.charValue() == y.floatValue();
+	}
+	
+	public static Boolean equal(String x, String y) {
+		return x == y;
+	}
+	
 	public static Boolean equal(Boolean x, Boolean y) {
 		return x == y;
+	}
+	
+	public static Boolean notEqual(Integer x, Integer y) {
+		return x != y;
+	}
+	
+	public static Boolean notEqual(Integer x, Float y) {
+		return x.intValue() != y.floatValue();
+	}
+	
+	public static Boolean notEqual(Integer x, Character y) {
+		return x.intValue() != y.charValue();
+	}
+	
+	public static Boolean notEqual(Float x, Float y) {
+		return x != y;
+	}
+	
+	public static Boolean notEqual(Float x, Integer y) {
+		return x.floatValue() != y.intValue();
+	}
+	
+	public static Boolean notEqual(Float x, Character y) {
+		return x.floatValue() != y.charValue();
+	}
+	
+	public static Boolean notEqual(Character x, Character y) {
+		return x != y;
+	}
+	
+	public static Boolean notEqual(Character x, Integer y) {
+		return x.charValue() != y.intValue();
+	}
+	
+	public static Boolean notEqual(Character x, Float y) {
+		return x.charValue() != y.floatValue();
+	}
+	
+	public static Boolean notEqual(String x, String y) {
+		return x != y;
 	}
 	
 	public static Boolean notEqual(Boolean x, Boolean y) {

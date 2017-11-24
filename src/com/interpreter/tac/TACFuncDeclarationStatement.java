@@ -20,7 +20,10 @@ public class TACFuncDeclarationStatement extends TACStatement{
 	}
 	
 	public String toString() {
-		return this.getLabel() + ": declare " + this.methodName;
+		if(this.getType().equals(NodeType.FUNCTION_DECLARATION))
+			return this.getLabel() + ": declare " + this.methodName;
+		else
+			return this.getLabel() + ": end " + this.methodName;
 	}
 
 }

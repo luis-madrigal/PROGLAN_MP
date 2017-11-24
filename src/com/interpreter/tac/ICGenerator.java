@@ -36,6 +36,7 @@ public class ICGenerator {
 	private Scope currentScope;
 	private HashMap<String, MethodContext> methodTable;
 	private Stack<TACStatement> toAdd;
+	private String methodName;
 	
 	public ICGenerator(HashMap<String, MethodContext> methodTable) {
 		this.registerCount = 0;
@@ -53,6 +54,7 @@ public class ICGenerator {
 //		registerCount = 0;
 //		labelCount = 0;
 		this.storeStatement(tree);
+		this.addStatement(new TACFuncDeclarationStatement(NodeType.FUNCTION_END, this.methodName));
 		return this.tac;
 	}
 	
@@ -110,6 +112,7 @@ public class ICGenerator {
 		this.currentMethodBlock = n.getChild(0);
 		
 		ProcedureNode pNode = (ProcedureNode) n;
+		this.methodName = pNode.getProcedureName();
 		MethodContext ctx = this.methodTable.get(pNode.getProcedureName());
 		for(int i = 0; i < ctx.getArgs().size(); i++) {
 			this.currentScope.addToScope(new SymbolContext(ctx.getArgTypes().get(i), this.currentScope,ctx.getArgs().get(i)));
@@ -352,8 +355,12 @@ public class ICGenerator {
 		this.tac = tac;
 	}
 
-	public Scope getScope() {
+	public Scope getGlobalScope() {
 		return scopes.peek();
+	}
+	
+	public Scope getScope() {
+		return scopes.peek().getChildren().get(0);
 	}
 
 }
