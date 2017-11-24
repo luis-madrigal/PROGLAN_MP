@@ -12,6 +12,7 @@ import org.antlr.v4.runtime.tree.RuleNode;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -88,18 +89,22 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
         nExitBlock++;
         if(nExitBlock >= 2){
             nExitBlock = 0;
-            levelIndexTracker.set(lvlDepth + 1, 0);
+            levelIndexTracker.set(lvlDepth , 0);
         }
+        System.out.println("newnextIndex#: "+ Arrays.deepToString(levelIndexTracker.toArray()));
+
     }
 
     private void enterBlock(){
         lvlIndex = this.levelIndexTracker.get(lvlDepth);
+        System.out.println("nextIndex#: "+ Arrays.deepToString(levelIndexTracker.toArray()));
+        System.out.println("Depth: "+lvlDepth+" ;block#: "+lvlIndex);
         curScope = curScope.getChildren().get(lvlIndex);    //go deeper
-        System.out.println("scope: "+lvlIndex);
         this.levelIndexTracker.set(lvlDepth,++lvlIndex);    //sets next expected index
         lvlDepth++;
         if(lvlDepth >= this.levelIndexTracker.size())
             this.levelIndexTracker.add(0);
+
     }
 
     @Override
