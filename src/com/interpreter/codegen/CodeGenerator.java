@@ -33,7 +33,6 @@ import com.interpreter.tac.operands.Operand;
 import com.interpreter.tac.operands.OperandTypes;
 import com.interpreter.tac.operands.Register;
 import com.interpreter.tac.operands.Variable;
-import com.utils.KeyTokens.LITERAL_TYPE;
 import com.utils.KeyTokens.OPERATOR;
 
 public class CodeGenerator {

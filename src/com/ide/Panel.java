@@ -477,9 +477,9 @@ public class Panel implements ActionListener, KeyListener, MouseListener {
 		parentPane.add(treePane);
 		
 		this.outputTabs = new JTabbedPane();
-		this.outputTabs.add("Parsed Out", this.parsedPane);
-		this.outputTabs.add("Parse Tree", parentPane);
 		this.outputTabs.add("3 Address Code", this.threeACPane);
+//		this.outputTabs.add("Parsed Out", this.parsedPane);
+		this.outputTabs.add("Parse Tree", parentPane);
 
 		this.outputTabs.setFont(FrameStatic.fntDefault);
 		outputTabs.setBackground(Color.WHITE);
