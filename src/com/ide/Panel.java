@@ -56,11 +56,13 @@ import com.utils.Console;
 
 
 
-public class Panel implements ActionListener, KeyListener, MouseListener {
+
+public class Panel implements Runnable, ActionListener, KeyListener, MouseListener {
+	public static boolean status = true;
 	private Frame frameParent;
 	private DialogSave dlgSave;
 	private DialogOpen dlgOpen;
-	
+
 	private TextFileHandler textFileHandler;
 	
 	private JPanel pnlMain;
@@ -70,6 +72,8 @@ public class Panel implements ActionListener, KeyListener, MouseListener {
 	private JButton btnSave;
 
 	private JButton btnWatch;
+	private JButton btnContinue;
+	private JButton btnPause;
 
 	
 	private Styles styles;
@@ -206,87 +210,7 @@ public class Panel implements ActionListener, KeyListener, MouseListener {
 //		pnlMenu.setPreferredSize(new Dimension(1920, 100));
 		pnlMenu.setMinimumSize(new Dimension(400, 100));
 		
-		this.btnRun = new JButton();
-		this.btnRun.setFocusable(false);
-		this.btnRun.addActionListener(this);
-       
-		btnRun.setBackground(Color.WHITE);
-//        btnRun.setBorder(null);
-		btnRun.setBorder(FrameStatic.brdrBarUn);
-		btnRun.setIcon(new ImageIcon(getClass().getClassLoader().getResource("res/ico_play_off.png")));
-        btnRun.setRolloverIcon(new ImageIcon(getClass().getClassLoader().getResource("res/ico_play_on.png")));
-        btnRun.setPressedIcon(new ImageIcon(getClass().getClassLoader().getResource("res/ico_play_on.png")));
-        btnRun.setFocusable(false);
-		btnRun.getInsets().set(5, 0, 0, 0);
-
-		btnRun.setSize(40, 35);
-		btnRun.setPreferredSize(btnRun.getSize());
-//		btnRun.setBounds(-10, 40, btnRun.getWidth(), btnRun.getHeight());
-		pnlMenu.add(btnRun);
-
-
-		this.btnLoad = new JButton();
-		btnLoad.setFocusable(false);
-		btnLoad.addActionListener(this);
-		btnLoad.addMouseListener(this);
-//		btnLoad.setBorder(null);
-		btnLoad.setBorder(FrameStatic.brdrBarUn);
-		btnLoad.setBackground(Color.WHITE);
-		btnLoad.setIcon(new ImageIcon(getClass().getClassLoader().getResource("res/ico_open_off.png")));
-		btnLoad.setRolloverIcon(new ImageIcon(getClass().getClassLoader().getResource("res/ico_open_on.png")));
-		btnLoad.setPressedIcon(new ImageIcon(getClass().getClassLoader().getResource("res/ico_open_on.png")));
-
-		btnLoad.setFocusable(false);
-		btnLoad.getInsets().set(30, 0, 0, 0);
-
-		btnLoad.setSize(40, 35);
-		btnLoad.setPreferredSize(btnLoad.getSize());
-		pnlMenu.add(btnLoad);
-
-
-		this.btnSave = new JButton();
-		btnSave.setFocusable(false);
-		btnSave.addActionListener(this);
-		btnSave.addMouseListener(this);
-//		btnSave.setBorder(null);
-		btnSave.setBorder(FrameStatic.brdrBarUn);
-		btnSave.setBackground(Color.WHITE);
-		btnSave.setIcon(new ImageIcon(getClass().getClassLoader().getResource("res/ico_save_off.png")));
-		btnSave.setRolloverIcon(new ImageIcon(getClass().getClassLoader().getResource("res/ico_save_on.png")));
-		btnSave.setPressedIcon(new ImageIcon(getClass().getClassLoader().getResource("res/ico_save_on.png")));
-		btnSave.setFocusable(false);
-		btnSave.getInsets().set(30, 0, 0, 0);
-
-		btnSave.setSize(40, 35);
-		btnSave.setPreferredSize(btnSave.getSize());
-		pnlMenu.add(btnSave);
-				
-		
-		this.btnWatch = new JButton();
-		btnWatch.setFocusable(false);
-		btnWatch.addActionListener(this);
-		btnWatch.addMouseListener(this);
-//		btnWatch.setBorder(null);
-		btnWatch.setBorder(FrameStatic.brdrBarUn);
-		btnWatch.setBackground(Color.WHITE);
-		btnWatch.setIcon(new ImageIcon(getClass().getClassLoader().getResource("res/ico_watch_off.png")));
-		btnWatch.setRolloverIcon(new ImageIcon(getClass().getClassLoader().getResource("res/ico_watch_on.png")));
-		btnWatch.setPressedIcon(new ImageIcon(getClass().getClassLoader().getResource("res/ico_watch_on.png")));
-		btnWatch.setFocusable(false);
-		btnWatch.getInsets().set(30, 0, 0, 0);
-
-		btnWatch.setSize(40, 35);
-		btnWatch.setPreferredSize(btnWatch.getSize());
-		pnlMenu.add(btnWatch);
-		
-
-		int offsetX = 7;
-
-//		btnRun.setLocation(10, 6);
-		btnRun.setLocation(20, 6);
-		btnLoad.setLocation(btnRun.getX()+btnRun.getWidth()+offsetX, btnRun.getY());
-		btnSave.setLocation(btnLoad.getX()+btnLoad.getWidth()+offsetX, btnRun.getY());
-		btnWatch.setLocation(btnSave.getX()+btnSave.getWidth()+offsetX, btnRun.getY());
+		this.initMenuButtons();
 		this.pnlMain.add(this.pnlMenu, gbc);
 		
 		//Code Input
@@ -607,6 +531,21 @@ public class Panel implements ActionListener, KeyListener, MouseListener {
 		this.consolePane = new JScrollPane(Console.instance().getTextPane());
 		this.consolePane.setPreferredSize(new Dimension(350, 150));
 		this.consolePane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		
+		this.consolePane.getVerticalScrollBar().setUI(new CustomScrollBarUISky());
+		this.consolePane.getHorizontalScrollBar().setUI(new CustomScrollBarUISky());
+		horizontalHeight = 10;
+		
+		this.consolePane.getHorizontalScrollBar().setPreferredSize(new Dimension(
+		        (int)consolePane.getHorizontalScrollBar().getPreferredSize().getWidth(),
+		        (int)horizontalHeight
+		));
+		
+		this.consolePane.getVerticalScrollBar().setPreferredSize(new Dimension(
+		        (int)horizontalHeight,
+		        (int)consolePane.getVerticalScrollBar().getPreferredSize().getWidth()
+		));
+		
 		gbc = new GridBagConstraints();
 		gbc.anchor = GridBagConstraints.NORTHEAST;
 		gbc.fill = GridBagConstraints.BOTH;
@@ -658,6 +597,126 @@ public class Panel implements ActionListener, KeyListener, MouseListener {
 		this.dlgOpen.setProgressColor(FrameStatic.clrLightBlue);
 		this.dlgOpen.getBtnOpen().addMouseListener(this);
 		
+	}
+	
+	public void initMenuButtons() {
+		this.btnRun = new JButton();
+		this.btnRun.setFocusable(false);
+		this.btnRun.addActionListener(this);
+       
+		btnRun.setBackground(Color.WHITE);
+//        btnRun.setBorder(null);
+		btnRun.setBorder(FrameStatic.brdrBarUn);
+		btnRun.setIcon(new ImageIcon(getClass().getClassLoader().getResource("res/ico_play_off.png")));
+        btnRun.setRolloverIcon(new ImageIcon(getClass().getClassLoader().getResource("res/ico_play_on.png")));
+        btnRun.setPressedIcon(new ImageIcon(getClass().getClassLoader().getResource("res/ico_play_on.png")));
+        btnRun.setFocusable(false);
+		btnRun.getInsets().set(5, 0, 0, 0);
+
+		btnRun.setSize(40, 35);
+		btnRun.setPreferredSize(btnRun.getSize());
+//		btnRun.setBounds(-10, 40, btnRun.getWidth(), btnRun.getHeight());
+		pnlMenu.add(btnRun);
+
+
+		this.btnLoad = new JButton();
+		btnLoad.setFocusable(false);
+		btnLoad.addActionListener(this);
+		btnLoad.addMouseListener(this);
+//		btnLoad.setBorder(null);
+		btnLoad.setBorder(FrameStatic.brdrBarUn);
+		btnLoad.setBackground(Color.WHITE);
+		btnLoad.setIcon(new ImageIcon(getClass().getClassLoader().getResource("res/ico_open_off.png")));
+		btnLoad.setRolloverIcon(new ImageIcon(getClass().getClassLoader().getResource("res/ico_open_on.png")));
+		btnLoad.setPressedIcon(new ImageIcon(getClass().getClassLoader().getResource("res/ico_open_on.png")));
+
+		btnLoad.setFocusable(false);
+		btnLoad.getInsets().set(30, 0, 0, 0);
+
+		btnLoad.setSize(40, 35);
+		btnLoad.setPreferredSize(btnLoad.getSize());
+		pnlMenu.add(btnLoad);
+
+
+		this.btnSave = new JButton();
+		btnSave.setFocusable(false);
+		btnSave.addActionListener(this);
+		btnSave.addMouseListener(this);
+//		btnSave.setBorder(null);
+		btnSave.setBorder(FrameStatic.brdrBarUn);
+		btnSave.setBackground(Color.WHITE);
+		btnSave.setIcon(new ImageIcon(getClass().getClassLoader().getResource("res/ico_save_off.png")));
+		btnSave.setRolloverIcon(new ImageIcon(getClass().getClassLoader().getResource("res/ico_save_on.png")));
+		btnSave.setPressedIcon(new ImageIcon(getClass().getClassLoader().getResource("res/ico_save_on.png")));
+		btnSave.setFocusable(false);
+		btnSave.getInsets().set(30, 0, 0, 0);
+
+		btnSave.setSize(40, 35);
+		btnSave.setPreferredSize(btnSave.getSize());
+		pnlMenu.add(btnSave);
+				
+		
+		this.btnWatch = new JButton();
+		btnWatch.setFocusable(false);
+		btnWatch.addActionListener(this);
+		btnWatch.addMouseListener(this);
+//		btnWatch.setBorder(null);
+		btnWatch.setBorder(FrameStatic.brdrBarUn);
+		btnWatch.setBackground(Color.WHITE);
+		btnWatch.setIcon(new ImageIcon(getClass().getClassLoader().getResource("res/ico_watch_off.png")));
+		btnWatch.setRolloverIcon(new ImageIcon(getClass().getClassLoader().getResource("res/ico_watch_on.png")));
+		btnWatch.setPressedIcon(new ImageIcon(getClass().getClassLoader().getResource("res/ico_watch_on.png")));
+		btnWatch.setFocusable(false);
+		btnWatch.getInsets().set(30, 0, 0, 0);
+
+		btnWatch.setSize(40, 35);
+		btnWatch.setPreferredSize(btnWatch.getSize());
+		pnlMenu.add(btnWatch);
+		
+		
+		this.btnContinue = new JButton("Play");
+		btnContinue.setFocusable(false);
+		btnContinue.addActionListener(this);
+		btnContinue.addMouseListener(this);
+//		btnContinue.setBorder(null);
+		btnContinue.setBorder(FrameStatic.brdrBarUn);
+		btnContinue.setBackground(Color.WHITE);
+//		btnContinue.setIcon(new ImageIcon(getClass().getClassLoader().getResource("res/ico_watch_off.png")));
+//		btnContinue.setRolloverIcon(new ImageIcon(getClass().getClassLoader().getResource("res/ico_watch_on.png")));
+//		btnContinue.setPressedIcon(new ImageIcon(getClass().getClassLoader().getResource("res/ico_watch_on.png")));
+		btnContinue.setFocusable(false);
+		btnContinue.getInsets().set(30, 0, 0, 0);
+
+		btnContinue.setSize(40, 35);
+		btnContinue.setPreferredSize(btnContinue.getSize());
+		pnlMenu.add(btnContinue);
+		
+		this.btnPause = new JButton("Pause");
+		btnPause.setFocusable(false);
+		btnPause.addActionListener(this);
+		btnPause.addMouseListener(this);
+//		btnPause.setBorder(null);
+		btnPause.setBorder(FrameStatic.brdrBarUn);
+		btnPause.setBackground(Color.WHITE);
+//		btnPause.setIcon(new ImageIcon(getClass().getClassLoader().getResource("res/ico_watch_off.png")));
+//		btnPause.setRolloverIcon(new ImageIcon(getClass().getClassLoader().getResource("res/ico_watch_on.png")));
+//		btnPause.setPressedIcon(new ImageIcon(getClass().getClassLoader().getResource("res/ico_watch_on.png")));
+		btnPause.setFocusable(false);
+		btnPause.getInsets().set(30, 0, 0, 0);
+
+		btnPause.setSize(40, 35);
+		btnPause.setPreferredSize(btnPause.getSize());
+		pnlMenu.add(btnPause);
+		
+
+		int offsetX = 7;
+
+		btnRun.setLocation(20, 6);
+		btnLoad.setLocation(btnRun.getX()+btnRun.getWidth()+offsetX, btnRun.getY());
+		btnSave.setLocation(btnLoad.getX()+btnLoad.getWidth()+offsetX, btnRun.getY());
+		btnWatch.setLocation(btnSave.getX()+btnSave.getWidth()+offsetX, btnRun.getY());
+		btnContinue.setLocation(btnWatch.getX()+btnWatch.getWidth()+offsetX, btnRun.getY());
+		btnPause.setLocation(btnContinue.getX()+btnContinue.getWidth()+offsetX, btnRun.getY());
 	}
 	
 	public RSyntaxTextAreaManuscript getCodeInput() {
@@ -717,8 +776,10 @@ public class Panel implements ActionListener, KeyListener, MouseListener {
 			
 			this.parsedOut.setText("");
 //			this.parsedOut.setText(this.parsedOut.getText() + newline);
-			this.parsedOut.setText(this.parsedOut.getText() + this.scanner.getTokens(text+newline));
+//			this.scanner.processTokens(text+newline);
+//			this.threadCodeGenerator = this.scanner.getThreadCodeGenerator();
 			
+			this.parsedOut.setText(this.parsedOut.getText() + this.scanner.getTokens(text+newline));
 			this.scanner.generateTree(); // Required to do this
 			this.treePane.setViewportView(this.scanner.getTree());			
 			
@@ -829,6 +890,19 @@ public class Panel implements ActionListener, KeyListener, MouseListener {
 		
 		if(e.getSource() == btnLoad) {
 			this.dlgOpen.show(pnlMain);	
+
+		}
+		
+		if(e.getSource() == btnContinue) {
+
+			scanner.getRunnableCodeGenerator().play();
+		}
+		if(e.getSource() == btnPause) {
+
+			scanner.getRunnableCodeGenerator().pause();
+		}
+		if(e.getSource() == btnWatch) {
+			System.out.println("Watch");
 		}
 		
 		if(e.getSource() == this.dlgSave.getBtnSave()) {
@@ -874,5 +948,10 @@ public class Panel implements ActionListener, KeyListener, MouseListener {
 
 	public void setFrameParent(Frame frameParent) {
 		this.frameParent = frameParent;
+	}
+
+	@Override
+	public void run() {
+		
 	}
 }
