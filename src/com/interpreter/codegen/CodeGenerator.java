@@ -67,7 +67,7 @@ public class CodeGenerator {
 			icg.print();
 			
 			ArrayList<String> args = methodTable.get(entry.getKey()).getArgs();
-			ArrayList<LITERAL_TYPE> argTypes = methodTable.get(entry.getKey()).getArgTypes();
+			ArrayList<String> argTypes = methodTable.get(entry.getKey()).getArgTypes();
 			for(int i = 0; i < args.size(); i++) {
 				this.variables.get(entry.getKey()).addToScope(new SymbolContext(argTypes.get(i), icg.getScope(), args.get(i)));
 			}
