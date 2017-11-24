@@ -59,7 +59,8 @@ import com.utils.Console;
 public class Panel implements ActionListener, KeyListener, MouseListener {
 	private Frame frameParent;
 	private DialogSave dlgSave;
-
+	private DialogOpen dlgOpen;
+	
 	private TextFileHandler textFileHandler;
 	
 	private JPanel pnlMain;
@@ -67,6 +68,8 @@ public class Panel implements ActionListener, KeyListener, MouseListener {
 	private JButton btnRun;
 	private JButton btnLoad;
 	private JButton btnSave;
+
+	private JButton btnWatch;
 
 	
 	private Styles styles;
@@ -258,6 +261,23 @@ public class Panel implements ActionListener, KeyListener, MouseListener {
 		pnlMenu.add(btnSave);
 				
 		
+		this.btnWatch = new JButton();
+		btnWatch.setFocusable(false);
+		btnWatch.addActionListener(this);
+		btnWatch.addMouseListener(this);
+//		btnWatch.setBorder(null);
+		btnWatch.setBorder(FrameStatic.brdrBarUn);
+		btnWatch.setBackground(Color.WHITE);
+		btnWatch.setIcon(new ImageIcon(getClass().getClassLoader().getResource("res/ico_save_off.png")));
+		btnWatch.setRolloverIcon(new ImageIcon(getClass().getClassLoader().getResource("res/ico_save_on.png")));
+		btnWatch.setPressedIcon(new ImageIcon(getClass().getClassLoader().getResource("res/ico_save_on.png")));
+		btnWatch.setFocusable(false);
+		btnWatch.getInsets().set(30, 0, 0, 0);
+
+		btnWatch.setSize(40, 35);
+		btnWatch.setPreferredSize(btnWatch.getSize());
+		pnlMenu.add(btnWatch);
+		
 
 		int offsetX = 7;
 
@@ -265,6 +285,7 @@ public class Panel implements ActionListener, KeyListener, MouseListener {
 		btnRun.setLocation(20, 6);
 		btnLoad.setLocation(btnRun.getX()+btnRun.getWidth()+offsetX, btnRun.getY());
 		btnSave.setLocation(btnLoad.getX()+btnLoad.getWidth()+offsetX, btnRun.getY());
+		btnWatch.setLocation(btnSave.getX()+btnSave.getWidth()+offsetX, btnRun.getY());
 		this.pnlMain.add(this.pnlMenu, gbc);
 		
 		//Code Input
@@ -476,9 +497,9 @@ public class Panel implements ActionListener, KeyListener, MouseListener {
 		parentPane.add(treePane);
 		
 		this.outputTabs = new JTabbedPane();
-		this.outputTabs.add("Parsed Out", this.parsedPane);
-		this.outputTabs.add("Parse Tree", parentPane);
 		this.outputTabs.add("3 Address Code", this.threeACPane);
+//		this.outputTabs.add("Parsed Out", this.parsedPane);
+		this.outputTabs.add("Parse Tree", parentPane);
 
 		this.outputTabs.setFont(FrameStatic.fntDefault);
 		outputTabs.setBackground(Color.WHITE);
@@ -603,6 +624,10 @@ public class Panel implements ActionListener, KeyListener, MouseListener {
 		this.dlgSave.setProgressColor(FrameStatic.clrLightBlue);
 		this.dlgSave.getBtnSave().addMouseListener(this);
 		
+		this.dlgOpen = new DialogOpen();
+		this.dlgOpen.setProgressColor(FrameStatic.clrLightBlue);
+		this.dlgOpen.getBtnOpen().addMouseListener(this);
+		
 	}
 	
 	public RSyntaxTextAreaManuscript getCodeInput() {
@@ -620,11 +645,6 @@ public class Panel implements ActionListener, KeyListener, MouseListener {
 	public void setInputLines(JTextArea inputLines) {
 		this.inputLines = inputLines;
 	}
-
-//	public void generateThreeAddressCode() {
-//		threeACOut.setText(this.scanner.getIcg().getPrintText());
-//		
-//	}
 	/*
 	 * TODO: SyntaxHighlighting
 	 * Specify the color for a Token type here using syntaxScheme.
@@ -766,20 +786,22 @@ public class Panel implements ActionListener, KeyListener, MouseListener {
 		}
 		
 		if(e.getSource() == btnSave) {
-			// TODO: Open Save Dialog
-			System.out.println("Save");
 			this.dlgSave.show(pnlMain);	
 
 		}
 		
 		if(e.getSource() == btnLoad) {
-			// TODO Open Load Dialog
-			System.out.println("Load");
+			this.dlgOpen.show(pnlMain);	
 		}
 		
 		if(e.getSource() == this.dlgSave.getBtnSave()) {
 			createSaveFile(this.dlgSave.getTxtfFilename().getText());
 			this.dlgSave.close();
+		}
+		
+		if(e.getSource() == this.dlgOpen.getBtnOpen()) {
+			loadTextFile(this.dlgOpen.getTxtfFilename().getText());
+			this.dlgOpen.close();
 		}
 		
 	}
@@ -789,6 +811,12 @@ public class Panel implements ActionListener, KeyListener, MouseListener {
 		this.textFileHandler.save(strFilename, strFile);
 	}
 	
+	public void loadTextFile(String strFilename) {
+		
+		String strFile = this.textFileHandler.load(strFilename);
+		this.codeInput.setText(strFile);
+	}
+
 	void gotoErrorLine(MouseEvent e) {
 		JTextPane textPane = Console.instance().getTextPane();
 		Element ele = textPane.getStyledDocument().getCharacterElement(textPane.viewToModel(e.getPoint()));

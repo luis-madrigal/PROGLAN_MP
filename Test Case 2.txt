@@ -1,16 +1,5 @@
 
 ACT main starring() {
-<<<<<<< HEAD
-	char cmd;
-
-	rehearse {
-		Say "Enter a letter: ";
-		Write to cmd;
-	}
-	when(cmd != 'Z')
-
-}
-=======
  	int x = 0;
  	float _veryWeirdIdentifier567 = 999.9f;
  	boolean y = (5 > 4 && true) || (false && !(x==0));
@@ -24,4 +13,3 @@ ACT main starring() {
  		Say "Hello World";
  	}
  }
->>>>>>> 0ab32310c39d9a28caa5fe85a3d64089d2b5b27d

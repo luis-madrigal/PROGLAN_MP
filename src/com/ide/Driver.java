@@ -1,4 +1,7 @@
 package com.ide;
+
+import com.threads.MainThread;
+
 /**
  * Uses RSyntaxTextArea
  * https://github.com/bobbylight/RSyntaxTextArea

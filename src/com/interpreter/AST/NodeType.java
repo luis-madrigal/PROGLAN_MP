@@ -12,7 +12,7 @@ public enum NodeType{
     TER_OP, //call onelineif
     WHILE, DO_WHILE, FOR,
     TERMINAL,
-    BRANCH, //used for if-else statements
+    BRANCH, //u sed for if-else statements
     PRINT,
     SCAN,
     VARIABLE, LITERAL

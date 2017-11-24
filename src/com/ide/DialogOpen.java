@@ -12,12 +12,13 @@ import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 
 public class DialogOpen extends JDialog implements MouseListener {
 	private static final long serialVersionUID = 1L;
 
-	private JFileChooser flchFFT1;
+	private JFileChooser flchBrowse;
 	private JLabel lblBackground;
 	private JButton btnClose;
 	private JButton btnOpen;
@@ -25,8 +26,8 @@ public class DialogOpen extends JDialog implements MouseListener {
 	
 	private JLabel lblTotal;
 
-	private JPanel pnlProgressBar;
-	private JLabel lblProgress;
+	private JPanel pnlInput;
+	private JButton btnBrowse;
 	private int total;
 	private JTextField txtfFilename;
 	
@@ -43,7 +44,7 @@ public class DialogOpen extends JDialog implements MouseListener {
 		this.add(btnCancel);
 		this.add(btnOpen);
 		this.add(lblTotal);
-		this.add(pnlProgressBar);
+		this.add(pnlInput);
 		this.add(btnClose);
 		this.add(lblBackground);
 	}
@@ -58,35 +59,37 @@ public class DialogOpen extends JDialog implements MouseListener {
 		
 		width = this.getWidth()*5/6;
 		height = 22;
-		pnlProgressBar = new JPanel();
-		FrameStatic.initPanel(pnlProgressBar, Color.LIGHT_GRAY, (this.getWidth()-width)/2, 30, width, height);
+		pnlInput = new JPanel();
+		FrameStatic.initPanel(pnlInput, Color.LIGHT_GRAY, (this.getWidth()-width)/2, 30, width, height);
 		
 
 //		pnlProgressBar.add(lblProgress);
 		
-		width = 75;
+		width = 80;
 		
 		txtfFilename = new JTextField();
-		FrameStatic.initTextField(txtfFilename, width, 0, pnlProgressBar.getWidth()-width, pnlProgressBar.getHeight(),
+		FrameStatic.initTextField(txtfFilename, width, 0, pnlInput.getWidth()-width, pnlInput.getHeight(),
 				FrameStatic.fntDefault12, FrameStatic.clrDifficulty, this);
 		
-		pnlProgressBar.add(txtfFilename);
+		pnlInput.add(txtfFilename);
 		
-		lblProgress = new JLabel("Filename: ");
-		FrameStatic.initLabel(lblProgress, FrameStatic.fntDefault13_BOLD, FrameStatic.clrAutomatic, FrameStatic.clrWhite, width, txtfFilename.getHeight());
-		
-		pnlProgressBar.add(lblProgress);
+		btnBrowse = new JButton("Browse");
+		FrameStatic.initButtons(btnBrowse, Color.WHITE, 
+				0, 0,
+				width+1, txtfFilename.getHeight(), this);
+		btnBrowse.setRolloverEnabled(false);
+		pnlInput.add(btnBrowse);
 		
 		lblTotal = new JLabel();
-		FrameStatic.initLabel(lblTotal, FrameStatic.fntDefault, FrameStatic.clrAutomatic, pnlProgressBar.getX(), pnlProgressBar.getY(), pnlProgressBar.getWidth(), pnlProgressBar.getHeight());
+		FrameStatic.initLabel(lblTotal, FrameStatic.fntDefault, FrameStatic.clrAutomatic, pnlInput.getX(), pnlInput.getY(), pnlInput.getWidth(), pnlInput.getHeight());
 		lblTotal.setHorizontalAlignment(JLabel.CENTER);
 		
 		
-		width = 80;//pnlProgressBar.getWidth();
+		width = 80; //pnlProgressBar.getWidth();
 		height = 20;
-		btnOpen = new JButton("SAVE");
+		btnOpen = new JButton("LOAD");
 //		FrameStatic.initButtons(lblMessage, FrameStatic.fntDefault12, FrameStatic.clrAutomatic, pnlProgressBar.getX(), pnlProgressBar.getY()+pnlProgressBar.getHeight(), width, height);
-		FrameStatic.initButtons(btnOpen, Color.WHITE,  pnlProgressBar.getX()+pnlProgressBar.getWidth()-width, pnlProgressBar.getY()+pnlProgressBar.getHeight()+5, width, height, this);
+		FrameStatic.initButtons(btnOpen, Color.WHITE,  pnlInput.getX()+pnlInput.getWidth()-width, pnlInput.getY()+pnlInput.getHeight()+5, width, height, this);
 		btnOpen.setFont(FrameStatic.fntDefault12_BOLD);
 		btnOpen.setRolloverEnabled(false);
 		
@@ -111,22 +114,23 @@ public class DialogOpen extends JDialog implements MouseListener {
 		btnCancel.setForeground(FrameStatic.clrWhite);
 		
 
-		File dirWorking = new File(System.getProperty("user.home"));
-		
-		this.flchFFT1 = new JFileChooser();		
-		this.flchFFT1.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-		this.flchFFT1.setCurrentDirectory(dirWorking);
+		File dirWorking = new File(System.getProperty("user.dir"));
+		this.flchBrowse = new JFileChooser();		
+//		this.flchFFT1.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+		this.flchBrowse.setCurrentDirectory(dirWorking);
+		FileNameExtensionFilter filter = new FileNameExtensionFilter("TXT FILES", "txt");
+		this.flchBrowse.setFileFilter(filter);		
 		
 		this.dlgConfirm = new DialogConfirm(170);
 		dlgConfirm.getBtnYes().addMouseListener(this);
 		dlgConfirm.close();
 	}
 	
-	public JButton getBtnSave() {
+	public JButton getBtnOpen() {
 		return btnOpen;
 	}
 
-	public void setBtnSave(JButton btnSave) {
+	public void setBtnOpen(JButton btnSave) {
 		this.btnOpen = btnSave;
 	}
 
@@ -185,6 +189,13 @@ public class DialogOpen extends JDialog implements MouseListener {
 
 	@Override
 	public void mouseReleased(MouseEvent e) {
+		if(e.getSource() == this.btnBrowse) {
+			int returnVal = this.flchBrowse.showOpenDialog(null);
+			if (returnVal == JFileChooser.APPROVE_OPTION) {
+				// TODO Open Text File
+				txtfFilename.setText(flchBrowse.getSelectedFile().getAbsolutePath());
+			}
+		}
 		if(e.getSource() == this.btnClose) {
 			this.close();
 		}
@@ -198,6 +209,14 @@ public class DialogOpen extends JDialog implements MouseListener {
 //			this.swProcess.cancel(true);
 			this.close();
 		}
+	}
+
+	public JFileChooser getFlchBrowse() {
+		return flchBrowse;
+	}
+
+	public void setFlchBrowse(JFileChooser flchBrowse) {
+		this.flchBrowse = flchBrowse;
 	}
 
 	public int getTotal() {

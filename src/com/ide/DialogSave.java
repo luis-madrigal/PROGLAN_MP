@@ -27,8 +27,8 @@ public class DialogSave extends JDialog implements MouseListener {
 	
 	private JLabel lblTotal;
 
-	private JPanel pnlProgressBar;
-	private JLabel lblProgress;
+	private JPanel pnlInput;
+	private JLabel lblInput;
 	private int total;
 	private JTextField txtfFilename;
 	
@@ -45,7 +45,7 @@ public class DialogSave extends JDialog implements MouseListener {
 		this.add(btnCancel);
 		this.add(btnSave);
 		this.add(lblTotal);
-		this.add(pnlProgressBar);
+		this.add(pnlInput);
 		this.add(btnClose);
 		this.add(lblBackground);
 	}
@@ -60,8 +60,8 @@ public class DialogSave extends JDialog implements MouseListener {
 		
 		width = this.getWidth()*5/6;
 		height = 22;
-		pnlProgressBar = new JPanel();
-		FrameStatic.initPanel(pnlProgressBar, Color.LIGHT_GRAY, (this.getWidth()-width)/2, 30, width, height);
+		pnlInput = new JPanel();
+		FrameStatic.initPanel(pnlInput, Color.LIGHT_GRAY, (this.getWidth()-width)/2, 30, width, height);
 		
 
 //		pnlProgressBar.add(lblProgress);
@@ -69,18 +69,18 @@ public class DialogSave extends JDialog implements MouseListener {
 		width = 75;
 		
 		txtfFilename = new JTextField();
-		FrameStatic.initTextField(txtfFilename, width, 0, pnlProgressBar.getWidth()-width, pnlProgressBar.getHeight(),
+		FrameStatic.initTextField(txtfFilename, width, 0, pnlInput.getWidth()-width, pnlInput.getHeight(),
 				FrameStatic.fntDefault12, FrameStatic.clrDifficulty, this);
 		
-		pnlProgressBar.add(txtfFilename);
+		pnlInput.add(txtfFilename);
 		
-		lblProgress = new JLabel("Filename: ");
-		FrameStatic.initLabel(lblProgress, FrameStatic.fntDefault13_BOLD, FrameStatic.clrAutomatic, FrameStatic.clrWhite, width, txtfFilename.getHeight());
+		lblInput = new JLabel("Filename: ");
+		FrameStatic.initLabel(lblInput, FrameStatic.fntDefault13_BOLD, FrameStatic.clrAutomatic, FrameStatic.clrWhite, width, txtfFilename.getHeight());
 		
-		pnlProgressBar.add(lblProgress);
+		pnlInput.add(lblInput);
 		
 		lblTotal = new JLabel();
-		FrameStatic.initLabel(lblTotal, FrameStatic.fntDefault, FrameStatic.clrAutomatic, pnlProgressBar.getX(), pnlProgressBar.getY(), pnlProgressBar.getWidth(), pnlProgressBar.getHeight());
+		FrameStatic.initLabel(lblTotal, FrameStatic.fntDefault, FrameStatic.clrAutomatic, pnlInput.getX(), pnlInput.getY(), pnlInput.getWidth(), pnlInput.getHeight());
 		lblTotal.setHorizontalAlignment(JLabel.CENTER);
 		
 		
@@ -88,7 +88,7 @@ public class DialogSave extends JDialog implements MouseListener {
 		height = 20;
 		btnSave = new JButton("SAVE");
 //		FrameStatic.initButtons(lblMessage, FrameStatic.fntDefault12, FrameStatic.clrAutomatic, pnlProgressBar.getX(), pnlProgressBar.getY()+pnlProgressBar.getHeight(), width, height);
-		FrameStatic.initButtons(btnSave, Color.WHITE,  pnlProgressBar.getX()+pnlProgressBar.getWidth()-width, pnlProgressBar.getY()+pnlProgressBar.getHeight()+5, width, height, this);
+		FrameStatic.initButtons(btnSave, Color.WHITE,  pnlInput.getX()+pnlInput.getWidth()-width, pnlInput.getY()+pnlInput.getHeight()+5, width, height, this);
 		btnSave.setFont(FrameStatic.fntDefault12_BOLD);
 		btnSave.setRolloverEnabled(false);
 		

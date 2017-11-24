@@ -1,0 +1,65 @@
+
+from com.default;
+
+[Comment]: Sample comment
+
+The universal script NewClass
+{SCENE}
+	composition values
+	{A}
+		int a [Error1]: Expected ';' after 'a' //error is consistent with what is displayed
+		int b;
+		int c [Error2]: Expected ';' after 'c' //error is consistent with what is displayed
+	{Z}
+
+	composition values v;
+
+	[Error3]: Unexpected 'ACT' after 'universal', expected 'script' //parser is detecting a class declaration instead of a method
+	The universal ACT performFunction starring(int x, int *p)
+	{A}
+		float _sampleIdentifier123 = 999.9f;
+		boolean y = (5 > 4 && true) || (false && !(x == 0));
+		int[] myArray = new int[10];
+		int z;
+
+		Say "Please input a number: ";
+
+		input; [Error4]: Error? //input can be a class name (since class names are identifiers
+		Write to input;
+
+		Say "The input is: " + input;
+		x = input;
+		z = input;
+
+		if( x  0 ) [Error5]: Missing relational operator //error is saying that x is a valid input for an if statement
+		{A}
+			[Comment]: sample single line comment
+		{Z}
+		else
+		{A}
+
+		{Z}
+		v.a = input;
+		when( x > 5 )
+		{A}
+			replay( int i = 0 ; i < x ; i++ )
+			{A}
+				Say "Hello World" + v.a;
+			{Z}
+		
+		x--;
+		[Error6]: Missing '{Z}'
+		*p = 0;
+		give z;
+	{Z}
+	
+	universal static ACT main starring()
+	{A}
+		int x = 2;
+		int p = 3;
+		NewClass dc = NewClass(); [Error7]: Unexpected 'NewClass()' expecting 'new'
+		x = dc.performFunction(x, &p);
+		Say "Value of X: " + x;
+		Say "Value of P: " + p;
+	{Z}
+{END}

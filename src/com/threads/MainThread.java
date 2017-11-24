@@ -1,4 +1,7 @@
-package com.ide;
+package com.threads;
+
+import com.ide.Frame;
+import com.ide.Panel;
 
 public class MainThread extends Thread {
 
