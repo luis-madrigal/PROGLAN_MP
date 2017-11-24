@@ -69,6 +69,8 @@ public class Panel implements ActionListener, KeyListener, MouseListener {
 	private JButton btnLoad;
 	private JButton btnSave;
 
+	private JButton btnWatch;
+
 	
 	private Styles styles;
 	
@@ -259,6 +261,23 @@ public class Panel implements ActionListener, KeyListener, MouseListener {
 		pnlMenu.add(btnSave);
 				
 		
+		this.btnWatch = new JButton();
+		btnWatch.setFocusable(false);
+		btnWatch.addActionListener(this);
+		btnWatch.addMouseListener(this);
+//		btnWatch.setBorder(null);
+		btnWatch.setBorder(FrameStatic.brdrBarUn);
+		btnWatch.setBackground(Color.WHITE);
+		btnWatch.setIcon(new ImageIcon(getClass().getClassLoader().getResource("res/ico_save_off.png")));
+		btnWatch.setRolloverIcon(new ImageIcon(getClass().getClassLoader().getResource("res/ico_save_on.png")));
+		btnWatch.setPressedIcon(new ImageIcon(getClass().getClassLoader().getResource("res/ico_save_on.png")));
+		btnWatch.setFocusable(false);
+		btnWatch.getInsets().set(30, 0, 0, 0);
+
+		btnWatch.setSize(40, 35);
+		btnWatch.setPreferredSize(btnWatch.getSize());
+		pnlMenu.add(btnWatch);
+		
 
 		int offsetX = 7;
 
@@ -266,6 +285,7 @@ public class Panel implements ActionListener, KeyListener, MouseListener {
 		btnRun.setLocation(20, 6);
 		btnLoad.setLocation(btnRun.getX()+btnRun.getWidth()+offsetX, btnRun.getY());
 		btnSave.setLocation(btnLoad.getX()+btnLoad.getWidth()+offsetX, btnRun.getY());
+		btnWatch.setLocation(btnSave.getX()+btnSave.getWidth()+offsetX, btnRun.getY());
 		this.pnlMain.add(this.pnlMenu, gbc);
 		
 		//Code Input
