@@ -109,7 +109,7 @@ public class ScannerModel {
 		ASTBuildVisitor astbv = new ASTBuildVisitor(scope);
 		astbv.visit(tree);
 		astbv.printAST("main");
-
+		astbv.printAST("%FIELD");
 
 		this.threadCodeGenerator = new CodeGeneratorThread(astbv, methodTable);
 		threadCodeGenerator.run();
