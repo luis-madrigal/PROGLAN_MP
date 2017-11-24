@@ -5,6 +5,8 @@
 	<classpathentry kind="src" path="prev-state"/>
 	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="jar/rsyntaxtextarea-3.0.0-SNAPSHOT.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Candy/Downloads/antlr-4.7-complete.jar"/>
+	<classpathentry kind="lib" path="jar/cloning-1.9.6.jar"/>
+	<classpathentry kind="lib" path="jar/objenesis-2.6.jar"/>
+	<classpathentry kind="lib" path="jar/antlr-4.7-complete.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>

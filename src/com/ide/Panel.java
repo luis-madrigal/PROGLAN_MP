@@ -645,13 +645,6 @@ public class Panel implements ActionListener, KeyListener, MouseListener {
 	public void setInputLines(JTextArea inputLines) {
 		this.inputLines = inputLines;
 	}
-
-	/*
-	public void generateThreeAddressCode() {
-		threeACOut.setText(this.scanner.getIcg().getPrintText());
-		
-	}
-	*/
 	/*
 	 * TODO: SyntaxHighlighting
 	 * Specify the color for a Token type here using syntaxScheme.

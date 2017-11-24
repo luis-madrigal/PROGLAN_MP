@@ -33,6 +33,8 @@ import com.interpreter.tac.operands.Operand;
 import com.interpreter.tac.operands.OperandTypes;
 import com.interpreter.tac.operands.Register;
 import com.interpreter.tac.operands.Variable;
+import com.rits.cloning.Cloner;
+import com.utils.KeyTokens.LITERAL_TYPE;
 import com.utils.KeyTokens.OPERATOR;
 
 public class CodeGenerator {
@@ -41,11 +43,13 @@ public class CodeGenerator {
 	private HashMap<String, TACStatement> labelMap;
 	private HashMap<String, Register> registers;
 	private HashMap<String, Scope> variables;
-	private Scope parentScope;
+	private Scope globalScope;
+	private Scope methodScope;
 	private Scope currentScope;
 	private String currentMethod;
 	private Stack<Scope> prevBlocks;
 	private HashMap<String, MethodContext> methodTable;
+	private boolean isRunning;
 	
 	public CodeGenerator(HashMap<String, ProcedureNode> methodASTTable, HashMap<String, MethodContext> methodTable) {
 		this.methodTable = methodTable;
@@ -54,7 +58,10 @@ public class CodeGenerator {
 		this.variables = new HashMap<String, Scope>();
 		this.registers = new HashMap<String, Register>();
 		this.prevBlocks = new Stack<Scope>();
+		this.isRunning = true;
 		ICGenerator icg = new ICGenerator(methodTable);
+		
+		Panel.threeACOut.setText("");
 		
 		for (Map.Entry<String, ProcedureNode> entry : methodASTTable.entrySet()) {
 			Panel.threeACOut.setText(Panel.threeACOut.getText() + "ICODE FOR: "+entry.getKey() + "\n");
@@ -68,50 +75,66 @@ public class CodeGenerator {
 			ArrayList<String> args = methodTable.get(entry.getKey()).getArgs();
 			ArrayList<String> argTypes = methodTable.get(entry.getKey()).getArgTypes();
 			for(int i = 0; i < args.size(); i++) {
-				this.variables.get(entry.getKey()).addToScope(new SymbolContext(argTypes.get(i), icg.getScope(), args.get(i)));
+//				System.out.println(this.variables.get(entry.getKey()).getSymTable().containsKey(args.get(i)));
+				this.variables.get(entry.getKey()).addToScope(new SymbolContext(argTypes.get(i), icg.getGlobalScope(), args.get(i)));
 			}
 		}
 		
+		this.globalScope = icg.getGlobalScope();
+		
+		for(Map.Entry<String, Scope> entry : this.variables.entrySet()) {
+			if(entry.getValue() != this.globalScope.getChildren().get(0)) {
+				this.globalScope.getChildren().add(entry.getValue());
+			}
+		}
 	}
 	
 	public void run() {
-		this.currentMethod = "main";
-		this.parentScope = this.variables.get(currentMethod);
-		System.out.println(parentScope);
-		this.run(methodICodes.get(currentMethod));
+//		this.methodScope = this.variables.get(currentMethod);
+		this.run("main");
 	}
 	
-	private Object run(ArrayList<TACStatement> icode, Object ...args) {
+	private Object run(String methodName, Object ...args) {
+		ArrayList<TACStatement> icode = this.methodICodes.get(methodName);
 		String pointer = icode.get(0).getLabel();
 		int pointerCount = Integer.parseInt(icode.get(0).getLabel().substring(1));
 		TACStatement stmt = null;
 		this.prevBlocks.push(null);
+		Scope methodScope = this.variables.get(methodName).clone();
+		HashMap<String, Register> registers = Cloner.standard().deepClone(this.registers);
+//		System.out.println(currentMethod);
 		
-		ArrayList<String> fnArgs = this.methodTable.get(currentMethod).getArgs();
+		ArrayList<String> fnArgs = this.methodTable.get(methodName).getArgs();
 		for(int i = 0; i < args.length; i++) {
-			this.variables.get(currentMethod).findVar(fnArgs.get(i)).setValue(args[i]);
+			methodScope.setSymbolContext(fnArgs.get(i), args[i]);
+//			System.out.println(args[i]+"--------------");
 		}
 		do {
 			System.out.println(pointer);
 			stmt = this.labelMap.get(pointer);
-			pointerCount = this.evaluate(stmt, pointerCount);
+			pointerCount = this.evaluate(methodScope, registers, stmt, pointerCount);
 			pointer = ICGenerator.LABEL_ALIAS+pointerCount;
-		}while(this.labelMap.containsKey(pointer) && !this.labelMap.get(pointer).getType().equals(NodeType.RETURN));
+		}while(!this.labelMap.get(pointer).getType().equals(NodeType.FUNCTION_END) && !this.labelMap.get(pointer).getType().equals(NodeType.RETURN) && this.isRunning);
 		
 		while(this.prevBlocks.peek() != null) {
 			this.prevBlocks.pop();
 		}
 		this.prevBlocks.pop();
+		if(!this.prevBlocks.isEmpty())
+			this.currentScope = this.prevBlocks.peek();
 		
-		if(stmt.getType().equals(NodeType.RETURN)) {
+//		if(stmt.getType().equals(NodeType.RETURN)) {
+		if(this.labelMap.containsKey(pointer) && this.labelMap.get(pointer).getType().equals(NodeType.RETURN)) {
+			stmt = this.labelMap.get(pointer);
 			TACReturnStatement rStmt = (TACReturnStatement) stmt;
-			return this.getValue(rStmt.getExpression());
+//			System.out.println("RETURN: "+this.getValue(rStmt.getExpression()));
+			return this.getValue(registers, rStmt.getExpression());
 		} else
 			return null;
 	}
 	
-	private void enterBlock(String label) {
-		Scope s = this.parentScope.findWithLabel(label);
+	private void enterBlock(Scope methodScope, String label) {
+		Scope s = methodScope.findWithLabel(label);
 		this.currentScope = s;
 		this.prevBlocks.push(s);
 	}
@@ -120,35 +143,36 @@ public class CodeGenerator {
 		this.currentScope = this.prevBlocks.pop();
 	}
 	
-	private int evaluate(TACStatement statement, int pointerCount) {
+	private int evaluate(Scope methodScope, HashMap<String, Register> registers, TACStatement statement, int pointerCount) {
 		switch (statement.getType()) {
 		case BLOCK:
 			TACBlockStatement bStmt = (TACBlockStatement) statement;
 			if(bStmt.isEnter())
-				this.enterBlock(bStmt.getLabel());
+				this.enterBlock(methodScope, bStmt.getLabel());
 			else
 				this.exitBlock();
 			pointerCount++;
 			break;			
 		case FUNCTION_INVOKE: 
 			TACFuncInvokeStatement stmt = (TACFuncInvokeStatement) statement;
-			this.currentMethod = stmt.getMethodName();
-			this.parentScope = this.variables.get(currentMethod);
+//			this.currentMethod = stmt.getMethodName();
+//			this.methodScope = this.variables.get(currentMethod).clone();
 			Register r = new Register(OperandTypes.REGISTER, stmt.getOutputRegister().getName());
 			
 			Object[] params = new Object[stmt.getParams().size()];
 			for(int i = 0; i < stmt.getParams().size(); i++) {
-				params[i] = this.getValue(stmt.getParams().get(i));
+				params[i] = this.getValue(registers, stmt.getParams().get(i));
 			}
 			
-			Object value = this.run(this.methodICodes.get(stmt.getMethodName()), params); 
+			Object value = this.run(stmt.getMethodName(), params); 
+//			System.out.println(value);
 			r.setValue(value);
-			this.registers.put(r.getName(), r);
+			registers.put(r.getName(), r);
 			pointerCount++;
 			break;
 		case ASSIGN:
 			TACAssignStatement aStmt = (TACAssignStatement) statement;
-			this.currentScope.findVar(aStmt.getVariable().getAlias()).setValue(this.getValue(aStmt.getValue()));
+			this.currentScope.findVar(aStmt.getVariable().getAlias()).setValue(this.getValue(registers, aStmt.getValue()));
 			pointerCount++;
 			break;
 		case GOTO:
@@ -157,8 +181,8 @@ public class CodeGenerator {
 			break;
 		case BRANCH:
 			TACIfStatement ifStmt = (TACIfStatement) statement;
-			System.out.println("==="+Boolean.parseBoolean(this.getValue(ifStmt.getOperand()).toString()));
-			if(Boolean.parseBoolean(this.getValue(ifStmt.getOperand()).toString())) {
+//			System.out.println("==="+Boolean.parseBoolean(this.getValue(ifStmt.getOperand()).toString()));
+			if(Boolean.parseBoolean(this.getValue(registers, ifStmt.getOperand()).toString())) {
 				pointerCount = ifStmt.getJumpDestTrueInt();
 			} else
 				pointerCount = ifStmt.getJumpDestFalseInt();
@@ -168,21 +192,26 @@ public class CodeGenerator {
 		case FOR:
 			TACLoopStatement loopStmt = (TACLoopStatement) statement;
 			System.out.println(loopStmt.getCondition().toString());
-			if(Boolean.parseBoolean(this.getValue(loopStmt.getCondition()).toString())) {
+			if(Boolean.parseBoolean(this.getValue(registers, loopStmt.getCondition()).toString())) {
 				pointerCount = loopStmt.getJumpDestTrueInt();
 			} else
 				pointerCount = loopStmt.getJumpDestFalseInt();
 			break;
 		case PRINT:
 			TACPrintStatement printStmt = (TACPrintStatement) statement;
-			Writer.printText(this.getValue(printStmt.getExpression()).toString());
+			Writer.printText(this.getValue(registers, printStmt.getExpression()).toString());
 			pointerCount++;
 			break;
 		case SCAN:
 			TACScanStatement scanStmt = (TACScanStatement) statement;
-			Object scanVal = Reader.readInput();
-			this.currentScope.findVar(scanStmt.getVariable()).setValue(LiteralMatcher.instance().parseAttempt(scanVal));
-			pointerCount++;
+			SymbolContext ctx = this.currentScope.findVar(scanStmt.getVariable());
+			Object scanVal = Reader.readInput(ctx.getSymbolType());
+			if(scanVal == null)
+				this.isRunning = false;
+			else {
+				ctx.setValue(scanVal);
+				pointerCount++;
+			}
 			break;
 		case VAR_DECLARE:
 			pointerCount++;
@@ -194,15 +223,16 @@ public class CodeGenerator {
 				case BIN_LOGIC: 
 					TACBinaryOpStatement binOp = (TACBinaryOpStatement) statement;
 					Register rb = ((TACOutputStatement) statement).getOutputRegister();
-					this.registers.put(rb.getName(), rb);
-					this.registers.get(rb.getName()).setValue(this.binOpEval(binOp.getOperator(), binOp.getOperand1(), binOp.getOperand2())); break;
+					registers.put(rb.getName(), rb);
+					registers.get(rb.getName()).setValue(this.binOpEval(registers, binOp.getOperator(), binOp.getOperand1(), binOp.getOperand2())); 
+					System.out.println(registers.get(rb.getName()).getValue());break;
 				case UNIPRE_ARITHMETIC:
 				case UNIPOST_ARITHMETIC:
 				case UNI_LOGIC:
 					TACUnaryOpStatement unOp = (TACUnaryOpStatement) statement;
 					Register rb1 = ((TACOutputStatement) statement).getOutputRegister();
-					this.registers.put(rb1.getName(), rb1);
-					this.registers.get(rb1.getName()).setValue(this.unOpEval(unOp.getOperator(), unOp.getOperand1())); break;
+					registers.put(rb1.getName(), rb1);
+					registers.get(rb1.getName()).setValue(this.unOpEval(registers, unOp.getOperator(), unOp.getOperand1())); break;
 				default:
 					break;
 				}
@@ -223,9 +253,9 @@ public class CodeGenerator {
 		return this.labelMap;
 	}
 	
-	private Object binOpEval(OPERATOR operator, Operand operand1, Operand operand2) {
-		Object op1Value = this.getValue(operand1);
-		Object op2Value = this.getValue(operand2);
+	private Object binOpEval(HashMap<String, Register> registers, OPERATOR operator, Operand operand1, Operand operand2) {
+		Object op1Value = this.getValue(registers, operand1);
+		Object op2Value = this.getValue(registers, operand2);
 		
 		System.out.println(op1Value + " " + operator.toString() + " " +op2Value);
 
@@ -238,8 +268,8 @@ public class CodeGenerator {
 		case LEQ: return ExpressionEvaluator.lessThanOrEqual(op1Value, op2Value);
 		case GREATER: return ExpressionEvaluator.greaterThan(op1Value, op2Value);
 		case GEQ: return ExpressionEvaluator.greaterThanOrEqual(op1Value, op2Value);
-		case EQUAL: return ExpressionEvaluator.equal((Boolean)op1Value, (Boolean)op2Value);
-		case NEQUAL: return ExpressionEvaluator.notEqual((Boolean)op1Value, (Boolean)op2Value);
+		case EQUAL: return ExpressionEvaluator.equal(op1Value, op2Value);
+		case NEQUAL: return ExpressionEvaluator.notEqual(op1Value, op2Value);
 		case AND: return ExpressionEvaluator.and((Boolean)op1Value, (Boolean)op2Value);
 		case OR: return ExpressionEvaluator.or((Boolean)op1Value, (Boolean)op2Value);
 		default:
@@ -247,8 +277,8 @@ public class CodeGenerator {
 		}
 	}
 	
-	private Object unOpEval(OPERATOR operator, Operand operand) {
-		Object opValue = this.getValue(operand);
+	private Object unOpEval(HashMap<String, Register> registers, OPERATOR operator, Operand operand) {
+		Object opValue = this.getValue(registers, operand);
 		
 		switch (operator) {
 		case INC: return ExpressionEvaluator.preInc(opValue);
@@ -261,36 +291,24 @@ public class CodeGenerator {
 		}
 	}
 	
-	private Object getValue(Operand operand) {
+	private Object getValue(HashMap<String, Register> registers, Operand operand) {
 		switch (operand.getOperandType()) {
 		case REGISTER:
 			Register r = (Register) operand;
 //			System.out.println(this.registers.containsKey(r.getName()));
-			System.out.println("+++++++++++++++"+this.registers.get(r.getName()).getValue());
-			return this.registers.get(r.getName()).getValue();
+//			System.out.println("+++++++++++++++"+this.registers.get(r.getName()).getValue());
+			return registers.get(r.getName()).getValue();
 		case LITERAL:
 			return operand.getValue();
 		case VARIABLE:
 			Variable v = (Variable) operand;
-			System.out.println(v.getAlias());
+//			System.out.println(v.getAlias());
+//			System.out.println("asfbiafbakdbfkshds" + (this.currentScope.findVar(v.getAlias()) == this.testctx));
+//			System.out.println(this.currentScope.findVar(v.getAlias()).getValue());
 			return this.currentScope.findVar(v.getAlias()).getValue();
 		default:
 			return null;
 		}
 	}
 	
-//	private void setValue(Operand operand) {
-//		switch (operand.getOperandType()) {
-//		case REGISTER:
-//			Register r = (Register) operand;
-//			this.registers.put(r.getName(), r);
-//		case LITERAL:
-//			return operand.getValue();
-//		case VARIABLE:
-//			Variable v = (Variable) operand;
-//			return this.currentScope.findVar(v.getAlias());
-//		default:
-//			return null;
-//		}
-//	}
 }

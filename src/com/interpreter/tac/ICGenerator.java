@@ -30,12 +30,12 @@ public class ICGenerator {
 	
 	private ArrayList<TACStatement> tac;
 	private int registerCount;
-	private int labelCount; //TODO: each instruction has label (not sure)
+	private int labelCount;
 	private AbstractSyntaxTree currentMethodBlock;
 	private Stack<Scope> scopes;
 	private Scope currentScope;
 	private HashMap<String, MethodContext> methodTable;
-	private Stack<TACStatement> toAdd;
+	private String methodName;
 	
 	public ICGenerator(HashMap<String, MethodContext> methodTable) {
 		this.registerCount = 0;
@@ -45,7 +45,6 @@ public class ICGenerator {
 	
 	public ArrayList<TACStatement> generateICode(AbstractSyntaxTree tree) {
 		this.tac = new ArrayList<TACStatement>();
-		this.toAdd = new Stack<TACStatement>();
 		this.scopes = new Stack<Scope>();
 		Scope s = new Scope(null);
 		this.scopes.push(s);
@@ -53,6 +52,7 @@ public class ICGenerator {
 //		registerCount = 0;
 //		labelCount = 0;
 		this.storeStatement(tree);
+		this.addStatement(new TACFuncDeclarationStatement(NodeType.FUNCTION_END, this.methodName));
 		return this.tac;
 	}
 	
@@ -110,6 +110,7 @@ public class ICGenerator {
 		this.currentMethodBlock = n.getChild(0);
 		
 		ProcedureNode pNode = (ProcedureNode) n;
+		this.methodName = pNode.getProcedureName();
 		MethodContext ctx = this.methodTable.get(pNode.getProcedureName());
 		for(int i = 0; i < ctx.getArgs().size(); i++) {
 			this.currentScope.addToScope(new SymbolContext(ctx.getArgTypes().get(i), this.currentScope,ctx.getArgs().get(i)));
@@ -142,8 +143,8 @@ public class ICGenerator {
 		TACLoopStatement stmt = new TACLoopStatement(node.getNodeType(), this.storeExpression(node.getChild(1)));
 		this.addStatement(stmt);
 		stmt.setJumpDestTrue(ICGenerator.LABEL_ALIAS+(this.labelCount+1));
-		this.storeExpression(node.getChild(2));
 		this.storeStatement(node.getChild(3));
+		this.storeExpression(node.getChild(2));
 		this.addStatement(new TACGotoStatement(NodeType.GOTO, ICGenerator.LABEL_ALIAS+currentLblCount));
 		this.exitBlock();
 		stmt.setJumpDestFalse(ICGenerator.LABEL_ALIAS+(this.labelCount));
@@ -251,7 +252,7 @@ public class ICGenerator {
 			TACBinaryOpStatement binOp = new TACBinaryOpStatement(NodeType.BIN_ARITHMETIC, OPERATOR.getOpOfAssign(stmt.getOperator()), stmt.getVariable(), stmt.getValue());
 			this.addOutputStatement(binOp);
 			stmt.setOperator(OPERATOR.ASSIGN);
-			stmt.setValue(new Operand(OperandTypes.REGISTER, binOp.getOutputRegister()));
+			stmt.setValue(new Register(OperandTypes.REGISTER, binOp.getOutputRegister().getName()));
 			break;
 		}
 		this.addStatement(stmt);
@@ -352,8 +353,12 @@ public class ICGenerator {
 		this.tac = tac;
 	}
 
-	public Scope getScope() {
+	public Scope getGlobalScope() {
 		return scopes.peek();
+	}
+	
+	public Scope getScope() {
+		return scopes.peek().getChildren().get(0);
 	}
 
 }

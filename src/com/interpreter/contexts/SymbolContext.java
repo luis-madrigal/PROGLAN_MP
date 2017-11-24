@@ -1,7 +1,9 @@
 package com.interpreter.contexts;
 
 import com.interpreter.Scope;
+import com.interpreter.matchers.LiteralMatcher;
 import com.parser.ManuScriptParser.LocalVariableDeclarationContext;
+import com.rits.cloning.Cloner;
 import com.utils.Types;
 
 public class SymbolContext extends Context{
@@ -50,5 +52,12 @@ public class SymbolContext extends Context{
 
 	public void setValue(Object value) {
 		this.value = value;
+	}
+	
+	public SymbolContext clone() {
+		SymbolContext ctx = new SymbolContext(getSymbolType(), getScope(), getSymbolType());
+		ctx.setValue(Cloner.standard().deepClone(value));
+		
+		return ctx;
 	}
 }
