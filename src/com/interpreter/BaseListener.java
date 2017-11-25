@@ -201,9 +201,11 @@ public class BaseListener extends ManuScriptBaseListener{
 		String varType = ctx.typeType().getText();
         Scope scope = scopes.peek();
         boolean isConstant = false;
+		if(ctx.FINAL() != null)
+			isConstant = true;
+
 		int dimCount = (ctx.typeType().getChildCount() - 1) / 2;
-        if(ctx.FINAL() != null)
-        	isConstant = true;
+
         
 		for (VariableDeclaratorContext vdctx : ctx.variableDeclarators().variableDeclarator()) {
 			String varName = vdctx.variableDeclaratorId().getText();
@@ -230,36 +232,33 @@ public class BaseListener extends ManuScriptBaseListener{
 		}
 	}
 
-	@Override public void enterLocalVariableDeclaration(ManuScriptParser.LocalVariableDeclarationContext ctx) { 
+	@Override public void enterLocalVariableDeclaration(ManuScriptParser.LocalVariableDeclarationContext ctx) {
 		String varType = ctx.typeType().getText();
         Scope scope = scopes.peek();
-        
+		int dimCount = (ctx.typeType().getChildCount() - 1) / 2;
+		boolean isConstant = false;
+
 		for (VariableDeclaratorContext vdctx : ctx.variableDeclarators().variableDeclarator()) {
 			String varName = vdctx.variableDeclaratorId().getText();
-			
+
 			if(getCurrentSymTable().containsKey(varName)) {
 				SemanticErrors.throwError(SemanticErrors.DUPLICATE_VAR, vdctx.getStart().getLine(), vdctx.getStart().getCharPositionInLine(), varName);
 			} else {
-				if(vdctx.variableInitializer() != null) {
-					if(vdctx.variableInitializer().expression() instanceof ArrayInitExprContext) {
-						ArrayInitExprContext aictx = (ArrayInitExprContext) vdctx.variableInitializer().expression();
-						ArrayCreatorRestContext acrctx = aictx.creator().arrayCreatorRest();
-						
-						if(acrctx.arrayInitializer() != null) {
-							//array is being initialized
-							this.expressionChecker(acrctx.arrayInitializer(), aictx.creator().createdName().getText());
-						} else if(acrctx.expression() != null) {
-							//array is being declared TODO: expression(0) can be wrong
-							this.expressionChecker(acrctx.expression(0), aictx.creator().createdName().getText());
-						}
-					} else {
+				SymbolContext symCtx = new SymbolContext(varType, scope, varName, isConstant);
+
+				if(dimCount>0) {    //ARRAY INIT
+					ArrayInfo arInf = new ArrayInfo(dimCount,varType);
+					checkArraySemantics(arInf, dimCount, varType, vdctx, ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine());
+					symCtx.setOther(arInf);
+				}else {
+					//do this if variable has initializer
+					if (vdctx.variableInitializer() != null) {
 						this.expressionChecker(vdctx.variableInitializer(), varType);
 					}
 				}
 				System.out.println("added "+varName+" to symbol table");
 				scope.add(varName);
-
-				getCurrentSymTable().put(varName, new SymbolContext(ctx.typeType().getText(), scope, varName));
+				getCurrentSymTable().put(varName, symCtx);
 			}
 		}
 
