@@ -3,7 +3,10 @@ ACT main starring() {
  	int x = 0;
 
 	Say "Hello World";
-
+	
+	Say "Hello World";
+	Say "Hello World";
+	
  	replay(int i = 0; i < 5; i++) {
  		Say "Hello World";
  	}

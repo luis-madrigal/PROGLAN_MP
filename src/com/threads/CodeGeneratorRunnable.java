@@ -38,7 +38,7 @@ import com.utils.KeyTokens.OPERATOR;
 
 public class CodeGeneratorRunnable implements Runnable {
 	private ASTBuildVisitor astbv;
-	private boolean isRunning;
+	private volatile boolean isRunning;
 	volatile boolean isPlay = false;
 
 	private HashMap<String, ArrayList<TACStatement>> methodICodes;
@@ -94,6 +94,7 @@ public class CodeGeneratorRunnable implements Runnable {
 		
 	}
 
+	
 	@Override
 	public void run() {
 //		CodeGenerator codegen = new CodeGenerator(astbv.getMethodASTTable(), methodTable);
@@ -133,7 +134,7 @@ public class CodeGeneratorRunnable implements Runnable {
 //					this.isPlay = false;
 //				}
 			}
-		}while(this.labelMap.containsKey(pointer) && !this.labelMap.get(pointer).getType().equals(NodeType.RETURN));
+		}while(isRunning && this.labelMap.containsKey(pointer) && !this.labelMap.get(pointer).getType().equals(NodeType.RETURN));
 		
 		while(this.prevBlocks.peek() != null) {
 			this.prevBlocks.pop();
@@ -291,6 +292,7 @@ public class CodeGeneratorRunnable implements Runnable {
 		return pointerCount;
 	}
 	
+	
 	private HashMap<String, TACStatement> addToLabelMap(ArrayList<TACStatement> icode) {
 		for (TACStatement tacStatement : icode) {
 			this.labelMap.put(tacStatement.getLabel(), tacStatement);
@@ -364,5 +366,6 @@ public class CodeGeneratorRunnable implements Runnable {
 	
 	public void stop() {
 		this.isRunning = false;
+		System.out.println("Stop");
 	}
 }

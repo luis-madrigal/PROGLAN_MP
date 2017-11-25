@@ -112,6 +112,12 @@ public class ScannerModel {
 //		this.threadCodeGenerator = new CodeGeneratorThread(this.astbv, methodTable);
 //		this.threadCodeGenerator.run(); // TODO
 		
+		if(this.threadCodeGenerator != null) {
+			this.runnableCodeGenerator.stop();
+			this.threadCodeGenerator.interrupt();
+			System.out.println("inter "+threadCodeGenerator.isAlive());
+		}
+			
 		this.runnableCodeGenerator = new CodeGeneratorRunnable(this.astbv, methodTable);
 		this.threadCodeGenerator = new Thread(runnableCodeGenerator);
 		threadCodeGenerator.start();
