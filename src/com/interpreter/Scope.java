@@ -10,7 +10,8 @@ import com.interpreter.contexts.SymbolContext;
 import com.rits.cloning.Cloner;
 
 public class Scope extends HashSet<String>{
-	
+
+	private static final long serialVersionUID = 1L;
 	private String label;
 	private Scope parent;
 	private HashMap<String, SymbolContext> symTable;

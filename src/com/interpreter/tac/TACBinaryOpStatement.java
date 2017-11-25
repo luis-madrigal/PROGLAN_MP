@@ -12,8 +12,8 @@ public class TACBinaryOpStatement extends TACOutputStatement{
 	private Operand operand1;
 	private Operand operand2;
 	
-	public TACBinaryOpStatement(NodeType type, OPERATOR operator, Operand operand1, Operand operand2) {
-		super(type);
+	public TACBinaryOpStatement(NodeType type, OPERATOR operator, Operand operand1, Operand operand2, boolean isBreakpoint) {
+		super(type, isBreakpoint);
 		this.operator = operator;
 		this.operand1 = operand1;
 		this.operand2 = operand2;

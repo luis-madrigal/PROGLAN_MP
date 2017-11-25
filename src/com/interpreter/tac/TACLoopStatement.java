@@ -8,8 +8,8 @@ public class TACLoopStatement extends TACStatement{
 	private String jumpDestTrue;
 	private String jumpDestFalse;
 	private Operand condition;
-	public TACLoopStatement(NodeType type, Operand condition) {
-		super(type);
+	public TACLoopStatement(NodeType type, Operand condition, boolean isBreakpoint) {
+		super(type, isBreakpoint);
 		this.condition = condition;
 	}
 	public String getJumpDestTrue() {

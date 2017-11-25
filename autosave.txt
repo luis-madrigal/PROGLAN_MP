@@ -9,9 +9,19 @@ ACT generateFibo starring (int number) {
 	give generateFibo(number-1)+generateFibo(number-2);
 }
 
+<<<<<<< HEAD
 ACT main starring () {
 	int x;
 	int fibo;
+=======
+ACT main starring() {
+<<<<<<< HEAD
+	int p;
+	int q;
+
+	Write to p;
+	Write to q;
+>>>>>>> b858c269c36280ee67453327c932e5b9e0c24ef6
 
 	Say "Enter a number: ";
 	Write to x;
@@ -20,3 +30,21 @@ ACT main starring () {
 	Say "Fibonacci Number "+x+": "+fibo;
 	Say numberCount;
 }
+=======
+ 	int x = 0;
+
+	Say "Hello World";
+	
+	Say "Hello World";
+	Say "Hello World";
+	
+ 	replay(int i = 0; i < 5; i++) {
+ 		Say "Hello World";
+ 	}
+
+ 	Say "Hello World 8";
+ 	Say "Hello World 9";
+ 	Say "Hello World 10"; 	
+ 	Say "Hello World 11";
+ }
+>>>>>>> DebugThread

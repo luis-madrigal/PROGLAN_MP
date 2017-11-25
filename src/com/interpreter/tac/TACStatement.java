@@ -6,9 +6,12 @@ public abstract class TACStatement {
 	
 	private String label;
 	private NodeType type;
+	private boolean isBreakpoint;
 	
-	public TACStatement(NodeType type) {
+	
+	public TACStatement(NodeType type, boolean isBreakpoint) {
 		this.type = type;
+		this.isBreakpoint = isBreakpoint;
 	}
 
 	public String getLabel() {
@@ -25,6 +28,14 @@ public abstract class TACStatement {
 
 	public void setType(NodeType type) {
 		this.type = type;
+	}
+
+	public boolean isBreakpoint() {
+		return isBreakpoint;
+	}
+
+	public void setBreakpoint(boolean isBreakpoint) {
+		this.isBreakpoint = isBreakpoint;
 	}
 
 }

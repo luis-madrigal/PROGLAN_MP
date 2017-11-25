@@ -7,8 +7,8 @@ public class TACScanStatement extends TACStatement{
 	
 	private Variable variable;
 
-	public TACScanStatement(NodeType type, Variable variable) {
-		super(type);
+	public TACScanStatement(NodeType type, Variable variable, boolean isBreakpoint) {
+		super(type, isBreakpoint);
 		this.variable = variable;
 	}
 
