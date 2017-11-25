@@ -7,8 +7,8 @@ public class TACReturnStatement extends TACStatement{
 
 	private Operand expression;
 
-	public TACReturnStatement(NodeType type, Operand expression) {
-		super(type);
+	public TACReturnStatement(NodeType type, Operand expression, boolean isBreakpoint) {
+		super(type, isBreakpoint);
 		this.expression = expression;
 	}
 

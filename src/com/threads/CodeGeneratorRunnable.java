@@ -1,4 +1,4 @@
-package com.interpreter.codegen;
+package com.threads;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -7,6 +7,7 @@ import java.util.Stack;
 
 import com.ide.Panel;
 import com.interpreter.Scope;
+import com.interpreter.AST.ASTBuildVisitor;
 import com.interpreter.AST.NodeType;
 import com.interpreter.AST.ProcedureNode;
 import com.interpreter.contexts.MethodContext;
@@ -37,8 +38,11 @@ import com.rits.cloning.Cloner;
 import com.utils.KeyTokens.LITERAL_TYPE;
 import com.utils.KeyTokens.OPERATOR;
 
-public class CodeGenerator {
-	
+public class CodeGeneratorRunnable implements Runnable {
+	private ASTBuildVisitor astbv;
+	private volatile boolean isRunning;
+	volatile boolean isPlay = false;
+
 	private HashMap<String, ArrayList<TACStatement>> methodICodes;
 	private HashMap<String, TACStatement> labelMap;
 	private HashMap<String, Register> registers;
@@ -49,9 +53,27 @@ public class CodeGenerator {
 	private String currentMethod;
 	private Stack<Scope> prevBlocks;
 	private HashMap<String, MethodContext> methodTable;
+<<<<<<< HEAD:src/com/interpreter/codegen/CodeGenerator.java
 	private boolean isRunning;
+=======
+	private HashMap<String, ProcedureNode> methodASTTable;
+>>>>>>> DebugThread:src/com/threads/CodeGeneratorRunnable.java
 	
-	public CodeGenerator(HashMap<String, ProcedureNode> methodASTTable, HashMap<String, MethodContext> methodTable) {
+//	public CodeGeneratorRunnable(ASTBuildVisitor astbv, HashMap<String, MethodContext> methodTable) {
+//		this.astbv = astbv;
+//		this.methodTable = methodTable;
+//		this.isRunning = true;
+//		this.isPlay = true;
+//		
+//	}
+	
+	public CodeGeneratorRunnable(ASTBuildVisitor astbv, HashMap<String, MethodContext> methodTable) {
+		this.astbv = astbv;
+		this.methodASTTable = astbv.getMethodASTTable();
+		this.methodTable = methodTable;
+		this.isRunning = true;
+		this.isPlay = true;
+		
 		this.methodTable = methodTable;
 		this.methodICodes = new HashMap<String, ArrayList<TACStatement>>();
 		this.labelMap = new HashMap<String, TACStatement>();
@@ -65,7 +87,8 @@ public class CodeGenerator {
 		
 		for (Map.Entry<String, ProcedureNode> entry : methodASTTable.entrySet()) {
 			Panel.threeACOut.setText(Panel.threeACOut.getText() + "ICODE FOR: "+entry.getKey() + "\n");
-//			System.out.println("GENERATE ICODE FOR: "+entry.getKey());
+			
+			// System.out.println("GENERATE ICODE FOR: "+entry.getValue().getProcedureName());
 			
 			this.methodICodes.put(entry.getKey(), icg.generateICode(entry.getValue()));
 			this.variables.put(entry.getKey(), icg.getScope());
@@ -88,10 +111,28 @@ public class CodeGenerator {
 			}
 		}
 	}
+
 	
+	@Override
 	public void run() {
+<<<<<<< HEAD:src/com/interpreter/codegen/CodeGenerator.java
 //		this.methodScope = this.variables.get(currentMethod);
 		this.run("main");
+=======
+//		CodeGenerator codegen = new CodeGenerator(astbv.getMethodASTTable(), methodTable);
+//		codegen.run();
+		
+		this.currentMethod = "main";
+		this.parentScope = this.variables.get(currentMethod);
+		this.run(methodICodes.get(currentMethod));
+		
+//		while(isRunning) {
+//			if(isPlay) {
+////				// System.out.println("Play");
+//				// TODO: Continue per line processing
+//			}
+//		}
+>>>>>>> DebugThread:src/com/threads/CodeGeneratorRunnable.java
 	}
 	
 	private Object run(String methodName, Object ...args) {
@@ -106,6 +147,7 @@ public class CodeGenerator {
 		
 		ArrayList<String> fnArgs = this.methodTable.get(methodName).getArgs();
 		for(int i = 0; i < args.length; i++) {
+<<<<<<< HEAD:src/com/interpreter/codegen/CodeGenerator.java
 			methodScope.setSymbolContext(fnArgs.get(i), args[i]);
 //			System.out.println(args[i]+"--------------");
 		}
@@ -115,6 +157,23 @@ public class CodeGenerator {
 			pointerCount = this.evaluate(methodScope, registers, stmt, pointerCount);
 			pointer = ICGenerator.LABEL_ALIAS+pointerCount;
 		}while(!this.labelMap.get(pointer).getType().equals(NodeType.FUNCTION_END) && !this.labelMap.get(pointer).getType().equals(NodeType.RETURN) && this.isRunning);
+=======
+			this.variables.get(currentMethod).findVar(fnArgs.get(i)).setValue(args[i]);
+
+		}
+		do {
+			if(isPlay) {
+				stmt = this.labelMap.get(pointer);
+				pointerCount = this.evaluate(stmt, pointerCount);
+				pointer = ICGenerator.LABEL_ALIAS+pointerCount;
+				
+//				if(stmt.isBreakpoint()) {
+//					System.out.println("BRK "+	stmt.getType()+": "+stmt.isBreakpoint());
+//					this.isPlay = false;
+//				}
+			}
+		}while(isRunning && this.labelMap.containsKey(pointer) && !this.labelMap.get(pointer).getType().equals(NodeType.RETURN));
+>>>>>>> DebugThread:src/com/threads/CodeGeneratorRunnable.java
 		
 		while(this.prevBlocks.peek() != null) {
 			this.prevBlocks.pop();
@@ -145,12 +204,19 @@ public class CodeGenerator {
 	
 	private int evaluate(Scope methodScope, HashMap<String, Register> registers, TACStatement statement, int pointerCount) {
 		switch (statement.getType()) {
+		
 		case BLOCK:
 			TACBlockStatement bStmt = (TACBlockStatement) statement;
 			if(bStmt.isEnter())
 				this.enterBlock(methodScope, bStmt.getLabel());
 			else
 				this.exitBlock();
+			
+			if(bStmt.isBreakpoint()) {
+				System.out.println("BRK "+	bStmt.getType()+": "+bStmt.isBreakpoint());
+				this.isPlay = false;
+			}
+			
 			pointerCount++;
 			break;			
 		case FUNCTION_INVOKE: 
@@ -167,12 +233,31 @@ public class CodeGenerator {
 			Object value = this.run(stmt.getMethodName(), params); 
 //			System.out.println(value);
 			r.setValue(value);
+<<<<<<< HEAD:src/com/interpreter/codegen/CodeGenerator.java
 			registers.put(r.getName(), r);
+=======
+			this.registers.put(r.getName(), r);
+			
+			if(stmt.isBreakpoint()) {
+				System.out.println("BRK "+	stmt.getType()+": "+stmt.isBreakpoint());
+				this.isPlay = false;
+			}
+			
+>>>>>>> DebugThread:src/com/threads/CodeGeneratorRunnable.java
 			pointerCount++;
 			break;
 		case ASSIGN:
 			TACAssignStatement aStmt = (TACAssignStatement) statement;
+<<<<<<< HEAD:src/com/interpreter/codegen/CodeGenerator.java
 			this.currentScope.findVar(aStmt.getVariable().getAlias()).setValue(this.getValue(registers, aStmt.getValue()));
+=======
+			this.currentScope.findVar(aStmt.getVariable().getAlias()).setValue(this.getValue(aStmt.getValue()));
+			
+			if(aStmt.isBreakpoint()) {
+				System.out.println("BRK "+	aStmt.getType()+": "+aStmt.isBreakpoint());
+				this.isPlay = false;
+			}
+>>>>>>> DebugThread:src/com/threads/CodeGeneratorRunnable.java
 			pointerCount++;
 			break;
 		case GOTO:
@@ -181,8 +266,13 @@ public class CodeGenerator {
 			break;
 		case BRANCH:
 			TACIfStatement ifStmt = (TACIfStatement) statement;
+<<<<<<< HEAD:src/com/interpreter/codegen/CodeGenerator.java
 //			System.out.println("==="+Boolean.parseBoolean(this.getValue(ifStmt.getOperand()).toString()));
 			if(Boolean.parseBoolean(this.getValue(registers, ifStmt.getOperand()).toString())) {
+=======
+			// System.out.println("==="+Boolean.parseBoolean(this.getValue(ifStmt.getOperand()).toString()));
+			if(Boolean.parseBoolean(this.getValue(ifStmt.getOperand()).toString())) {
+>>>>>>> DebugThread:src/com/threads/CodeGeneratorRunnable.java
 				pointerCount = ifStmt.getJumpDestTrueInt();
 			} else
 				pointerCount = ifStmt.getJumpDestFalseInt();
@@ -191,19 +281,39 @@ public class CodeGenerator {
 		case DO_WHILE:
 		case FOR:
 			TACLoopStatement loopStmt = (TACLoopStatement) statement;
+<<<<<<< HEAD:src/com/interpreter/codegen/CodeGenerator.java
 			System.out.println(loopStmt.getCondition().toString());
 			if(Boolean.parseBoolean(this.getValue(registers, loopStmt.getCondition()).toString())) {
+=======
+			// System.out.println(loopStmt.getCondition().toString());
+			if(Boolean.parseBoolean(this.getValue(loopStmt.getCondition()).toString())) {
+>>>>>>> DebugThread:src/com/threads/CodeGeneratorRunnable.java
 				pointerCount = loopStmt.getJumpDestTrueInt();
 			} else
 				pointerCount = loopStmt.getJumpDestFalseInt();
+			
+			if(loopStmt.isBreakpoint()) {
+				System.out.println("BRK "+	loopStmt.getType()+": "+loopStmt.isBreakpoint());
+				this.isPlay = false;
+			}
 			break;
 		case PRINT:
 			TACPrintStatement printStmt = (TACPrintStatement) statement;
+<<<<<<< HEAD:src/com/interpreter/codegen/CodeGenerator.java
 			Writer.printText(this.getValue(registers, printStmt.getExpression()).toString());
+=======
+			Writer.printText(this.getValue(printStmt.getExpression()).toString());
+			
+			if(printStmt.isBreakpoint()) {
+				System.out.println("BRK "+	printStmt.getType()+": "+printStmt.isBreakpoint());
+				this.isPlay = false;
+			}
+>>>>>>> DebugThread:src/com/threads/CodeGeneratorRunnable.java
 			pointerCount++;
 			break;
 		case SCAN:
 			TACScanStatement scanStmt = (TACScanStatement) statement;
+<<<<<<< HEAD:src/com/interpreter/codegen/CodeGenerator.java
 			SymbolContext ctx = this.currentScope.findVar(scanStmt.getVariable());
 			Object scanVal = Reader.readInput(ctx.getSymbolType());
 			if(scanVal == null)
@@ -212,6 +322,16 @@ public class CodeGenerator {
 				ctx.setValue(scanVal);
 				pointerCount++;
 			}
+=======
+			Object scanVal = Reader.readInput();
+			this.currentScope.findVar(scanStmt.getVariable()).setValue(LiteralMatcher.instance().parseAttempt(scanVal));
+			
+			if(scanStmt.isBreakpoint()) {
+				System.out.println("BRK "+	scanStmt.getType()+": "+scanStmt.isBreakpoint());
+				this.isPlay = false;
+			}
+			pointerCount++;
+>>>>>>> DebugThread:src/com/threads/CodeGeneratorRunnable.java
 			break;
 		case VAR_DECLARE:
 			pointerCount++;
@@ -238,12 +358,19 @@ public class CodeGenerator {
 				}
 				
 			}
+			
+			if(statement.isBreakpoint()) {
+				System.out.println("BRK "+	statement.getType()+": "+statement.isBreakpoint());
+				this.isPlay = false;
+			}
+			
 			pointerCount++;
 			break;
 		}
 		
 		return pointerCount;
 	}
+	
 	
 	private HashMap<String, TACStatement> addToLabelMap(ArrayList<TACStatement> icode) {
 		for (TACStatement tacStatement : icode) {
@@ -257,7 +384,7 @@ public class CodeGenerator {
 		Object op1Value = this.getValue(registers, operand1);
 		Object op2Value = this.getValue(registers, operand2);
 		
-		System.out.println(op1Value + " " + operator.toString() + " " +op2Value);
+//		// System.out.println(op1Value + " " + operator.toString() + " " +op2Value);
 
 		switch (operator) {
 		case ADD: return ExpressionEvaluator.add(op1Value, op2Value);
@@ -296,20 +423,44 @@ public class CodeGenerator {
 		switch (operand.getOperandType()) {
 		case REGISTER:
 			Register r = (Register) operand;
+<<<<<<< HEAD:src/com/interpreter/codegen/CodeGenerator.java
 //			System.out.println(this.registers.containsKey(r.getName()));
 //			System.out.println("+++++++++++++++"+this.registers.get(r.getName()).getValue());
 			return registers.get(r.getName()).getValue();
+=======
+//			// System.out.println(this.registers.containsKey(r.getName()));
+			// System.out.println("+++++++++++++++"+this.registers.get(r.getName()).getValue());
+			return this.registers.get(r.getName()).getValue();
+>>>>>>> DebugThread:src/com/threads/CodeGeneratorRunnable.java
 		case LITERAL:
 			return operand.getValue();
 		case VARIABLE:
 			Variable v = (Variable) operand;
+<<<<<<< HEAD:src/com/interpreter/codegen/CodeGenerator.java
 //			System.out.println(v.getAlias());
 //			System.out.println("asfbiafbakdbfkshds" + (this.currentScope.findVar(v.getAlias()) == this.testctx));
 //			System.out.println(this.currentScope.findVar(v.getAlias()).getValue());
+=======
+			// System.out.println(v.getAlias());
+>>>>>>> DebugThread:src/com/threads/CodeGeneratorRunnable.java
 			return this.currentScope.findVar(v.getAlias()).getValue();
 		default:
 			return null;
 		}
 	}
+	public void play() {
+        isPlay = true;
+    }
 	
+<<<<<<< HEAD:src/com/interpreter/codegen/CodeGenerator.java
+=======
+	public void pause() {
+        isPlay = false;
+    }
+	
+	public void stop() {
+		this.isRunning = false;
+		System.out.println("Stop");
+	}
+>>>>>>> DebugThread:src/com/threads/CodeGeneratorRunnable.java
 }

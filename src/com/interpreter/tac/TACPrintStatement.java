@@ -7,8 +7,8 @@ public class TACPrintStatement extends TACStatement{
 	
 	private Operand expression;
 
-	public TACPrintStatement(NodeType type, Operand expression) {
-		super(type);
+	public TACPrintStatement(NodeType type, Operand expression, boolean isBreakpoint) {
+		super(type, isBreakpoint);
 		this.expression = expression;
 	}
 

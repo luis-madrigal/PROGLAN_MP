@@ -3,7 +3,7 @@ package com.threads;
 import com.ide.Frame;
 import com.ide.Panel;
 
-public class MainThread extends Thread {
+public class MainThread extends Thread implements Runnable {
 
 	@Override
 	public void run() {

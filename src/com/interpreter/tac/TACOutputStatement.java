@@ -7,13 +7,13 @@ public abstract class TACOutputStatement extends TACStatement {
 	
 	private Register outputRegister;
 
-	public TACOutputStatement(NodeType type, Register outputRegister) {
-		super(type);
+	public TACOutputStatement(NodeType type, Register outputRegister, boolean isBreakpoint) {
+		super(type, isBreakpoint);
 		this.outputRegister = outputRegister;
 	}
 	
-	public TACOutputStatement(NodeType type) {
-		super(type);
+	public TACOutputStatement(NodeType type, boolean isBreakpoint) {
+		super(type, isBreakpoint);
 	}
 	
 	public Object evaluate() {
