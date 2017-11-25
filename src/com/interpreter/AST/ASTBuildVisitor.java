@@ -109,11 +109,15 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
     }
 
     private void configureIsBreakpoint(int lineNumber) {
-    	if(lineNumber != this.triggeringLineNumber &&
-    			listBreakpoints.peek() >= lineNumber) {
+    	if(!listBreakpoints.isEmpty() &&
+    			lineNumber != this.triggeringLineNumber &&
+    			lineNumber >= listBreakpoints.peek()) {
+    		listBreakpoints.pop();
     		isBreakpoint = true;
     		this.triggeringLineNumber = lineNumber;
-    		System.out.println("BREAK "+lineNumber+" next top: "+listBreakpoints.peek());
+    		System.out.println("BREAK "+lineNumber);
+    		if(!listBreakpoints.isEmpty())
+    			System.out.println("STACK TOP: "+listBreakpoints.peek());
     	}
     	else {
     		isBreakpoint = false;
@@ -142,10 +146,6 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
                     if (varDec != null) {
                         varDec.setParent(blockNode);
                         blockNode.addChild(varDec);
-                        blockNode.setBreakpoint(this.isBreakpoint);
-
-                        if(isBreakpoint)
-                        	System.out.println("BP: "+blockNode.getNodeType());
                     }
                 }
             }
@@ -154,9 +154,6 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
                 if (body != null) {
                     body.setParent(blockNode);
                     blockNode.addChild(body);
-                    blockNode.setBreakpoint(this.isBreakpoint);
-                    if(isBreakpoint)
-                    	System.out.println("BP: "+blockNode.getNodeType());
                 }
             }
         }

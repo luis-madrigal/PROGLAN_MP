@@ -125,11 +125,13 @@ public class CodeGeneratorRunnable implements Runnable {
 		do {
 			if(isPlay) {
 				stmt = this.labelMap.get(pointer);
-				System.out.println("BRK "+	stmt.getType()+": "+stmt.isBreakpoint());
-			
 				pointerCount = this.evaluate(stmt, pointerCount);
 				pointer = ICGenerator.LABEL_ALIAS+pointerCount;
-				this.isPlay = false;
+				
+				if(stmt.isBreakpoint()) {
+					System.out.println("BRK "+	stmt.getType()+": "+stmt.isBreakpoint());
+					this.isPlay = false;
+				}
 			}
 		}while(this.labelMap.containsKey(pointer) && !this.labelMap.get(pointer).getType().equals(NodeType.RETURN));
 		
