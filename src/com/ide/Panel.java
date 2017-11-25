@@ -28,7 +28,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
-import javax.swing.JTextArea;
 import javax.swing.JTextPane;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.UIManager;
@@ -84,7 +83,6 @@ public class Panel implements Runnable, ActionListener, KeyListener, MouseListen
 	private JLabel lblParsedOut;
 	private JLabel lblConsole;
 	
-	private JTextArea inputLines;
 	
 	private JSplitPane topSplitPane;
 	private JSplitPane bottomSplitPane;
@@ -211,8 +209,9 @@ public class Panel implements Runnable, ActionListener, KeyListener, MouseListen
 //		pnlMenu.setSize(new Dimension(1920, 100));
 //		pnlMenu.setPreferredSize(new Dimension(1920, 100));
 		pnlMenu.setMinimumSize(new Dimension(400, 100));
-		
 		this.initMenuButtons();
+//		pnlMenu.setBackground(Styles.LIGHT_GRAY);
+		
 		this.pnlMain.add(this.pnlMenu, gbc);
 		
 		//Code Input
@@ -241,10 +240,15 @@ public class Panel implements Runnable, ActionListener, KeyListener, MouseListen
 		
 		this.codeInput.setSyntaxEditingStyle("text/manuscript");
 
+//		this.codeInput.setCurrentLineHighlightColor(Styles.PALE_GRAY);
 		this.codeInput.setCurrentLineHighlightColor(SUBLIME_HIGHLIGHT);
 		this.codeInput.setCodeFoldingEnabled(true);
+		this.codeInput.setSelectedTextColor(Styles.LIGHT_GRAY);
 		this.codeInput.setFont(new Font("Consolas", 150, baseFontSize));
+//		this.codeInput.setForeground(Styles.TEXT_GRAY);
 		this.codeInput.setForeground(Color.WHITE);
+//		this.codeInput.setBackground(Color.WHITE);
+//		this.codeInput.setBackground(Styles.PALE_GRAY);
 		this.codeInput.setBackground(SUBLIME_BG);
 //		this.codeInput.isOpaque();
 		this.codeInput.setCaretColor(Color.WHITE);
@@ -253,13 +257,6 @@ public class Panel implements Runnable, ActionListener, KeyListener, MouseListen
 		Console.instance().setCodeInput(codeInput);
 		Console.instance().getTextPane().addMouseListener(this);
 		
-		this.inputLines = new JTextArea("1");
-	      
-		this.inputLines.setFont(new Font("Consolas", 150, baseFontSize));
-		this.inputLines.setBackground(Color.DARK_GRAY);
-		this.inputLines.setForeground(Color.WHITE);
-		this.inputLines.setEditable(false);
-		this.inputLines.setMargin(new Insets(0, 5, 0, 5));
 
 		this.gutter = new ManuScriptGutter(this.codeInput);
 		this.inputPane = new RTextScrollPane(this.codeInput, true, Styles.SUBLIME_LINE_NUMBER, gutter);
@@ -269,6 +266,7 @@ public class Panel implements Runnable, ActionListener, KeyListener, MouseListen
 		this.gutter.getLineNumberList().addMouseListener(this);
 		this.inputPane.setGutter(this.gutter);
 		this.gutter.setBookmarkingEnabled(true);
+		this.gutter.setBackground(Color.WHITE);
 		this.gutter.setBookmarkIcon(new ImageIcon(getClass().getClassLoader().getResource("res/ico_bookmark.png")));
 		this.inputPane.setFoldIndicatorEnabled(true);
 		this.inputPane.setIconRowHeaderEnabled(true);
@@ -322,15 +320,15 @@ public class Panel implements Runnable, ActionListener, KeyListener, MouseListen
 		this.parsedOut = new JTextPane(doc);
         this.parsedOut.setFont(new Font("Consolas", 150, baseFontSize));
         this.parsedOut.setEditable(false);
-        this.parsedOut.setForeground(Color.WHITE);
-        this.parsedOut.setBackground(SUBLIME_BG);
+        this.parsedOut.setForeground(Styles.TEXT_GRAY);
+        this.parsedOut.setBackground(Color.WHITE);
         this.parsedOut.isOpaque();
 		
         
 		this.parsedPane = new JScrollPane(this.parsedOut);
 		this.parsedPane.setPreferredSize(new Dimension((int) Frame.SCREEN_SIZE.getWidth()/2, 150));
 		this.parsedPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-		
+		parsedPane.setBackground(Color.WHITE);
 		this.parsedPane.getVerticalScrollBar().setUI(new CustomScrollBarUISky());
 		this.parsedPane.getHorizontalScrollBar().setUI(new CustomScrollBarUISky());
 		this.parsedPane.setBorder(null);
@@ -350,8 +348,8 @@ public class Panel implements Runnable, ActionListener, KeyListener, MouseListen
 		threeACOut = new JTextPane();
         threeACOut.setFont(new Font("Consolas", 150, baseFontSize));
         threeACOut.setEditable(false);
-        threeACOut.setForeground(Color.WHITE);
-        threeACOut.setBackground(SUBLIME_BG);
+        threeACOut.setForeground(Styles.TEXT_GRAY);
+        threeACOut.setBackground(Color.WHITE);
         threeACOut.isOpaque();
 		
         
@@ -380,7 +378,8 @@ public class Panel implements Runnable, ActionListener, KeyListener, MouseListen
 		this.treePane.getVerticalScrollBar().setUI(new CustomScrollBarUISky());
 		this.treePane.getHorizontalScrollBar().setUI(new CustomScrollBarUISky());
 		this.treePane.setBorder(null);
-	
+		treePane.getViewport().setBackground(Color.WHITE);
+		this.treePane.setBackground(Color.WHITE);
 		this.treePane.getHorizontalScrollBar().setPreferredSize(new Dimension(
 		        (int)treePane.getHorizontalScrollBar().getPreferredSize().getWidth(),
 		        (int)horizontalHeight
@@ -395,8 +394,8 @@ public class Panel implements Runnable, ActionListener, KeyListener, MouseListen
 		watchOut = new JTextPane();
 		watchOut.setFont(new Font("Consolas", 150, baseFontSize));
 		watchOut.setEditable(false);
-		watchOut.setForeground(Color.WHITE);
-		watchOut.setBackground(SUBLIME_BG);
+		watchOut.setForeground(Styles.TEXT_GRAY);
+		watchOut.setBackground(Color.WHITE);
         watchOut.isOpaque();
 		        
 		this.watchPane = new JScrollPane(watchOut);
@@ -420,7 +419,7 @@ public class Panel implements Runnable, ActionListener, KeyListener, MouseListen
 		
 		JPanel parentPane = new JPanel();
 		parentPane.setLayout(new BoxLayout(parentPane, BoxLayout.Y_AXIS));
-		
+		parentPane.setBackground(Color.WHITE);
 		//Scale Button
 		JPanel pnlScaleMenu = new JPanel();
 		pnlScaleMenu.setLayout(null);
@@ -466,7 +465,10 @@ public class Panel implements Runnable, ActionListener, KeyListener, MouseListen
 
 		this.outputTabs.setFont(FrameStatic.fntDefault);
 		outputTabs.setBackground(Color.WHITE);
+		outputTabs.setForeground(Styles.TEXT_GRAY);
 		parentPane.setSize(outputTabs.getWidth(), 40);
+		
+	
 		
 		this.inputPaneParent = new JPanel();
 		this.inputPaneParent.setLayout(new BoxLayout(inputPaneParent, BoxLayout.Y_AXIS));
@@ -610,20 +612,24 @@ public class Panel implements Runnable, ActionListener, KeyListener, MouseListen
 	}
 	
 	public void initMenuButtons() {
+		
+		int width = 50;
+		int height = 30;
+		
 		this.btnRun = new JButton();
 		this.btnRun.setFocusable(false);
 		this.btnRun.addActionListener(this);
        
 		btnRun.setBackground(Color.WHITE);
-//        btnRun.setBorder(null);
-		btnRun.setBorder(FrameStatic.brdrBarUn);
+        btnRun.setBorder(null);
+//		btnRun.setBorder(FrameStatic.brdrBarUn);
 		btnRun.setIcon(new ImageIcon(getClass().getClassLoader().getResource("res/ico_play_off.png")));
         btnRun.setRolloverIcon(new ImageIcon(getClass().getClassLoader().getResource("res/ico_play_on.png")));
         btnRun.setPressedIcon(new ImageIcon(getClass().getClassLoader().getResource("res/ico_play_on.png")));
         btnRun.setFocusable(false);
-		btnRun.getInsets().set(5, 0, 0, 0);
+		btnRun.getInsets().set(0, 0, 0, 0);
 
-		btnRun.setSize(40, 35);
+		btnRun.setSize(width, height);
 		btnRun.setPreferredSize(btnRun.getSize());
 //		btnRun.setBounds(-10, 40, btnRun.getWidth(), btnRun.getHeight());
 		pnlMenu.add(btnRun);
@@ -633,17 +639,17 @@ public class Panel implements Runnable, ActionListener, KeyListener, MouseListen
 		btnLoad.setFocusable(false);
 		btnLoad.addActionListener(this);
 		btnLoad.addMouseListener(this);
-//		btnLoad.setBorder(null);
-		btnLoad.setBorder(FrameStatic.brdrBarUn);
+		btnLoad.setBorder(null);
+//		btnLoad.setBorder(FrameStatic.brdrBarUn);
 		btnLoad.setBackground(Color.WHITE);
 		btnLoad.setIcon(new ImageIcon(getClass().getClassLoader().getResource("res/ico_open_off.png")));
 		btnLoad.setRolloverIcon(new ImageIcon(getClass().getClassLoader().getResource("res/ico_open_on.png")));
 		btnLoad.setPressedIcon(new ImageIcon(getClass().getClassLoader().getResource("res/ico_open_on.png")));
 
 		btnLoad.setFocusable(false);
-		btnLoad.getInsets().set(30, 0, 0, 0);
+		btnLoad.getInsets().set(0, 0, 0, 0);
 
-		btnLoad.setSize(40, 35);
+		btnLoad.setSize(width, height);
 		btnLoad.setPreferredSize(btnLoad.getSize());
 		pnlMenu.add(btnLoad);
 
@@ -652,16 +658,16 @@ public class Panel implements Runnable, ActionListener, KeyListener, MouseListen
 		btnSave.setFocusable(false);
 		btnSave.addActionListener(this);
 		btnSave.addMouseListener(this);
-//		btnSave.setBorder(null);
-		btnSave.setBorder(FrameStatic.brdrBarUn);
+		btnSave.setBorder(null);
+//		btnSave.setBorder(FrameStatic.brdrBarUn);
 		btnSave.setBackground(Color.WHITE);
 		btnSave.setIcon(new ImageIcon(getClass().getClassLoader().getResource("res/ico_save_off.png")));
 		btnSave.setRolloverIcon(new ImageIcon(getClass().getClassLoader().getResource("res/ico_save_on.png")));
 		btnSave.setPressedIcon(new ImageIcon(getClass().getClassLoader().getResource("res/ico_save_on.png")));
 		btnSave.setFocusable(false);
-		btnSave.getInsets().set(30, 0, 0, 0);
+		btnSave.getInsets().set(0, 0, 0, 0);
 
-		btnSave.setSize(40, 35);
+		btnSave.setSize(width, height);
 		btnSave.setPreferredSize(btnSave.getSize());
 		pnlMenu.add(btnSave);
 				
@@ -670,34 +676,34 @@ public class Panel implements Runnable, ActionListener, KeyListener, MouseListen
 		btnWatch.setFocusable(false);
 		btnWatch.addActionListener(this);
 		btnWatch.addMouseListener(this);
-//		btnWatch.setBorder(null);
-		btnWatch.setBorder(FrameStatic.brdrBarUn);
+		btnWatch.setBorder(null);
+//		btnWatch.setBorder(FrameStatic.brdrBarUn);
 		btnWatch.setBackground(Color.WHITE);
 		btnWatch.setIcon(new ImageIcon(getClass().getClassLoader().getResource("res/ico_watch_off.png")));
 		btnWatch.setRolloverIcon(new ImageIcon(getClass().getClassLoader().getResource("res/ico_watch_on.png")));
 		btnWatch.setPressedIcon(new ImageIcon(getClass().getClassLoader().getResource("res/ico_watch_on.png")));
 		btnWatch.setFocusable(false);
-		btnWatch.getInsets().set(30, 0, 0, 0);
+		btnWatch.getInsets().set(0, 0, 0, 0);
 
-		btnWatch.setSize(40, 35);
+		btnWatch.setSize(width, height);
 		btnWatch.setPreferredSize(btnWatch.getSize());
 		pnlMenu.add(btnWatch);
 		
 		
-		this.btnContinue = new JButton("Play");
+		this.btnContinue = new JButton();
 		btnContinue.setFocusable(false);
 		btnContinue.addActionListener(this);
 		btnContinue.addMouseListener(this);
-//		btnContinue.setBorder(null);
-		btnContinue.setBorder(FrameStatic.brdrBarUn);
+		btnContinue.setBorder(null);
+//		btnContinue.setBorder(FrameStatic.brdrBarUn);
 		btnContinue.setBackground(Color.WHITE);
-//		btnContinue.setIcon(new ImageIcon(getClass().getClassLoader().getResource("res/ico_watch_off.png")));
-//		btnContinue.setRolloverIcon(new ImageIcon(getClass().getClassLoader().getResource("res/ico_watch_on.png")));
-//		btnContinue.setPressedIcon(new ImageIcon(getClass().getClassLoader().getResource("res/ico_watch_on.png")));
+		btnContinue.setIcon(new ImageIcon(getClass().getClassLoader().getResource("res/ico_continue_off.png")));
+		btnContinue.setRolloverIcon(new ImageIcon(getClass().getClassLoader().getResource("res/ico_continue_on.png")));
+		btnContinue.setPressedIcon(new ImageIcon(getClass().getClassLoader().getResource("res/ico_continue_on.png")));
 		btnContinue.setFocusable(false);
-		btnContinue.getInsets().set(30, 0, 0, 0);
+		btnContinue.getInsets().set(0, 0, 0, 0);
 
-		btnContinue.setSize(40, 35);
+		btnContinue.setSize(width, height);
 		btnContinue.setPreferredSize(btnContinue.getSize());
 		pnlMenu.add(btnContinue);
 		
@@ -712,14 +718,14 @@ public class Panel implements Runnable, ActionListener, KeyListener, MouseListen
 //		btnPause.setRolloverIcon(new ImageIcon(getClass().getClassLoader().getResource("res/ico_watch_on.png")));
 //		btnPause.setPressedIcon(new ImageIcon(getClass().getClassLoader().getResource("res/ico_watch_on.png")));
 		btnPause.setFocusable(false);
-		btnPause.getInsets().set(30, 0, 0, 0);
+		btnPause.getInsets().set(0, 0, 0, 0);
 
-		btnPause.setSize(40, 35);
+		btnPause.setSize(width, height);
 		btnPause.setPreferredSize(btnPause.getSize());
 //		pnlMenu.add(btnPause);
 		
 
-		int offsetX = 7;
+		int offsetX = 0;
 
 		btnRun.setLocation(20, 6);
 		btnLoad.setLocation(btnRun.getX()+btnRun.getWidth()+offsetX, btnRun.getY());
@@ -737,13 +743,6 @@ public class Panel implements Runnable, ActionListener, KeyListener, MouseListen
 		this.codeInput = codeInput;
 	}
 
-	public JTextArea getInputLines() {
-		return inputLines;
-	}
-
-	public void setInputLines(JTextArea inputLines) {
-		this.inputLines = inputLines;
-	}
 	/*
 	 * Specify the color for a Token type here using syntaxScheme.
 	 * 
@@ -771,6 +770,7 @@ public class Panel implements Runnable, ActionListener, KeyListener, MouseListen
 	}
 	
 	public void changeToPlayIcon() {
+		this.isRunning = false;
 		btnRun.setIcon(new ImageIcon(getClass().getClassLoader().getResource("res/ico_play_off.png")));
         btnRun.setRolloverIcon(new ImageIcon(getClass().getClassLoader().getResource("res/ico_play_on.png")));
         btnRun.setPressedIcon(new ImageIcon(getClass().getClassLoader().getResource("res/ico_play_on.png")));
@@ -778,6 +778,7 @@ public class Panel implements Runnable, ActionListener, KeyListener, MouseListen
 	}
 	
 	public void changeToPauseIcon() {
+		this.isRunning = true;
 		btnRun.setIcon(new ImageIcon(getClass().getClassLoader().getResource("res/ico_pause_off.png")));
         btnRun.setRolloverIcon(new ImageIcon(getClass().getClassLoader().getResource("res/ico_pause_on.png")));
         btnRun.setPressedIcon(new ImageIcon(getClass().getClassLoader().getResource("res/ico_pause_on.png")));
@@ -787,14 +788,13 @@ public class Panel implements Runnable, ActionListener, KeyListener, MouseListen
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if(e.getSource() == this.btnRun) {
+			System.out.println("isRunn "+isRunning);
 			if(this.isRunning) {
 				this.changeToPlayIcon();
-				this.isRunning = false;
 				this.scanner.stopThread();
 			}
 			else {
 				this.changeToPauseIcon();
-				this.isRunning = true;
 				Console.instance().purge();
 				String text = this.codeInput.getText();		
 				
@@ -928,7 +928,7 @@ public class Panel implements Runnable, ActionListener, KeyListener, MouseListen
 
 	@Override
 	public void mouseReleased(MouseEvent e) {
-		
+		System.out.println(e.getSource());
 		if(e.getSource() == Console.instance().getTextPane()) {
 			gotoErrorLine(e);
 		}
