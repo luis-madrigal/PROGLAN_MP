@@ -24,6 +24,7 @@ import org.antlr.v4.runtime.dfa.DFA;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
+import com.ide.Panel;
 import com.interpreter.BaseListener;
 import com.interpreter.Scope;
 import com.parser.ManuScriptLexer;
@@ -35,7 +36,7 @@ import com.utils.Tokens;
 @SuppressWarnings("deprecation")
 public class ScannerModel {
 	private CodeGeneratorRunnable runnableCodeGenerator;
-	
+	private Panel pnlParent;
 	private String message;
 	private ParseTree tree;
 	private List<String> ruleNames;
@@ -46,6 +47,10 @@ public class ScannerModel {
 	private ManuScriptParser parser;
 	private CommonTokenStream tokens;
 	private Thread threadCodeGenerator;
+	
+	public ScannerModel(Panel pnlParent) {
+		this.pnlParent = pnlParent;
+	}
 	
 	public String getTokens(String input, Stack<Integer> listBreakpoints) {
 		ANTLRInputStream istream = new ANTLRInputStream(input);
@@ -110,13 +115,9 @@ public class ScannerModel {
 		astbv.printAST("main");
 //		astbv.printAST("generateFibo");
 		
-		if(this.threadCodeGenerator != null) {
-			this.runnableCodeGenerator.stop();
-			this.threadCodeGenerator.interrupt();
-			System.out.println("inter "+threadCodeGenerator.isAlive());
-		}
+		this.stopThread();
 			
-		this.runnableCodeGenerator = new CodeGeneratorRunnable(this.astbv, methodTable);
+		this.runnableCodeGenerator = new CodeGeneratorRunnable(this.pnlParent, this.astbv, methodTable);
 		this.threadCodeGenerator = new Thread(runnableCodeGenerator);
 		threadCodeGenerator.start();
 		
@@ -132,6 +133,13 @@ public class ScannerModel {
 		return tokenized;
 	}
 
+	public void stopThread() {
+		if(this.threadCodeGenerator != null) {
+			this.runnableCodeGenerator.stop();
+			this.threadCodeGenerator.interrupt();
+			System.out.println("isAlive "+threadCodeGenerator.isAlive());
+		}
+	}
 	public ICGenerator getIcg() {
 		return icg;
 	}

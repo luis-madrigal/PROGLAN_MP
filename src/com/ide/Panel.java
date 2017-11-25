@@ -66,7 +66,7 @@ public class Panel implements Runnable, ActionListener, KeyListener, MouseListen
 	private DialogOpen dlgOpen;
 
 	private TextFileHandler textFileHandler;
-	
+	private boolean isRunning;
 	private JPanel pnlMain;
 	private JPanel pnlMenu;
 	private JButton btnRun;
@@ -588,7 +588,7 @@ public class Panel implements Runnable, ActionListener, KeyListener, MouseListen
 		});
 		
 		//Scanner for input string
-		this.scanner = new ScannerModel();
+		this.scanner = new ScannerModel(this);
 		
 		this.topSplitPane.setDividerSize(2);
 		this.topSplitPane.setBackground(Color.WHITE);
@@ -605,6 +605,8 @@ public class Panel implements Runnable, ActionListener, KeyListener, MouseListen
 		this.dlgOpen = new DialogOpen();
 		this.dlgOpen.setProgressColor(FrameStatic.clrLightBlue);
 		this.dlgOpen.getBtnOpen().addMouseListener(this);
+		
+		this.isRunning = false;
 	}
 	
 	public void initMenuButtons() {
@@ -767,27 +769,50 @@ public class Panel implements Runnable, ActionListener, KeyListener, MouseListen
 	public JPanel getUI() {
 		return this.pnlMain;
 	}
-
+	
+	public void changeToPlayIcon() {
+		btnRun.setIcon(new ImageIcon(getClass().getClassLoader().getResource("res/ico_play_off.png")));
+        btnRun.setRolloverIcon(new ImageIcon(getClass().getClassLoader().getResource("res/ico_play_on.png")));
+        btnRun.setPressedIcon(new ImageIcon(getClass().getClassLoader().getResource("res/ico_play_on.png")));
+      
+	}
+	
+	public void changeToPauseIcon() {
+		btnRun.setIcon(new ImageIcon(getClass().getClassLoader().getResource("res/ico_pause_off.png")));
+        btnRun.setRolloverIcon(new ImageIcon(getClass().getClassLoader().getResource("res/ico_pause_on.png")));
+        btnRun.setPressedIcon(new ImageIcon(getClass().getClassLoader().getResource("res/ico_pause_on.png")));
+      
+	}
+	
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if(e.getSource() == this.btnRun) {
-			Console.instance().purge();
-			String text = this.codeInput.getText();		
-			
-			this.parsedOut.setText("");
-//			this.parsedOut.setText(this.parsedOut.getText() + newline);
-//			this.scanner.processTokens(text+newline);
-//			this.threadCodeGenerator = this.scanner.getThreadCodeGenerator();
-			
-			this.parsedOut.setText(this.parsedOut.getText() + this.scanner.getTokens(text+newline, this.getListBreakpoints(text+newline)));
-			this.scanner.generateTree(); // Required to do this
-			this.treePane.setViewportView(this.scanner.getTree());			
-			
-//			this.generateThreeAddressCode();
-//			this.console.setText(this.console.getText() + this.scanner.getMessage());			
-			this.codeInput.selectAll();
-			this.parsedOut.setCaretPosition(parsedOut.getDocument().getLength());
+			if(this.isRunning) {
+				this.changeToPlayIcon();
+				this.isRunning = false;
+				this.scanner.stopThread();
+			}
+			else {
+				this.changeToPauseIcon();
+				this.isRunning = true;
+				Console.instance().purge();
+				String text = this.codeInput.getText();		
+				
+				this.parsedOut.setText("");
+//				this.parsedOut.setText(this.parsedOut.getText() + newline);
+//				this.scanner.processTokens(text+newline);
+//				this.threadCodeGenerator = this.scanner.getThreadCodeGenerator();
+				
+				this.parsedOut.setText(this.parsedOut.getText() + this.scanner.getTokens(text+newline, this.getListBreakpoints(text+newline)));
+				this.scanner.generateTree(); // Required to do this
+				this.treePane.setViewportView(this.scanner.getTree());			
+				
+//				this.generateThreeAddressCode();
+//				this.console.setText(this.console.getText() + this.scanner.getMessage());			
+				this.codeInput.selectAll();
+				this.parsedOut.setCaretPosition(parsedOut.getDocument().getLength());
 		
+			}	
 		}
 		
 		if(e.getSource() == this.btnScaleUp) {

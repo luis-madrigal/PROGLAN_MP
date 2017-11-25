@@ -7,6 +7,5 @@ ACT main starring() {
 	
  	replay(int i = 0; i < 5; i++) {
  		Say "Hello World";
- 		i += 1;
  	}
  }

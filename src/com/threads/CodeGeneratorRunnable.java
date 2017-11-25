@@ -53,13 +53,14 @@ public class CodeGeneratorRunnable implements Runnable {
 	private Stack<Scope> prevBlocks;
 	private HashMap<String, MethodContext> methodTable;
 	private HashMap<String, ProcedureNode> methodASTTable;
-	
-	public CodeGeneratorRunnable(ASTBuildVisitor astbv, HashMap<String, MethodContext> methodTable) {
+	private Panel pnlParent;
+	public CodeGeneratorRunnable(Panel pnlParent, ASTBuildVisitor astbv, HashMap<String, MethodContext> methodTable) {
 		this.astbv = astbv;
 		this.methodASTTable = astbv.getMethodASTTable();
 		this.methodTable = methodTable;
 		this.isRunning = true;
 		this.isPlay = true;
+		this.pnlParent = pnlParent;
 		
 		this.methodTable = methodTable;
 		this.methodICodes = new HashMap<String, ArrayList<TACStatement>>();
@@ -113,6 +114,7 @@ public class CodeGeneratorRunnable implements Runnable {
 	
 	@Override
 	public void run() {
+		this.pnlParent.changeToPauseIcon();
 //		this.methodScope = this.variables.get(currentMethod);
 		ArrayList<TACStatement> icode = this.methodICodes.get("%FIELD");
 		String pointer = icode.get(0).getLabel();
@@ -129,6 +131,8 @@ public class CodeGeneratorRunnable implements Runnable {
 		
 		System.out.println("+++++++++++ RUN MAIN");
 		System.out.println(this.run("main"));
+		
+		this.pnlParent.changeToPlayIcon();
 	}
 	
 	private Object run(String methodName, Object ...args) {
@@ -413,5 +417,6 @@ public class CodeGeneratorRunnable implements Runnable {
 	public void stop() {
 		this.isRunning = false;
 		System.out.println("Stop");
+		this.pnlParent.changeToPlayIcon();
 	}
 }
