@@ -42,6 +42,10 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
         this.listBreakpoints = listBreakpoints;
         this.isBreakpoint = false;
         this.triggeringLineNumber = 0;
+
+        this.fieldDecNode = new ProcedureNode(null,"%FIELD");
+        this.fieldDecNode.setNodeType(NodeType.FIELD_DEC);
+        methodASTTable.put(this.fieldDecNode.procedureName,fieldDecNode);
     }
 
     public HashMap<String, ProcedureNode> getMethodASTTable() {
@@ -798,7 +802,6 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
         	System.out.println("BP: "+variable.getNodeType());
         
         symContext = curScope.checkTables(ctx.Identifier().getText());
-        String type = symContext.getSymbolType(); //todo: convert to enum?
 
         if(symContext != null) {
             variable.setValue(symContext);
@@ -856,7 +859,6 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
         	System.out.println("BP: "+variable.getNodeType());
         
         symContext = curScope.checkTables(ctx.Identifier().getText());
-        String type = symContext.getSymbolType(); //todo: convert to enum?
 
         if(symContext != null) {
             variable.setValue(symContext);
@@ -881,8 +883,6 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
         	System.out.println("BP: "+variable.getNodeType());
         
         symContext = curScope.checkTables(ctx.Identifier().getText());
-//        System.out.println("var "+ctx.Identifier().getText() + " in table? "+curScope.inScope(ctx.Identifier().getText()));
-//        System.out.println(symContext.getSymbolType());
 
         if(symContext != null) {
             variable.setValue(symContext);
