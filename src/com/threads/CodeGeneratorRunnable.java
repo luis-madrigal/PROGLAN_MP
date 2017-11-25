@@ -116,7 +116,7 @@ public class CodeGeneratorRunnable implements Runnable {
 	
 	@Override
 	public void run() {
-		this.pnlParent.changeToPauseIcon();
+		this.pnlParent.changeToPause();
 //		this.methodScope = this.variables.get(currentMethod);
 		ArrayList<TACStatement> icode = this.methodICodes.get("%FIELD");
 		String pointer = icode.get(0).getLabel();
@@ -134,7 +134,7 @@ public class CodeGeneratorRunnable implements Runnable {
 		System.out.println("+++++++++++ RUN MAIN");
 		System.out.println(this.run("main"));
 		
-		this.pnlParent.changeToPlayIcon();
+		this.pnlParent.changeToPlay();
 	}
 	
 	private Object run(String methodName, Object ...args) {
@@ -432,6 +432,6 @@ public class CodeGeneratorRunnable implements Runnable {
 	public void stop() {
 		this.isRunning = false;
 		System.out.println("Stop");
-		this.pnlParent.changeToPlayIcon();
+		this.pnlParent.changeToPlay();
 	}
 }

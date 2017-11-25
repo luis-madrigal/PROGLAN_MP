@@ -37,7 +37,7 @@ public class Console {
 		StyleConstants.setForeground(styleLog, Styles.UN_CONSOLE_LOG);
 		styleLog.addAttribute("log", "Log");
 		try {
-			doc.insertString(doc.getLength(), msg, styleLog);
+			doc.insertString(findLineNumber(msg)/*doc.getLength()*/, msg, styleLog);
 		} catch (BadLocationException e) {
 			e.printStackTrace();
 		}
@@ -49,7 +49,7 @@ public class Console {
 		StyleConstants.setForeground(styleLog, Styles.UN_CONSOLE_LOG);
 		styleLog.addAttribute("log", "Log");
 		try {
-			doc.insertString(doc.getLength(), msg+"\n", styleLog);
+			doc.insertString(findLineNumber(msg)/*doc.getLength()*/, msg+"\n", styleLog);
 		} catch (BadLocationException e) {
 			e.printStackTrace();
 		}
@@ -66,7 +66,8 @@ public class Console {
 		StyleConstants.setForeground(styleError, Styles.UN_CONSOLE_ERR);
 		styleError.addAttribute("key", "Error");
 		try {
-			doc.insertString(doc.getLength(), msg+"\n", styleError);
+			doc.insertString(findLineNumber(msg)/*doc.getLength()*/, msg+"\n", styleError);
+			
 		} catch (BadLocationException e) {
 			e.printStackTrace();
 		}
@@ -84,7 +85,8 @@ public class Console {
 		StyleConstants.setUnderline(styleError, true);
 		styleError.addAttribute("key", lineNumber);
 		try {
-			doc.insertString(doc.getLength(), msg+"\n", styleError);
+//			findLineNumber(msg);
+			doc.insertString(findLineNumber(msg)/*doc.getLength()*/, msg+"\n", styleError);
 		} catch (BadLocationException e) {
 			e.printStackTrace();
 		}
@@ -94,6 +96,59 @@ public class Console {
 		} catch (BadLocationException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	public int findLineNumber(String message) {
+		String[] splitMessage = message.split(":");
+		String strLine = splitMessage[0];
+		strLine = strLine.replace("line ", "").trim();
+		
+		
+		String[] listText = this.textPane.getText().split("\n");
+		int lineNumber;
+		int messageLineNumber = extractLineNumber(message);
+		int offsetCount = 0;
+		for(int i = 0; i < listText.length; i++) {
+			lineNumber = extractLineNumber(listText[i]);
+			
+			if(messageLineNumber < lineNumber) {
+				return offsetCount;
+			}
+			else {
+				offsetCount += listText[i].length();
+			}
+		}
+		return offsetCount;
+		
+//		System.out.println("style "+message+" Line "+strLine);
+		
+//		for(int i = 0; i < root.getElementCount(); i++) {
+//			element = root.getElement(i);
+//			lineDoc = element.getDocument();
+//			
+//			try {
+//				System.out.println("====");
+//				System.out.println(element.getStartOffset()+" "+element.getEndOffset()+" EN");
+//				System.out.println("ec "+lineDoc.getText(element.getStartOffset(), element.getEndOffset()-1));
+//				System.out.println("<<<<");
+//			} catch (BadLocationException e) {
+//				e.printStackTrace();
+//			}
+//		}
+	}
+	
+	public int extractLineNumber(String message) {
+		int lineNumber = 0;
+		
+		if(message.contains("line ")) {
+			String[] splitMessage = message.split(":");
+			String strLine = splitMessage[0];
+			strLine = strLine.replace("line ", "").trim();
+			lineNumber = Integer.parseInt(strLine);
+		}
+		
+		
+		return lineNumber;
 	}
 	
 	public void purge() {

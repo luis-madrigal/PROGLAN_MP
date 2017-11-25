@@ -1,21 +1,11 @@
 
-int[] a = new int[5];
-int[] b = a;
 
+ACT main starring() {
+ 	int x = 0;
 
-composition abc{
-	int a;
-	int d;
-	char asd;
-	float asd;
-}
-
-
-ACT main starring () {
-	int count = 8;
-	int[] c = new int[3];
-	when(count < 11) {
-		Say "Count is: "+count;
-		count++;
-	}
-}
+	Say "Hello World";
+	
+ 	replay(int i = 0; i < 5; i++) {
+ 		Say "Hello World";
+ 	}
+ }

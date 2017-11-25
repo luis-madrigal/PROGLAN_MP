@@ -95,7 +95,6 @@ public class BaseListener extends ManuScriptBaseListener{
 			} else {
 				//checking if array init is of type = {1,2,32,4,21};
 				//or int[] a = b;
-				if(v)
 				SemanticErrors.throwError(SemanticErrors.INVALID_INIT, line, charPosition);
 			}
 		}

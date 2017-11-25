@@ -31,6 +31,8 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTextPane;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.UIManager;
+import javax.swing.border.Border;
+import javax.swing.border.LineBorder;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.DefaultStyledDocument;
@@ -238,6 +240,7 @@ public class Panel implements Runnable, ActionListener, KeyListener, MouseListen
 		AbstractTokenMakerFactory atmf = (AbstractTokenMakerFactory)TokenMakerFactory.getDefaultInstance();
 		atmf.putMapping("text/manuscript", "com.ide.styles.ManuScriptTokenMaker");
 		
+	
 		this.codeInput.setSyntaxEditingStyle("text/manuscript");
 
 //		this.codeInput.setCurrentLineHighlightColor(Styles.PALE_GRAY);
@@ -253,6 +256,8 @@ public class Panel implements Runnable, ActionListener, KeyListener, MouseListen
 //		this.codeInput.isOpaque();
 		this.codeInput.setCaretColor(Color.WHITE);
 		this.codeInput.setMargin(new Insets(5, 5, 0, 0));
+//		Border roundedBorder = new LineBorder(Color.WHITE, 5, true); // the third parameter - true, says it's round
+//		this.codeInput.setBorder(roundedBorder);
 		
 		Console.instance().setCodeInput(codeInput);
 		Console.instance().getTextPane().addMouseListener(this);
@@ -769,7 +774,7 @@ public class Panel implements Runnable, ActionListener, KeyListener, MouseListen
 		return this.pnlMain;
 	}
 	
-	public void changeToPlayIcon() {
+	public void changeToPlay() {
 		this.isRunning = false;
 		btnRun.setIcon(new ImageIcon(getClass().getClassLoader().getResource("res/ico_play_off.png")));
         btnRun.setRolloverIcon(new ImageIcon(getClass().getClassLoader().getResource("res/ico_play_on.png")));
@@ -777,7 +782,7 @@ public class Panel implements Runnable, ActionListener, KeyListener, MouseListen
       
 	}
 	
-	public void changeToPauseIcon() {
+	public void changeToPause() {
 		this.isRunning = true;
 		btnRun.setIcon(new ImageIcon(getClass().getClassLoader().getResource("res/ico_pause_off.png")));
         btnRun.setRolloverIcon(new ImageIcon(getClass().getClassLoader().getResource("res/ico_pause_on.png")));
@@ -790,11 +795,11 @@ public class Panel implements Runnable, ActionListener, KeyListener, MouseListen
 		if(e.getSource() == this.btnRun) {
 			System.out.println("isRunn "+isRunning);
 			if(this.isRunning) {
-				this.changeToPlayIcon();
+				this.changeToPlay();
 				this.scanner.stopThread();
 			}
 			else {
-				this.changeToPauseIcon();
+				this.changeToPause();
 				Console.instance().purge();
 				String text = this.codeInput.getText();		
 				
@@ -811,6 +816,7 @@ public class Panel implements Runnable, ActionListener, KeyListener, MouseListen
 //				this.console.setText(this.console.getText() + this.scanner.getMessage());			
 				this.codeInput.selectAll();
 				this.parsedOut.setCaretPosition(parsedOut.getDocument().getLength());
+				
 		
 			}	
 		}
