@@ -1,5 +1,21 @@
 
+int[] a = new int[5];
+int[] b = a;
+
+
+composition abc{
+	int a;
+	int d;
+	char asd;
+	float asd;
+}
+
+
 ACT main starring () {
-	int arr = new int[] {2, 3, 4};
-	Say arr[2];
+	int count = 8;
+	int[] c = new int[3];
+	when(count < 11) {
+		Say "Count is: "+count;
+		count++;
+	}
 }
