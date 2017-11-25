@@ -15,6 +15,8 @@ public class Console {
 	private static Console instance;
 	private JTextPane textPane;
 	private RSyntaxTextAreaManuscript codeInput;
+	
+	public int errorCount;
 	private Console(int fontSize) {
 		this.textPane = new JTextPane();
 		this.textPane.setFont(new Font("Consolas", 150, fontSize));
@@ -22,6 +24,7 @@ public class Console {
 		this.textPane.setForeground(Color.RED);
 		this.textPane.setBackground(Color.WHITE);
 		this.textPane.isOpaque();
+		this.errorCount = 0;
 	}
 	
 	public static Console instance() {
@@ -70,6 +73,7 @@ public class Console {
 		} catch (BadLocationException e) {
 			e.printStackTrace();
 		}
+		this.errorCount++;
 	}
 
 	/**
@@ -94,11 +98,13 @@ public class Console {
 		} catch (BadLocationException e) {
 			e.printStackTrace();
 		}
+		this.errorCount++;
 	}
 	
 	public void purge() {
 		this.textPane.setText("");
 		this.codeInput.removeAllLineHighlights();
+		this.errorCount = 0;
 	}
 	
 	public JTextPane getTextPane() {

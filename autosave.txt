@@ -1,21 +1,20 @@
 
-int[] a = new int[5];
-int[] b = a;
+permanent int FINAL_X = 10;
 
-
-composition abc{
-	int a;
-	int d;
-	char asd;
-	float asd;
+ACT add starring(int x, int y) {
+	give (x + y);
 }
 
+ACT main starring() {
+	int i = 1;
+	int value = 0;
 
-ACT main starring () {
-	int count = 8;
-	int[] c = new int[3];
-	when(count < 11) {
-		Say "Count is: "+count;
-		count++;
-	}
+	value += (5 * 1) + (5 * 5 / 1 + 3 + (4 + (5 * 3)))/2 * 8 + ++i;
+	Say value;
+
+	string str = "asd";
+	str += "asdas";
+	Say str;
+
+	Say add(value, i);
 }

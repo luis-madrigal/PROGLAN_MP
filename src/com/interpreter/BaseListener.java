@@ -6,6 +6,8 @@ import java.util.Stack;
 
 import com.interpreter.contexts.ArrayInfo;
 import com.interpreter.contexts.StructInfo;
+
+import org.antlr.v4.runtime.atn.SemanticContext.Operator;
 import org.antlr.v4.runtime.tree.ParseTree;
 
 import com.interpreter.contexts.MethodContext;
@@ -24,11 +26,13 @@ import com.parser.ManuScriptParser.FormalParameterContext;
 import com.parser.ManuScriptParser.LiteralContext;
 import com.parser.ManuScriptParser.MethodBodyContext;
 import com.parser.ManuScriptParser.OrExprContext;
+import com.parser.ManuScriptParser.PostIncDecExprContext;
 import com.parser.ManuScriptParser.PrimaryContext;
 import com.parser.ManuScriptParser.PrimaryExprContext;
 import com.parser.ManuScriptParser.VariableDeclaratorContext;
 import com.parser.ManuScriptParser.VariableExprContext;
 import com.utils.Console;
+import com.utils.KeyTokens.OPERATOR;
 import com.utils.Types;
 import com.utils.Utils;
 
@@ -95,7 +99,7 @@ public class BaseListener extends ManuScriptBaseListener{
 			} else {
 				//checking if array init is of type = {1,2,32,4,21};
 				//or int[] a = b;
-				if(v)
+//				if(v)
 				SemanticErrors.throwError(SemanticErrors.INVALID_INIT, line, charPosition);
 			}
 		}
@@ -278,7 +282,7 @@ public class BaseListener extends ManuScriptBaseListener{
 	}
 	
 	@Override public void enterFunctionExpr(ManuScriptParser.FunctionExprContext ctx) { 
-		String methodName = ctx.variableExpr().getText();
+		String methodName = ctx.Identifier().getText();
 		int lineNum = ctx.getStart().getLine();
 		int charPosInLine = ctx.getStart().getCharPositionInLine();
 
@@ -326,7 +330,7 @@ public class BaseListener extends ManuScriptBaseListener{
 	
 	@Override
 	public void enterPostIncDecExpr(ManuScriptParser.PostIncDecExprContext ctx) {
-		String varName = ctx.variableExpr().getText();
+		String varName = ctx.equationExpr().getText();
 		SymbolContext sctx;
 		
 		if((sctx = scopes.peek().checkTables(varName)) != null){
@@ -342,7 +346,7 @@ public class BaseListener extends ManuScriptBaseListener{
 	
 	@Override
 	public void enterPreIncDecSignExpr(ManuScriptParser.PreIncDecSignExprContext ctx) {
-		String varName = ctx.variableExpr().getText();
+		String varName = ctx.equationExpr().getText();
 		SymbolContext sctx;
 		
 		if((sctx = scopes.peek().checkTables(varName)) != null){
@@ -606,5 +610,89 @@ public class BaseListener extends ManuScriptBaseListener{
 
 		return maxDepth;
 	}
+	
+//	private boolean expressionCheck(ParseTree node, String expectedType) {
+//		if(node instanceof PostIncDecExprContext) {
+//			
+//		}
+//	}
+//	
+//	private String getTypeOf(ParseTree node) {
+//		if(node instanceof VariableExprContext) {
+//			//node is a variable
+//		}
+//		int[] arr =  new int[]{3};
+//		arr[2]++;
+//	}
 
+	//expression checking for unary operations
+	private boolean exprAllowed(OPERATOR operator, String type) {
+		switch (operator) {
+		case ADD:
+		case SUB: 
+			if(this.canBeOfType(type, "int", "float"))
+				return true;
+			break;
+		case INC:
+		case DEC:
+			if(this.canBeOfType(type, "int", "float", "char"))
+				return true;
+			break;
+		case NOT:
+			if(this.canBeOfType(type, "boolean"))
+				return true;
+			break;
+		default:
+			break;
+		}
+		
+		return false;
+	}
+	
+	//expression checking for binary operations
+	private boolean exprAllowed(OPERATOR operator, String type1, String type2) {
+		switch(operator) {
+		case ADD:
+			if(this.canBeOfType(type1, "string") && this.canBeOfType(type2, "string"))
+				return true;
+		case SUB:
+		case MULT:
+		case DIV:
+		case MOD:
+		case PLUSASSIGN:
+			if(this.canBeOfType(type1, "string") && this.canBeOfType(type2, "string"))
+				return true;
+		case SUBASSIGN:
+		case MULTASSIGN:
+		case DIVASSIGN:
+		case MODASSIGN:
+			if(this.canBeOfType(type1, "int", "float") && this.canBeOfType(type2, "int", "float"))
+				return true;
+			if(this.canBeOfType(type1, "int", "char") && this.canBeOfType(type2, "int", "char"))
+				return true;
+			break;
+		case EQUAL:
+		case NEQUAL:
+			if(this.canBeOfType(type1, "string") && this.canBeOfType(type2, "string"))
+				return true;
+		case LESS:
+		case LEQ:
+		case GREATER:
+		case GEQ:
+			if(this.canBeOfType(type1, "int", "float", "char") && this.canBeOfType(type2, "int", "float", "char"))
+				return true;
+		default:
+			break;
+		}
+		return false;
+	}
+	
+	private boolean canBeOfType(String type, String ...args) {
+		for(int i = 0; i < args.length; i++) {
+			if(type.equals(args[i]))
+				return true;
+		}
+		
+		return false;
+	}
 }

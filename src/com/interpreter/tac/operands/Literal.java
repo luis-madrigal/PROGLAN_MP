@@ -19,5 +19,13 @@ public class Literal extends Operand{
 		this.type = type;
 	}	
 	
+	public String toString() {
+		if(type.equals(LITERAL_TYPE.STRING))
+			return "\"" + getValue().toString() + "\"";
+		else if(type.equals(LITERAL_TYPE.CHAR))
+			return "'" + getValue().toString() + "'";
+		else
+			return getValue().toString();
+	}
 
 }
