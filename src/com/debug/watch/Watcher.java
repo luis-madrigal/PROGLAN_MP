@@ -1,260 +1,259 @@
 package com.debug.watch;
 
 import java.util.ArrayList;
+import java.util.Stack;
 
 public class Watcher {
 	
 	private ArrayList<VariableNode> varList;
+	private Stack<String> blocks;
 	
 	public Watcher() {
 		this.varList = new ArrayList<VariableNode>();
+		this.blocks = new Stack<String>();
 	}
 	
 	public ArrayList<VariableNode> getVarList() {
 		return this.varList;
 	}
 	
-	//TODO: Fix line number
 	public void generateVarList(String inputCode) {
-		String funcName = "";
-		String funcBlock = "-";
-		int lineNumber = 1;
+		int lineNumber = 0;
 		String dataType = "";
 		String literal = "";
+		String funcName = "";
+		String funcBlock = "-";
 		
-		int i = 0;
-		while (i < inputCode.length()) {
-			//ACT
-			if(inputCode.charAt(i) == 'A') {
-				if(i+1 < inputCode.length() && inputCode.charAt(i+1) == 'C') {
-					if(i+2 < inputCode.length() && inputCode.charAt(i+2) == 'T') {
-						if(i+3 < inputCode.length() && inputCode.charAt(i+3) == ' ') {
-							i+=4;
-							funcName = "";
+		String[] segmented = inputCode.split("\n");
+//		int i = 0;
+		
+		for(String line : segmented) {
+			lineNumber++;
+			
+			if(line.contains("ACT ")) {
+				int index = line.indexOf("ACT ") + 4;
+				funcName = "";
+				
+				while(index < line.length() && line.charAt(index) != ' ') {
+					funcName += line.charAt(index);
+					index++;
+				}
+			}
+			
+			if(line.contains("rehearse")) {
+				funcBlock = "rehearse-when";
+				this.blocks.push("DOWHILE");
+			}
+			
+			if(line.contains("when(") || line.contains("when (")) {
+				if(!this.blocks.isEmpty() && this.blocks.peek().equals("DOWHILE") && line.contains(";")) {
+					this.blocks.pop();
+					
+					if(!this.blocks.isEmpty()) {
+						System.out.println("Peek: "+this.blocks.peek());
+						boolean hasMultiple = false;
+						
+						if(this.blocks.peek().equals("MULTIPLE")) {
+							this.blocks.pop();
+							hasMultiple = true;
+						}
+						
+						if(this.blocks.peek().equals("IF"))
+							funcBlock = "if";
+						else if(this.blocks.peek().equals("FOR"))
+							funcBlock = "replay";
+						else if(this.blocks.peek().equals("WHILE"))
+							funcBlock = "when";
+						else if(this.blocks.peek().equals("DOWHILE"))
+							funcBlock = "rehearse-when";
+						
+						if(hasMultiple)
+							this.blocks.push("MULTIPLE");
+					}
+					else
+						funcBlock = "";
+				}
+				else {
+					funcBlock = "when";
+					this.blocks.push("WHILE");
+					if(line.contains("{"))
+						this.blocks.push("MULTIPLE");
+				}
+			}
+			
+			if(line.contains("{") && !this.blocks.isEmpty() &&
+					(this.blocks.peek().equals("WHILE") || this.blocks.peek().equals("FOR") || this.blocks.peek().equals("IF"))) {
+				this.blocks.push("MULTIPLE");
+			}
+			
+			if(line.contains("}") && !this.blocks.isEmpty() && this.blocks.peek().equals("MULTIPLE")) {
+				this.blocks.pop();
+				this.blocks.pop();
+
+				if(!this.blocks.isEmpty()) {
+					System.out.println("Peek: "+this.blocks.peek());
+					boolean hasMultiple = false;
+					
+					if(this.blocks.peek().equals("MULTIPLE")) {
+						this.blocks.pop();
+						hasMultiple = true;
+					}
+					
+					if(this.blocks.peek().equals("IF"))
+						funcBlock = "if";
+					else if(this.blocks.peek().equals("FOR"))
+						funcBlock = "replay";
+					else if(this.blocks.peek().equals("WHILE"))
+						funcBlock = "when";
+					else if(this.blocks.peek().equals("DOWHILE"))
+						funcBlock = "rehearse-when";
+					
+					if(hasMultiple)
+						this.blocks.push("MULTIPLE");
+				}
+				else
+					funcBlock = "";
+			}
+			
+			if(!this.blocks.isEmpty() &&
+					(this.blocks.peek().equals("WHILE") || this.blocks.peek().equals("FOR") || this.blocks.peek().equals("IF"))) {
+				this.blocks.push("SINGLE");
+			}
+			
+			if(line.contains("replay(") || line.contains("replay (")) {
+				funcBlock = "replay";
+				this.blocks.push("FOR");
+				if(line.contains("{")) {
+					this.blocks.push("MULTIPLE");
+				}
+			}
+			
+			if(line.contains("if (") || line.contains("if(")) {
+				funcBlock = "if";
+				this.blocks.push("IF");
+				if(line.contains("{")) {
+					this.blocks.push("MULTIPLE");
+				}
+			}
+			
+			if(line.contains("int ") || line.contains("float ") || line.contains("double ") || line.contains("boolean ") ||
+					line.contains("long ") || line.contains("short ") || line.contains("String ") || line.contains("char ")) {
+				
+				int index = 0;
+				
+				if(line.contains("int ")) {
+					index = line.indexOf("int ")+4;
+					dataType = "int";
+				}
+				else if(line.contains("float ")) {
+					index = line.indexOf("float ")+6;
+					dataType = "float";
+				}
+				else if(line.contains("double ")) {
+					index = line.indexOf("double ")+7;
+					dataType = "double";
+				}
+				else if(line.contains("boolean ")) {
+					index = line.indexOf("boolean ")+8;
+					dataType = "boolean";
+				}
+				else if(line.contains("long ")) {
+					index = line.indexOf("long ")+5;
+					dataType = "long";
+				}
+				else if(line.contains("short ")) {
+					index = line.indexOf("short ")+6;
+					dataType = "short";
+				}
+				else if(line.contains("String ")) {
+					index = line.indexOf("String ")+7;
+					dataType = "String";
+				}
+				else if(line.contains("char ")) {
+					index = line.indexOf("char ")+5;
+					dataType = "char";
+				}
+				
+				while(index < line.length() && (line.charAt(index) != ';' && line.charAt(index) != '=' && line.charAt(index) != ' ')) {
+					literal += line.charAt(index);
+					
+					if(index+1 < line.length() && line.charAt(index+1) == ',') {
+						VariableNode var = new VariableNode(lineNumber, dataType, literal, funcName, funcBlock);
+						this.varList.add(var);
+						literal = "";
+						
+						if(!this.blocks.isEmpty() && this.blocks.peek().equals("SINGLE")) {
+							this.blocks.pop();
+							this.blocks.pop();
 							
-							while(i < inputCode.length() && inputCode.charAt(i) != ' ') {
-								 funcName += inputCode.charAt(i);
-								 i++;
-							}
-						}
-					}
-				}
-			}
-			
-			//int
-			if(inputCode.charAt(i) == 'i') {
-				if(i+1 < inputCode.length() && inputCode.charAt(i+1) == 'n') {
-					if(i+2 < inputCode.length() && inputCode.charAt(i+2) == 't') {
-						if(i+3 < inputCode.length() && inputCode.charAt(i+3) == ' ') {
-							i+=4;
-							dataType = "int";
-							
-							while(i < inputCode.length() && (inputCode.charAt(i) != ';' && inputCode.charAt(i) != '=' && inputCode.charAt(i) != ' ')) {
-								literal += inputCode.charAt(i);
-								i++;
-							}
-							
-							VariableNode var = new VariableNode(lineNumber, dataType, literal, funcName, funcBlock);
-							this.varList.add(var);
-							literal = "";
-						}
-					}
-				}
-			}
-			
-			//float
-			if(inputCode.charAt(i) == 'f') {
-				if(i+1 < inputCode.length() && inputCode.charAt(i+1) == 'l') {
-					if(i+2 < inputCode.length() && inputCode.charAt(i+2) == 'o') {
-						if(i+3 < inputCode.length() && inputCode.charAt(i+3) == 'a') {
-							if(i+4 < inputCode.length() && inputCode.charAt(i+4) == 't') {
-								if(i+5 < inputCode.length() && inputCode.charAt(i+5) == ' ') {
-									i+=6;
-									dataType = "float";
-									
-									while(i < inputCode.length() && (inputCode.charAt(i) != ';' && inputCode.charAt(i) != '=' && inputCode.charAt(i) != ' ')) {
-										literal += inputCode.charAt(i);
-										i++;
-									}
-									
-									VariableNode var = new VariableNode(lineNumber, dataType, literal, funcName, funcBlock);
-									this.varList.add(var);
-									
-									literal = "";
-								}
-							}
-						}
-					}
-				}
-			}
-			
-			//double
-			if(inputCode.charAt(i) == 'd') {
-				if(i+1 < inputCode.length() && inputCode.charAt(i+1) == 'o') {
-					if(i+2 < inputCode.length() && inputCode.charAt(i+2) == 'u') {
-						if(i+3 < inputCode.length() && inputCode.charAt(i+3) == 'b') {
-							if(i+4 < inputCode.length() && inputCode.charAt(i+4) == 'l') {
-								if(i+5 < inputCode.length() && inputCode.charAt(i+5) == 'e') {
-									if(i+6 < inputCode.length() && inputCode.charAt(i+6) == ' ') {
-										i+=7;
-										dataType = "double";
-										
-										while(i < inputCode.length() && (inputCode.charAt(i) != ';' && inputCode.charAt(i) != '=' && inputCode.charAt(i) != ' ')) {
-											literal += inputCode.charAt(i);
-											i++;
-										}
-										
-										VariableNode var = new VariableNode(lineNumber, dataType, literal, funcName, funcBlock);
-										this.varList.add(var);
-										
-										literal = "";
-									}
-								}
-							}
-						}
-					}
-				}
-			}
-			
-			//short
-			if(inputCode.charAt(i) == 's') {
-				if(i+1 < inputCode.length() && inputCode.charAt(i+1) == 'h') {
-					if(i+2 < inputCode.length() && inputCode.charAt(i+2) == 'o') {
-						if(i+3 < inputCode.length() && inputCode.charAt(i+3) == 'r') {
-							if(i+4 < inputCode.length() && inputCode.charAt(i+4) == 't') {
-								if(i+5 < inputCode.length() && inputCode.charAt(i+5) == ' ') {
-									i+=6;
-									dataType = "short";
-									
-									while(i < inputCode.length() && (inputCode.charAt(i) != ';' && inputCode.charAt(i) != '=' && inputCode.charAt(i) != ' ')) {
-										literal += inputCode.charAt(i);
-										i++;
-									}
-									
-									VariableNode var = new VariableNode(lineNumber, dataType, literal, funcName, funcBlock);
-									this.varList.add(var);
-									
-									literal = "";
-								}
-							}
-						}
-					}
-				}
-			}
-			
-			//long
-			if(inputCode.charAt(i) == 'l') {
-				if(i+1 < inputCode.length() && inputCode.charAt(i+1) == 'o') {
-					if(i+2 < inputCode.length() && inputCode.charAt(i+2) == 'n') {
-						if(i+3 < inputCode.length() && inputCode.charAt(i+3) == 'g') {
-							if(i+4 < inputCode.length() && inputCode.charAt(i+4) == ' ') {
-								i+=5;
-								dataType = "long";
+							if(!this.blocks.isEmpty()) {
+								System.out.println("Peek: "+this.blocks.peek());
+								boolean hasMultiple = false;
 								
-								while(i < inputCode.length() && (inputCode.charAt(i) != ';' && inputCode.charAt(i) != '=' && inputCode.charAt(i) != ' ')) {
-									literal += inputCode.charAt(i);
-									i++;
+								if(this.blocks.peek().equals("MULTIPLE")) {
+									this.blocks.pop();
+									hasMultiple = true;
 								}
 								
-								VariableNode var = new VariableNode(lineNumber, dataType, literal, funcName, funcBlock);
-								this.varList.add(var);
+								if(this.blocks.peek().equals("IF"))
+									funcBlock = "if";
+								else if(this.blocks.peek().equals("FOR"))
+									funcBlock = "replay";
+								else if(this.blocks.peek().equals("WHILE"))
+									funcBlock = "when";
+								else if(this.blocks.peek().equals("DOWHILE"))
+									funcBlock = "rehearse-when";
 								
-								literal = "";
+								if(hasMultiple)
+									this.blocks.push("MULTIPLE");
 							}
+							else
+								funcBlock = "";
 						}
+						
+						if(index+2 < line.length() && line.charAt(index+2) == ' ')
+							index += 3;
+						else
+							index += 2;
 					}
+					else
+						index++; 
+				}
+				
+				VariableNode var = new VariableNode(lineNumber, dataType, literal, funcName, funcBlock);
+				this.varList.add(var);
+				literal = "";
+				
+				if(!this.blocks.isEmpty() && this.blocks.peek().equals("SINGLE")) {
+					this.blocks.pop();
+					this.blocks.pop();
+					
+					if(!this.blocks.isEmpty()) {
+						System.out.println("Peek: "+this.blocks.peek());
+						boolean hasMultiple = false;
+						
+						if(this.blocks.peek().equals("MULTIPLE")) {
+							this.blocks.pop();
+							hasMultiple = true;
+						}
+						
+						if(this.blocks.peek().equals("IF"))
+							funcBlock = "if";
+						else if(this.blocks.peek().equals("FOR"))
+							funcBlock = "replay";
+						else if(this.blocks.peek().equals("WHILE"))
+							funcBlock = "when";
+						else if(this.blocks.peek().equals("DOWHILE"))
+							funcBlock = "rehearse-when";
+						
+						if(hasMultiple)
+							this.blocks.push("MULTIPLE");
+					}
+					else
+						funcBlock = "";
 				}
 			}
 			
-			//boolean
-			if(inputCode.charAt(i) == 'b') {
-				if(i+1 < inputCode.length() && inputCode.charAt(i+1) == 'o') {
-					if(i+2 < inputCode.length() && inputCode.charAt(i+2) == 'o') {
-						if(i+3 < inputCode.length() && inputCode.charAt(i+3) == 'l') {
-							if(i+4 < inputCode.length() && inputCode.charAt(i+4) == 'e') {
-								if(i+5 < inputCode.length() && inputCode.charAt(i+5) == 'a') {
-									if(i+6 < inputCode.length() && inputCode.charAt(i+6) == 'n') {
-										if(i+7 < inputCode.length() && inputCode.charAt(i+7) == ' ') {
-											i+=8;
-											dataType = "boolean";
-											
-											while(i < inputCode.length() && (inputCode.charAt(i) != ';' && inputCode.charAt(i) != '=' && inputCode.charAt(i) != ' ')) {
-												literal += inputCode.charAt(i);
-												i++;
-											}
-											
-											VariableNode var = new VariableNode(lineNumber, dataType, literal, funcName, funcBlock);
-											this.varList.add(var);
-											
-											literal = "";
-										}
-									}
-								}
-							}
-						}
-					}
-				}
-			}
-			
-			//char
-			if(inputCode.charAt(i) == 'c') {
-				if(i+1 < inputCode.length() && inputCode.charAt(i+1) == 'h') {
-					if(i+2 < inputCode.length() && inputCode.charAt(i+2) == 'a') {
-						if(i+3 < inputCode.length() && inputCode.charAt(i+3) == 'r') {
-							if(i+4 < inputCode.length() && inputCode.charAt(i+4) == ' ') {
-								i+=5;
-								dataType = "char";
-								
-								while(i < inputCode.length() && (inputCode.charAt(i) != ';' && inputCode.charAt(i) != '=' && inputCode.charAt(i) != ' ')) {
-									literal += inputCode.charAt(i);
-									i++;
-								}
-								
-								VariableNode var = new VariableNode(lineNumber, dataType, literal, funcName, funcBlock);
-								this.varList.add(var);
-								
-								literal = "";
-							}
-						}
-					}
-				}
-			}
-			
-			//String
-			if(inputCode.charAt(i) == 'S') {
-				if(i+1 < inputCode.length() && inputCode.charAt(i+1) == 't') {
-					if(i+2 < inputCode.length() && inputCode.charAt(i+2) == 'r') {
-						if(i+3 < inputCode.length() && inputCode.charAt(i+3) == 'i') {
-							if(i+4 < inputCode.length() && inputCode.charAt(i+4) == 'n') {
-								if(i+5 < inputCode.length() && inputCode.charAt(i+5) == 'g') {
-									if(i+6 < inputCode.length() && inputCode.charAt(i+6) == ' ') {
-										i+=7;
-										dataType = "String";
-										
-										while(i < inputCode.length() && (inputCode.charAt(i) != ';' && inputCode.charAt(i) != '=' && inputCode.charAt(i) != ' ')) {
-											literal += inputCode.charAt(i);
-											i++;
-										}
-										
-										VariableNode var = new VariableNode(lineNumber, dataType, literal, funcName, funcBlock);
-										this.varList.add(var);
-										
-										literal = "";
-									}
-								}
-							}
-						}
-					}
-				}
-			}
-			
-			//next line
-			if(inputCode.charAt(i) == '\n') {
-				lineNumber++;
-				i++;
-			}
-			
-			i++;
 		}
 	}
 	
