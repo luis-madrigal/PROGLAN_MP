@@ -66,39 +66,41 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
         }
     }
 
-    /**
-     * acts as the exitBlockListener
-     * @param node
-     * @return
-     */
-    public AbstractSyntaxTree visitBlockChildren(RuleNode node) {
-        AbstractSyntaxTree result = this.defaultResult();
-        int n = node.getChildCount();
-        
-        for(int i = 0; i < n && this.shouldVisitNextChild(node, result); ++i) {
-            ParseTree c = node.getChild(i);
-            AbstractSyntaxTree childResult = c.accept(this);
-            result = this.aggregateResult(result, childResult);
-        }
-        exitBlock();
 
-        return result;
-    }
+//    /**
+//     * acts as the exitBlockListener
+//     * @param node
+//     * @return
+//     */
+//    public AbstractSyntaxTree visitBlockChildren(RuleNode node) {
+//        AbstractSyntaxTree result = this.defaultResult();
+//        int n = node.getChildCount();
+//
+//        for(int i = 0; i < n && this.shouldVisitNextChild(node, result); ++i) {
+//            ParseTree c = node.getChild(i);
+//            AbstractSyntaxTree childResult = c.accept(this);
+//            result = this.aggregateResult(result, childResult);
+//        }
+//        exitBlock();
+//
+//        return result;
+//    }
 
     private void exitBlock(){
-        curScope = curScope.getParent();    //go deeper
+        curScope = curScope.getParent();    //go out
         //this.levelIndexTracker.set(lvlDepth,++lvlIndex);    //sets next expected index
-        lvlDepth--;
         nExitBlock++;
         if(nExitBlock >= 2){
             nExitBlock = 0;
             levelIndexTracker.set(lvlDepth , 0);
         }
+        lvlDepth--;
         System.out.println("newnextIndex#: "+ Arrays.deepToString(levelIndexTracker.toArray()));
 
     }
 
     private void enterBlock(){
+        nExitBlock = 0;
         lvlIndex = this.levelIndexTracker.get(lvlDepth);
         System.out.println("nextIndex#: "+ Arrays.deepToString(levelIndexTracker.toArray()));
         System.out.println("Depth: "+lvlDepth+" ;block#: "+lvlIndex);
@@ -796,15 +798,13 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
         configureIsBreakpoint(ctx.getStart().getLine());
         LeafNode variable = new LeafNode(null);
         variable.setNodeType(NodeType.VARIABLE);
-        SymbolContext symContext = null;
         variable.setBreakpoint(this.isBreakpoint);
         if(isBreakpoint)
         	System.out.println("BP: "+variable.getNodeType());
         
-        symContext = curScope.checkTables(ctx.Identifier().getText());
+        SymbolContext symContext = curScope.checkTables(ctx.Identifier().getText());
 
         if(symContext != null) {
-        	System.out.println(symContext.getIdentifier());
             variable.setValue(symContext);
             variable.setLiteralType(symContext.getSymbolType());
             return variable;

@@ -1,21 +1,41 @@
 
+permanent int FINAL_X = 10;
 
-ACT main starring () {
-	int x = 5;
-	int fibo;
-<<<<<<< HEAD
+ACT add starring(int x, int y) {
+{
+}
+{
+}
+	give (x + y);
+}
+ACT asd starring(int o){
+	int z;
+	{
+		{
+		}
+	}
+	{
+	}
+}
+ACT main starring() {
+	int x = 0;
+	int y = 0;
 
-	Say "Enter a number: ";
+	when ( a > 5 )
+	{
+		int d = 5;
+		int z = 3;
+	}
+
+	Say 5 + ( 7  + 8 ) + "Ay lmao";
+	Say 5 +  7  + 8  + "Ay lmao2";
+	
+	Say "Enter value for X: ";
 	Write to x;
+	Say "Enter value for Y: ";
+	Write to y;
 
-	fibo = 2;
-	Say fibo;
-=======
-	string a = "Asda";
-
-	Say "Enter a number: ";
-	Write to x;
+	Say "Value is" +add(x,y);
+	
 	Say x;
-	Say a;
->>>>>>> 304bb935237b44951b802dcc3ed9076e86a0a861
 }
