@@ -614,7 +614,7 @@ expression
 //    |   expression '.' NEW nonWildcardTypeArguments? innerCreator
 //    |   expression '.' SUPER superSuffix
 //    |   expression '.' explicitGenericInvocation
-    |   variableExpr '[' expression ']' # arrayExpr
+    |   variableExpr '[' expression ']' ('[' expression ']')* # arrayExpr
     |   Identifier '(' expressionList? ')' # functionExpr
     |   NEW creator #arrayInitExpr
 //    |   '(' typeType ')' expression
