@@ -125,10 +125,11 @@ public class CodeGeneratorRunnable implements Runnable {
 		do {
 			if(isPlay) {
 				stmt = this.labelMap.get(pointer);
+				System.out.println("BRK "+	stmt.getType()+": "+stmt.isBreakpoint());
+			
 				pointerCount = this.evaluate(stmt, pointerCount);
 				pointer = ICGenerator.LABEL_ALIAS+pointerCount;
 				this.isPlay = false;
-
 			}
 		}while(this.labelMap.containsKey(pointer) && !this.labelMap.get(pointer).getType().equals(NodeType.RETURN));
 		
@@ -156,6 +157,7 @@ public class CodeGeneratorRunnable implements Runnable {
 	
 	private int evaluate(TACStatement statement, int pointerCount) {
 		switch (statement.getType()) {
+		
 		case BLOCK:
 			TACBlockStatement bStmt = (TACBlockStatement) statement;
 			if(bStmt.isEnter())

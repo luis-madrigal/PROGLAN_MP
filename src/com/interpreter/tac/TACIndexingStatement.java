@@ -8,8 +8,8 @@ public class TACIndexingStatement extends TACOutputStatement {
 	private String arrayName;
 	private Operand index;
 
-	public TACIndexingStatement(NodeType type, String arrayName, Operand index) {
-		super(type);
+	public TACIndexingStatement(NodeType type, String arrayName, Operand index, boolean isBreakpoint) {
+		super(type, isBreakpoint);
 		this.arrayName = arrayName;
 		this.index = index;
 	}

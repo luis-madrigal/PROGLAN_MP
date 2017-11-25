@@ -9,8 +9,8 @@ public class TACUnaryOpStatement extends TACOutputStatement {
 	private OPERATOR operator;
 	private Operand operand1;
 
-	public TACUnaryOpStatement(NodeType type, OPERATOR operator, Operand operand1) {
-		super(type);
+	public TACUnaryOpStatement(NodeType type, OPERATOR operator, Operand operand1, boolean isBreakpoint) {
+		super(type, isBreakpoint);
 		this.operator = operator;
 		this.operand1 = operand1;
 	}
