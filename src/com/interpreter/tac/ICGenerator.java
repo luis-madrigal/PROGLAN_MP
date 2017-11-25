@@ -149,6 +149,7 @@ public class ICGenerator {
 		stmt.setJumpDestTrue(ICGenerator.LABEL_ALIAS+(this.labelCount+1));
 		this.storeStatement(node.getChild(3));
 
+		this.storeExpression(node.getChild(2));
 		this.addStatement(new TACGotoStatement(NodeType.GOTO, ICGenerator.LABEL_ALIAS+currentLblCount, stmt.isBreakpoint()));
 		this.exitBlock(node.isBreakpoint());
 		stmt.setJumpDestFalse(ICGenerator.LABEL_ALIAS+(this.labelCount));
