@@ -39,16 +39,9 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
         this.lvlIndex = 0;
         this.lvlDepth = 0;
         this.nExitBlock = 0;
-<<<<<<< HEAD
-
-        this.fieldDecNode = new ProcedureNode(null,"%FIELD");
-        this.fieldDecNode.setNodeType(NodeType.FIELD_DEC);
-        methodASTTable.put(fieldDecNode.procedureName,fieldDecNode);
-=======
         this.listBreakpoints = listBreakpoints;
         this.isBreakpoint = false;
         this.triggeringLineNumber = 0;
->>>>>>> DebugThread
     }
 
     public HashMap<String, ProcedureNode> getMethodASTTable() {
@@ -107,10 +100,6 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
         System.out.println("nextIndex#: "+ Arrays.deepToString(levelIndexTracker.toArray()));
         System.out.println("Depth: "+lvlDepth+" ;block#: "+lvlIndex);
         curScope = curScope.getChildren().get(lvlIndex);    //go deeper
-<<<<<<< HEAD
-=======
-//        System.out.println("scope: "+lvlIndex);
->>>>>>> DebugThread
         this.levelIndexTracker.set(lvlDepth,++lvlIndex);    //sets next expected index
         lvlDepth++;
         if(lvlDepth >= this.levelIndexTracker.size())
@@ -839,13 +828,8 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
             symContext = curScope.checkTables(ctx.Identifier().getText());
 
             if(symContext != null){
-<<<<<<< HEAD
-                System.out.println("symcontext found");
-                variable.setValue(symContext);
-=======
 //                System.out.println("symcontext found");
                 variable.setValue(symContext.getIdentifier());
->>>>>>> DebugThread
                 variable.setLiteralType(symContext.getSymbolType());
                 return variable;
             }
