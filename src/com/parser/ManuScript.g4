@@ -614,12 +614,12 @@ expression
 //    |   expression '.' NEW nonWildcardTypeArguments? innerCreator
 //    |   expression '.' SUPER superSuffix
 //    |   expression '.' explicitGenericInvocation
-    |   variableExpr '[' expression ']' # arrayExpr
-    |   variableExpr '(' expressionList? ')' # functionExpr
+    |   variableExpr '[' expression ']' ('[' expression ']')* # arrayExpr
+    |   Identifier '(' expressionList? ')' # functionExpr
     |   NEW creator #arrayInitExpr
 //    |   '(' typeType ')' expression
-    |   variableExpr ('++' | '--') # postIncDecExpr
-    |   ('+'|'-'|'++'|'--') variableExpr # preIncDecSignExpr
+    |   equationExpr ('++' | '--') # postIncDecExpr
+    |   ('+'|'-'|'++'|'--') equationExpr # preIncDecSignExpr
     |   ('~'|'!') expression # negationExpr
     |   expression ('*'|'/'|'%') expression # multDivModExpr
     |   expression ('+'|'-') expression # addSubExpr
@@ -665,7 +665,7 @@ variableExpr
 equationExpr
 	:	Identifier
 	|	'*'Identifier
-	|	variableExpr '[' expression ']'
+	|	variableExpr ('[' expression ']')*
 	|	structExpr
 	;
 

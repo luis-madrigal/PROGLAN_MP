@@ -107,19 +107,21 @@ public class ScannerModel {
 		this.methodTable = new HashMap<String, MethodContext>(); //the methods in the program. no overloading
 		
 		ParseTreeWalker.DEFAULT.walk(new BaseListener(scope, methodTable), this.tree);
-
-		scope.print();
-
-		this.astbv = new ASTBuildVisitor(scope, listBreakpoints);
-		astbv.visit(tree);
-		astbv.printAST("main");
-//		astbv.printAST("generateFibo");
 		
-		this.stopThread();
+		if(Console.instance().errorCount == 0) {
+			scope.print();
+	
+			this.astbv = new ASTBuildVisitor(scope, listBreakpoints);
+			astbv.visit(tree);
+			astbv.printAST("main");
+	//		astbv.printAST("generateFibo");
 			
-		this.runnableCodeGenerator = new CodeGeneratorRunnable(this.pnlParent, this.astbv, methodTable);
-		this.threadCodeGenerator = new Thread(runnableCodeGenerator);
-		threadCodeGenerator.start();
+			this.stopThread();
+				
+			this.runnableCodeGenerator = new CodeGeneratorRunnable(this.pnlParent, this.astbv, methodTable);
+			this.threadCodeGenerator = new Thread(runnableCodeGenerator);
+			threadCodeGenerator.start();
+		}
 		
 	
 		String tokenized = "";
