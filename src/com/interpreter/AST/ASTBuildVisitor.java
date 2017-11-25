@@ -99,10 +99,7 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
         System.out.println("nextIndex#: "+ Arrays.deepToString(levelIndexTracker.toArray()));
         System.out.println("Depth: "+lvlDepth+" ;block#: "+lvlIndex);
         curScope = curScope.getChildren().get(lvlIndex);    //go deeper
-<<<<<<< HEAD
 
-=======
->>>>>>> Merge
         this.levelIndexTracker.set(lvlDepth,++lvlIndex);    //sets next expected index
         lvlDepth++;
         if(lvlDepth >= this.levelIndexTracker.size())
@@ -831,10 +828,7 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
             symContext = curScope.checkTables(ctx.Identifier().getText());
 
             if(symContext != null){
-<<<<<<< HEAD
-=======
-//                System.out.println("symcontext found");
->>>>>>> Merge
+
                 variable.setValue(symContext.getIdentifier());
                 variable.setLiteralType(symContext.getSymbolType());
                 return variable;
