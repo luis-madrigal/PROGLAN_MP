@@ -802,7 +802,6 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
         	System.out.println("BP: "+variable.getNodeType());
         
         symContext = curScope.checkTables(ctx.Identifier().getText());
-        String type = symContext.getSymbolType(); //todo: convert to enum?
 
         if(symContext != null) {
             variable.setValue(symContext);
@@ -860,7 +859,6 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
         	System.out.println("BP: "+variable.getNodeType());
         
         symContext = curScope.checkTables(ctx.Identifier().getText());
-        String type = symContext.getSymbolType(); //todo: convert to enum?
 
         if(symContext != null) {
             variable.setValue(symContext);
@@ -885,8 +883,6 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
         	System.out.println("BP: "+variable.getNodeType());
         
         symContext = curScope.checkTables(ctx.Identifier().getText());
-//        System.out.println("var "+ctx.Identifier().getText() + " in table? "+curScope.inScope(ctx.Identifier().getText()));
-//        System.out.println(symContext.getSymbolType());
 
         if(symContext != null) {
             variable.setValue(symContext);
