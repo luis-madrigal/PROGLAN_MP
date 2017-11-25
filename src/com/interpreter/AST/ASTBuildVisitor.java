@@ -832,8 +832,7 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
             symContext = curScope.checkTables(ctx.Identifier().getText());
 
             if(symContext != null){
-
-                variable.setValue(symContext.getIdentifier());
+                variable.setValue(symContext);
                 variable.setLiteralType(symContext.getSymbolType());
                 return variable;
             }
