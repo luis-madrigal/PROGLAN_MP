@@ -153,7 +153,7 @@ public class CodeGeneratorRunnable implements Runnable {
 		}
 		do {
 			if(isPlay) {
-				System.out.println("evaluating: "+pointer);
+//				System.out.println("evaluating: "+pointer);
 				stmt = this.labelMap.get(pointer);
 				pointerCount = this.evaluate(methodScope, registers, stmt, pointerCount);
 				pointer = ICGenerator.LABEL_ALIAS+pointerCount;
@@ -164,22 +164,17 @@ public class CodeGeneratorRunnable implements Runnable {
 //				}
 			}
 		}while(this.checkEndRun(pointer));
-
-		while(this.prevBlocks.peek() != null) {
-			this.prevBlocks.pop();
-		}
-		this.prevBlocks.pop();
-		if(!this.prevBlocks.isEmpty())
-			this.currentScope = this.prevBlocks.peek();
 		
-//		if(stmt.getType().equals(NodeType.RETURN)) {
+		Object value = null;
 		if(this.labelMap.containsKey(pointer) && this.labelMap.get(pointer).getType().equals(NodeType.RETURN)) {
 			stmt = this.labelMap.get(pointer);
 			TACReturnStatement rStmt = (TACReturnStatement) stmt;
 			System.out.println("RETURN: "+this.getValue(registers, rStmt.getExpression()));
-			return this.getValue(registers, rStmt.getExpression());
-		} else
-			return null;
+			value = this.getValue(registers, rStmt.getExpression());
+		}
+		
+		this.returnScope();
+		return value;
 	}
 	
 	private void enterBlock(Scope methodScope, String label) {
@@ -394,8 +389,8 @@ public class CodeGeneratorRunnable implements Runnable {
 			return operand.getValue();
 		case VARIABLE:
 			Variable v = (Variable) operand;
-
-			return this.currentScope.findVar(v.getAlias()).getValue();
+			Object valueClone = Cloner.standard().deepClone(this.currentScope.findVar(v.getAlias()).getValue());
+			return valueClone;
 		default:
 			return null;
 		}
@@ -408,6 +403,15 @@ public class CodeGeneratorRunnable implements Runnable {
 		return !this.labelMap.get(pointer).getType().equals(NodeType.FUNCTION_END) 
 				&& !this.labelMap.get(pointer).getType().equals(NodeType.FIELD_DEC_END)
 				&& !this.labelMap.get(pointer).getType().equals(NodeType.RETURN) && this.isRunning;
+	}
+	
+	private void returnScope() {
+		while(this.prevBlocks.peek() != null) {
+			this.prevBlocks.pop();
+		}
+		this.prevBlocks.pop();
+		if(!this.prevBlocks.isEmpty())
+			this.currentScope = this.prevBlocks.peek();
 	}
 	
 	public void pause() {

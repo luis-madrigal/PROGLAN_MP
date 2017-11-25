@@ -1,11 +1,34 @@
 
+permanent int FINAL_X = 10;
+
+ACT gcd starring (int p, int q) {
+	if(q == 0) 
+		give p;
+	else 
+		give gcd(q, p % q);
+}
+
+ACT gcd2 starring (int p, int q) {
+	when (q != 0) {
+		int temp = q;
+		q = p % q;
+		p = temp;
+		
+	}
+	Say p;
+	give p + 0;
+}
 
 ACT main starring() {
- 	int x = 0;
+	int p;
+	int q;
 
-	Say "Hello World";
-	
- 	replay(int i = 0; i < 5; i++) {
- 		Say "Hello World";
- 	}
- }
+	Write to p;
+	Write to q;
+
+	int d = gcd(p, q);
+	int d2 = gcd2(p, q);
+
+	Say "gcd(" + p + ", " + q + ") = " + d;
+	Say "gcd(" + p + ", " + q + ") = " + d2;
+}
