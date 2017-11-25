@@ -28,6 +28,12 @@ public class ExpressionEvaluator {
 		if(xType.equals(LITERAL_TYPE.FLOAT) && yType.equals(LITERAL_TYPE.INT)) {
 			return ExpressionEvaluator.add((Float)x, (Integer)y);
 		}
+		if(xType.equals(LITERAL_TYPE.CHAR) && yType.equals(LITERAL_TYPE.INT)) {
+			return ExpressionEvaluator.add((Character) x, (Integer)y);
+		}
+		if(xType.equals(LITERAL_TYPE.INT) && yType.equals(LITERAL_TYPE.CHAR)) {
+			return ExpressionEvaluator.add((Integer) x, (Character)y);
+		}
 		
 		return ExpressionEvaluator.concat(x.toString(), y.toString());
 	}
@@ -55,6 +61,12 @@ public class ExpressionEvaluator {
 		if(xType.equals(LITERAL_TYPE.FLOAT) && yType.equals(LITERAL_TYPE.INT)) {
 			return ExpressionEvaluator.subtract((Float)x, (Integer)y);
 		}
+		if(xType.equals(LITERAL_TYPE.CHAR) && yType.equals(LITERAL_TYPE.INT)) {
+			return ExpressionEvaluator.subtract((Character) x, (Integer)y);
+		}
+		if(xType.equals(LITERAL_TYPE.INT) && yType.equals(LITERAL_TYPE.CHAR)) {
+			return ExpressionEvaluator.subtract((Integer) x, (Character)y);
+		}
 		
 		return null;
 	}
@@ -81,6 +93,12 @@ public class ExpressionEvaluator {
 		
 		if(xType.equals(LITERAL_TYPE.FLOAT) && yType.equals(LITERAL_TYPE.INT)) {
 			return ExpressionEvaluator.multiply((Float)x, (Integer)y);
+		}
+		if(xType.equals(LITERAL_TYPE.CHAR) && yType.equals(LITERAL_TYPE.INT)) {
+			return ExpressionEvaluator.multiply((Character) x, (Integer)y);
+		}
+		if(xType.equals(LITERAL_TYPE.INT) && yType.equals(LITERAL_TYPE.CHAR)) {
+			return ExpressionEvaluator.multiply((Integer) x, (Character)y);
 		}
 		
 		return null;
@@ -110,6 +128,13 @@ public class ExpressionEvaluator {
 			return ExpressionEvaluator.divide((Float)x, (Integer)y);
 		}
 		
+		if(xType.equals(LITERAL_TYPE.CHAR) && yType.equals(LITERAL_TYPE.INT)) {
+			return ExpressionEvaluator.divide((Character) x, (Integer)y);
+		}
+		if(xType.equals(LITERAL_TYPE.INT) && yType.equals(LITERAL_TYPE.CHAR)) {
+			return ExpressionEvaluator.divide((Integer) x, (Character)y);
+		}
+		
 		return null;
 	}
 	
@@ -137,6 +162,13 @@ public class ExpressionEvaluator {
 			return ExpressionEvaluator.modulo((Float)x, (Integer)y);
 		}
 		
+		if(xType.equals(LITERAL_TYPE.CHAR) && yType.equals(LITERAL_TYPE.INT)) {
+			return ExpressionEvaluator.modulo((Character) x, (Integer)y);
+		}
+		if(xType.equals(LITERAL_TYPE.INT) && yType.equals(LITERAL_TYPE.CHAR)) {
+			return ExpressionEvaluator.modulo((Integer) x, (Character)y);
+		}
+		
 		return null;
 	}
 	
@@ -149,6 +181,14 @@ public class ExpressionEvaluator {
 	}
 	
 	public static Float add(Integer x, Float y) {
+		return x + y;
+	}
+	
+	public static Integer add(Integer x, Character y) {
+		return x + y;
+	}
+	
+	public static Integer add(Character x, Integer y) {
 		return x + y;
 	}
 
@@ -164,6 +204,14 @@ public class ExpressionEvaluator {
 		return x - y;
 	}
 	
+	public static Integer subtract(Integer x, Character y) {
+		return x - y;
+	}
+	
+	public static Integer subtract(Character x, Integer y) {
+		return x - y;
+	}
+	
 	public static Integer multiply(Integer x, Integer y) {
 		return x * y;
 	}
@@ -173,6 +221,14 @@ public class ExpressionEvaluator {
 	}
 	
 	public static Float multiply(Integer x, Float y) {
+		return x * y;
+	}
+	
+	public static Integer multiply(Integer x, Character y) {
+		return x * y;
+	}
+	
+	public static Integer multiply(Character x, Integer y) {
 		return x * y;
 	}
 	
@@ -188,6 +244,14 @@ public class ExpressionEvaluator {
 		return x / y;
 	}
 	
+	public static Integer divide(Integer x, Character y) {
+		return x / y;
+	}
+	
+	public static Integer divide(Character x, Integer y) {
+		return x / y;
+	}
+	
 	public static Integer modulo(Integer x, Integer y) {
 		return x % y;
 	}
@@ -197,6 +261,14 @@ public class ExpressionEvaluator {
 	}
 	
 	public static Float modulo(Integer x, Float y) {
+		return x % y;
+	}
+	
+	public static Integer modulo(Integer x, Character y) {
+		return x % y;
+	}
+	
+	public static Integer modulo(Character x, Integer y) {
 		return x % y;
 	}
 	

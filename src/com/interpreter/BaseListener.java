@@ -15,20 +15,26 @@ import com.interpreter.contexts.SymbolContext;
 import com.interpreter.matchers.LiteralMatcher;
 import com.parser.ManuScriptBaseListener;
 import com.parser.ManuScriptParser;
+import com.parser.ManuScriptParser.AddSubExprContext;
 import com.parser.ManuScriptParser.AndExprContext;
 import com.parser.ManuScriptParser.ArrayCreatorRestContext;
 import com.parser.ManuScriptParser.ArrayInitExprContext;
 import com.parser.ManuScriptParser.ComparisonExprContext;
 import com.parser.ManuScriptParser.EqualityExprContext;
+import com.parser.ManuScriptParser.EquationExprContext;
 import com.parser.ManuScriptParser.ExpressionContext;
 import com.parser.ManuScriptParser.ExpressionListContext;
 import com.parser.ManuScriptParser.FormalParameterContext;
 import com.parser.ManuScriptParser.LiteralContext;
 import com.parser.ManuScriptParser.MethodBodyContext;
+import com.parser.ManuScriptParser.MultDivModExprContext;
+import com.parser.ManuScriptParser.NegationExprContext;
 import com.parser.ManuScriptParser.OrExprContext;
 import com.parser.ManuScriptParser.PostIncDecExprContext;
+import com.parser.ManuScriptParser.PreIncDecSignExprContext;
 import com.parser.ManuScriptParser.PrimaryContext;
 import com.parser.ManuScriptParser.PrimaryExprContext;
+import com.parser.ManuScriptParser.StructExprContext;
 import com.parser.ManuScriptParser.VariableDeclaratorContext;
 import com.parser.ManuScriptParser.VariableExprContext;
 import com.utils.Console;
@@ -91,7 +97,7 @@ public class BaseListener extends ManuScriptBaseListener{
 						if (crCtx.arrayCreatorRest().expression().size() != dimCount)
 							SemanticErrors.throwError(SemanticErrors.INVALID_DIMS, line, charPosition, crCtx.arrayCreatorRest().expression().size(), dimCount);
 						for (ExpressionContext expr : crCtx.arrayCreatorRest().expression()) {
-							this.expressionChecker(expr, "int");
+//							this.expressionChecker(expr, "int");
 						}
 					}
 
@@ -111,10 +117,10 @@ public class BaseListener extends ManuScriptBaseListener{
 				}
 				else if(vdi.expression() instanceof PrimaryExprContext){
 					PrimaryContext primary = ((PrimaryExprContext) vdi.expression()).primary();
-					if(primary.Identifier() != null){
-						if(!getCurrentSymTable().containsKey(primary.Identifier().getText())){
-							SemanticErrors.throwError(SemanticErrors.UNDECLARED_VAR, line, charPosition, primary.Identifier().getText());
-						}else if(!getCurrentSymTable().get(primary.Identifier().getText()).getSymbolType().equals(varType)){
+					if(primary.equationExpr().Identifier() != null){
+						if(!getCurrentSymTable().containsKey(primary.equationExpr().Identifier().getText())){
+							SemanticErrors.throwError(SemanticErrors.UNDECLARED_VAR, line, charPosition, primary.equationExpr().Identifier().getText());
+						}else if(!getCurrentSymTable().get(primary.equationExpr().Identifier().getText()).getSymbolType().equals(varType)){
 							SemanticErrors.throwError(SemanticErrors.TYPE_MISMATCH, line, charPosition, varType);
 						}
 					}
@@ -226,7 +232,7 @@ public class BaseListener extends ManuScriptBaseListener{
 				}else {
 					//do this if variable has initializer
 					if (vdctx.variableInitializer() != null) {
-						this.expressionChecker(vdctx.variableInitializer(), varType);
+//						this.expressionChecker(vdctx.variableInitializer(), varType);
 					}
 				}
 				System.out.println("added "+varName+" to symbol table"+" is constant:"+isConstant);
@@ -257,7 +263,7 @@ public class BaseListener extends ManuScriptBaseListener{
 				}else {
 					//do this if variable has initializer
 					if (vdctx.variableInitializer() != null) {
-						this.expressionChecker(vdctx.variableInitializer(), varType);
+//						this.expressionChecker(vdctx.variableInitializer(), varType);
 					}
 				}
 				System.out.println("added "+varName+" to symbol table");
@@ -281,7 +287,11 @@ public class BaseListener extends ManuScriptBaseListener{
 			if(sctx.isConstant())
 				SemanticErrors.throwError(SemanticErrors.CONSTANT_MOD, lineNumStart, charNumStart, varName);
 			else {
-				this.expressionChecker(ctx.expression(), sctx.getSymbolType());
+				String types = this.expressionCheck(ctx.expression());
+				if(!sctx.getSymbolType().matches(types)) {
+					SemanticErrors.throwError(SemanticErrors.VAR_ASSIGN_MISMATCH, lineNumStart, charNumStart, varName, types);
+				}
+//				this.expressionChecker(ctx.expression(), sctx.getSymbolType());
 			}
 		} else {
 			SemanticErrors.throwError(SemanticErrors.UNDECLARED_VAR, ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), varName);
@@ -328,12 +338,12 @@ public class BaseListener extends ManuScriptBaseListener{
 					//Existing variable. now check for type mismatch
 					if(!scopes.peek().checkTables(arg).getSymbolType().equals(mcx.getArgTypes().get(i)))
 						SemanticErrors.throwError(SemanticErrors.TYPE_MISMATCH, ectxLineNum, ectxCharPosAtLine, mcx.getArgTypes().get(i));
-				} else if(ectx instanceof PrimaryExprContext && ((PrimaryExprContext) ectx).primary().Identifier() != null) {
+				} else if(ectx instanceof PrimaryExprContext && ((PrimaryExprContext) ectx).primary().equationExpr().Identifier() != null) {
 					//variable but not in scope or not declared.
 					SemanticErrors.throwError(SemanticErrors.UNDECLARED_VAR, ectxLineNum, ectxCharPosAtLine, arg);
 				} else {
 					//literal or expression
-					this.expressionChecker(ectx, mcx.getArgTypes().get(i));
+//					this.expressionChecker(ectx, mcx.getArgTypes().get(i));
 				}
 				i++;
 			}
@@ -356,7 +366,7 @@ public class BaseListener extends ManuScriptBaseListener{
 			if(sctx.isConstant())
 				SemanticErrors.throwError(SemanticErrors.CONSTANT_MOD, ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), varName);
 			else {
-				this.expressionChecker(ctx, sctx.getSymbolType());
+//				this.expressionChecker(ctx, sctx.getSymbolType());
 			}
 		} else {
 			SemanticErrors.throwError(SemanticErrors.UNDECLARED_VAR, ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), varName);
@@ -372,7 +382,7 @@ public class BaseListener extends ManuScriptBaseListener{
 			if(sctx.isConstant())
 				SemanticErrors.throwError(SemanticErrors.CONSTANT_MOD, ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), varName);
 			else {
-				this.expressionChecker(ctx, sctx.getSymbolType());
+//				this.expressionChecker(ctx, sctx.getSymbolType());
 			}
 		} else {
 			SemanticErrors.throwError(SemanticErrors.UNDECLARED_VAR, ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), varName);
@@ -391,23 +401,23 @@ public class BaseListener extends ManuScriptBaseListener{
 		
 		String actualType = "null";
 		
-		if(node.getParent() instanceof LiteralContext) {
-			LiteralContext lctx = (LiteralContext) node.getParent();
-			actualType = LiteralMatcher.instance().getLiteralType(lctx);
-			
-			return actualType;
-		} else if(node.getParent() instanceof PrimaryContext && ((PrimaryContext) node.getParent()).Identifier() != null) {
-			PrimaryContext pctx = (PrimaryContext) node.getParent();
-			String varName = node.getParent().getText();
-			SymbolContext sctx;
-			if((sctx = scopes.peek().checkTables(varName)) != null) {
-				//Existing variable. now check for type mismatch
-				actualType = sctx.getSymbolType();
-			} else {
-				SemanticErrors.throwError(SemanticErrors.UNDECLARED_VAR, pctx.getStart().getLine(), pctx.getStart().getCharPositionInLine(), varName);
-			}
-			return actualType;
-		}
+//		if(node.getParent() instanceof LiteralContext) {
+//			LiteralContext lctx = (LiteralContext) node.getParent();
+//			actualType = LiteralMatcher.instance().getLiteralType(lctx);
+//			
+//			return actualType;
+//		} else if(node.getParent() instanceof PrimaryContext && ((PrimaryContext) node.getParent()).equationExpr().Identifier() != null) {
+//			PrimaryContext pctx = (PrimaryContext) node.getParent();
+//			String varName = node.getParent().getText();
+//			SymbolContext sctx;
+//			if((sctx = scopes.peek().checkTables(varName)) != null) {
+//				//Existing variable. now check for type mismatch
+//				actualType = sctx.getSymbolType();
+//			} else {
+//				SemanticErrors.throwError(SemanticErrors.UNDECLARED_VAR, pctx.getStart().getLine(), pctx.getStart().getCharPositionInLine(), varName);
+//			}
+//			return actualType;
+//		}
 		
 		return "null";
 	}
@@ -439,7 +449,7 @@ public class BaseListener extends ManuScriptBaseListener{
 					if(!expectedType.equals(actualType))
 						SemanticErrors.throwError(SemanticErrors.TYPE_MISMATCH, lctx.getStart().getLine(), lctx.getStart().getCharPositionInLine(), expectedType);
 				}
-			} else if(node.getParent() instanceof PrimaryContext && ((PrimaryContext) node.getParent()).Identifier() != null) {
+			} else if(node.getParent() instanceof PrimaryContext && ((PrimaryContext) node.getParent()).equationExpr().Identifier() != null) {
 				PrimaryContext pctx = (PrimaryContext) node.getParent();
 				SymbolContext sctx;				
 				String varName = node.getParent().getText();
@@ -500,7 +510,7 @@ public class BaseListener extends ManuScriptBaseListener{
         	i++;
         }
         
-        if(node.getParent() instanceof PrimaryContext && ((PrimaryContext) node.getParent()).Identifier() != null) {
+        if(node.getParent() instanceof PrimaryContext && ((PrimaryContext) node.getParent()).equationExpr().Identifier() != null) {
 			PrimaryContext pctx = (PrimaryContext) node.getParent();
 			String varName = node.getParent().getText();
 			if(scopes.peek().checkTables(varName) == null) {
@@ -630,85 +640,149 @@ public class BaseListener extends ManuScriptBaseListener{
 		return maxDepth;
 	}
 	
-//	private boolean expressionCheck(ParseTree node, String expectedType) {
-//		if(node instanceof PostIncDecExprContext) {
-//			
-//		}
-//	}
-//	
-//	private String getTypeOf(ParseTree node) {
-//		if(node instanceof VariableExprContext) {
-//			//node is a variable
-//		}
-//		int[] arr =  new int[]{3};
-//		arr[2]++;
-//	}
+	private String expressionCheck(ParseTree node) {
+		if(node.getChildCount() == 1) {
+			return this.getTypeOf(node.getChild(0));
+		} else if(node.getChild(0).getText().equals("(")) {
+			return this.getTypeOf(node.getChild(1));
+		} else if(node instanceof PostIncDecExprContext) {
+			return this.getExprReturnedType(((PostIncDecExprContext) node).getStart().getLine(), ((PostIncDecExprContext) node).getStart().getCharPositionInLine(), OPERATOR.getEnum(node.getChild(1)), this.getTypeOf(node.getChild(0)));
+		} else if(node instanceof PreIncDecSignExprContext) {
+			return this.getExprReturnedType(((PreIncDecSignExprContext) node).getStart().getLine(), ((PreIncDecSignExprContext) node).getStart().getCharPositionInLine(), OPERATOR.getEnum(node.getChild(0)), this.getTypeOf(node.getChild(1)));
+		} else {
+			int lineNum = 0;
+			int charPos = 0;
+			
+			if(node instanceof MultDivModExprContext) {
+				lineNum = ((MultDivModExprContext) node).getStart().getLine();
+				charPos = ((MultDivModExprContext) node).getStart().getCharPositionInLine();
+			} else if(node instanceof AddSubExprContext) {
+				lineNum = ((AddSubExprContext) node).getStart().getLine();
+				charPos = ((AddSubExprContext) node).getStart().getCharPositionInLine();
+			} else if(node instanceof ComparisonExprContext) {
+				lineNum = ((ComparisonExprContext) node).getStart().getLine();
+				charPos = ((ComparisonExprContext) node).getStart().getCharPositionInLine();
+			} else if(node instanceof EqualityExprContext) {
+				lineNum = ((EqualityExprContext) node).getStart().getLine();
+				charPos = ((EqualityExprContext) node).getStart().getCharPositionInLine();
+			} else if(node instanceof AndExprContext) {
+				lineNum = ((AndExprContext) node).getStart().getLine();
+				charPos = ((AndExprContext) node).getStart().getCharPositionInLine();
+			} else if(node instanceof OrExprContext) {
+				lineNum = ((OrExprContext) node).getStart().getLine();
+				charPos = ((OrExprContext) node).getStart().getCharPositionInLine();
+			} 
+			System.out.println(lineNum + " " + charPos + " " +node.getChild(1).getText());
+			return this.getExprReturnedType(lineNum, charPos, OPERATOR.getEnum(node.getChild(1)), this.getTypeOf(node.getChild(0)), this.getTypeOf(node.getChild(2)));
+		}
+	}
+	
+	private String getTypeOf(ParseTree node) {
+		if(node instanceof VariableExprContext
+				|| node instanceof StructExprContext
+				|| node instanceof EquationExprContext) {
+			SymbolContext ctx = scopes.peek().checkTables(node.getText());
+			return ctx.getSymbolType();
+		} else if (node instanceof PrimaryContext && node.getChildCount() == 1){
+			String text = node.getText();
+			System.out.println(text);
+			if(scopes.peek().inScope(text)) {
+				//node is a variable
+				return scopes.peek().checkTables(text).getSymbolType();
+			} else if(methodTable.containsKey(text)) {
+				return methodTable.get(text).getReturnType();
+			} else {
+				PrimaryContext ctx = (PrimaryContext) node;
+				return LiteralMatcher.instance().getLiteralType(ctx.literal());
+			}
+		} else {
+			return this.expressionCheck(node);
+		}
+		
+	}
 
 	//expression checking for unary operations
-	private boolean exprAllowed(OPERATOR operator, String type) {
+	private String getExprReturnedType(int lineNum, int charPos, OPERATOR operator, String type) {
 		switch (operator) {
 		case ADD:
 		case SUB: 
 			if(this.canBeOfType(type, "int", "float"))
-				return true;
+				return type;
 			break;
 		case INC:
 		case DEC:
 			if(this.canBeOfType(type, "int", "float", "char"))
-				return true;
+				return type;
 			break;
 		case NOT:
 			if(this.canBeOfType(type, "boolean"))
-				return true;
+				return type;
 			break;
 		default:
 			break;
 		}
-		
-		return false;
+		SemanticErrors.throwError(SemanticErrors.UN_OP_TYPE_MISMATCH, lineNum, charPos, operator.toString(), type);
+		return "null";
 	}
 	
 	//expression checking for binary operations
-	private boolean exprAllowed(OPERATOR operator, String type1, String type2) {
+	private String getExprReturnedType(int lineNum, int charPos, OPERATOR operator, String type1, String type2) {
 		switch(operator) {
 		case ADD:
 			if(this.canBeOfType(type1, "string") && this.canBeOfType(type2, "string"))
-				return true;
+				return type1;
 		case SUB:
 		case MULT:
 		case DIV:
 		case MOD:
 		case PLUSASSIGN:
 			if(this.canBeOfType(type1, "string") && this.canBeOfType(type2, "string"))
-				return true;
+				return type1;
 		case SUBASSIGN:
 		case MULTASSIGN:
 		case DIVASSIGN:
 		case MODASSIGN:
-			if(this.canBeOfType(type1, "int", "float") && this.canBeOfType(type2, "int", "float"))
-				return true;
-			if(this.canBeOfType(type1, "int", "char") && this.canBeOfType(type2, "int", "char"))
-				return true;
+			if(this.canBeOfType(type1, "int") && this.canBeOfType(type2, "int"))
+				return "int|char|float";
+			if(this.canBeOfType(type1, "int") && this.canBeOfType(type2, "float"))
+				return "float";
+			if(this.canBeOfType(type1, "float") && this.canBeOfType(type2, "int"))
+				return "float";
+			if(this.canBeOfType(type1, "float") && this.canBeOfType(type2, "float"))
+				return "float";
+			if(this.canBeOfType(type1, "char") && this.canBeOfType(type2, "char"))
+				return "int|char|float";
+			if(this.canBeOfType(type1, "char") && this.canBeOfType(type2, "int"))
+				return "int|char|float";
+			if(this.canBeOfType(type1, "int") && this.canBeOfType(type2, "char"))
+				return "int|char|float";
+			if(this.canBeOfType(type1, "float") && this.canBeOfType(type2, "char"))
+				return "float";
+			if(this.canBeOfType(type1, "char") && this.canBeOfType(type2, "float"))
+				return "float";
 			break;
 		case EQUAL:
 		case NEQUAL:
 			if(this.canBeOfType(type1, "string") && this.canBeOfType(type2, "string"))
-				return true;
+				return "boolean";
 		case LESS:
 		case LEQ:
 		case GREATER:
 		case GEQ:
 			if(this.canBeOfType(type1, "int", "float", "char") && this.canBeOfType(type2, "int", "float", "char"))
-				return true;
+				return "boolean";
+			if(this.canBeOfType(type1, "boolean") && this.canBeOfType(type2, "boolean"))
+				return "boolean";
 		default:
 			break;
 		}
-		return false;
+		SemanticErrors.throwError(SemanticErrors.BIN_OP_TYPE_MISMATCH, lineNum, charPos, operator.toString(), type1, type2);
+		return "null";
 	}
 	
 	private boolean canBeOfType(String type, String ...args) {
 		for(int i = 0; i < args.length; i++) {
-			if(type.equals(args[i]))
+			if(args[i].matches(type))
 				return true;
 		}
 		
