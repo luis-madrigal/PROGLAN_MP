@@ -322,7 +322,7 @@ public class CodeGeneratorRunnable implements Runnable {
 					ArrayInfo info = (ArrayInfo) iCtx.getOther();
 					System.out.println(info);
 					registers.put(rb2.getName(), rb2);
-					registers.get(rb2.getName()).setValue(info.getObjWithIndex(this.getValue(registers, iOp.getIndex())));
+					registers.get(rb2.getName()).setValue(info.getObject(Integer.parseInt(this.getValue(registers, iOp.getIndex()).toString())));
 					pointerCount++;
 					break;
 				default:

@@ -659,12 +659,14 @@ structExpr
 variableExpr
 	:	Identifier
 	|	'*'Identifier
+	|	structExpr
 	;
 	
 equationExpr
 	:	Identifier
 	|	'*'Identifier
 	|	variableExpr '[' expression ']'
+	|	structExpr
 	;
 
 primary
@@ -674,6 +676,7 @@ primary
     |   literal
     |   Identifier
     |	'*'Identifier
+   	|	structExpr
 //    |	'&'Identifier
 //    |   typeType '.' 'class'
 //    |   nonWildcardTypeArguments (explicitGenericInvocationSuffix | THIS arguments)
