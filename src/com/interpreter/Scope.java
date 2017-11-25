@@ -8,7 +8,8 @@ import java.util.List;
 import com.interpreter.contexts.SymbolContext;
 
 public class Scope extends HashSet<String>{
-	
+
+	private static final long serialVersionUID = 1L;
 	private String label;
 	private Scope parent;
 	private HashMap<String, SymbolContext> symTable;

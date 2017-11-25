@@ -16,10 +16,12 @@ public class AbstractSyntaxTree {
     protected AbstractSyntaxTree parent;
     protected NodeType nodeType;
     protected Object value;
-
+    protected boolean isBreakpoint;
+    
     public AbstractSyntaxTree(AbstractSyntaxTree parent) {
         this.parent = parent;
         this.children = new ArrayList<AbstractSyntaxTree>();
+        this.isBreakpoint = false;
     }
 
     public void print() {
@@ -111,4 +113,12 @@ public class AbstractSyntaxTree {
         }
 		return null;
     }
+
+	public boolean isBreakpoint() {
+		return isBreakpoint;
+	}
+
+	public void setBreakpoint(boolean isBreakpoint) {
+		this.isBreakpoint = isBreakpoint;
+	}
 }

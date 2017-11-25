@@ -325,12 +325,12 @@ public class ICGenerator {
 		this.labelCount++;
 		this.tac.add(stmt);
 		stmt.setLabel(ICGenerator.LABEL_ALIAS+this.labelCount);
-		System.out.println(stmt.toString());
+		// System.out.println(stmt.toString());
 	}
 	
 	public void print() {
 		for (TACStatement tacStatement : tac) {
-//			System.out.println(tacStatement.toString());
+//			// System.out.println(tacStatement.toString());
 			Panel.threeACOut.setText(Panel.threeACOut.getText() + tacStatement.toString() + "\n");
 		}
 		Panel.threeACOut.setText(Panel.threeACOut.getText() + "\n");

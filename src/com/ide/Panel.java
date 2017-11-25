@@ -15,6 +15,8 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.ArrayList;
+import java.util.Stack;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -529,7 +531,7 @@ public class Panel implements Runnable, ActionListener, KeyListener, MouseListen
 		this.bottomPane.add(this.lblConsole, gbc);
 				
 		this.consolePane = new JScrollPane(Console.instance().getTextPane());
-		this.consolePane.setPreferredSize(new Dimension(350, 150));
+		this.consolePane.setPreferredSize(new Dimension(350, (int)Frame.SCREEN_SIZE.getHeight()-300));
 		this.consolePane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		
 		this.consolePane.getVerticalScrollBar().setUI(new CustomScrollBarUISky());
@@ -558,7 +560,7 @@ public class Panel implements Runnable, ActionListener, KeyListener, MouseListen
 		this.bottomSplitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
 		this.bottomSplitPane.setTopComponent(this.topSplitPane);
 		this.bottomSplitPane.setBottomComponent(this.bottomPane);
-		this.bottomSplitPane.setDividerLocation((int) Frame.SCREEN_SIZE.getHeight()-300);
+		this.bottomSplitPane.setDividerLocation((int)Frame.SCREEN_SIZE.getHeight()-300);
 		bottomSplitPane.setOpaque(false);
 		bottomSplitPane.setBackground(FrameStatic.clrTransparent);
 		gbc = new GridBagConstraints();
@@ -779,7 +781,7 @@ public class Panel implements Runnable, ActionListener, KeyListener, MouseListen
 //			this.scanner.processTokens(text+newline);
 //			this.threadCodeGenerator = this.scanner.getThreadCodeGenerator();
 			
-			this.parsedOut.setText(this.parsedOut.getText() + this.scanner.getTokens(text+newline));
+			this.parsedOut.setText(this.parsedOut.getText() + this.scanner.getTokens(text+newline, this.getListBreakpoints(text+newline)));
 			this.scanner.generateTree(); // Required to do this
 			this.treePane.setViewportView(this.scanner.getTree());			
 			
@@ -819,7 +821,7 @@ public class Panel implements Runnable, ActionListener, KeyListener, MouseListen
 			String text = this.codeInput.getText();
 			
 			this.parsedOut.setText("");
-			this.parsedOut.setText(this.parsedOut.getText()+this.scanner.getTokens(text+newline));
+			this.parsedOut.setText(this.parsedOut.getText()+this.scanner.getTokens(text+newline, this.getListBreakpoints(text+newline)));
 			
 			this.codeInput.selectAll();
 			
@@ -827,6 +829,14 @@ public class Panel implements Runnable, ActionListener, KeyListener, MouseListen
 		}
 	}
 
+	public Stack<Integer> getListBreakpoints(String text) {
+		Stack<Integer> listBreakpoints = new Stack<Integer>();
+		listBreakpoints.push(1);
+		listBreakpoints.push(4);
+		listBreakpoints.push(5);
+		
+		return listBreakpoints;
+	}
 	@Override
 	public void keyReleased(KeyEvent e) {
 	}

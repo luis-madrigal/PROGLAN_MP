@@ -1,5 +1,6 @@
 package com.parser;
 import java.util.List;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.BitSet;
 import java.util.HashMap;
@@ -46,7 +47,7 @@ public class ScannerModel {
 	private CommonTokenStream tokens;
 	private Thread threadCodeGenerator;
 	
-	public String getTokens(String input) {
+	public String getTokens(String input, Stack<Integer> listBreakpoints) {
 		ANTLRInputStream istream = new ANTLRInputStream(input);
 		
 		message = "";
@@ -99,16 +100,12 @@ public class ScannerModel {
 		
 		Scope scope = new Scope(null); //scope of program. contains the symbol tables
 		this.methodTable = new HashMap<String, MethodContext>(); //the methods in the program. no overloading
-
-
-		ParseTreeWalker.DEFAULT.walk(new BaseListener(scope, methodTable), this.tree);
 		
-		System.out.println(scope.getChildren().size());
-		System.out.println(methodTable.size());
+		ParseTreeWalker.DEFAULT.walk(new BaseListener(scope, methodTable), this.tree);
 
 		scope.print();
 
-		this.astbv = new ASTBuildVisitor(scope);
+		this.astbv = new ASTBuildVisitor(scope, listBreakpoints);
 		astbv.visit(tree);
 		astbv.printAST("main");
 		
@@ -125,6 +122,7 @@ public class ScannerModel {
 		Vocabulary vocabulary = parser.getVocabulary();
 		for(Token token : this.tokens.getTokens()) {
 			tokenized += "<"+this.getTokenClass(vocabulary.getDisplayName(token.getType()))+", "+token.getText()+">"+"\n";
+			
 		}
 
 		return tokenized;

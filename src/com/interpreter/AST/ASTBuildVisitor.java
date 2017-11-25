@@ -14,6 +14,7 @@ import org.antlr.v4.runtime.tree.TerminalNode;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Stack;
 
 public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
 
@@ -23,20 +24,25 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
     private int lvlDepth;
     private int lvlIndex;
     private int nExitBlock;
-
+    private Stack<Integer> listBreakpoints;
+    private boolean isBreakpoint;
+    private int triggeringLineNumber;
 
     private HashMap<String, ProcedureNode> methodASTTable;
 
 
-    public ASTBuildVisitor(Scope symbolTable){
+    public ASTBuildVisitor(Scope symbolTable, Stack<Integer> listBreakpoints){
         methodASTTable = new HashMap<String, ProcedureNode>();
         this.curScope = symbolTable;
         this.levelIndexTracker = new ArrayList<>();
         this.levelIndexTracker.add(0);
-        System.out.println("init size: "+levelIndexTracker.size());
+//        System.out.println("init size: "+levelIndexTracker.size());
         this.lvlIndex = 0;
         this.lvlDepth = 0;
         this.nExitBlock = 0;
+        this.listBreakpoints = listBreakpoints;
+        this.isBreakpoint = false;
+        this.triggeringLineNumber = 0;
     }
 
     public HashMap<String, ProcedureNode> getMethodASTTable() {
@@ -54,11 +60,12 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
 
     @Override
     protected AbstractSyntaxTree aggregateResult(AbstractSyntaxTree aggregate, AbstractSyntaxTree nextResult) {
-
-        if(nextResult != null)
-            return nextResult;
-        else
+    	if(nextResult != null) {
+    		return nextResult;
+    	}
+        else {
             return aggregate;
+        }
     }
 
     /**
@@ -69,13 +76,12 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
     public AbstractSyntaxTree visitBlockChildren(RuleNode node) {
         AbstractSyntaxTree result = this.defaultResult();
         int n = node.getChildCount();
-
+        
         for(int i = 0; i < n && this.shouldVisitNextChild(node, result); ++i) {
             ParseTree c = node.getChild(i);
             AbstractSyntaxTree childResult = c.accept(this);
             result = this.aggregateResult(result, childResult);
         }
-
         exitBlock();
 
         return result;
@@ -95,19 +101,39 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
     private void enterBlock(){
         lvlIndex = this.levelIndexTracker.get(lvlDepth);
         curScope = curScope.getChildren().get(lvlIndex);    //go deeper
-        System.out.println("scope: "+lvlIndex);
+//        System.out.println("scope: "+lvlIndex);
         this.levelIndexTracker.set(lvlDepth,++lvlIndex);    //sets next expected index
         lvlDepth++;
         if(lvlDepth >= this.levelIndexTracker.size())
             this.levelIndexTracker.add(0);
     }
 
+    private void configureIsBreakpoint(int lineNumber) {
+    	if(lineNumber != this.triggeringLineNumber &&
+    			listBreakpoints.peek() >= lineNumber) {
+    		isBreakpoint = true;
+    		this.triggeringLineNumber = lineNumber;
+    		System.out.println("BREAK "+lineNumber+" next top: "+listBreakpoints.peek());
+    	}
+    	else {
+    		isBreakpoint = false;
+    	}
+    }
+    
     @Override
     public AbstractSyntaxTree visitBlock(ManuScriptParser.BlockContext ctx) {
+   
+        System.out.println("visitingBL "+ctx.getStart().getLine()+"    "+ctx.getText());
+        configureIsBreakpoint(ctx.getStart().getLine());
+        
         enterBlock();
-
         AbstractSyntaxTree blockNode = new AbstractSyntaxTree(null);
         blockNode.setNodeType(NodeType.BLOCK);
+        
+        blockNode.setBreakpoint(this.isBreakpoint);
+        if(isBreakpoint)
+        	System.out.println("BP: "+blockNode.getNodeType());
+        
         for(ManuScriptParser.BlockStatementContext stmt : ctx.blockStatement()){
             if(stmt.localVariableDeclarationStatement() != null){
                 List<ManuScriptParser.VariableDeclaratorContext> varDecs = stmt.localVariableDeclarationStatement().localVariableDeclaration().variableDeclarators().variableDeclarator();
@@ -116,6 +142,10 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
                     if (varDec != null) {
                         varDec.setParent(blockNode);
                         blockNode.addChild(varDec);
+                        blockNode.setBreakpoint(this.isBreakpoint);
+
+                        if(isBreakpoint)
+                        	System.out.println("BP: "+blockNode.getNodeType());
                     }
                 }
             }
@@ -124,6 +154,9 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
                 if (body != null) {
                     body.setParent(blockNode);
                     blockNode.addChild(body);
+                    blockNode.setBreakpoint(this.isBreakpoint);
+                    if(isBreakpoint)
+                    	System.out.println("BP: "+blockNode.getNodeType());
                 }
             }
         }
@@ -134,10 +167,18 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
 
     @Override
     public AbstractSyntaxTree visitMethodDeclaration(ManuScriptParser.MethodDeclarationContext ctx) {
+
+
+        System.out.println("visitingME "+ctx.getStart().getLine()+"    "+ctx.getText());
+        configureIsBreakpoint(ctx.getStart().getLine());
         ProcedureNode pNode = new ProcedureNode(null,ctx.Identifier().getText());
-        System.out.println("visited method declaration: "+ctx.Identifier().getText());
+//        System.out.println("visited method declaration: "+ctx.Identifier().getText());
         pNode.setNodeType(NodeType.FUNCTION_DECLARATION);
 
+        pNode.setBreakpoint(this.isBreakpoint);
+        if(isBreakpoint)
+        	System.out.println("BP: "+pNode.getNodeType());
+        
         AbstractSyntaxTree block = visit(ctx.methodBody().block());
         if (block != null) {
             block.setParent(pNode);
@@ -162,15 +203,22 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
 
     @Override
     public AbstractSyntaxTree visitReturnStmt(ManuScriptParser.ReturnStmtContext ctx) {
+
+
+        System.out.println("visitingRET "+ctx.getStart().getLine()+"    "+ctx.getText());
+        configureIsBreakpoint(ctx.getStart().getLine());
         AbstractSyntaxTree node = new AbstractSyntaxTree(null);
         node.setNodeType(NodeType.RETURN);
-
+        node.setBreakpoint(this.isBreakpoint);
+        if(isBreakpoint)
+        	System.out.println("BP: "+node.getNodeType());
+        
         AbstractSyntaxTree child = visit(ctx.expression());
 
         if(child!=null) {
             child.setParent(node);
             node.addChild(child);
-    }
+        }
 
         return node;
     }
@@ -178,8 +226,15 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
 
     @Override
     public AbstractSyntaxTree visitWhileStmt(ManuScriptParser.WhileStmtContext ctx) {
+
+
+        System.out.println("visitingWHIL "+ctx.getStart().getLine()+"    "+ctx.getText());
+        configureIsBreakpoint(ctx.getStart().getLine());
         AbstractSyntaxTree node = new AbstractSyntaxTree(null);
         node.setNodeType(NodeType.WHILE);
+        node.setBreakpoint(this.isBreakpoint);
+        if(isBreakpoint)
+        	System.out.println("BP: "+node.getNodeType());
         AbstractSyntaxTree condition = visit(ctx.parExpression().expression());
         if(condition!=null) {
             condition.setParent(node);
@@ -196,9 +251,17 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
 
     @Override
     public AbstractSyntaxTree visitDoWhileStmt(ManuScriptParser.DoWhileStmtContext ctx) {
+
+
+        System.out.println("visitingDW "+ctx.getStart().getLine()+"    "+ctx.getText());
+        configureIsBreakpoint(ctx.getStart().getLine());
         AbstractSyntaxTree node = new AbstractSyntaxTree(null);
         node.setNodeType(NodeType.DO_WHILE);
 
+        node.setBreakpoint(this.isBreakpoint);
+        if(isBreakpoint)
+        	System.out.println("BP: "+node.getNodeType());
+        
         AbstractSyntaxTree stmt = visit(ctx.statement());
         if(stmt!=null) {
             stmt.setParent(node);
@@ -216,9 +279,15 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
     public AbstractSyntaxTree visitForStmt(ManuScriptParser.ForStmtContext ctx) {
         //TODO: add nodetype to conditions
 
+
+        System.out.println("visitingFor "+ctx.getStart().getLine()+"    "+ctx.getText());
+        configureIsBreakpoint(ctx.getStart().getLine());
         AbstractSyntaxTree node = new AbstractSyntaxTree(null);
         node.setNodeType(NodeType.FOR);
-
+        node.setBreakpoint(this.isBreakpoint);
+        if(isBreakpoint)
+        	System.out.println("BP: "+node.getNodeType());
+        
         AbstractSyntaxTree forInit = visit(ctx.forControl().forInit());
         if( forInit != null ) {
             forInit.setParent(node);
@@ -244,9 +313,16 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
 
     @Override
     public AbstractSyntaxTree visitIfElseStmt(ManuScriptParser.IfElseStmtContext ctx) {
+
+
+        System.out.println("visitingIFEL "+ctx.getStart().getLine()+"    "+ctx.getText());
+        configureIsBreakpoint(ctx.getStart().getLine());
         AbstractSyntaxTree node = new AbstractSyntaxTree(null);
         node.setNodeType(NodeType.BRANCH);
-
+        node.setBreakpoint(this.isBreakpoint);
+        if(isBreakpoint)
+        	System.out.println("BP: "+node.getNodeType());
+        
         AbstractSyntaxTree condition = visit(ctx.parExpression().expression());
         if(condition!=null) {
             condition.setParent(node);
@@ -271,9 +347,16 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
 
     @Override
     public AbstractSyntaxTree visitOutputStatement(ManuScriptParser.OutputStatementContext ctx) {
+
+
+        System.out.println("visitingOUT "+ctx.getStart().getLine()+"    "+ctx.getText());
+        configureIsBreakpoint(ctx.getStart().getLine());
         AbstractSyntaxTree node = new AbstractSyntaxTree(null);
         node.setNodeType(NodeType.PRINT);
-
+        node.setBreakpoint(this.isBreakpoint);
+        if(isBreakpoint)
+        	System.out.println("BP: "+node.getNodeType());
+        
         AbstractSyntaxTree output = visit(ctx.expression());
         if(output!=null){
             output.setParent(node);
@@ -286,9 +369,16 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
 
     @Override
     public AbstractSyntaxTree visitInputStatement(ManuScriptParser.InputStatementContext ctx) {
+
+
+        System.out.println("visitingINP "+ctx.getStart().getLine()+"    "+ctx.getText());
+        configureIsBreakpoint(ctx.getStart().getLine());
         AbstractSyntaxTree node = new AbstractSyntaxTree(null);
         node.setNodeType(NodeType.SCAN);
-
+        node.setBreakpoint(this.isBreakpoint);
+        if(isBreakpoint)
+        	System.out.println("BP: "+node.getNodeType());
+        
         AbstractSyntaxTree scanTo = visit(ctx.variableDeclaratorId());
         if(scanTo != null){
             scanTo.setParent(node);
@@ -296,7 +386,7 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
         }
 
         if(ctx.typeType() != null) {
-            System.out.println("Scan type: "+ ctx.typeType().getText());
+//            System.out.println("Scan type: "+ ctx.typeType().getText());
             node.setValue(ctx.typeType().getText());
         }
         return node;
@@ -306,9 +396,16 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
 
     @Override
     public AbstractSyntaxTree visitArrayExpr(ManuScriptParser.ArrayExprContext ctx) {
+
+
+        System.out.println("visitingARREXP "+ctx.getStart().getLine()+"    "+ctx.getText());
+        configureIsBreakpoint(ctx.getStart().getLine());
         AbstractSyntaxTree node = new AbstractSyntaxTree(null);
         node.setNodeType(NodeType.ARRAY_ACCESS);
-
+        node.setBreakpoint(this.isBreakpoint);
+        if(isBreakpoint)
+        	System.out.println("BP: "+node.getNodeType());
+        
         AbstractSyntaxTree var = visit(ctx.variableExpr());
         if(var!=null) {
             var.setParent(node);
@@ -326,8 +423,17 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
 
     @Override
     public AbstractSyntaxTree visitFunctionExpr(ManuScriptParser.FunctionExprContext ctx) {
+
+
+        System.out.println("visitingFUNCEXP "+ctx.getStart().getLine()+"    "+ctx.getText());
+        configureIsBreakpoint(ctx.getStart().getLine());
         ProcedureNode node = new ProcedureNode(null, ctx.variableExpr().getText());
         node.setNodeType(NodeType.FUNCTION_INVOKE);
+        node.setBreakpoint(this.isBreakpoint);
+        if(isBreakpoint)
+        	System.out.println("BP: "+node.getNodeType());
+        
+        
         for(ManuScriptParser.ExpressionContext c : ctx.expressionList().expression()){
             AbstractSyntaxTree param = visit(c);
             if(param != null) {
@@ -341,8 +447,16 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
 
     @Override
     public AbstractSyntaxTree visitPostIncDecExpr(ManuScriptParser.PostIncDecExprContext ctx) {
+
+
+        System.out.println("visitingPOSTINCDEC "+ctx.getStart().getLine()+"    "+ctx.getText());
+        configureIsBreakpoint(ctx.getStart().getLine());
         AbstractSyntaxTree node = new AbstractSyntaxTree(null);
         node.setNodeType(NodeType.UNIPOST_ARITHMETIC);
+        node.setBreakpoint(this.isBreakpoint);
+        if(isBreakpoint)
+        	System.out.println("BP: "+node.getNodeType());
+        
         node.setValue(ctx.getChild(1).getText());
 
         AbstractSyntaxTree left = visit(ctx.variableExpr());
@@ -357,10 +471,17 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
     @Override
     public AbstractSyntaxTree visitPreIncDecSignExpr(ManuScriptParser.PreIncDecSignExprContext ctx) {
         //also includes sign operator
+
+
+        System.out.println("visitingPREINCDEC "+ctx.getStart().getLine()+"    "+ctx.getText());
+        configureIsBreakpoint(ctx.getStart().getLine());
         AbstractSyntaxTree node = new AbstractSyntaxTree(null);
         node.setNodeType(NodeType.UNIPRE_ARITHMETIC);
         node.setValue(ctx.getChild(0).getText());
-
+        node.setBreakpoint(this.isBreakpoint);
+        if(isBreakpoint)
+        	System.out.println("BP: "+node.getNodeType());
+        
         AbstractSyntaxTree right = visit(ctx.variableExpr());
         if(right!=null) {
             right.setParent(node);
@@ -372,10 +493,17 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
 
     @Override
     public AbstractSyntaxTree visitNegationExpr(ManuScriptParser.NegationExprContext ctx) {
+
+
+        System.out.println("visitingNEGEXP "+ctx.getStart().getLine()+"    "+ctx.getText());
+        configureIsBreakpoint(ctx.getStart().getLine());
         AbstractSyntaxTree node = new AbstractSyntaxTree(null);
         node.setNodeType(NodeType.UNI_LOGIC);
         node.setValue(ctx.getChild(0).getText());
-
+        node.setBreakpoint(this.isBreakpoint);
+        if(isBreakpoint)
+        	System.out.println("BP: "+node.getNodeType());
+        
         AbstractSyntaxTree right = visit(ctx.expression());
         if(right!=null) {
             right.setParent(node);
@@ -387,10 +515,17 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
 
     @Override
     public AbstractSyntaxTree visitMultDivModExpr(ManuScriptParser.MultDivModExprContext ctx) {
+
+
+        System.out.println("visitingMULTDIVMODEXP "+ctx.getStart().getLine()+"    "+ctx.getText());
+        configureIsBreakpoint(ctx.getStart().getLine());
         AbstractSyntaxTree node = new AbstractSyntaxTree(null);
         node.setNodeType(NodeType.BIN_ARITHMETIC);
         node.setValue(ctx.getChild(1).getText());
-
+        node.setBreakpoint(this.isBreakpoint);
+        if(isBreakpoint)
+        	System.out.println("BP: "+node.getNodeType());
+        
         AbstractSyntaxTree left = visit(ctx.expression(0));
         if(left!=null) {
             left.setParent(node);
@@ -408,10 +543,17 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
 
     @Override
     public AbstractSyntaxTree visitAddSubExpr(ManuScriptParser.AddSubExprContext ctx) {
+
+
+        System.out.println("visitingADDSUBEXP "+ctx.getStart().getLine()+"    "+ctx.getText());
+        configureIsBreakpoint(ctx.getStart().getLine());
         AbstractSyntaxTree node = new AbstractSyntaxTree(null);
         node.setNodeType(NodeType.BIN_ARITHMETIC);
         node.setValue(ctx.getChild(1).getText());
-
+        node.setBreakpoint(this.isBreakpoint);
+        if(isBreakpoint)
+        	System.out.println("BP: "+node.getNodeType());
+        
         AbstractSyntaxTree left = visit(ctx.expression(0));
         if(left!=null) {
             left.setParent(node);
@@ -430,10 +572,17 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
 
     @Override
     public AbstractSyntaxTree visitComparisonExpr(ManuScriptParser.ComparisonExprContext ctx) {
+
+
+        System.out.println("visitingCOMPREXPR "+ctx.getStart().getLine()+"    "+ctx.getText());
+        configureIsBreakpoint(ctx.getStart().getLine());
         AbstractSyntaxTree node = new AbstractSyntaxTree(null);
         node.setNodeType(NodeType.BIN_LOGIC);
         node.setValue(ctx.getChild(1).getText());
-
+        node.setBreakpoint(this.isBreakpoint);
+        if(isBreakpoint)
+        	System.out.println("BP: "+node.getNodeType());
+        
         AbstractSyntaxTree left = visit(ctx.expression(0));
         if(left!=null) {
             left.setParent(node);
@@ -451,10 +600,17 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
 
     @Override
     public AbstractSyntaxTree visitEqualityExpr(ManuScriptParser.EqualityExprContext ctx) {
+
+
+        System.out.println("visitingEQUALITYEXP "+ctx.getStart().getLine()+"    "+ctx.getText());
+        configureIsBreakpoint(ctx.getStart().getLine());
         AbstractSyntaxTree node = new AbstractSyntaxTree(null);
         node.setNodeType(NodeType.BIN_LOGIC);
         node.setValue(ctx.getChild(1).getText());
-
+        node.setBreakpoint(this.isBreakpoint);
+        if(isBreakpoint)
+        	System.out.println("BP: "+node.getNodeType());
+        
         AbstractSyntaxTree left = visit(ctx.expression(0));
         if(left!=null) {
             left.setParent(node);
@@ -472,10 +628,17 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
 
     @Override
     public AbstractSyntaxTree visitAndExpr(ManuScriptParser.AndExprContext ctx) {
+
+
+        System.out.println("visitingANDEXPR "+ctx.getStart().getLine()+"    "+ctx.getText());
+        configureIsBreakpoint(ctx.getStart().getLine());
         AbstractSyntaxTree node = new AbstractSyntaxTree(null);
         node.setNodeType(NodeType.BIN_LOGIC);
         node.setValue(ctx.getChild(1).getText());
-
+        node.setBreakpoint(this.isBreakpoint);
+        if(isBreakpoint)
+        	System.out.println("BP: "+node.getNodeType());
+        
         AbstractSyntaxTree left = visit(ctx.expression(0));
         if(left!=null) {
             left.setParent(node);
@@ -493,10 +656,17 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
 
     @Override
     public AbstractSyntaxTree visitOrExpr(ManuScriptParser.OrExprContext ctx) {
+
+
+        System.out.println("visitingOREXPR "+ctx.getStart().getLine()+"    "+ctx.getText());
+        configureIsBreakpoint(ctx.getStart().getLine());
         AbstractSyntaxTree node = new AbstractSyntaxTree(null);
         node.setNodeType(NodeType.BIN_LOGIC);
         node.setValue(ctx.getChild(1).getText());
-
+        node.setBreakpoint(this.isBreakpoint);
+        if(isBreakpoint)
+        	System.out.println("BP: "+node.getNodeType());
+        
         AbstractSyntaxTree left = visit(ctx.expression(0));
         if(left!=null) {
             left.setParent(node);
@@ -514,9 +684,16 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
 
     @Override
     public AbstractSyntaxTree visitOneLineIfExpr(ManuScriptParser.OneLineIfExprContext ctx) {
+
+
+        System.out.println("visitingONELINEIFEXPR "+ctx.getStart().getLine()+"    "+ctx.getText());
+        configureIsBreakpoint(ctx.getStart().getLine());
         AbstractSyntaxTree node = new AbstractSyntaxTree(null);
         node.setNodeType(NodeType.TER_OP);
-
+        node.setBreakpoint(this.isBreakpoint);
+        if(isBreakpoint)
+        	System.out.println("BP: "+node.getNodeType());
+        
         AbstractSyntaxTree condition = visit(ctx.expression(0));
         if(condition!=null) {
             condition.setParent(node);
@@ -540,10 +717,17 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
 
     @Override
     public AbstractSyntaxTree visitVariableDeclarator(ManuScriptParser.VariableDeclaratorContext ctx) {
+
+
+        System.out.println("visitingVARDEC "+ctx.getStart().getLine()+"    "+ctx.getText());
+        configureIsBreakpoint(ctx.getStart().getLine());
         AbstractSyntaxTree node = new AbstractSyntaxTree(null);
         node.setNodeType(NodeType.VAR_DECLARE);   //TODO: add nodetype if not assign
         node.setValue(ctx.getChild(1));
-
+        node.setBreakpoint(this.isBreakpoint);
+        if(isBreakpoint)
+        	System.out.println("BP: "+node.getNodeType());
+        
         AbstractSyntaxTree var = visit(ctx.variableDeclaratorId());
         if(var!=null) {
             var.setParent(node);
@@ -565,10 +749,17 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
 
     @Override
     public AbstractSyntaxTree visitAssignExpr(ManuScriptParser.AssignExprContext ctx) {
+
+
+        System.out.println("visitingASSIGNEXPR "+ctx.getStart().getLine()+"    "+ctx.getText());
+        configureIsBreakpoint(ctx.getStart().getLine());
         AbstractSyntaxTree node = new AbstractSyntaxTree(null);
         node.setNodeType(NodeType.ASSIGN);
         node.setValue(ctx.getChild(1));
-
+        node.setBreakpoint(this.isBreakpoint);
+        if(isBreakpoint)
+        	System.out.println("BP: "+node.getNodeType());
+        
         AbstractSyntaxTree target = visit(ctx.equationExpr());
         if(target!=null) {
             target.setParent(node);
@@ -586,10 +777,17 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
 
     @Override
     public AbstractSyntaxTree visitEquationExpr(ManuScriptParser.EquationExprContext ctx) {
+
+
+        System.out.println("visitingEQEXPR "+ctx.getStart().getLine()+"    "+ctx.getText());
+        configureIsBreakpoint(ctx.getStart().getLine());
         LeafNode variable = new LeafNode(null);
         variable.setNodeType(NodeType.VARIABLE);
         SymbolContext symContext = null;
-
+        variable.setBreakpoint(this.isBreakpoint);
+        if(isBreakpoint)
+        	System.out.println("BP: "+variable.getNodeType());
+        
         symContext = curScope.checkTables(ctx.Identifier().getText());
         String type = symContext.getSymbolType(); //todo: convert to enum?
 
@@ -605,17 +803,23 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
     @Override
     public AbstractSyntaxTree visitPrimary(ManuScriptParser.PrimaryContext ctx) {
 
+
+        System.out.println("visitingPRIMEXPR "+ctx.getStart().getLine()+"    "+ctx.getText());
+        configureIsBreakpoint(ctx.getStart().getLine());
         if(ctx.Identifier() != null){
-            System.out.println("variable found");
+//            System.out.println("variable found");
             LeafNode variable = new LeafNode(null);
             variable.setNodeType(NodeType.VARIABLE);
             SymbolContext symContext = null;
-
+            variable.setBreakpoint(this.isBreakpoint);
+            if(isBreakpoint)
+            	System.out.println("BP: "+variable.getNodeType());
+            
 
             symContext = curScope.checkTables(ctx.Identifier().getText());
 
             if(symContext != null){
-                System.out.println("symcontext found");
+//                System.out.println("symcontext found");
                 variable.setValue(symContext.getIdentifier());
                 variable.setLiteralType(symContext.getSymbolType());
                 return variable;
@@ -631,10 +835,17 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
 
     @Override
     public AbstractSyntaxTree visitVariableExpr(ManuScriptParser.VariableExprContext ctx) {
+
+
+        System.out.println("visitingVAREXPR "+ctx.getStart().getLine()+"    "+ctx.getText());
+        configureIsBreakpoint(ctx.getStart().getLine());
         LeafNode variable = new LeafNode(null);
         variable.setNodeType(NodeType.VARIABLE);
         SymbolContext symContext = null;
-
+        variable.setBreakpoint(this.isBreakpoint);
+        if(isBreakpoint)
+        	System.out.println("BP: "+variable.getNodeType());
+        
         symContext = curScope.checkTables(ctx.Identifier().getText());
         String type = symContext.getSymbolType(); //todo: convert to enum?
 
@@ -649,13 +860,20 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
 
     @Override
     public AbstractSyntaxTree visitVariableDeclaratorId(ManuScriptParser.VariableDeclaratorIdContext ctx) {
+
+
+        System.out.println("visitingVARDECLID "+ctx.getStart().getLine()+"    "+ctx.getText());
+        configureIsBreakpoint(ctx.getStart().getLine());
         LeafNode variable = new LeafNode(null);
         variable.setNodeType(NodeType.VARIABLE);
         SymbolContext symContext = null;
-
+        variable.setBreakpoint(this.isBreakpoint);
+        if(isBreakpoint)
+        	System.out.println("BP: "+variable.getNodeType());
+        
         symContext = curScope.checkTables(ctx.Identifier().getText());
-        System.out.println("var "+ctx.Identifier().getText() + " in table? "+curScope.inScope(ctx.Identifier().getText()));
-        System.out.println(symContext.getSymbolType());
+//        System.out.println("var "+ctx.Identifier().getText() + " in table? "+curScope.inScope(ctx.Identifier().getText()));
+//        System.out.println(symContext.getSymbolType());
 
         if(symContext != null) {
             variable.setValue(symContext.getIdentifier());
@@ -668,6 +886,10 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
 
     @Override
     public AbstractSyntaxTree visitLiteral(ManuScriptParser.LiteralContext ctx) {
+
+
+        System.out.println("visitingLIT "+ctx.getStart().getLine()+"    "+ctx.getText());
+        configureIsBreakpoint(ctx.getStart().getLine());
         TerminalNode tn = null;
         String type = null;
         if(ctx.StringLiteral() != null) {
@@ -694,6 +916,11 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
         if(type != null) {
             LeafNode literal = new LeafNode(null);
             literal.setNodeType(NodeType.LITERAL);
+            literal.setBreakpoint(this.isBreakpoint);
+            if(isBreakpoint)
+            	System.out.println("BP: "+literal.getNodeType());
+            
+            
             literal.setLiteralType(type);
             literal.setValue(tn.getSymbol().getText());
 
