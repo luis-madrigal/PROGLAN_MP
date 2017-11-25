@@ -101,7 +101,10 @@ public class ScannerModel {
 		Scope scope = new Scope(null); //scope of program. contains the symbol tables
 		this.methodTable = new HashMap<String, MethodContext>(); //the methods in the program. no overloading
 		
+<<<<<<< HEAD
 
+=======
+>>>>>>> Merge
 		ParseTreeWalker.DEFAULT.walk(new BaseListener(scope, methodTable), this.tree);
 
 		scope.print();
@@ -109,6 +112,7 @@ public class ScannerModel {
 		this.astbv = new ASTBuildVisitor(scope, listBreakpoints);
 		astbv.visit(tree);
 		astbv.printAST("main");
+<<<<<<< HEAD
 <<<<<<< HEAD
 =======
 
@@ -121,6 +125,8 @@ public class ScannerModel {
 		
 //		this.threadCodeGenerator = new CodeGeneratorThread(this.astbv, methodTable);
 //		this.threadCodeGenerator.run(); // TODO
+=======
+>>>>>>> Merge
 		
 		if(this.threadCodeGenerator != null) {
 			this.runnableCodeGenerator.stop();

@@ -10,6 +10,12 @@ public class TACFuncDeclarationStatement extends TACStatement{
 		super(type, isBreakpoint);
 		this.methodName = methodName;
 	}
+	
+	// TODO
+	public TACFuncDeclarationStatement(NodeType type, String methodName) {
+		super(type, false);
+		this.methodName = methodName;
+	}
 
 	public String getMethodName() {
 		return methodName;
