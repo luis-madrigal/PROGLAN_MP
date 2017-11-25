@@ -303,7 +303,7 @@ public class BaseListener extends ManuScriptBaseListener{
 				
 				if(scopes.peek().inScope(arg)) {
 					//Existing variable. now check for type mismatch
-					if(!getCurrentSymTable().get(arg).getSymbolType().equals(mcx.getArgTypes().get(i)))
+					if(!scopes.peek().checkTables(arg).getSymbolType().equals(mcx.getArgTypes().get(i)))
 						SemanticErrors.throwError(SemanticErrors.TYPE_MISMATCH, ectxLineNum, ectxCharPosAtLine, mcx.getArgTypes().get(i));
 				} else if(ectx instanceof PrimaryExprContext && ((PrimaryExprContext) ectx).primary().Identifier() != null) {
 					//variable but not in scope or not declared.

@@ -1,0 +1,24 @@
+
+ACT isOdd starring (int n) {
+	if (n == 0)
+		give false;
+	else
+		give isEven(n-1);
+}
+
+ACT isEven starring (int n) {
+	if (n == 0)
+		give true;
+	else
+		give isOdd(n-1);
+}
+
+ACT main starring () {
+	int x;
+	
+	Say "Enter a number: ";
+	Write to x;
+
+	if (isEven(x)) Say x + " is even";
+	else	Say x + " is odd";
+}
