@@ -1,31 +1,19 @@
 
-int numberCount = 0;
-
 ACT generateFibo starring (int number) {
 	if(number == 1 || number == 2) {
 		give 1;
 	}
-	numberCount++;
+
 	give generateFibo(number-1)+generateFibo(number-2);
 }
 
-<<<<<<< HEAD
 ACT main starring () {
 	int x;
 	int fibo;
-=======
-ACT main starring() {
-	int p;
-	int q;
-
-	Write to p;
-	Write to q;
->>>>>>> b858c269c36280ee67453327c932e5b9e0c24ef6
 
 	Say "Enter a number: ";
 	Write to x;
 
 	fibo = generateFibo(x);
 	Say "Fibonacci Number "+x+": "+fibo;
-	Say numberCount;
 }

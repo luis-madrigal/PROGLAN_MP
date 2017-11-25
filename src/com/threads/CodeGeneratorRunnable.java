@@ -49,9 +49,7 @@ public class CodeGeneratorRunnable implements Runnable {
 	private HashMap<String, Scope> variables;
 	private Scope parentScope;
 	private Scope globalScope;
-	private Scope methodScope;
 	private Scope currentScope;
-	private String currentMethod;
 	private Stack<Scope> prevBlocks;
 	private HashMap<String, MethodContext> methodTable;
 	private HashMap<String, ProcedureNode> methodASTTable;
@@ -82,41 +80,62 @@ public class CodeGeneratorRunnable implements Runnable {
 		
 		Panel.threeACOut.setText("");
 		
+		Panel.threeACOut.setText(Panel.threeACOut.getText() + "ICODE FOR: %FIELD\n");
+		this.methodICodes.put("%FIELD", icg.generateICode(methodASTTable.get("%FIELD"), true));
+		this.globalScope = icg.getGlobalScope();
+		this.globalScope.setParent(null);
+		this.addToLabelMap(this.methodICodes.get("%FIELD"));
+		icg.print();
+		
+		this.currentScope = this.globalScope;
+				
 		for (Map.Entry<String, ProcedureNode> entry : methodASTTable.entrySet()) {
-			Panel.threeACOut.setText(Panel.threeACOut.getText() + "ICODE FOR: "+entry.getKey() + "\n");
-			
-			// System.out.println("GENERATE ICODE FOR: "+entry.getValue().getProcedureName());
-			
-			this.methodICodes.put(entry.getKey(), icg.generateICode(entry.getValue()));
-			this.variables.put(entry.getKey(), icg.getScope());
-			this.addToLabelMap(this.methodICodes.get(entry.getKey()));
-			icg.print();
-			
-			ArrayList<String> args = methodTable.get(entry.getKey()).getArgs();
-			ArrayList<String> argTypes = methodTable.get(entry.getKey()).getArgTypes();
-			for(int i = 0; i < args.size(); i++) {
-//				System.out.println(this.variables.get(entry.getKey()).getSymTable().containsKey(args.get(i)));
-				this.variables.get(entry.getKey()).addToScope(new SymbolContext(argTypes.get(i), icg.getGlobalScope(), args.get(i)));
+			if(!entry.getKey().equals("%FIELD")) {
+				Panel.threeACOut.setText(Panel.threeACOut.getText() + "ICODE FOR: "+entry.getKey() + "\n");
+	//			System.out.println("GENERATE ICODE FOR: "+entry.getKey());
+				
+				this.methodICodes.put(entry.getKey(), icg.generateICode(entry.getValue(), false));
+				this.variables.put(entry.getKey(), icg.getScope());
+				this.addToLabelMap(this.methodICodes.get(entry.getKey()));
+				icg.print();
+				
+				ArrayList<String> args = methodTable.get(entry.getKey()).getArgs();
+				ArrayList<String> argTypes = methodTable.get(entry.getKey()).getArgTypes();
+				for(int i = 0; i < args.size(); i++) {
+	//				System.out.println(this.variables.get(entry.getKey()).getSymTable().containsKey(args.get(i)));
+					this.variables.get(entry.getKey()).addToScope(new SymbolContext(argTypes.get(i), icg.getGlobalScope(), args.get(i)));
+				}
 			}
 		}
+//		this.globalScope = icg.getGlobalScope();
 		
-		this.globalScope = icg.getGlobalScope();
 		
 		for(Map.Entry<String, Scope> entry : this.variables.entrySet()) {
-			if(entry.getValue() != this.globalScope.getChildren().get(0)) {
+//			if(entry.getValue() != this.globalScope.getChildren().get(0)) {
 				this.globalScope.getChildren().add(entry.getValue());
-			}
+				entry.getValue().setParent(this.globalScope);
+//			}
 		}
 	}
 
 	
 	@Override
 	public void run() {
+//		this.methodScope = this.variables.get(currentMethod);
+		ArrayList<TACStatement> icode = this.methodICodes.get("%FIELD");
+		String pointer = icode.get(0).getLabel();
+		int pointerCount = Integer.parseInt(icode.get(0).getLabel().substring(1));
+		HashMap<String, Register> registers = Cloner.standard().deepClone(this.registers);
+		TACStatement stmt = null;
 		
-		this.currentMethod = "main";
-		this.parentScope = this.variables.get(currentMethod);
-		this.run(methodICodes.get(currentMethod));
+		do {
+			System.out.println(pointer);
+			stmt = this.labelMap.get(pointer);
+			pointerCount = this.evaluate(this.globalScope, registers, stmt, pointerCount);
+			pointer = ICGenerator.LABEL_ALIAS+pointerCount;
+		}while(this.checkEndRun(pointer));
 		
+		this.run("main");
 	}
 	
 	private Object run(String methodName, Object ...args) {
@@ -132,13 +151,13 @@ public class CodeGeneratorRunnable implements Runnable {
 		ArrayList<String> fnArgs = this.methodTable.get(methodName).getArgs();
 		for(int i = 0; i < args.length; i++) {
 
-			this.variables.get(currentMethod).findVar(fnArgs.get(i)).setValue(args[i]);
+			this.variables.get(methodName).findVar(fnArgs.get(i)).setValue(args[i]);
 
 		}
 		do {
 			if(isPlay) {
 				stmt = this.labelMap.get(pointer);
-				pointerCount = this.evaluate(stmt, pointerCount);
+				pointerCount = this.evaluate(methodScope, registers, stmt, pointerCount);
 				pointer = ICGenerator.LABEL_ALIAS+pointerCount;
 				
 //				if(stmt.isBreakpoint()) {
@@ -146,7 +165,7 @@ public class CodeGeneratorRunnable implements Runnable {
 //					this.isPlay = false;
 //				}
 			}
-		}while(isRunning && this.labelMap.containsKey(pointer) && !this.labelMap.get(pointer).getType().equals(NodeType.RETURN));
+		}while(this.checkEndRun(pointer));
 
 		while(this.prevBlocks.peek() != null) {
 			this.prevBlocks.pop();
@@ -218,7 +237,7 @@ public class CodeGeneratorRunnable implements Runnable {
 		case ASSIGN:
 			TACAssignStatement aStmt = (TACAssignStatement) statement;
 
-			this.currentScope.findVar(aStmt.getVariable().getAlias()).setValue(this.getValue(aStmt.getValue()));
+			this.currentScope.findVar(aStmt.getVariable().getAlias()).setValue(this.getValue(registers, aStmt.getValue()));
 			
 			if(aStmt.isBreakpoint()) {
 				System.out.println("BRK "+	aStmt.getType()+": "+aStmt.isBreakpoint());
@@ -234,7 +253,7 @@ public class CodeGeneratorRunnable implements Runnable {
 			TACIfStatement ifStmt = (TACIfStatement) statement;
 
 			// System.out.println("==="+Boolean.parseBoolean(this.getValue(ifStmt.getOperand()).toString()));
-			if(Boolean.parseBoolean(this.getValue(ifStmt.getOperand()).toString())) {
+			if(Boolean.parseBoolean(this.getValue(registers, ifStmt.getOperand()).toString())) {
 				pointerCount = ifStmt.getJumpDestTrueInt();
 			} else
 				pointerCount = ifStmt.getJumpDestFalseInt();
@@ -245,7 +264,7 @@ public class CodeGeneratorRunnable implements Runnable {
 			TACLoopStatement loopStmt = (TACLoopStatement) statement;
 
 			// System.out.println(loopStmt.getCondition().toString());
-			if(Boolean.parseBoolean(this.getValue(loopStmt.getCondition()).toString())) {
+			if(Boolean.parseBoolean(this.getValue(registers, loopStmt.getCondition()).toString())) {
 				pointerCount = loopStmt.getJumpDestTrueInt();
 			} else
 				pointerCount = loopStmt.getJumpDestFalseInt();
@@ -258,7 +277,7 @@ public class CodeGeneratorRunnable implements Runnable {
 		case PRINT:
 			TACPrintStatement printStmt = (TACPrintStatement) statement;
 
-			Writer.printText(this.getValue(printStmt.getExpression()).toString());
+			Writer.printText(this.getValue(registers, printStmt.getExpression()).toString());
 			
 			if(printStmt.isBreakpoint()) {
 				System.out.println("BRK "+	printStmt.getType()+": "+printStmt.isBreakpoint());
@@ -268,13 +287,17 @@ public class CodeGeneratorRunnable implements Runnable {
 			break;
 		case SCAN:
 			TACScanStatement scanStmt = (TACScanStatement) statement;
-
-			Object scanVal = Reader.readInput();
-			this.currentScope.findVar(scanStmt.getVariable()).setValue(LiteralMatcher.instance().parseAttempt(scanVal));
-			
-			if(scanStmt.isBreakpoint()) {
-				System.out.println("BRK "+	scanStmt.getType()+": "+scanStmt.isBreakpoint());
-				this.isPlay = false;
+			SymbolContext ctx = this.currentScope.findVar(scanStmt.getVariable().getAlias());
+			Object scanVal = Reader.readInput(ctx.getSymbolType());
+			if(scanVal == null)
+				this.isRunning = false;
+			else {
+				ctx.setValue(scanVal);
+				if(scanStmt.isBreakpoint()) {
+					System.out.println("BRK "+	scanStmt.getType()+": "+scanStmt.isBreakpoint());
+					this.isPlay = false;
+				}
+				pointerCount++;
 			}
 			pointerCount++;
 			break;
@@ -383,6 +406,12 @@ public class CodeGeneratorRunnable implements Runnable {
 	public void play() {
         isPlay = true;
     }
+	
+	private boolean checkEndRun(String pointer) {
+		return !this.labelMap.get(pointer).getType().equals(NodeType.FUNCTION_END) 
+				&& !this.labelMap.get(pointer).getType().equals(NodeType.FIELD_DEC_END)
+				&& !this.labelMap.get(pointer).getType().equals(NodeType.RETURN) && this.isRunning;
+	}
 	
 	public void pause() {
         isPlay = false;

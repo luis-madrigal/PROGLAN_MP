@@ -108,7 +108,6 @@ public class ScannerModel {
 		this.astbv = new ASTBuildVisitor(scope, listBreakpoints);
 		astbv.visit(tree);
 		astbv.printAST("main");
-
 		
 		if(this.threadCodeGenerator != null) {
 			this.runnableCodeGenerator.stop();
