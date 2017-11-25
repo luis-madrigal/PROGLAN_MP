@@ -1,21 +1,15 @@
 
+ACT info starring (int x) {
+	give x + 5;
+}
 
 ACT main starring () {
-	int x = 5;
+	int x;
 	int fibo;
-<<<<<<< HEAD
-
-	Say "Enter a number: ";
-	Write to x;
-
-	fibo = 2;
-	Say fibo;
-=======
-	string a = "Asda";
+	[comment]: int[] arr = new int[] {1, 2, 3};
 
 	Say "Enter a number: ";
 	Write to x;
 	Say x;
-	Say a;
->>>>>>> 304bb935237b44951b802dcc3ed9076e86a0a861
+	Say info(10);
 }

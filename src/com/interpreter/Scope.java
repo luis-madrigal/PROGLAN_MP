@@ -133,16 +133,6 @@ public class Scope extends HashSet<String>{
 	
 	public Scope clone() {
 		Scope s;
-//		if(this.getParent() == null)
-//			s = new Scope(null);
-//		else
-//			s = new Scope(this.getParent().clone());
-//		s.setChildren(new ArrayList<Scope>(this.cloneChildren()));
-//		s.setLabel(this.getLabel());
-//		s.setSymTable((HashMap)this.getSymTable().clone());
-//		
-//		s = this;
-//		s.setChildren(new ArrayList<Scope>(this.cloneChildren()));
 		Cloner cloner = new Cloner();
 		s = cloner.deepClone(this);
 		s.setParent(getParent());

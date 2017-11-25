@@ -54,14 +54,6 @@ public class CodeGeneratorRunnable implements Runnable {
 	private HashMap<String, MethodContext> methodTable;
 	private HashMap<String, ProcedureNode> methodASTTable;
 	
-//	public CodeGeneratorRunnable(ASTBuildVisitor astbv, HashMap<String, MethodContext> methodTable) {
-//		this.astbv = astbv;
-//		this.methodTable = methodTable;
-//		this.isRunning = true;
-//		this.isPlay = true;
-//		
-//	}
-	
 	public CodeGeneratorRunnable(ASTBuildVisitor astbv, HashMap<String, MethodContext> methodTable) {
 		this.astbv = astbv;
 		this.methodASTTable = astbv.getMethodASTTable();
@@ -135,7 +127,8 @@ public class CodeGeneratorRunnable implements Runnable {
 			pointer = ICGenerator.LABEL_ALIAS+pointerCount;
 		}while(this.checkEndRun(pointer));
 		
-		this.run("main");
+		System.out.println("+++++++++++ RUN MAIN");
+		System.out.println(this.run("main"));
 	}
 	
 	private Object run(String methodName, Object ...args) {
@@ -150,12 +143,13 @@ public class CodeGeneratorRunnable implements Runnable {
 		
 		ArrayList<String> fnArgs = this.methodTable.get(methodName).getArgs();
 		for(int i = 0; i < args.length; i++) {
-
-			this.variables.get(methodName).findVar(fnArgs.get(i)).setValue(args[i]);
+			System.out.println(args[i]);
+			methodScope.findVar(fnArgs.get(i)).setValue(args[i]);
 
 		}
 		do {
 			if(isPlay) {
+				System.out.println("evaluating: "+pointer);
 				stmt = this.labelMap.get(pointer);
 				pointerCount = this.evaluate(methodScope, registers, stmt, pointerCount);
 				pointer = ICGenerator.LABEL_ALIAS+pointerCount;
@@ -225,7 +219,7 @@ public class CodeGeneratorRunnable implements Runnable {
 			Object value = this.run(stmt.getMethodName(), params); 
 //			System.out.println(value);
 			r.setValue(value);
-			this.registers.put(r.getName(), r);
+			registers.put(r.getName(), r);
 			
 			if(stmt.isBreakpoint()) {
 				System.out.println("BRK "+	stmt.getType()+": "+stmt.isBreakpoint());
@@ -275,6 +269,7 @@ public class CodeGeneratorRunnable implements Runnable {
 			}
 			break;
 		case PRINT:
+			System.out.println("PRINTPRINT");
 			TACPrintStatement printStmt = (TACPrintStatement) statement;
 
 			Writer.printText(this.getValue(registers, printStmt.getExpression()).toString());
@@ -299,7 +294,6 @@ public class CodeGeneratorRunnable implements Runnable {
 				}
 				pointerCount++;
 			}
-			pointerCount++;
 			break;
 		case VAR_DECLARE:
 			pointerCount++;
@@ -391,8 +385,7 @@ public class CodeGeneratorRunnable implements Runnable {
 		switch (operand.getOperandType()) {
 		case REGISTER:
 			Register r = (Register) operand;
-
-			return this.registers.get(r.getName()).getValue();
+			return registers.get(r.getName()).getValue();
 		case LITERAL:
 			return operand.getValue();
 		case VARIABLE:
