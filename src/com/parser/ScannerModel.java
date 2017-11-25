@@ -109,6 +109,15 @@ public class ScannerModel {
 		this.astbv = new ASTBuildVisitor(scope, listBreakpoints);
 		astbv.visit(tree);
 		astbv.printAST("main");
+<<<<<<< HEAD
+=======
+
+
+		this.threadCodeGenerator = new CodeGeneratorThread(astbv, methodTable);
+		threadCodeGenerator.run();
+
+//		System.out.println(tree.toStringTree(parser));
+>>>>>>> parent of 5e849c8... added readability stuff in console
 		
 //		this.threadCodeGenerator = new CodeGeneratorThread(this.astbv, methodTable);
 //		this.threadCodeGenerator.run(); // TODO

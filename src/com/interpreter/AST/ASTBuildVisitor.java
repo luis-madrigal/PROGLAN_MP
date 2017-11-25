@@ -49,7 +49,6 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
     }
 
     public void printAST(String rootName){
-        System.out.println("printing "+rootName);
         methodASTTable.get(rootName).print();
     }
 
