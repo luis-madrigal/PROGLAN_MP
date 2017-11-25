@@ -15,6 +15,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.ArrayList;
 import java.util.Stack;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -47,6 +48,8 @@ import org.fife.ui.rsyntaxtextarea.Token;
 import org.fife.ui.rsyntaxtextarea.TokenMakerFactory;
 import org.fife.ui.rtextarea.RTextScrollPane;
 
+import com.debug.watch.VariableNode;
+import com.debug.watch.Watcher;
 import com.ide.styles.IdeStyle;
 import com.ide.styles.ManuScriptGutter;
 import com.ide.styles.RSyntaxTextAreaManuscript;
@@ -66,7 +69,7 @@ public class Panel implements Runnable, ActionListener, KeyListener, MouseListen
 	private DialogOpen dlgOpen;
 
 	private TextFileHandler textFileHandler;
-	
+	private boolean isRunning;
 	private JPanel pnlMain;
 	private JPanel pnlMenu;
 	private JButton btnRun;
@@ -115,6 +118,7 @@ public class Panel implements Runnable, ActionListener, KeyListener, MouseListen
 	public final static String newline = "\n";
 	
 	private ScannerModel scanner;
+	private Watcher watcher;
 
 	public static int baseFontSize = (int) Frame.SCREEN_SIZE.getHeight() / 60;
 	
@@ -392,6 +396,8 @@ public class Panel implements Runnable, ActionListener, KeyListener, MouseListen
 		));
 		
 		// For watch variables
+		this.watcher = new Watcher();
+		
 		watchOut = new JTextPane();
 		watchOut.setFont(new Font("Consolas", 150, baseFontSize));
 		watchOut.setEditable(false);
@@ -588,7 +594,7 @@ public class Panel implements Runnable, ActionListener, KeyListener, MouseListen
 		});
 		
 		//Scanner for input string
-		this.scanner = new ScannerModel();
+		this.scanner = new ScannerModel(this);
 		
 		this.topSplitPane.setDividerSize(2);
 		this.topSplitPane.setBackground(Color.WHITE);
@@ -605,6 +611,8 @@ public class Panel implements Runnable, ActionListener, KeyListener, MouseListen
 		this.dlgOpen = new DialogOpen();
 		this.dlgOpen.setProgressColor(FrameStatic.clrLightBlue);
 		this.dlgOpen.getBtnOpen().addMouseListener(this);
+		
+		this.isRunning = false;
 	}
 	
 	public void initMenuButtons() {
@@ -742,13 +750,6 @@ public class Panel implements Runnable, ActionListener, KeyListener, MouseListen
 	public void setInputLines(JTextArea inputLines) {
 		this.inputLines = inputLines;
 	}
-
-	/*
-	public void generateThreeAddressCode() {
-		threeACOut.setText(this.scanner.getIcg().getPrintText());
-		
-	}
-	*/
 	/*
 	 * Specify the color for a Token type here using syntaxScheme.
 	 * 
@@ -774,27 +775,50 @@ public class Panel implements Runnable, ActionListener, KeyListener, MouseListen
 	public JPanel getUI() {
 		return this.pnlMain;
 	}
-
+	
+	public void changeToPlayIcon() {
+		btnRun.setIcon(new ImageIcon(getClass().getClassLoader().getResource("res/ico_play_off.png")));
+        btnRun.setRolloverIcon(new ImageIcon(getClass().getClassLoader().getResource("res/ico_play_on.png")));
+        btnRun.setPressedIcon(new ImageIcon(getClass().getClassLoader().getResource("res/ico_play_on.png")));
+      
+	}
+	
+	public void changeToPauseIcon() {
+		btnRun.setIcon(new ImageIcon(getClass().getClassLoader().getResource("res/ico_pause_off.png")));
+        btnRun.setRolloverIcon(new ImageIcon(getClass().getClassLoader().getResource("res/ico_pause_on.png")));
+        btnRun.setPressedIcon(new ImageIcon(getClass().getClassLoader().getResource("res/ico_pause_on.png")));
+      
+	}
+	
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if(e.getSource() == this.btnRun) {
-			Console.instance().purge();
-			String text = this.codeInput.getText();		
-			
-			this.parsedOut.setText("");
-//			this.parsedOut.setText(this.parsedOut.getText() + newline);
-//			this.scanner.processTokens(text+newline);
-//			this.threadCodeGenerator = this.scanner.getThreadCodeGenerator();
-			
-			this.parsedOut.setText(this.parsedOut.getText() + this.scanner.getTokens(text+newline, this.getListBreakpoints(text+newline)));
-			this.scanner.generateTree(); // Required to do this
-			this.treePane.setViewportView(this.scanner.getTree());			
-			
-//			this.generateThreeAddressCode();
-//			this.console.setText(this.console.getText() + this.scanner.getMessage());			
-			this.codeInput.selectAll();
-			this.parsedOut.setCaretPosition(parsedOut.getDocument().getLength());
+			if(this.isRunning) {
+				this.changeToPlayIcon();
+				this.isRunning = false;
+				this.scanner.stopThread();
+			}
+			else {
+				this.changeToPauseIcon();
+				this.isRunning = true;
+				Console.instance().purge();
+				String text = this.codeInput.getText();		
+				
+				this.parsedOut.setText("");
+//				this.parsedOut.setText(this.parsedOut.getText() + newline);
+//				this.scanner.processTokens(text+newline);
+//				this.threadCodeGenerator = this.scanner.getThreadCodeGenerator();
+				
+				this.parsedOut.setText(this.parsedOut.getText() + this.scanner.getTokens(text+newline, this.getListBreakpoints(text+newline)));
+				this.scanner.generateTree(); // Required to do this
+				this.treePane.setViewportView(this.scanner.getTree());			
+				
+//				this.generateThreeAddressCode();
+//				this.console.setText(this.console.getText() + this.scanner.getMessage());			
+				this.codeInput.selectAll();
+				this.parsedOut.setCaretPosition(parsedOut.getDocument().getLength());
 		
+			}	
 		}
 		
 		if(e.getSource() == this.btnScaleUp) {
@@ -934,6 +958,11 @@ public class Panel implements Runnable, ActionListener, KeyListener, MouseListen
 		}
 		if(e.getSource() == btnWatch) {
 			System.out.println("Watch");
+			
+			ArrayList<VariableNode> varList = new ArrayList<VariableNode>();
+			
+			watcher.generateVarList(this.codeInput.getText());
+			varList = watcher.getVarList();
 		}
 		
 		if(e.getSource() == this.dlgSave.getBtnSave()) {
