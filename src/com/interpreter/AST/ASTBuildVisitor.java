@@ -427,12 +427,13 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
             node.addChild(var);
         }
 
-        AbstractSyntaxTree expression = visit(ctx.expression());
-        if(expression!=null) {
-            expression.setParent(node);
-            node.addChild(expression);
+        for(ManuScriptParser.ExpressionContext expr : ctx.expression()) {
+            AbstractSyntaxTree expression = visit(expr);
+            if (expression != null) {
+                expression.setParent(node);
+                node.addChild(expression);
+            }
         }
-
         return node;
     }
 

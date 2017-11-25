@@ -614,7 +614,7 @@ expression
 //    |   expression '.' NEW nonWildcardTypeArguments? innerCreator
 //    |   expression '.' SUPER superSuffix
 //    |   expression '.' explicitGenericInvocation
-    |   variableExpr '[' expression ']' # arrayExpr
+    |   variableExpr '[' expression ']' ('[' expression ']')* # arrayExpr
     |   variableExpr '(' expressionList? ')' # functionExpr
     |   NEW creator #arrayInitExpr
 //    |   '(' typeType ')' expression
@@ -665,7 +665,7 @@ variableExpr
 equationExpr
 	:	Identifier
 	|	'*'Identifier
-	|	variableExpr '[' expression ']'
+	|	variableExpr '[' expression ']' ('[' expression ']')*
 	|	structExpr
 	;
 

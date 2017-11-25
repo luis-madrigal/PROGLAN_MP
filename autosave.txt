@@ -17,9 +17,11 @@ composition abc{
 ACT main starring () {
 	int count = 8;
 	int[] a = new int[5];
+	
 	string sdf = "asd";
-	int x = 5;
+	int x = a[0];
 	int[] b = {1,2,3,x};
+	
 	int[] c = new int[1][2];
 	when(count < 11) {
 		Say "Count is: "+count;
