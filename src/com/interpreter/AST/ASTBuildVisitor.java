@@ -2,11 +2,8 @@ package com.interpreter.AST;
 
 import com.interpreter.Scope;
 import com.interpreter.contexts.SymbolContext;
-import com.interpreter.modules.Reader;
-import com.interpreter.modules.Writer;
 import com.parser.ManuScriptBaseVisitor;
 import com.parser.ManuScriptParser;
-import com.utils.KeyTokens;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.RuleNode;
 import org.antlr.v4.runtime.tree.TerminalNode;

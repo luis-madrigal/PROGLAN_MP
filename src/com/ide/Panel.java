@@ -15,7 +15,6 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.util.ArrayList;
 import java.util.Stack;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -49,6 +48,7 @@ import org.fife.ui.rsyntaxtextarea.TokenMakerFactory;
 import org.fife.ui.rtextarea.RTextScrollPane;
 
 import com.ide.styles.IdeStyle;
+import com.ide.styles.ManuScriptGutter;
 import com.ide.styles.RSyntaxTextAreaManuscript;
 import com.ide.styles.Styles;
 import com.override.CustomScrollBarUISky;
@@ -77,7 +77,7 @@ public class Panel implements Runnable, ActionListener, KeyListener, MouseListen
 	private JButton btnContinue;
 	private JButton btnPause;
 
-	
+	private ManuScriptGutter gutter;
 	private Styles styles;
 	
 	private JLabel lblCodeInput;
@@ -249,6 +249,7 @@ public class Panel implements Runnable, ActionListener, KeyListener, MouseListen
 //		this.codeInput.isOpaque();
 		this.codeInput.setCaretColor(Color.WHITE);
 		this.codeInput.setMargin(new Insets(5, 5, 0, 0));
+		
 		Console.instance().setCodeInput(codeInput);
 		Console.instance().getTextPane().addMouseListener(this);
 		
@@ -259,10 +260,27 @@ public class Panel implements Runnable, ActionListener, KeyListener, MouseListen
 		this.inputLines.setForeground(Color.WHITE);
 		this.inputLines.setEditable(false);
 		this.inputLines.setMargin(new Insets(0, 5, 0, 5));
+
+		this.gutter = new ManuScriptGutter(this.codeInput);
+		this.inputPane = new RTextScrollPane(this.codeInput, true, Styles.SUBLIME_LINE_NUMBER, gutter);
+//		gutter.setBackground(Color.WHITE);
+//		this.gutter.setLineNumberColor(Color.CYAN);
+		this.gutter.addMouseListener(this);
+		this.gutter.getLineNumberList().addMouseListener(this);
+		this.inputPane.setGutter(this.gutter);
 		
-		this.inputPane = new RTextScrollPane(this.codeInput);
-		this.inputPane.setPreferredSize(new Dimension((int) Frame.SCREEN_SIZE.getWidth()/2, 150));
-//		this.inputPane.setSize(new Dimension((int) Frame.SCREEN_SIZE.getWidth()/2, 150));
+		this.gutter.setBookmarkingEnabled(true);
+		this.gutter.setBookmarkIcon(new ImageIcon(getClass().getClassLoader().getResource("res/ico_bookmark.png")));
+		this.inputPane.setFoldIndicatorEnabled(true);
+		this.inputPane.setIconRowHeaderEnabled(true);
+		
+//		((Gutter)((JViewport)inputPane.getComponent(3)).getView()).line
+//		setLineNumberList(this.lineNumberList);
+		//		((JTextArea)inputPane.getComponent(0)).getText()
+//		if(((Gutter)((JViewport)inputPane.getComponent(3)).getView()).getLineNumberList() instanceof ManuScriptLineNumberList) {
+//			System.out.println("Changed");
+//		}
+		this.inputPane.setPreferredSize(new Dimension((int) Frame.SCREEN_SIZE.getWidth()/2, 150));//		this.inputPane.setSize(new Dimension((int) Frame.SCREEN_SIZE.getWidth()/2, 150));
 //		this.inputPane.setMaximumSize(new Dimension((int) Frame.SCREEN_SIZE.getWidth()/2, 150));
 //		this.inputPane.setMinimumSize(new Dimension((int) Frame.SCREEN_SIZE.getWidth()/2, 150));
 		
@@ -598,7 +616,13 @@ public class Panel implements Runnable, ActionListener, KeyListener, MouseListen
 		this.dlgOpen = new DialogOpen();
 		this.dlgOpen.setProgressColor(FrameStatic.clrLightBlue);
 		this.dlgOpen.getBtnOpen().addMouseListener(this);
-		
+
+		this.codeInput.addMouseListener(this);
+		this.pnlMain.addMouseListener(this);
+
+		this.topSplitPane.addMouseListener(this);
+		this.inputLines.addMouseListener(this);
+		this.inputPane.addMouseListener(this);
 	}
 	
 	public void initMenuButtons() {
@@ -708,7 +732,7 @@ public class Panel implements Runnable, ActionListener, KeyListener, MouseListen
 
 		btnPause.setSize(40, 35);
 		btnPause.setPreferredSize(btnPause.getSize());
-		pnlMenu.add(btnPause);
+//		pnlMenu.add(btnPause);
 		
 
 		int offsetX = 7;
@@ -891,6 +915,16 @@ public class Panel implements Runnable, ActionListener, KeyListener, MouseListen
 
 	@Override
 	public void mouseReleased(MouseEvent e) {
+		System.out.println("relsrc"+e.getSource());
+		if(e.getSource() == this.gutter.getLineNumberList()) {
+			System.out.println("lineNumberList");
+		}
+		if(e.getSource() == gutter) {
+			System.out.println("gutter");
+		}
+		if(e.getSource() == codeInput) {
+			System.out.println("ln");
+		}
 		if(e.getSource() == Console.instance().getTextPane()) {
 			System.out.println("Enter");
 			gotoErrorLine(e);
@@ -898,7 +932,6 @@ public class Panel implements Runnable, ActionListener, KeyListener, MouseListen
 		
 		if(e.getSource() == btnSave) {
 			this.dlgSave.show(pnlMain);	
-
 		}
 		
 		if(e.getSource() == btnLoad) {

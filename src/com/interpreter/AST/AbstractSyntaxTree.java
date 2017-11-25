@@ -1,10 +1,5 @@
 package com.interpreter.AST;
-
-import com.interpreter.modules.ExpressionEvaluator;
 import com.interpreter.modules.Writer;
-import com.utils.KeyTokens;
-
-import javax.xml.soap.Node;
 import java.util.ArrayList;
 import java.util.List;
 
