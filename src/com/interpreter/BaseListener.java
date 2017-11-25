@@ -66,8 +66,9 @@ public class BaseListener extends ManuScriptBaseListener{
 	private void checkArraySemantics(ArrayInfo arInf, int dimCount, String varType, VariableDeclaratorContext vdctx, int line, int charPosition){
 
 		if(vdctx.variableInitializer() != null) {
-			if (vdctx.variableInitializer().expression() instanceof ArrayInitExprContext) {
-				ManuScriptParser.CreatorContext crCtx = ((ArrayInitExprContext) vdctx.variableInitializer().expression()).creator();
+			ManuScriptParser.VariableInitializerContext vdi = vdctx.variableInitializer();
+			if (vdi.expression() instanceof ArrayInitExprContext) {
+				ManuScriptParser.CreatorContext crCtx = ((ArrayInitExprContext) vdi.expression()).creator();
 				System.out.println("created text: " + crCtx.createdName().getText());
 				if (!crCtx.createdName().getText().equals(arInf.getArrType()))
 					SemanticErrors.throwError(SemanticErrors.ARR_TYPE_MISMATCH, line, charPosition, arInf.getArrType());
@@ -78,7 +79,6 @@ public class BaseListener extends ManuScriptBaseListener{
 							SemanticErrors.throwError(SemanticErrors.INVALID_DIMS, line, charPosition, (crCtx.arrayCreatorRest().children.size() - 1) / 2, dimCount);
 						ManuScriptParser.ArrayInitializerContext arInit = crCtx.arrayCreatorRest().arrayInitializer();
 						int height = getBlockHeight(arInit.getText());
-						System.out.println("height: " + height);
 						if (height != dimCount)
 							SemanticErrors.throwError(SemanticErrors.ILLEGAL_INIT, line, charPosition, varType);
 
@@ -93,10 +93,30 @@ public class BaseListener extends ManuScriptBaseListener{
 
 				}
 			} else {
-				//checking if array init is of type = {1,2,32,4,21};
-				//or int[] a = b;
-				if(v)
-				SemanticErrors.throwError(SemanticErrors.INVALID_INIT, line, charPosition);
+				if(vdi.arrayInitializer() != null){
+					//checking if array init is of type = {1,2,32,4,21};
+					int height = getBlockHeight(vdi.arrayInitializer().getText());
+					if(dimCount != height)
+						SemanticErrors.throwError(SemanticErrors.ILLEGAL_INIT, line, charPosition, varType);
+					else{
+						for(ManuScriptParser.VariableInitializerContext varInit : vdi.arrayInitializer().variableInitializer()){
+							this.expressionChecker(varInit,arInf.getArrType());
+						}
+					}
+
+				}
+				else if(vdi.expression() instanceof PrimaryExprContext){
+					PrimaryContext primary = ((PrimaryExprContext) vdi.expression()).primary();
+					if(primary.Identifier() != null){
+						if(!getCurrentSymTable().containsKey(primary.Identifier().getText())){
+							SemanticErrors.throwError(SemanticErrors.UNDECLARED_VAR, line, charPosition, primary.Identifier().getText());
+						}else if(!getCurrentSymTable().get(primary.Identifier().getText()).getSymbolType().equals(varType)){
+							SemanticErrors.throwError(SemanticErrors.TYPE_MISMATCH, line, charPosition, varType);
+						}
+					}
+				}
+				else
+					SemanticErrors.throwError(SemanticErrors.INVALID_INIT, line, charPosition);
 			}
 		}
 	}
