@@ -131,10 +131,7 @@ public class CodeGeneratorRunnable implements Runnable {
 		
 		ArrayList<String> fnArgs = this.methodTable.get(methodName).getArgs();
 		for(int i = 0; i < args.length; i++) {
-<<<<<<< HEAD
 
-=======
->>>>>>> Merge
 			this.variables.get(currentMethod).findVar(fnArgs.get(i)).setValue(args[i]);
 
 		}
@@ -150,12 +147,7 @@ public class CodeGeneratorRunnable implements Runnable {
 //				}
 			}
 		}while(isRunning && this.labelMap.containsKey(pointer) && !this.labelMap.get(pointer).getType().equals(NodeType.RETURN));
-<<<<<<< HEAD
-	
-=======
 
-		
->>>>>>> Merge
 		while(this.prevBlocks.peek() != null) {
 			this.prevBlocks.pop();
 		}
@@ -225,10 +217,7 @@ public class CodeGeneratorRunnable implements Runnable {
 			break;
 		case ASSIGN:
 			TACAssignStatement aStmt = (TACAssignStatement) statement;
-<<<<<<< HEAD
 
-=======
->>>>>>> Merge
 			this.currentScope.findVar(aStmt.getVariable().getAlias()).setValue(this.getValue(aStmt.getValue()));
 			
 			if(aStmt.isBreakpoint()) {
@@ -243,10 +232,7 @@ public class CodeGeneratorRunnable implements Runnable {
 			break;
 		case BRANCH:
 			TACIfStatement ifStmt = (TACIfStatement) statement;
-<<<<<<< HEAD
 
-=======
->>>>>>> Merge
 			// System.out.println("==="+Boolean.parseBoolean(this.getValue(ifStmt.getOperand()).toString()));
 			if(Boolean.parseBoolean(this.getValue(ifStmt.getOperand()).toString())) {
 				pointerCount = ifStmt.getJumpDestTrueInt();
@@ -257,10 +243,7 @@ public class CodeGeneratorRunnable implements Runnable {
 		case DO_WHILE:
 		case FOR:
 			TACLoopStatement loopStmt = (TACLoopStatement) statement;
-<<<<<<< HEAD
 
-=======
->>>>>>> Merge
 			// System.out.println(loopStmt.getCondition().toString());
 			if(Boolean.parseBoolean(this.getValue(loopStmt.getCondition()).toString())) {
 				pointerCount = loopStmt.getJumpDestTrueInt();
@@ -285,10 +268,7 @@ public class CodeGeneratorRunnable implements Runnable {
 			break;
 		case SCAN:
 			TACScanStatement scanStmt = (TACScanStatement) statement;
-<<<<<<< HEAD
-=======
 
->>>>>>> Merge
 			Object scanVal = Reader.readInput();
 			this.currentScope.findVar(scanStmt.getVariable()).setValue(LiteralMatcher.instance().parseAttempt(scanVal));
 			
@@ -388,20 +368,13 @@ public class CodeGeneratorRunnable implements Runnable {
 		switch (operand.getOperandType()) {
 		case REGISTER:
 			Register r = (Register) operand;
-<<<<<<< HEAD
-=======
-//			// System.out.println(this.registers.containsKey(r.getName()));
-			// System.out.println("+++++++++++++++"+this.registers.get(r.getName()).getValue());
->>>>>>> Merge
+
 			return this.registers.get(r.getName()).getValue();
 		case LITERAL:
 			return operand.getValue();
 		case VARIABLE:
 			Variable v = (Variable) operand;
-<<<<<<< HEAD
-			// System.out.println(v.getAlias());
-=======
->>>>>>> Merge
+
 			return this.currentScope.findVar(v.getAlias()).getValue();
 		default:
 			return null;
