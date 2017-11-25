@@ -97,11 +97,6 @@ public class BaseListener extends ManuScriptBaseListener{
 
 				}
 			} else {
-<<<<<<< HEAD
-				//checking if array init is of type = {1,2,32,4,21};
-				//or int[] a = b;
-				SemanticErrors.throwError(SemanticErrors.INVALID_INIT, line, charPosition);
-=======
 				if(vdi.arrayInitializer() != null){
 					//checking if array init is of type = {1,2,32,4,21};
 					int height = getBlockHeight(vdi.arrayInitializer().getText());
@@ -126,7 +121,6 @@ public class BaseListener extends ManuScriptBaseListener{
 				}
 				else
 					SemanticErrors.throwError(SemanticErrors.INVALID_INIT, line, charPosition);
->>>>>>> f91ba21f4030a1d3ecda85cbacba2e19396f9b7a
 			}
 		}
 	}
