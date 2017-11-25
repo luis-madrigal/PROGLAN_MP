@@ -832,9 +832,10 @@ public class Panel implements Runnable, ActionListener, KeyListener, MouseListen
 	public Stack<Integer> getListBreakpoints(String text) {
 		Stack<Integer> listBreakpoints = new Stack<Integer>();
 //		listBreakpoints.push(1);
-		listBreakpoints.push(2);
+//		listBreakpoints.push(2);
+//		listBreakpoints.push(3);
 //		listBreakpoints.push(4);
-//		listBreakpoints.push(5);
+		listBreakpoints.push(5);
 //		listBreakpoints.push(7);
 		
 		return listBreakpoints;

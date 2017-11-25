@@ -128,10 +128,10 @@ public class CodeGeneratorRunnable implements Runnable {
 				pointerCount = this.evaluate(stmt, pointerCount);
 				pointer = ICGenerator.LABEL_ALIAS+pointerCount;
 				
-				if(stmt.isBreakpoint()) {
-					System.out.println("BRK "+	stmt.getType()+": "+stmt.isBreakpoint());
-					this.isPlay = false;
-				}
+//				if(stmt.isBreakpoint()) {
+//					System.out.println("BRK "+	stmt.getType()+": "+stmt.isBreakpoint());
+//					this.isPlay = false;
+//				}
 			}
 		}while(this.labelMap.containsKey(pointer) && !this.labelMap.get(pointer).getType().equals(NodeType.RETURN));
 		
@@ -166,6 +166,12 @@ public class CodeGeneratorRunnable implements Runnable {
 				this.enterBlock(bStmt.getLabel());
 			else
 				this.exitBlock();
+			
+			if(bStmt.isBreakpoint()) {
+				System.out.println("BRK "+	bStmt.getType()+": "+bStmt.isBreakpoint());
+				this.isPlay = false;
+			}
+			
 			pointerCount++;
 			break;			
 		case FUNCTION_INVOKE: 
@@ -182,11 +188,22 @@ public class CodeGeneratorRunnable implements Runnable {
 			Object value = this.run(this.methodICodes.get(stmt.getMethodName()), params); 
 			r.setValue(value);
 			this.registers.put(r.getName(), r);
+			
+			if(stmt.isBreakpoint()) {
+				System.out.println("BRK "+	stmt.getType()+": "+stmt.isBreakpoint());
+				this.isPlay = false;
+			}
+			
 			pointerCount++;
 			break;
 		case ASSIGN:
 			TACAssignStatement aStmt = (TACAssignStatement) statement;
 			this.currentScope.findVar(aStmt.getVariable().getAlias()).setValue(this.getValue(aStmt.getValue()));
+			
+			if(aStmt.isBreakpoint()) {
+				System.out.println("BRK "+	aStmt.getType()+": "+aStmt.isBreakpoint());
+				this.isPlay = false;
+			}
 			pointerCount++;
 			break;
 		case GOTO:
@@ -210,16 +227,31 @@ public class CodeGeneratorRunnable implements Runnable {
 				pointerCount = loopStmt.getJumpDestTrueInt();
 			} else
 				pointerCount = loopStmt.getJumpDestFalseInt();
+			
+			if(loopStmt.isBreakpoint()) {
+				System.out.println("BRK "+	loopStmt.getType()+": "+loopStmt.isBreakpoint());
+				this.isPlay = false;
+			}
 			break;
 		case PRINT:
 			TACPrintStatement printStmt = (TACPrintStatement) statement;
 			Writer.printText(this.getValue(printStmt.getExpression()).toString());
+			
+			if(printStmt.isBreakpoint()) {
+				System.out.println("BRK "+	printStmt.getType()+": "+printStmt.isBreakpoint());
+				this.isPlay = false;
+			}
 			pointerCount++;
 			break;
 		case SCAN:
 			TACScanStatement scanStmt = (TACScanStatement) statement;
 			Object scanVal = Reader.readInput();
 			this.currentScope.findVar(scanStmt.getVariable()).setValue(LiteralMatcher.instance().parseAttempt(scanVal));
+			
+			if(scanStmt.isBreakpoint()) {
+				System.out.println("BRK "+	scanStmt.getType()+": "+scanStmt.isBreakpoint());
+				this.isPlay = false;
+			}
 			pointerCount++;
 			break;
 		case VAR_DECLARE:
@@ -246,6 +278,12 @@ public class CodeGeneratorRunnable implements Runnable {
 				}
 				
 			}
+			
+			if(statement.isBreakpoint()) {
+				System.out.println("BRK "+	statement.getType()+": "+statement.isBreakpoint());
+				this.isPlay = false;
+			}
+			
 			pointerCount++;
 			break;
 		}
