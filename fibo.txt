@@ -1,11 +1,9 @@
 
-int numberCount = 0;
-
 ACT generateFibo starring (int number) {
 	if(number == 1 || number == 2) {
 		give 1;
 	}
-	numberCount++;
+
 	give generateFibo(number-1)+generateFibo(number-2);
 }
 
@@ -18,5 +16,4 @@ ACT main starring () {
 
 	fibo = generateFibo(x);
 	Say "Fibonacci Number "+x+": "+fibo;
-	Say numberCount;
 }
