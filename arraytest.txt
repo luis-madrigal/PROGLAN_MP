@@ -1,27 +1,5 @@
 
-permanent int FINAL_X = 10;
-permanent int FINAL_Z = 5;
-
-composition abc{
-int a;
-}
-
-ACT gcd starring (int p, int q) {
-	if(q == 0) give p;
-	else give gcd(q, p % q);
-}
-
-ACT gcd2 starring (int p, int q) {
-	when (q != 0) {
-		int temp = q;
-		q = p % q;
-		p = temp;
-	}
-	give p;
-}
-
-ACT main starring() {
-	int p;
-	int q = new int[2];
-
+ACT main starring () {
+	int arr = new int[] {2, 3, 4};
+	Say arr[3+3];
 }

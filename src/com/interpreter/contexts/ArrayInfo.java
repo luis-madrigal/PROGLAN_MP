@@ -85,6 +85,12 @@ public class ArrayInfo implements GenericInfo{
         this.array = curArr;
         return curArr;
     }
+    
+    public Object getObjWithIndex(Object value) {
+    	Integer index = Integer.parseInt(value.toString());
+    	System.out.println(this.array[index]);
+    	return this.array[index];
+    }
 
     public Object[] getArray() {
         return array;

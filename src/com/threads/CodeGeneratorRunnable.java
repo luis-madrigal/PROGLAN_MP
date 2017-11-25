@@ -10,6 +10,7 @@ import com.interpreter.Scope;
 import com.interpreter.AST.ASTBuildVisitor;
 import com.interpreter.AST.NodeType;
 import com.interpreter.AST.ProcedureNode;
+import com.interpreter.contexts.ArrayInfo;
 import com.interpreter.contexts.MethodContext;
 import com.interpreter.contexts.SymbolContext;
 import com.interpreter.matchers.LiteralMatcher;
@@ -23,6 +24,7 @@ import com.interpreter.tac.TACBlockStatement;
 import com.interpreter.tac.TACFuncInvokeStatement;
 import com.interpreter.tac.TACGotoStatement;
 import com.interpreter.tac.TACIfStatement;
+import com.interpreter.tac.TACIndexingStatement;
 import com.interpreter.tac.TACLoopStatement;
 import com.interpreter.tac.TACOutputStatement;
 import com.interpreter.tac.TACPrintStatement;
@@ -268,7 +270,6 @@ public class CodeGeneratorRunnable implements Runnable {
 			}
 			break;
 		case PRINT:
-			System.out.println("PRINTPRINT");
 			TACPrintStatement printStmt = (TACPrintStatement) statement;
 
 			Writer.printText(this.getValue(registers, printStmt.getExpression()).toString());
@@ -303,7 +304,7 @@ public class CodeGeneratorRunnable implements Runnable {
 				case BIN_ARITHMETIC:
 				case BIN_LOGIC: 
 					TACBinaryOpStatement binOp = (TACBinaryOpStatement) statement;
-					Register rb = ((TACOutputStatement) statement).getOutputRegister();
+					Register rb = binOp.getOutputRegister();
 					registers.put(rb.getName(), rb);
 					registers.get(rb.getName()).setValue(this.binOpEval(registers, binOp.getOperator(), binOp.getOperand1(), binOp.getOperand2())); 
 					System.out.println(registers.get(rb.getName()).getValue());break;
@@ -311,9 +312,19 @@ public class CodeGeneratorRunnable implements Runnable {
 				case UNIPOST_ARITHMETIC:
 				case UNI_LOGIC:
 					TACUnaryOpStatement unOp = (TACUnaryOpStatement) statement;
-					Register rb1 = ((TACOutputStatement) statement).getOutputRegister();
+					Register rb1 = unOp.getOutputRegister();
 					registers.put(rb1.getName(), rb1);
 					registers.get(rb1.getName()).setValue(this.unOpEval(registers, unOp.getOperator(), unOp.getOperand1())); break;
+				case ARRAY_ACCESS:
+					TACIndexingStatement iOp = (TACIndexingStatement) statement;
+					Register rb2 = iOp.getOutputRegister();
+					SymbolContext iCtx = this.currentScope.findVar(iOp.getArrayName());
+					ArrayInfo info = (ArrayInfo) iCtx.getOther();
+					System.out.println(info);
+					registers.put(rb2.getName(), rb2);
+					registers.get(rb2.getName()).setValue(info.getObjWithIndex(this.getValue(registers, iOp.getIndex())));
+					pointerCount++;
+					break;
 				default:
 					break;
 				}
