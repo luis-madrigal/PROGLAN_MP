@@ -1,20 +1,19 @@
 package com.interpreter.contexts;
 
-public class StructInfo implements GenericInfo{
-    private String name;
+/** todo: implement a separate table for defined structinfo
+ * data for struct type symbols
+ */
+public class StructInfo implements GenericInfo<StructInfo>{
+    private String structName;
     private SymbolContext[] members;
 
-    public StructInfo(String name, SymbolContext[] members){
-       this.name = name;
+    public StructInfo(String type, SymbolContext[] members){
+       this.structName = type.replace("composition ","");
        this.members = members;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
+    public String getStructName() {
+        return structName;
     }
 
     public SymbolContext[] getMembers() {
@@ -25,8 +24,16 @@ public class StructInfo implements GenericInfo{
         this.members = members;
     }
 
+    public SymbolContext getMember(String memberName){
+        for(SymbolContext mem : members){
+            if(mem.getIdentifier().equals(memberName))
+                return mem;
+        }
+        return null;
+    }
+
     @Override
-    public GenericInfo getInfo() {
+    public StructInfo getInfo() {
         return this;
     }
 }

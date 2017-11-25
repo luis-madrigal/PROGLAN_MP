@@ -1,12 +1,15 @@
 package com.interpreter.contexts;
 
 import com.interpreter.SemanticErrors;
-import java.lang.reflect.Array;
+import com.rits.cloning.Cloner;
 
-public class ArrayInfo implements GenericInfo{
+import java.lang.reflect.Array;
+import java.util.Arrays;
+
+public class ArrayInfo implements GenericInfo<ArrayInfo>{
     //
    // private ArrayList<Integer> size;
-    private String type;
+    private String arrType;
     private Object[] array;
     //number of dimensions of array
     private int dims;
@@ -14,57 +17,56 @@ public class ArrayInfo implements GenericInfo{
 
     public ArrayInfo(int dims, String type){
         this.dims = dims;
-        this.type = type.substring(0,type.indexOf('['));
-        System.out.println("arr type: "+this.type);
+        this.arrType = type.substring(0,type.indexOf('['));
+        System.out.println("array type: "+this.arrType);
     }
 
-
-    public ArrayInfo(int[] sizes, String type){
-        this.dims = sizes.length;
-        this.array = initArr(sizes);
-
-
-        this.type = type.substring(0,type.indexOf('['));
-        System.out.println("arr type: "+this.type);
-
-        this.isInitialized = true;
-    }
-
-    //todo test
     public Object getObject(int ... index){
-        if(index.length != dims){
-            SemanticErrors.throwError(SemanticErrors.INVALID_DIMS, index.length,dims);
-            return null;
-        }
-        else {
-            Object cur = array;
-            for (int i : index) {
-                cur = Array.get(cur, i);
+        if(isInitialized) {
+            get: if (index.length != dims) {
+                //todo might not work properly -- no line number, charnumber
+                SemanticErrors.throwError(SemanticErrors.INVALID_DIMS, index.length, dims);
+                return null;
+            } else {
+                Object cur = array;
+                for (int i : index) {
+                    if (i < Array.getLength(cur)) {
+                        cur = Array.get(cur, i);
+                    } else {
+                        //todo might not work properly -- no line number, charnumber
+                        SemanticErrors.throwError(SemanticErrors.OUT_OF_BOUNDS, i, Array.getLength(cur));
+                        break get;
+                    }
+                }
+                return cur;
             }
-            return cur;
         }
+        return null;
     }
 
     public void setObject(Object toSet, int ... index){
-        set: if(index.length != dims){
-            SemanticErrors.throwError(SemanticErrors.INVALID_DIMS, index.length,dims);
-        }
-        else {
-            Object cur = array;
-            for (int i : index) {
-                if(i < Array.getLength(cur)) {
-                    cur = Array.get(cur, i);
-                }else {
-                    SemanticErrors.throwError(SemanticErrors.OUT_OF_BOUNDS, i, Array.getLength(cur));
-                    break set;
+        if(isInitialized) {
+            set:
+            if (index.length != dims) {
+                SemanticErrors.throwError(SemanticErrors.INVALID_DIMS, index.length, dims);
+            } else {
+                Object cur = array;
+                for (int i : index) {
+                    if (i < Array.getLength(cur)) {
+                        cur = Array.get(cur, i);
+                    } else {
+                        //todo might not work properly -- no line number, charnumber
+                        SemanticErrors.throwError(SemanticErrors.OUT_OF_BOUNDS, i, Array.getLength(cur));
+                        break set;
+                    }
                 }
-            }
 
-            cur = toSet;
+                cur = toSet;
+            }
         }
     }
 
-    public Object[] initArr(int[] sizes){
+    public void initArr(int[] sizes){
         int dims = sizes.length;
         if(this.dims != dims){
             SemanticErrors.throwError(SemanticErrors.INVALID_DIMS,dims,this.dims);
@@ -78,12 +80,16 @@ public class ArrayInfo implements GenericInfo{
             int curSize = sizes[i];
             supArr = new Object[curSize];
             for(int index = 0; index < curSize; index++){
-                supArr[index] = curArr.clone();
+                supArr[index] = Cloner.standard().deepClone(curArr);
             }
             curArr = supArr;
         }
+        this.isInitialized = true;
         this.array = curArr;
-        return curArr;
+    }
+
+    public String getArrType(){
+        return this.arrType;
     }
     
     public Object getObjWithIndex(Object value) {
@@ -97,11 +103,15 @@ public class ArrayInfo implements GenericInfo{
     }
 
     @Override
-    public GenericInfo getInfo() {
+    public ArrayInfo getInfo() {
         return this;
     }
 
     public boolean isInitialized() {
         return isInitialized;
+    }
+
+    public String toSring(){
+        return Arrays.deepToString(array);
     }
 }

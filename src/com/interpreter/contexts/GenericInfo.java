@@ -1,5 +1,5 @@
 package com.interpreter.contexts;
 
-public interface GenericInfo {
-    public GenericInfo getInfo();
+public interface GenericInfo<T>{
+    public T getInfo();
 }

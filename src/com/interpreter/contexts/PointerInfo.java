@@ -1,6 +1,6 @@
 package com.interpreter.contexts;
 
-public class PointerInfo implements  GenericInfo{
+public class PointerInfo implements  GenericInfo<PointerInfo>{
     private SymbolContext pointee;
 
     public PointerInfo(SymbolContext pointee){
@@ -16,7 +16,7 @@ public class PointerInfo implements  GenericInfo{
     }
 
     @Override
-    public GenericInfo getInfo() {
+    public PointerInfo getInfo() {
         return this;
     }
 }
