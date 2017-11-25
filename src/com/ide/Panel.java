@@ -49,7 +49,7 @@ import org.fife.ui.rsyntaxtextarea.TokenMakerFactory;
 import org.fife.ui.rtextarea.RTextScrollPane;
 
 import com.debug.watch.VariableNode;
-import com.debug.watch.Watcher;
+import com.debug.watch.Searcher;
 import com.ide.styles.IdeStyle;
 import com.ide.styles.ManuScriptGutter;
 import com.ide.styles.RSyntaxTextAreaManuscript;
@@ -67,6 +67,7 @@ public class Panel implements Runnable, ActionListener, KeyListener, MouseListen
 	private Frame frameParent;
 	private DialogSave dlgSave;
 	private DialogOpen dlgOpen;
+	private DialogWatch dlgWatch;
 
 	private TextFileHandler textFileHandler;
 	private boolean isRunning;
@@ -118,7 +119,7 @@ public class Panel implements Runnable, ActionListener, KeyListener, MouseListen
 	public final static String newline = "\n";
 	
 	private ScannerModel scanner;
-	private Watcher watcher;
+	private Searcher watcher;
 
 	public static int baseFontSize = (int) Frame.SCREEN_SIZE.getHeight() / 60;
 	
@@ -396,7 +397,9 @@ public class Panel implements Runnable, ActionListener, KeyListener, MouseListen
 		));
 		
 		// For watch variables
-		this.watcher = new Watcher();
+		this.watcher = new Searcher();
+		
+		this.dlgWatch = new DialogWatch();
 		
 		watchOut = new JTextPane();
 		watchOut.setFont(new Font("Consolas", 150, baseFontSize));
@@ -613,6 +616,7 @@ public class Panel implements Runnable, ActionListener, KeyListener, MouseListen
 		this.dlgOpen.getBtnOpen().addMouseListener(this);
 		
 		this.isRunning = false;
+		
 	}
 	
 	public void initMenuButtons() {
@@ -963,6 +967,12 @@ public class Panel implements Runnable, ActionListener, KeyListener, MouseListen
 			
 			watcher.generateVarList(this.codeInput.getText());
 			varList = watcher.getVarList();
+			
+			for(VariableNode var : varList)
+				System.out.println("Line "+var.getLineNumber()+": "+var.getDataType()+" "+var.getLiteral()+
+						" | Found in method "+var.getFuncParent()+" ("+var.getFuncChild()+")");
+			
+			this.dlgWatch.setVisible(true);
 		}
 		
 		if(e.getSource() == this.dlgSave.getBtnSave()) {
