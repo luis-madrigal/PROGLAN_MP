@@ -268,29 +268,19 @@ public class Panel implements Runnable, ActionListener, KeyListener, MouseListen
 		this.gutter.addMouseListener(this);
 		this.gutter.getLineNumberList().addMouseListener(this);
 		this.inputPane.setGutter(this.gutter);
-		
 		this.gutter.setBookmarkingEnabled(true);
 		this.gutter.setBookmarkIcon(new ImageIcon(getClass().getClassLoader().getResource("res/ico_bookmark.png")));
 		this.inputPane.setFoldIndicatorEnabled(true);
 		this.inputPane.setIconRowHeaderEnabled(true);
-		
-//		((Gutter)((JViewport)inputPane.getComponent(3)).getView()).line
-//		setLineNumberList(this.lineNumberList);
-		//		((JTextArea)inputPane.getComponent(0)).getText()
-//		if(((Gutter)((JViewport)inputPane.getComponent(3)).getView()).getLineNumberList() instanceof ManuScriptLineNumberList) {
-//			System.out.println("Changed");
-//		}
+
 		this.inputPane.setPreferredSize(new Dimension((int) Frame.SCREEN_SIZE.getWidth()/2, 150));//		this.inputPane.setSize(new Dimension((int) Frame.SCREEN_SIZE.getWidth()/2, 150));
-//		this.inputPane.setMaximumSize(new Dimension((int) Frame.SCREEN_SIZE.getWidth()/2, 150));
-//		this.inputPane.setMinimumSize(new Dimension((int) Frame.SCREEN_SIZE.getWidth()/2, 150));
-		
+
 		this.inputPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		this.inputPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
-//		this.inputPane.setRowHeaderView(this.inputLines);
+
 		this.inputPane.getVerticalScrollBar().setUI(new CustomScrollBarUISky());
 		this.inputPane.getHorizontalScrollBar().setUI(new CustomScrollBarUISky());
 		this.inputPane.getTextArea().setFadeCurrentLineHighlight(true);
-//		this.inputPane.getTextArea().setCurrentLineHighlightColor(Styles.UN_HIGHLIGHT);
 		this.inputPane.getTextArea().setSelectionColor(Styles.UN_HIGHLIGHT);
 		this.inputPane.setBorder(null);
 		int horizontalHeight = 10;
@@ -383,7 +373,7 @@ public class Panel implements Runnable, ActionListener, KeyListener, MouseListen
 		        (int)threeACPane.getVerticalScrollBar().getPreferredSize().getHeight()
 		));
 		
-		this.treePane = new JScrollPane(); //TODO: do parse tree
+		this.treePane = new JScrollPane();
 		this.treePane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		this.treePane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
 		
@@ -438,7 +428,6 @@ public class Panel implements Runnable, ActionListener, KeyListener, MouseListen
         btnScaleUp.setBackground(Color.WHITE);
         btnScaleUp.setBorder(null);
         
-        // TODO Proper res retrieval
         btnScaleUp.setIcon(new ImageIcon(getClass().getClassLoader().getResource("res/ico_add_off.png")));
         btnScaleUp.setRolloverIcon(new ImageIcon(getClass().getClassLoader().getResource("res/ico_add_on.png")));
         btnScaleUp.setPressedIcon(new ImageIcon(getClass().getClassLoader().getResource("res/ico_add_on.png")));
@@ -616,13 +605,6 @@ public class Panel implements Runnable, ActionListener, KeyListener, MouseListen
 		this.dlgOpen = new DialogOpen();
 		this.dlgOpen.setProgressColor(FrameStatic.clrLightBlue);
 		this.dlgOpen.getBtnOpen().addMouseListener(this);
-
-		this.codeInput.addMouseListener(this);
-		this.pnlMain.addMouseListener(this);
-
-		this.topSplitPane.addMouseListener(this);
-		this.inputLines.addMouseListener(this);
-		this.inputPane.addMouseListener(this);
 	}
 	
 	public void initMenuButtons() {
@@ -768,7 +750,6 @@ public class Panel implements Runnable, ActionListener, KeyListener, MouseListen
 	}
 	*/
 	/*
-	 * TODO: SyntaxHighlighting
 	 * Specify the color for a Token type here using syntaxScheme.
 	 * 
 	 * The Token class is from the RSyntax external library. It has static methods
@@ -855,11 +836,25 @@ public class Panel implements Runnable, ActionListener, KeyListener, MouseListen
 
 	public Stack<Integer> getListBreakpoints(String text) {
 		Stack<Integer> listBreakpoints = new Stack<Integer>();
+		String listText = codeInput.getText();
+		int length = listText.split("\n").length;
+		
+		for(int i = 0; i < length; i++) {
+			if(gutter.hasBookmark(i)) {
+
+				listBreakpoints.push(i);
+//				System.out.println(i+" has");
+			}
+		}
+
+//		this.gutter.hasBookmark(5);
+		
+		
+//		listBreakpoints.push(0);
 //		listBreakpoints.push(1);
 //		listBreakpoints.push(2);
 //		listBreakpoints.push(3);
-//		listBreakpoints.push(4);
-		listBreakpoints.push(5);
+//		listBreakpoints.push(5);
 //		listBreakpoints.push(7);
 		
 		return listBreakpoints;
@@ -915,18 +910,8 @@ public class Panel implements Runnable, ActionListener, KeyListener, MouseListen
 
 	@Override
 	public void mouseReleased(MouseEvent e) {
-		System.out.println("relsrc"+e.getSource());
-		if(e.getSource() == this.gutter.getLineNumberList()) {
-			System.out.println("lineNumberList");
-		}
-		if(e.getSource() == gutter) {
-			System.out.println("gutter");
-		}
-		if(e.getSource() == codeInput) {
-			System.out.println("ln");
-		}
+		
 		if(e.getSource() == Console.instance().getTextPane()) {
-			System.out.println("Enter");
 			gotoErrorLine(e);
 		}
 		

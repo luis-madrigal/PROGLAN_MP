@@ -1,6 +1,7 @@
 package com.ide.styles;
 
 import org.fife.ui.rtextarea.Gutter;
+import org.fife.ui.rtextarea.GutterIconInfo;
 import org.fife.ui.rtextarea.RTextArea;
 
 public class ManuScriptGutter extends Gutter {
@@ -15,6 +16,11 @@ public class ManuScriptGutter extends Gutter {
 		this.iconArea = new ManuScriptIconRowHeader(textArea);
 		this.setIconArea(iconArea);
 	}
+	
+	public boolean hasBookmark(int line) {
+		return this.iconArea.hasBookmark(line);
+	}
+	
 
 	public ManuScriptLineNumberList getLineNumberList() {
 		return lineNumberList;
