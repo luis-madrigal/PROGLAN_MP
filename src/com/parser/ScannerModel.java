@@ -101,30 +101,14 @@ public class ScannerModel {
 		Scope scope = new Scope(null); //scope of program. contains the symbol tables
 		this.methodTable = new HashMap<String, MethodContext>(); //the methods in the program. no overloading
 		
-<<<<<<< HEAD
-		System.out.println(scope.getChildren().size());
-		System.out.println(methodTable.size());
 
-
-		scope.print(); //todo: remove this
-=======
 		ParseTreeWalker.DEFAULT.walk(new BaseListener(scope, methodTable), this.tree);
 
 		scope.print();
->>>>>>> DebugThread
 
 		this.astbv = new ASTBuildVisitor(scope, listBreakpoints);
 		astbv.visit(tree);
 		astbv.printAST("main");
-<<<<<<< HEAD
-		astbv.printAST("%FIELD");
-
-		this.threadCodeGenerator = new CodeGeneratorThread(astbv, methodTable);
-		threadCodeGenerator.run();
-
-//		System.out.println(tree.toStringTree(parser));
-=======
->>>>>>> DebugThread
 		
 //		this.threadCodeGenerator = new CodeGeneratorThread(this.astbv, methodTable);
 //		this.threadCodeGenerator.run(); // TODO

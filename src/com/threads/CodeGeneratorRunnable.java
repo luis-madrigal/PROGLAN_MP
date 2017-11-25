@@ -53,11 +53,7 @@ public class CodeGeneratorRunnable implements Runnable {
 	private String currentMethod;
 	private Stack<Scope> prevBlocks;
 	private HashMap<String, MethodContext> methodTable;
-<<<<<<< HEAD:src/com/interpreter/codegen/CodeGenerator.java
-	private boolean isRunning;
-=======
 	private HashMap<String, ProcedureNode> methodASTTable;
->>>>>>> DebugThread:src/com/threads/CodeGeneratorRunnable.java
 	
 //	public CodeGeneratorRunnable(ASTBuildVisitor astbv, HashMap<String, MethodContext> methodTable) {
 //		this.astbv = astbv;
@@ -115,24 +111,11 @@ public class CodeGeneratorRunnable implements Runnable {
 	
 	@Override
 	public void run() {
-<<<<<<< HEAD:src/com/interpreter/codegen/CodeGenerator.java
-//		this.methodScope = this.variables.get(currentMethod);
-		this.run("main");
-=======
-//		CodeGenerator codegen = new CodeGenerator(astbv.getMethodASTTable(), methodTable);
-//		codegen.run();
 		
 		this.currentMethod = "main";
 		this.parentScope = this.variables.get(currentMethod);
 		this.run(methodICodes.get(currentMethod));
 		
-//		while(isRunning) {
-//			if(isPlay) {
-////				// System.out.println("Play");
-//				// TODO: Continue per line processing
-//			}
-//		}
->>>>>>> DebugThread:src/com/threads/CodeGeneratorRunnable.java
 	}
 	
 	private Object run(String methodName, Object ...args) {
@@ -147,17 +130,7 @@ public class CodeGeneratorRunnable implements Runnable {
 		
 		ArrayList<String> fnArgs = this.methodTable.get(methodName).getArgs();
 		for(int i = 0; i < args.length; i++) {
-<<<<<<< HEAD:src/com/interpreter/codegen/CodeGenerator.java
-			methodScope.setSymbolContext(fnArgs.get(i), args[i]);
-//			System.out.println(args[i]+"--------------");
-		}
-		do {
-			System.out.println(pointer);
-			stmt = this.labelMap.get(pointer);
-			pointerCount = this.evaluate(methodScope, registers, stmt, pointerCount);
-			pointer = ICGenerator.LABEL_ALIAS+pointerCount;
-		}while(!this.labelMap.get(pointer).getType().equals(NodeType.FUNCTION_END) && !this.labelMap.get(pointer).getType().equals(NodeType.RETURN) && this.isRunning);
-=======
+
 			this.variables.get(currentMethod).findVar(fnArgs.get(i)).setValue(args[i]);
 
 		}
@@ -173,8 +146,7 @@ public class CodeGeneratorRunnable implements Runnable {
 //				}
 			}
 		}while(isRunning && this.labelMap.containsKey(pointer) && !this.labelMap.get(pointer).getType().equals(NodeType.RETURN));
->>>>>>> DebugThread:src/com/threads/CodeGeneratorRunnable.java
-		
+	
 		while(this.prevBlocks.peek() != null) {
 			this.prevBlocks.pop();
 		}
@@ -233,9 +205,6 @@ public class CodeGeneratorRunnable implements Runnable {
 			Object value = this.run(stmt.getMethodName(), params); 
 //			System.out.println(value);
 			r.setValue(value);
-<<<<<<< HEAD:src/com/interpreter/codegen/CodeGenerator.java
-			registers.put(r.getName(), r);
-=======
 			this.registers.put(r.getName(), r);
 			
 			if(stmt.isBreakpoint()) {
@@ -243,21 +212,17 @@ public class CodeGeneratorRunnable implements Runnable {
 				this.isPlay = false;
 			}
 			
->>>>>>> DebugThread:src/com/threads/CodeGeneratorRunnable.java
 			pointerCount++;
 			break;
 		case ASSIGN:
 			TACAssignStatement aStmt = (TACAssignStatement) statement;
-<<<<<<< HEAD:src/com/interpreter/codegen/CodeGenerator.java
-			this.currentScope.findVar(aStmt.getVariable().getAlias()).setValue(this.getValue(registers, aStmt.getValue()));
-=======
+
 			this.currentScope.findVar(aStmt.getVariable().getAlias()).setValue(this.getValue(aStmt.getValue()));
 			
 			if(aStmt.isBreakpoint()) {
 				System.out.println("BRK "+	aStmt.getType()+": "+aStmt.isBreakpoint());
 				this.isPlay = false;
 			}
->>>>>>> DebugThread:src/com/threads/CodeGeneratorRunnable.java
 			pointerCount++;
 			break;
 		case GOTO:
@@ -266,13 +231,9 @@ public class CodeGeneratorRunnable implements Runnable {
 			break;
 		case BRANCH:
 			TACIfStatement ifStmt = (TACIfStatement) statement;
-<<<<<<< HEAD:src/com/interpreter/codegen/CodeGenerator.java
-//			System.out.println("==="+Boolean.parseBoolean(this.getValue(ifStmt.getOperand()).toString()));
-			if(Boolean.parseBoolean(this.getValue(registers, ifStmt.getOperand()).toString())) {
-=======
+
 			// System.out.println("==="+Boolean.parseBoolean(this.getValue(ifStmt.getOperand()).toString()));
 			if(Boolean.parseBoolean(this.getValue(ifStmt.getOperand()).toString())) {
->>>>>>> DebugThread:src/com/threads/CodeGeneratorRunnable.java
 				pointerCount = ifStmt.getJumpDestTrueInt();
 			} else
 				pointerCount = ifStmt.getJumpDestFalseInt();
@@ -281,13 +242,9 @@ public class CodeGeneratorRunnable implements Runnable {
 		case DO_WHILE:
 		case FOR:
 			TACLoopStatement loopStmt = (TACLoopStatement) statement;
-<<<<<<< HEAD:src/com/interpreter/codegen/CodeGenerator.java
-			System.out.println(loopStmt.getCondition().toString());
-			if(Boolean.parseBoolean(this.getValue(registers, loopStmt.getCondition()).toString())) {
-=======
+
 			// System.out.println(loopStmt.getCondition().toString());
 			if(Boolean.parseBoolean(this.getValue(loopStmt.getCondition()).toString())) {
->>>>>>> DebugThread:src/com/threads/CodeGeneratorRunnable.java
 				pointerCount = loopStmt.getJumpDestTrueInt();
 			} else
 				pointerCount = loopStmt.getJumpDestFalseInt();
@@ -299,30 +256,17 @@ public class CodeGeneratorRunnable implements Runnable {
 			break;
 		case PRINT:
 			TACPrintStatement printStmt = (TACPrintStatement) statement;
-<<<<<<< HEAD:src/com/interpreter/codegen/CodeGenerator.java
-			Writer.printText(this.getValue(registers, printStmt.getExpression()).toString());
-=======
+
 			Writer.printText(this.getValue(printStmt.getExpression()).toString());
 			
 			if(printStmt.isBreakpoint()) {
 				System.out.println("BRK "+	printStmt.getType()+": "+printStmt.isBreakpoint());
 				this.isPlay = false;
 			}
->>>>>>> DebugThread:src/com/threads/CodeGeneratorRunnable.java
 			pointerCount++;
 			break;
 		case SCAN:
 			TACScanStatement scanStmt = (TACScanStatement) statement;
-<<<<<<< HEAD:src/com/interpreter/codegen/CodeGenerator.java
-			SymbolContext ctx = this.currentScope.findVar(scanStmt.getVariable());
-			Object scanVal = Reader.readInput(ctx.getSymbolType());
-			if(scanVal == null)
-				this.isRunning = false;
-			else {
-				ctx.setValue(scanVal);
-				pointerCount++;
-			}
-=======
 			Object scanVal = Reader.readInput();
 			this.currentScope.findVar(scanStmt.getVariable()).setValue(LiteralMatcher.instance().parseAttempt(scanVal));
 			
@@ -331,7 +275,6 @@ public class CodeGeneratorRunnable implements Runnable {
 				this.isPlay = false;
 			}
 			pointerCount++;
->>>>>>> DebugThread:src/com/threads/CodeGeneratorRunnable.java
 			break;
 		case VAR_DECLARE:
 			pointerCount++;
@@ -423,26 +366,12 @@ public class CodeGeneratorRunnable implements Runnable {
 		switch (operand.getOperandType()) {
 		case REGISTER:
 			Register r = (Register) operand;
-<<<<<<< HEAD:src/com/interpreter/codegen/CodeGenerator.java
-//			System.out.println(this.registers.containsKey(r.getName()));
-//			System.out.println("+++++++++++++++"+this.registers.get(r.getName()).getValue());
-			return registers.get(r.getName()).getValue();
-=======
-//			// System.out.println(this.registers.containsKey(r.getName()));
-			// System.out.println("+++++++++++++++"+this.registers.get(r.getName()).getValue());
 			return this.registers.get(r.getName()).getValue();
->>>>>>> DebugThread:src/com/threads/CodeGeneratorRunnable.java
 		case LITERAL:
 			return operand.getValue();
 		case VARIABLE:
 			Variable v = (Variable) operand;
-<<<<<<< HEAD:src/com/interpreter/codegen/CodeGenerator.java
-//			System.out.println(v.getAlias());
-//			System.out.println("asfbiafbakdbfkshds" + (this.currentScope.findVar(v.getAlias()) == this.testctx));
-//			System.out.println(this.currentScope.findVar(v.getAlias()).getValue());
-=======
 			// System.out.println(v.getAlias());
->>>>>>> DebugThread:src/com/threads/CodeGeneratorRunnable.java
 			return this.currentScope.findVar(v.getAlias()).getValue();
 		default:
 			return null;
@@ -452,8 +381,6 @@ public class CodeGeneratorRunnable implements Runnable {
         isPlay = true;
     }
 	
-<<<<<<< HEAD:src/com/interpreter/codegen/CodeGenerator.java
-=======
 	public void pause() {
         isPlay = false;
     }
@@ -462,5 +389,4 @@ public class CodeGeneratorRunnable implements Runnable {
 		this.isRunning = false;
 		System.out.println("Stop");
 	}
->>>>>>> DebugThread:src/com/threads/CodeGeneratorRunnable.java
 }
