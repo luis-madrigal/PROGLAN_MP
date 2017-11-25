@@ -1,15 +1,12 @@
 
-ACT info starring (int x) {
-	give x + 5;
-}
 
-ACT main starring () {
-	int x;
-	int fibo;
-	[comment]: int[] arr = new int[] {1, 2, 3};
+ACT main starring() {
+ 	int x = 0;
 
-	Say "Enter a number: ";
-	Write to x;
-	Say x;
-	Say info(10);
-}
+	Say "Hello World";
+	
+ 	replay(int i = 0; i < 5; i++) {
+ 		Say "Hello World";
+ 		i += 1;
+ 	}
+ }
