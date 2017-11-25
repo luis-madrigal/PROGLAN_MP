@@ -108,7 +108,7 @@ public class ScannerModel {
 		this.astbv = new ASTBuildVisitor(scope, listBreakpoints);
 		astbv.visit(tree);
 		astbv.printAST("main");
-		astbv.printAST("%FIELD");
+//		astbv.printAST("generateFibo");
 		
 		if(this.threadCodeGenerator != null) {
 			this.runnableCodeGenerator.stop();

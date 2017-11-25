@@ -1,18 +1,12 @@
 
-int t = 0;
+
 ACT main starring () {
 	int x;
 	int fibo;
-<<<<<<< HEAD
-=======
-=======
-ACT main starring() {
-	int p;
-	int q;
 
-	Write to p;
-	Write to q;
->>>>>>> b858c269c36280ee67453327c932e5b9e0c24ef6
->>>>>>> cb47cc56c1f4186f87b70b5f846773d917f20a41
+	Say "Enter a number: ";
+	Write to x;
 
+	fibo = 2;
+	Say fibo;
 }

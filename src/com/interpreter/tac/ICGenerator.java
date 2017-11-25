@@ -211,7 +211,7 @@ public class ICGenerator {
 		while(!queue.isEmpty()) {
 			AbstractSyntaxTree n = queue.poll();
 			switch(n.getNodeType()) {
-			case VARIABLE: 
+			case VARIABLE: System.out.println(n.getValue());
 				SymbolContext ctx = (SymbolContext)n.getValue();
 				return new Variable(OperandTypes.VARIABLE, ctx.getValue(), ctx.getIdentifier());
 			case LITERAL: return new Literal(OperandTypes.LITERAL, LiteralMatcher.instance().parseAttempt(n.getValue()), LITERAL_TYPE.getEnum(((LeafNode)n).getLiteralType()));
@@ -331,7 +331,7 @@ public class ICGenerator {
 		this.labelCount++;
 		this.tac.add(stmt);
 		stmt.setLabel(ICGenerator.LABEL_ALIAS+this.labelCount);
-		// System.out.println(stmt.toString());
+		System.out.println(stmt.toString());
 	}
 	
 	public void print() {
