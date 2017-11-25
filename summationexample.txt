@@ -1,0 +1,15 @@
+
+ACT SUM starring ( int n, int m) {
+	if (m == 1)
+		give (n * (n + 1) / 2);
+
+	int sum = SUM(n, m-1);
+	give (sum * (sum + 1) / 2);
+}
+
+ACT main starring () {
+	int n = 5;
+	int m = 3;
+
+	Say "SUM(" + n + ", " + m + "): " + SUM(n, m);
+}

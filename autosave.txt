@@ -1,5 +1,4 @@
 
 ACT main starring () {
-	int arr = new int[] {2, 3, 4};
-	Say arr[2];
+	Say x->a;
 }
