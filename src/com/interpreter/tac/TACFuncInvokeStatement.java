@@ -10,8 +10,8 @@ public class TACFuncInvokeStatement extends TACOutputStatement{
 	private String methodName;
 	private ArrayList<Operand> params;
 
-	public TACFuncInvokeStatement(NodeType type, String methodName, ArrayList<Operand> params) {
-		super(type);
+	public TACFuncInvokeStatement(NodeType type, String methodName, ArrayList<Operand> params, boolean isBreakpoint) {
+		super(type, isBreakpoint);
 		this.methodName = methodName;
 		this.params = params;
 	}

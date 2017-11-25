@@ -6,13 +6,13 @@ public class TACGotoStatement extends TACStatement {
 	
 	private String jumpDest;
 	
-	public TACGotoStatement(NodeType type, String jumpDest) {
-		super(type);
+	public TACGotoStatement(NodeType type, String jumpDest, boolean isBreakpoint) {
+		super(type, isBreakpoint);
 		this.jumpDest = jumpDest;
 	}
 	
-	public TACGotoStatement(NodeType type) {
-		super(type);
+	public TACGotoStatement(NodeType type, boolean isBreakpoint) {
+		super(type, isBreakpoint);
 	}
 
 	public String getJumpDest() {

@@ -6,8 +6,8 @@ public class TACFuncDeclarationStatement extends TACStatement{
 	
 	private String methodName;
 
-	public TACFuncDeclarationStatement(NodeType type, String methodName) {
-		super(type);
+	public TACFuncDeclarationStatement(NodeType type, String methodName, boolean isBreakpoint) {
+		super(type, isBreakpoint);
 		this.methodName = methodName;
 	}
 
