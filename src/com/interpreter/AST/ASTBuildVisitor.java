@@ -42,6 +42,10 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
         this.listBreakpoints = listBreakpoints;
         this.isBreakpoint = false;
         this.triggeringLineNumber = 0;
+
+        this.fieldDecNode = new ProcedureNode(null,"%FIELD");
+        this.fieldDecNode.setNodeType(NodeType.FIELD_DEC);
+        methodASTTable.put(this.fieldDecNode.procedureName,fieldDecNode);
     }
 
     public HashMap<String, ProcedureNode> getMethodASTTable() {

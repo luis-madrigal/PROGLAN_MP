@@ -1,4 +1,4 @@
-// Generated from ManuScript.g4 by ANTLR 4.7
+// Generated from C:/INTELLIJ Projects/PROGLAN_MP/src/com/parser\ManuScript.g4 by ANTLR 4.7
 package com.parser;
 import org.antlr.v4.runtime.atn.*;
 import org.antlr.v4.runtime.dfa.DFA;
@@ -5276,6 +5276,9 @@ public class ManuScriptParser extends Parser {
 		public PointerTypeContext pointerType() {
 			return getRuleContext(PointerTypeContext.class,0);
 		}
+		public StructTypeContext structType() {
+			return getRuleContext(StructTypeContext.class,0);
+		}
 		public CreatedNameContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -5299,7 +5302,7 @@ public class ManuScriptParser extends Parser {
 		CreatedNameContext _localctx = new CreatedNameContext(_ctx, getState());
 		enterRule(_localctx, 120, RULE_createdName);
 		try {
-			setState(719);
+			setState(720);
 			_errHandler.sync(this);
 			switch ( getInterpreter().adaptivePredict(_input,74,_ctx) ) {
 			case 1:
@@ -5314,6 +5317,13 @@ public class ManuScriptParser extends Parser {
 				{
 				setState(718);
 				pointerType();
+				}
+				break;
+			case 3:
+				enterOuterAlt(_localctx, 3);
+				{
+				setState(719);
+				structType();
 				}
 				break;
 			}
@@ -5366,32 +5376,32 @@ public class ManuScriptParser extends Parser {
 			int _alt;
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(721);
+			setState(722);
 			match(LBRACK);
-			setState(749);
+			setState(750);
 			_errHandler.sync(this);
 			switch (_input.LA(1)) {
 			case RBRACK:
 				{
-				setState(722);
+				setState(723);
 				match(RBRACK);
-				setState(727);
+				setState(728);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 				while (_la==LBRACK) {
 					{
 					{
-					setState(723);
-					match(LBRACK);
 					setState(724);
+					match(LBRACK);
+					setState(725);
 					match(RBRACK);
 					}
 					}
-					setState(729);
+					setState(730);
 					_errHandler.sync(this);
 					_la = _input.LA(1);
 				}
-				setState(730);
+				setState(731);
 				arrayInitializer();
 				}
 				break;
@@ -5412,45 +5422,45 @@ public class ManuScriptParser extends Parser {
 			case MUL:
 			case Identifier:
 				{
-				setState(731);
-				expression(0);
 				setState(732);
+				expression(0);
+				setState(733);
 				match(RBRACK);
-				setState(739);
+				setState(740);
 				_errHandler.sync(this);
 				_alt = getInterpreter().adaptivePredict(_input,76,_ctx);
 				while ( _alt!=2 && _alt!=org.antlr.v4.runtime.atn.ATN.INVALID_ALT_NUMBER ) {
 					if ( _alt==1 ) {
 						{
 						{
-						setState(733);
-						match(LBRACK);
 						setState(734);
-						expression(0);
+						match(LBRACK);
 						setState(735);
+						expression(0);
+						setState(736);
 						match(RBRACK);
 						}
 						} 
 					}
-					setState(741);
+					setState(742);
 					_errHandler.sync(this);
 					_alt = getInterpreter().adaptivePredict(_input,76,_ctx);
 				}
-				setState(746);
+				setState(747);
 				_errHandler.sync(this);
 				_alt = getInterpreter().adaptivePredict(_input,77,_ctx);
 				while ( _alt!=2 && _alt!=org.antlr.v4.runtime.atn.ATN.INVALID_ALT_NUMBER ) {
 					if ( _alt==1 ) {
 						{
 						{
-						setState(742);
-						match(LBRACK);
 						setState(743);
+						match(LBRACK);
+						setState(744);
 						match(RBRACK);
 						}
 						} 
 					}
-					setState(748);
+					setState(749);
 					_errHandler.sync(this);
 					_alt = getInterpreter().adaptivePredict(_input,77,_ctx);
 				}
@@ -5502,19 +5512,19 @@ public class ManuScriptParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(751);
+			setState(752);
 			match(LPAREN);
-			setState(753);
+			setState(754);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			if (_la==NEW || ((((_la - 67)) & ~0x3f) == 0 && ((1L << (_la - 67)) & ((1L << (IntegerLiteral - 67)) | (1L << (FloatingPointLiteral - 67)) | (1L << (BooleanLiteral - 67)) | (1L << (CharacterLiteral - 67)) | (1L << (StringLiteral - 67)) | (1L << (NullLiteral - 67)) | (1L << (LPAREN - 67)) | (1L << (BANG - 67)) | (1L << (TILDE - 67)) | (1L << (INC - 67)) | (1L << (DEC - 67)) | (1L << (ADD - 67)) | (1L << (SUB - 67)) | (1L << (MUL - 67)) | (1L << (Identifier - 67)))) != 0)) {
 				{
-				setState(752);
+				setState(753);
 				expressionList();
 				}
 			}
 
-			setState(755);
+			setState(756);
 			match(RPAREN);
 			}
 		}
@@ -5568,7 +5578,7 @@ public class ManuScriptParser extends Parser {
 	}
 
 	public static final String _serializedATN =
-		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3{\u02f8\4\2\t\2\4"+
+		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3{\u02f9\4\2\t\2\4"+
 		"\3\t\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7\4\b\t\b\4\t\t\t\4\n\t\n\4\13\t"+
 		"\13\4\f\t\f\4\r\t\r\4\16\t\16\4\17\t\17\4\20\t\20\4\21\t\21\4\22\t\22"+
 		"\4\23\t\23\4\24\t\24\4\25\t\25\4\26\t\26\4\27\t\27\4\30\t\30\4\31\t\31"+
@@ -5618,13 +5628,13 @@ public class ManuScriptParser extends Parser {
 		"\n8\38\38\38\38\38\38\38\38\38\38\38\38\38\38\38\38\38\38\38\38\38\38"+
 		"\38\38\78\u02a1\n8\f8\168\u02a4\138\39\39\39\39\39\39\39\39\39\79\u02af"+
 		"\n9\f9\169\u02b2\139\3:\3:\3:\5:\u02b7\n:\3;\3;\3;\3;\3;\3;\3;\3;\5;\u02c1"+
-		"\n;\3<\3<\3<\3<\3<\3<\3<\3<\5<\u02cb\n<\3=\3=\3=\3>\3>\5>\u02d2\n>\3?"+
-		"\3?\3?\3?\7?\u02d8\n?\f?\16?\u02db\13?\3?\3?\3?\3?\3?\3?\3?\7?\u02e4\n"+
-		"?\f?\16?\u02e7\13?\3?\3?\7?\u02eb\n?\f?\16?\u02ee\13?\5?\u02f0\n?\3@\3"+
-		"@\5@\u02f4\n@\3@\3@\3@\2\4npA\2\4\6\b\n\f\16\20\22\24\26\30\32\34\36 "+
-		"\"$&(*,.\60\62\64\668:<>@BDFHJLNPRTVXZ\\^`bdfhjlnprtvxz|~\2\r\13\2\20"+
+		"\n;\3<\3<\3<\3<\3<\3<\3<\3<\5<\u02cb\n<\3=\3=\3=\3>\3>\3>\5>\u02d3\n>"+
+		"\3?\3?\3?\3?\7?\u02d9\n?\f?\16?\u02dc\13?\3?\3?\3?\3?\3?\3?\3?\7?\u02e5"+
+		"\n?\f?\16?\u02e8\13?\3?\3?\7?\u02ec\n?\f?\16?\u02ef\13?\5?\u02f1\n?\3"+
+		"@\3@\5@\u02f5\n@\3@\3@\3@\2\4npA\2\4\6\b\n\f\16\20\22\24\26\30\32\34\36"+
+		" \"$&(*,.\60\62\64\668:<>@BDFHJLNPRTVXZ\\^`bdfhjlnprtvxz|~\2\r\13\2\20"+
 		"\20\22\22\25\25\33\33!!((**\65\6599\4\2\36\36;;\3\2EJ\3\2ab\3\2ad\3\2"+
-		"WX\5\2TTknrr\4\2efjj\3\2cd\4\2UV\\]\4\2[[^^\2\u0326\2\u0081\3\2\2\2\4"+
+		"WX\5\2TTknrr\4\2efjj\3\2cd\4\2UV\\]\4\2[[^^\2\u0328\2\u0081\3\2\2\2\4"+
 		"\u0085\3\2\2\2\6\u0087\3\2\2\2\b\u008f\3\2\2\2\n\u009a\3\2\2\2\f\u00a1"+
 		"\3\2\2\2\16\u00a3\3\2\2\2\20\u00aa\3\2\2\2\22\u00be\3\2\2\2\24\u00c4\3"+
 		"\2\2\2\26\u00cf\3\2\2\2\30\u00da\3\2\2\2\32\u00e2\3\2\2\2\34\u00e7\3\2"+
@@ -5638,7 +5648,7 @@ public class ManuScriptParser extends Parser {
 		"^\u024a\3\2\2\2`\u024f\3\2\2\2b\u0251\3\2\2\2d\u0254\3\2\2\2f\u025b\3"+
 		"\2\2\2h\u025f\3\2\2\2j\u0267\3\2\2\2l\u0269\3\2\2\2n\u0286\3\2\2\2p\u02a5"+
 		"\3\2\2\2r\u02b6\3\2\2\2t\u02c0\3\2\2\2v\u02ca\3\2\2\2x\u02cc\3\2\2\2z"+
-		"\u02d1\3\2\2\2|\u02d3\3\2\2\2~\u02f1\3\2\2\2\u0080\u0082\5\4\3\2\u0081"+
+		"\u02d2\3\2\2\2|\u02d4\3\2\2\2~\u02f2\3\2\2\2\u0080\u0082\5\4\3\2\u0081"+
 		"\u0080\3\2\2\2\u0081\u0082\3\2\2\2\u0082\u0083\3\2\2\2\u0083\u0084\7\2"+
 		"\2\3\u0084\3\3\2\2\2\u0085\u0086\5\n\6\2\u0086\5\3\2\2\2\u0087\u008c\5"+
 		"\"\22\2\u0088\u0089\7g\2\2\u0089\u008b\5\"\22\2\u008a\u0088\3\2\2\2\u008b"+
@@ -5828,26 +5838,27 @@ public class ManuScriptParser extends Parser {
 		"\u02c4\5n8\2\u02c4\u02c5\7L\2\2\u02c5\u02cb\3\2\2\2\u02c6\u02cb\5J&\2"+
 		"\u02c7\u02cb\7v\2\2\u02c8\u02c9\7e\2\2\u02c9\u02cb\7v\2\2\u02ca\u02c2"+
 		"\3\2\2\2\u02ca\u02c6\3\2\2\2\u02ca\u02c7\3\2\2\2\u02ca\u02c8\3\2\2\2\u02cb"+
-		"w\3\2\2\2\u02cc\u02cd\5z>\2\u02cd\u02ce\5|?\2\u02cey\3\2\2\2\u02cf\u02d2"+
-		"\5(\25\2\u02d0\u02d2\5$\23\2\u02d1\u02cf\3\2\2\2\u02d1\u02d0\3\2\2\2\u02d2"+
-		"{\3\2\2\2\u02d3\u02ef\7O\2\2\u02d4\u02d9\7P\2\2\u02d5\u02d6\7O\2\2\u02d6"+
-		"\u02d8\7P\2\2\u02d7\u02d5\3\2\2\2\u02d8\u02db\3\2\2\2\u02d9\u02d7\3\2"+
-		"\2\2\u02d9\u02da\3\2\2\2\u02da\u02dc\3\2\2\2\u02db\u02d9\3\2\2\2\u02dc"+
-		"\u02f0\5 \21\2\u02dd\u02de\5n8\2\u02de\u02e5\7P\2\2\u02df\u02e0\7O\2\2"+
-		"\u02e0\u02e1\5n8\2\u02e1\u02e2\7P\2\2\u02e2\u02e4\3\2\2\2\u02e3\u02df"+
-		"\3\2\2\2\u02e4\u02e7\3\2\2\2\u02e5\u02e3\3\2\2\2\u02e5\u02e6\3\2\2\2\u02e6"+
-		"\u02ec\3\2\2\2\u02e7\u02e5\3\2\2\2\u02e8\u02e9\7O\2\2\u02e9\u02eb\7P\2"+
-		"\2\u02ea\u02e8\3\2\2\2\u02eb\u02ee\3\2\2\2\u02ec\u02ea\3\2\2\2\u02ec\u02ed"+
-		"\3\2\2\2\u02ed\u02f0\3\2\2\2\u02ee\u02ec\3\2\2\2\u02ef\u02d4\3\2\2\2\u02ef"+
-		"\u02dd\3\2\2\2\u02f0}\3\2\2\2\u02f1\u02f3\7K\2\2\u02f2\u02f4\5h\65\2\u02f3"+
-		"\u02f2\3\2\2\2\u02f3\u02f4\3\2\2\2\u02f4\u02f5\3\2\2\2\u02f5\u02f6\7L"+
-		"\2\2\u02f6\177\3\2\2\2R\u0081\u008c\u0094\u009a\u00a1\u00a7\u00b2\u00b7"+
-		"\u00bb\u00be\u00ca\u00d4\u00df\u00e5\u00ec\u00f1\u00f9\u00fd\u00ff\u0108"+
-		"\u0110\u0118\u011b\u011f\u0132\u0138\u0148\u014d\u0157\u016a\u0172\u017b"+
-		"\u017d\u0184\u0189\u0192\u0197\u019a\u01aa\u01b3\u01b9\u01bf\u01c4\u01cb"+
-		"\u01cf\u01d3\u01e1\u01e4\u01fb\u01fe\u0203\u0209\u0210\u0213\u0217\u021c"+
-		"\u0229\u022e\u0233\u023b\u0240\u0244\u0248\u0256\u0264\u0275\u0286\u02a0"+
-		"\u02a2\u02ae\u02b0\u02b6\u02c0\u02ca\u02d1\u02d9\u02e5\u02ec\u02ef\u02f3";
+		"w\3\2\2\2\u02cc\u02cd\5z>\2\u02cd\u02ce\5|?\2\u02cey\3\2\2\2\u02cf\u02d3"+
+		"\5(\25\2\u02d0\u02d3\5$\23\2\u02d1\u02d3\5&\24\2\u02d2\u02cf\3\2\2\2\u02d2"+
+		"\u02d0\3\2\2\2\u02d2\u02d1\3\2\2\2\u02d3{\3\2\2\2\u02d4\u02f0\7O\2\2\u02d5"+
+		"\u02da\7P\2\2\u02d6\u02d7\7O\2\2\u02d7\u02d9\7P\2\2\u02d8\u02d6\3\2\2"+
+		"\2\u02d9\u02dc\3\2\2\2\u02da\u02d8\3\2\2\2\u02da\u02db\3\2\2\2\u02db\u02dd"+
+		"\3\2\2\2\u02dc\u02da\3\2\2\2\u02dd\u02f1\5 \21\2\u02de\u02df\5n8\2\u02df"+
+		"\u02e6\7P\2\2\u02e0\u02e1\7O\2\2\u02e1\u02e2\5n8\2\u02e2\u02e3\7P\2\2"+
+		"\u02e3\u02e5\3\2\2\2\u02e4\u02e0\3\2\2\2\u02e5\u02e8\3\2\2\2\u02e6\u02e4"+
+		"\3\2\2\2\u02e6\u02e7\3\2\2\2\u02e7\u02ed\3\2\2\2\u02e8\u02e6\3\2\2\2\u02e9"+
+		"\u02ea\7O\2\2\u02ea\u02ec\7P\2\2\u02eb\u02e9\3\2\2\2\u02ec\u02ef\3\2\2"+
+		"\2\u02ed\u02eb\3\2\2\2\u02ed\u02ee\3\2\2\2\u02ee\u02f1\3\2\2\2\u02ef\u02ed"+
+		"\3\2\2\2\u02f0\u02d5\3\2\2\2\u02f0\u02de\3\2\2\2\u02f1}\3\2\2\2\u02f2"+
+		"\u02f4\7K\2\2\u02f3\u02f5\5h\65\2\u02f4\u02f3\3\2\2\2\u02f4\u02f5\3\2"+
+		"\2\2\u02f5\u02f6\3\2\2\2\u02f6\u02f7\7L\2\2\u02f7\177\3\2\2\2R\u0081\u008c"+
+		"\u0094\u009a\u00a1\u00a7\u00b2\u00b7\u00bb\u00be\u00ca\u00d4\u00df\u00e5"+
+		"\u00ec\u00f1\u00f9\u00fd\u00ff\u0108\u0110\u0118\u011b\u011f\u0132\u0138"+
+		"\u0148\u014d\u0157\u016a\u0172\u017b\u017d\u0184\u0189\u0192\u0197\u019a"+
+		"\u01aa\u01b3\u01b9\u01bf\u01c4\u01cb\u01cf\u01d3\u01e1\u01e4\u01fb\u01fe"+
+		"\u0203\u0209\u0210\u0213\u0217\u021c\u0229\u022e\u0233\u023b\u0240\u0244"+
+		"\u0248\u0256\u0264\u0275\u0286\u02a0\u02a2\u02ae\u02b0\u02b6\u02c0\u02ca"+
+		"\u02d2\u02da\u02e6\u02ed\u02f0\u02f4";
 	public static final ATN _ATN =
 		new ATNDeserializer().deserialize(_serializedATN.toCharArray());
 	static {

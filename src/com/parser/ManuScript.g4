@@ -686,6 +686,7 @@ creator
 createdName
     :   primitiveType 
     | 	pointerType
+    |   structType
     ;
 //
 //innerCreator
