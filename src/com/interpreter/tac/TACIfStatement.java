@@ -8,8 +8,8 @@ public class TACIfStatement extends TACStatement{
 	private String jumpDestTrue;
 	private String jumpDestFalse;
 
-	public TACIfStatement(NodeType type, Operand operand) {
-		super(type);
+	public TACIfStatement(NodeType type, Operand operand, boolean isBreakpoint) {
+		super(type, isBreakpoint);
 		this.condition = operand;
 	}
 

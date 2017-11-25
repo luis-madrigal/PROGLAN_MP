@@ -11,8 +11,8 @@ public class TACAssignStatement extends TACStatement{
 	private Variable variable;
 	private Operand value;
 
-	public TACAssignStatement(NodeType type, OPERATOR operator, Variable variable, Operand value) {
-		super(type);
+	public TACAssignStatement(NodeType type, OPERATOR operator, Variable variable, Operand value, boolean isBreakpoint) {
+		super(type, isBreakpoint);
 		this.operator = operator;
 		this.variable = variable;
 		this.value = value;

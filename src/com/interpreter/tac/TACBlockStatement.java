@@ -7,8 +7,8 @@ public class TACBlockStatement extends TACStatement{
 	private String message;
 	private boolean isEnter;
 
-	public TACBlockStatement(NodeType type, boolean isEnter) {
-		super(type);
+	public TACBlockStatement(NodeType type, boolean isEnter, boolean isBreakpoint) {
+		super(type, isBreakpoint);
 		this.message = (isEnter)? "ENTER BLOCK" : "EXIT BLOCK";
 		this.isEnter = isEnter;
 	}

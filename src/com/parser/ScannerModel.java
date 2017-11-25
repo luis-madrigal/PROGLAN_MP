@@ -1,5 +1,6 @@
 package com.parser;
 import java.util.List;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.BitSet;
 import java.util.HashMap;
@@ -27,20 +28,26 @@ import com.interpreter.BaseListener;
 import com.interpreter.Scope;
 import com.parser.ManuScriptLexer;
 import com.parser.ManuScriptParser;
-import com.threads.CodeGeneratorThread;
+import com.threads.CodeGeneratorRunnable;
 import com.utils.Console;
 import com.utils.Tokens;
 
 @SuppressWarnings("deprecation")
 public class ScannerModel {
-	private CodeGeneratorThread threadCodeGenerator;
+	private CodeGeneratorRunnable runnableCodeGenerator;
 	
 	private String message;
 	private ParseTree tree;
 	private List<String> ruleNames;
 	private TreeViewer treeViewer;
 	private ICGenerator icg;
-	public String getTokens(String input) {
+	private ASTBuildVisitor astbv;
+	private HashMap<String, MethodContext> methodTable;
+	private ManuScriptParser parser;
+	private CommonTokenStream tokens;
+	private Thread threadCodeGenerator;
+	
+	public String getTokens(String input, Stack<Integer> listBreakpoints) {
 		ANTLRInputStream istream = new ANTLRInputStream(input);
 		
 		message = "";
@@ -54,9 +61,6 @@ public class ScannerModel {
 			    if (!sourceName.isEmpty()) {
 			        sourceName = String.format("%s:%d:%d: ", sourceName, arg2, arg3);
 			    }
-
-//			    System.err.println(sourceName+"line "+arg2+":"+arg3+" "+arg4);
-//			    message = message + "line "+arg2+":"+arg3+" "+arg4+"\n";
 			    Console.instance().err("line "+arg2+":"+arg3+" "+arg4);
 			}
 			
@@ -84,8 +88,8 @@ public class ScannerModel {
 		lexer.removeErrorListeners();
 		lexer.addErrorListener(listener);
 		
-		CommonTokenStream tokens = new CommonTokenStream(lexer);
-		ManuScriptParser parser = new ManuScriptParser(tokens);
+		this.tokens = new CommonTokenStream(lexer);
+		this.parser = new ManuScriptParser(tokens);
 		parser.removeErrorListeners();
 		parser.setErrorHandler(new ManuscriptErrorHandler());
 		parser.addErrorListener(listener);
@@ -95,32 +99,34 @@ public class ScannerModel {
 		this.tree = parser.compilationUnit();
 		
 		Scope scope = new Scope(null); //scope of program. contains the symbol tables
-		HashMap<String, MethodContext> methodTable = new HashMap<String, MethodContext>(); //the methods in the program. no overloading
-
-
-		ParseTreeWalker.DEFAULT.walk(new BaseListener(scope, methodTable), this.tree);
+		this.methodTable = new HashMap<String, MethodContext>(); //the methods in the program. no overloading
 		
-		System.out.println(scope.getChildren().size());
-		System.out.println(methodTable.size());
+		ParseTreeWalker.DEFAULT.walk(new BaseListener(scope, methodTable), this.tree);
 
+		scope.print();
 
-		scope.print(); //todo: remove this
-
-		ASTBuildVisitor astbv = new ASTBuildVisitor(scope);
+		this.astbv = new ASTBuildVisitor(scope, listBreakpoints);
 		astbv.visit(tree);
 		astbv.printAST("main");
-		astbv.printAST("%FIELD");
 
-		this.threadCodeGenerator = new CodeGeneratorThread(astbv, methodTable);
-		threadCodeGenerator.run();
-
-//		System.out.println(tree.toStringTree(parser));
 		
+		if(this.threadCodeGenerator != null) {
+			this.runnableCodeGenerator.stop();
+			this.threadCodeGenerator.interrupt();
+			System.out.println("inter "+threadCodeGenerator.isAlive());
+		}
+			
+		this.runnableCodeGenerator = new CodeGeneratorRunnable(this.astbv, methodTable);
+		this.threadCodeGenerator = new Thread(runnableCodeGenerator);
+		threadCodeGenerator.start();
+		
+	
 		String tokenized = "";
 		
 		Vocabulary vocabulary = parser.getVocabulary();
-		for(Token token : tokens.getTokens()) {
+		for(Token token : this.tokens.getTokens()) {
 			tokenized += "<"+this.getTokenClass(vocabulary.getDisplayName(token.getType()))+", "+token.getText()+">"+"\n";
+			
 		}
 
 		return tokenized;
@@ -191,5 +197,21 @@ public class ScannerModel {
 
 	public void setTreeViewer(TreeViewer treeViewer) {
 		this.treeViewer = treeViewer;
+	}
+
+	public CodeGeneratorRunnable getRunnableCodeGenerator() {
+		return runnableCodeGenerator;
+	}
+
+	public Thread getThreadCodeGenerator() {
+		return threadCodeGenerator;
+	}
+
+	public void setRunnableCodeGenerator(CodeGeneratorRunnable runnableCodeGenerator) {
+		this.runnableCodeGenerator = runnableCodeGenerator;
+	}
+
+	public void setThreadCodeGenerator(Thread threadCodeGenerator) {
+		this.threadCodeGenerator = threadCodeGenerator;
 	}
 }
