@@ -55,7 +55,7 @@ public class ICGenerator {
 		if(!isField)
 			this.addStatement(new TACFuncDeclarationStatement(NodeType.FUNCTION_END, this.methodName));
 		else
-			this.addStatement(new TACFuncDeclarationStatement(NodeType.FIELD_DEC_END, "%FIELD"));
+			this.addStatement(new TACFieldDeclarationStatement(NodeType.FIELD_DEC_END));
 		return this.tac;
 	}
 	
@@ -76,6 +76,7 @@ public class ICGenerator {
 			case DO_WHILE: this.doWhileStmt(n); flag = false; break;
 			case FOR: this.forStmt(n); flag = false; break;
 			case BLOCK: break;
+			case FIELD_DEC: this.addStatement(new TACFieldDeclarationStatement(n.getNodeType(), n.isBreakpoint())); break;
 			case FUNCTION_DECLARATION: this.declareFunc(n); this.addStatement(new TACFuncDeclarationStatement(n.getNodeType(), ((ProcedureNode)n).getProcedureName(), n.isBreakpoint())); break;
 			case RETURN: this.addStatement(new TACReturnStatement(n.getNodeType(), this.storeExpression(n.getChild(0)), n.isBreakpoint())); flag = false;break;
 			case PRINT: this.addStatement(new TACPrintStatement(n.getNodeType(), this.storeExpression(n.getChild(0)), n.isBreakpoint())); flag = false; break;
