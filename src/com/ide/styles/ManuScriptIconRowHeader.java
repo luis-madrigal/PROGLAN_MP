@@ -14,7 +14,7 @@ public class ManuScriptIconRowHeader extends IconRowHeader {
 	
 	public ManuScriptIconRowHeader(RTextArea textArea) {
 		super(textArea);
-		this.setBackground(Color.WHITE);
+		this.setBackground(Styles.LIGHT_GRAY);
 		
 	}
 	
