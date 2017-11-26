@@ -87,6 +87,7 @@ public class ICGenerator {
 				break;
 			case PRINT: this.addStatement(new TACPrintStatement(n.getNodeType(), this.storeExpression(n.getChild(0)), n.isBreakpoint())); flag = false; break;
 			case SCAN: this.addStatement(new TACScanStatement(n.getNodeType(), (Variable) this.storeExpression(n.getChild(0)), n.isBreakpoint())); flag = false; break;
+			case ARRAY_ASSIGN: this.assignArray(n); flag = false; break;
 			default:
 				break;
 			}
@@ -100,6 +101,25 @@ public class ICGenerator {
 			
 			
 		}
+	}
+	
+	private void assignArray(AbstractSyntaxTree n) {//TODO assign sctx to current scope
+		TACArrayAssignStatement stmt = new TACArrayAssignStatement((SymbolContext) n.getChild(0).getValue(), n.getNodeType(), n.isBreakpoint());
+		AbstractSyntaxTree arrInit = n.getChild(1);
+		if(arrInit.getChild(0).getNodeType() == NodeType.ARRAY_BLOCK) {
+			for (AbstractSyntaxTree ast : arrInit.getChildren()) {
+				this.storeExpression(ast);
+			}
+		} else {
+			TACArrayDimsStatement dStmt = new TACArrayDimsStatement(NodeType.ARRAY_DIMS, n.isBreakpoint());
+			dStmt.initArr(arrInit.getChildren().size());
+			for (int i = 0; i < arrInit.getChildren().size(); i++) {
+				dStmt.add(i, this.storeExpression(arrInit.getChild(i)));
+			}
+			this.addOutputStatement(dStmt);
+		}
+		
+		this.addStatement(stmt);
 	}
 	
 	private void declareVar(AbstractSyntaxTree n) {
@@ -234,6 +254,7 @@ public class ICGenerator {
 							return this.addOutputStatement(stmt);
 			case ARRAY_ACCESS: stmt = new TACIndexingStatement(node.getNodeType(), this.storeExpression(node.getChild(0)).toString(), this.storeExpression(n.getChild(1)), n.isBreakpoint());
 							   return this.addOutputStatement(stmt);
+			case ARRAY_BLOCK: return this.genArrayBlock(n);
 			case FUNCTION_INVOKE: return this.funcInvoke(n); 
 			default:
 				break;
@@ -244,6 +265,16 @@ public class ICGenerator {
 		}
 
 		return null;
+	}
+	
+	private Operand genArrayBlock(AbstractSyntaxTree node) {
+		TACArrayBlockStatement stmt = new TACArrayBlockStatement(node.getNodeType(), node.isBreakpoint());
+		stmt.initArr(node.getChildren().size());
+		for(int i = 0; i < node.getChildren().size(); i++) {
+			stmt.add(i, this.storeExpression(node.getChild(i)));
+		}
+		
+		return this.addOutputStatement(stmt);
 	}
 	
 	private Operand funcInvoke(AbstractSyntaxTree node) {
