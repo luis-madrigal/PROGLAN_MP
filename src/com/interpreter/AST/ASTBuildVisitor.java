@@ -738,6 +738,9 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
 
     @Override
     public AbstractSyntaxTree visitArrayInitExpr(ManuScriptParser.ArrayInitExprContext ctx) {
+        System.out.println("visitingARRINITEXPR "+ctx.getStart().getLine()+"    "+ctx.getText());
+        configureIsBreakpoint(ctx.getStart().getLine());
+
         AbstractSyntaxTree aiExpr = new AbstractSyntaxTree(null);
         aiExpr.setNodeType(NodeType.ARRAY_INIT);
 
@@ -745,17 +748,42 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
         if(arRest.arrayInitializer() != null) {
             //for '= int[]{a,b,c};'
             aiExpr.setValue("val");
-
+            AbstractSyntaxTree ai = visit(arRest.arrayInitializer());
+            if(ai != null){
+                ai.setParent(aiExpr);
+                aiExpr.addChild(ai);
+            }
         }
         else {
             //for '= int[x];'
             aiExpr.setValue("dim");
             for(ManuScriptParser.ExpressionContext expr : arRest.expression()){
-
+                AbstractSyntaxTree exprNode = visit(expr);
+                if(exprNode != null){
+                    exprNode.setParent(aiExpr);
+                    aiExpr.addChild(exprNode);
+                }
             }
         }
 
         return aiExpr;
+    }
+
+    @Override
+    public AbstractSyntaxTree visitArrayInitializer(ManuScriptParser.ArrayInitializerContext ctx) {
+        System.out.println("visitingARRINITIALIZER "+ctx.getStart().getLine()+"    "+ctx.getText());
+        configureIsBreakpoint(ctx.getStart().getLine());
+        AbstractSyntaxTree node = new AbstractSyntaxTree(null);
+        node.setNodeType(NodeType.ARRAY_BLOCK);
+        for(ManuScriptParser.VariableInitializerContext viCtx : ctx.variableInitializer()){
+            AbstractSyntaxTree vi = visit(viCtx);
+            if(vi != null){
+                vi.setParent(node);
+                node.addChild(vi);
+            }
+        }
+
+        return node;
     }
 
     @Override
@@ -791,9 +819,18 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
                 }
                 else if(varInit.arrayInitializer() !=  null){
                     //for '= {a,b,c,d}'
+                    AbstractSyntaxTree init = new AbstractSyntaxTree(node);
+                    init.setNodeType(NodeType.ARRAY_INIT);
+                    init.setValue("val");
 
+                    AbstractSyntaxTree value = visitArrayInitializer(varInit.arrayInitializer());
+                    if (value != null) {
+                        value.setParent(init);
+                        init.addChild(value);
+                    }
+
+                    node.addChild(init);
                 }
-
             }
             else {  //if variable is normal type
                 AbstractSyntaxTree value = visit(varInit);
@@ -803,7 +840,6 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
                 }
             }
         }
-
 
         return node;
     }
