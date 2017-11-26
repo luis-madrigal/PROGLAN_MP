@@ -30,12 +30,12 @@ public class ICGenerator {
 	
 	private ArrayList<TACStatement> tac;
 	private int registerCount;
-	private int labelCount; //TODO: each instruction has label (not sure)
+	private int labelCount;
 	private AbstractSyntaxTree currentMethodBlock;
 	private Stack<Scope> scopes;
 	private Scope currentScope;
 	private HashMap<String, MethodContext> methodTable;
-	private Stack<TACStatement> toAdd;
+	private String methodName;
 	
 	public ICGenerator(HashMap<String, MethodContext> methodTable) {
 		this.registerCount = 0;
@@ -43,9 +43,8 @@ public class ICGenerator {
 		this.methodTable = methodTable;
 	}
 	
-	public ArrayList<TACStatement> generateICode(AbstractSyntaxTree tree) {
+	public ArrayList<TACStatement> generateICode(AbstractSyntaxTree tree, boolean isField) {
 		this.tac = new ArrayList<TACStatement>();
-		this.toAdd = new Stack<TACStatement>();
 		this.scopes = new Stack<Scope>();
 		Scope s = new Scope(null);
 		this.scopes.push(s);
@@ -53,10 +52,14 @@ public class ICGenerator {
 //		registerCount = 0;
 //		labelCount = 0;
 		this.storeStatement(tree);
+		if(!isField)
+			this.addStatement(new TACFuncDeclarationStatement(NodeType.FUNCTION_END, this.methodName));
+		else
+			this.addStatement(new TACFieldDeclarationStatement(NodeType.FIELD_DEC_END));
 		return this.tac;
 	}
 	
-	public void storeStatement(AbstractSyntaxTree node) {//TODO: not parseing properties
+	public void storeStatement(AbstractSyntaxTree node) {
 		boolean flag = true;
 		Queue<AbstractSyntaxTree> queue = new LinkedList<AbstractSyntaxTree>();
 		queue.add(node);
@@ -73,10 +76,17 @@ public class ICGenerator {
 			case DO_WHILE: this.doWhileStmt(n); flag = false; break;
 			case FOR: this.forStmt(n); flag = false; break;
 			case BLOCK: break;
+			case FIELD_DEC: this.addStatement(new TACFieldDeclarationStatement(n.getNodeType(), n.isBreakpoint())); break;
 			case FUNCTION_DECLARATION: this.declareFunc(n); this.addStatement(new TACFuncDeclarationStatement(n.getNodeType(), ((ProcedureNode)n).getProcedureName(), n.isBreakpoint())); break;
-			case RETURN: this.addStatement(new TACReturnStatement(n.getNodeType(), this.storeExpression(n.getChild(0)), n.isBreakpoint())); flag = false;break;
+			case RETURN: 
+				if(n.getChildren().size() > 0)//error here
+					this.addStatement(new TACReturnStatement(n.getNodeType(), this.storeExpression(n.getChild(0)), n.isBreakpoint()));
+				else
+					this.addStatement(new TACReturnStatement(n.getNodeType(), null, n.isBreakpoint())); 
+				flag = false;
+				break;
 			case PRINT: this.addStatement(new TACPrintStatement(n.getNodeType(), this.storeExpression(n.getChild(0)), n.isBreakpoint())); flag = false; break;
-			case SCAN: this.addStatement(new TACScanStatement(n.getNodeType(), n.getChild(0).getValue().toString(), n.isBreakpoint())); flag = false; break;
+			case SCAN: this.addStatement(new TACScanStatement(n.getNodeType(), (Variable) this.storeExpression(n.getChild(0)), n.isBreakpoint())); flag = false; break;
 			default:
 				break;
 			}
@@ -94,14 +104,13 @@ public class ICGenerator {
 	
 	private void declareVar(AbstractSyntaxTree n) {
 		LeafNode lNode = (LeafNode) n.getChild(0);
-		SymbolContext ctx = new SymbolContext(lNode.getLiteralType(), this.currentScope, lNode.getValue().toString());
+		SymbolContext ctx = (SymbolContext) lNode.getValue();
 		this.addStatement(new TACVariableDeclaration(n.getNodeType(), ctx, n.isBreakpoint()));
 		this.currentScope.addToScope(ctx);
 		
 		if(n.getValue() != null) {
 			Operand value = this.storeExpression(n.getChild(1));
-			
-			TACAssignStatement aStmt = new TACAssignStatement(NodeType.ASSIGN, OPERATOR.getEnum(n.getValue()), new Variable(OperandTypes.VARIABLE, value, lNode.getValue().toString()), value, n.isBreakpoint());
+			TACAssignStatement aStmt = new TACAssignStatement(NodeType.ASSIGN, OPERATOR.getEnum(n.getValue()), new Variable(OperandTypes.VARIABLE, value, ctx.getIdentifier()), value, n.isBreakpoint());
 			this.addAssignStatement(aStmt);
 		}
 	}
@@ -111,6 +120,7 @@ public class ICGenerator {
 		this.currentMethodBlock = n.getChild(0);
 		
 		ProcedureNode pNode = (ProcedureNode) n;
+		this.methodName = pNode.getProcedureName();
 		MethodContext ctx = this.methodTable.get(pNode.getProcedureName());
 		for(int i = 0; i < ctx.getArgs().size(); i++) {
 			this.currentScope.addToScope(new SymbolContext(ctx.getArgTypes().get(i), this.currentScope,ctx.getArgs().get(i)));
@@ -143,8 +153,9 @@ public class ICGenerator {
 		TACLoopStatement stmt = new TACLoopStatement(node.getNodeType(), this.storeExpression(node.getChild(1)), node.isBreakpoint());
 		this.addStatement(stmt);
 		stmt.setJumpDestTrue(ICGenerator.LABEL_ALIAS+(this.labelCount+1));
-		this.storeExpression(node.getChild(2));
 		this.storeStatement(node.getChild(3));
+
+		this.storeExpression(node.getChild(2));
 		this.addStatement(new TACGotoStatement(NodeType.GOTO, ICGenerator.LABEL_ALIAS+currentLblCount, stmt.isBreakpoint()));
 		this.exitBlock(node.isBreakpoint());
 		stmt.setJumpDestFalse(ICGenerator.LABEL_ALIAS+(this.labelCount));
@@ -208,7 +219,9 @@ public class ICGenerator {
 		while(!queue.isEmpty()) {
 			AbstractSyntaxTree n = queue.poll();
 			switch(n.getNodeType()) {
-			case VARIABLE: return new Variable(OperandTypes.VARIABLE, n.getValue(), n.getValue().toString());
+			case VARIABLE: System.out.println(n.getValue());
+				SymbolContext ctx = (SymbolContext)n.getValue();
+				return new Variable(OperandTypes.VARIABLE, ctx.getValue(), ctx.getIdentifier());
 			case LITERAL: return new Literal(OperandTypes.LITERAL, LiteralMatcher.instance().parseAttempt(n.getValue()), LITERAL_TYPE.getEnum(((LeafNode)n).getLiteralType()));
 			case ASSIGN: TACAssignStatement aStmt = new TACAssignStatement(node.getNodeType(), OPERATOR.getEnum(n.getValue()), (Variable)this.storeExpression(n.getChild(0)), this.storeExpression(n.getChild(1)), n.isBreakpoint());
 						 this.addAssignStatement(aStmt); break;
@@ -219,7 +232,7 @@ public class ICGenerator {
 			case UNIPRE_ARITHMETIC:
 			case UNI_LOGIC: stmt = new TACUnaryOpStatement(node.getNodeType(), OPERATOR.getEnum(n.getValue()), this.storeExpression(n.getChild(0)), n.isBreakpoint());
 							return this.addOutputStatement(stmt);
-			case ARRAY_ACCESS: stmt = new TACIndexingStatement(node.getNodeType(), n.getChild(0).toString(), this.storeExpression(n.getChild(1)), n.isBreakpoint());
+			case ARRAY_ACCESS: stmt = new TACIndexingStatement(node.getNodeType(), this.storeExpression(node.getChild(0)).toString(), this.storeExpression(n.getChild(1)), n.isBreakpoint());
 							   return this.addOutputStatement(stmt);
 			case FUNCTION_INVOKE: return this.funcInvoke(n); 
 			default:
@@ -252,7 +265,7 @@ public class ICGenerator {
 			TACBinaryOpStatement binOp = new TACBinaryOpStatement(NodeType.BIN_ARITHMETIC, OPERATOR.getOpOfAssign(stmt.getOperator()), stmt.getVariable(), stmt.getValue(), stmt.isBreakpoint());
 			this.addOutputStatement(binOp);
 			stmt.setOperator(OPERATOR.ASSIGN);
-			stmt.setValue(new Operand(OperandTypes.REGISTER, binOp.getOutputRegister()));
+			stmt.setValue(new Register(OperandTypes.REGISTER, binOp.getOutputRegister().getName()));
 			break;
 		}
 		this.addStatement(stmt);
@@ -326,7 +339,7 @@ public class ICGenerator {
 		this.labelCount++;
 		this.tac.add(stmt);
 		stmt.setLabel(ICGenerator.LABEL_ALIAS+this.labelCount);
-		// System.out.println(stmt.toString());
+		System.out.println(stmt.toString());
 	}
 	
 	public void print() {
@@ -353,8 +366,12 @@ public class ICGenerator {
 		this.tac = tac;
 	}
 
-	public Scope getScope() {
+	public Scope getGlobalScope() {
 		return scopes.peek();
+	}
+	
+	public Scope getScope() {
+		return scopes.peek().getChildren().get(0);
 	}
 
 }

@@ -28,6 +28,19 @@ public class ExpressionEvaluator {
 		if(xType.equals(LITERAL_TYPE.FLOAT) && yType.equals(LITERAL_TYPE.INT)) {
 			return ExpressionEvaluator.add((Float)x, (Integer)y);
 		}
+		if(xType.equals(LITERAL_TYPE.CHAR) && yType.equals(LITERAL_TYPE.INT)) {
+			return ExpressionEvaluator.add((Character) x, (Integer)y);
+		}
+		if(xType.equals(LITERAL_TYPE.INT) && yType.equals(LITERAL_TYPE.CHAR)) {
+			return ExpressionEvaluator.add((Integer) x, (Character)y);
+		}
+		
+		if(xType.equals(LITERAL_TYPE.CHAR)) {
+			x = ((Character) x).charValue();
+		}
+		if(yType.equals(LITERAL_TYPE.CHAR)) {
+			y = ((Character) y).charValue();
+		}
 		
 		return ExpressionEvaluator.concat(x.toString(), y.toString());
 	}
@@ -55,6 +68,12 @@ public class ExpressionEvaluator {
 		if(xType.equals(LITERAL_TYPE.FLOAT) && yType.equals(LITERAL_TYPE.INT)) {
 			return ExpressionEvaluator.subtract((Float)x, (Integer)y);
 		}
+		if(xType.equals(LITERAL_TYPE.CHAR) && yType.equals(LITERAL_TYPE.INT)) {
+			return ExpressionEvaluator.subtract((Character) x, (Integer)y);
+		}
+		if(xType.equals(LITERAL_TYPE.INT) && yType.equals(LITERAL_TYPE.CHAR)) {
+			return ExpressionEvaluator.subtract((Integer) x, (Character)y);
+		}
 		
 		return null;
 	}
@@ -81,6 +100,12 @@ public class ExpressionEvaluator {
 		
 		if(xType.equals(LITERAL_TYPE.FLOAT) && yType.equals(LITERAL_TYPE.INT)) {
 			return ExpressionEvaluator.multiply((Float)x, (Integer)y);
+		}
+		if(xType.equals(LITERAL_TYPE.CHAR) && yType.equals(LITERAL_TYPE.INT)) {
+			return ExpressionEvaluator.multiply((Character) x, (Integer)y);
+		}
+		if(xType.equals(LITERAL_TYPE.INT) && yType.equals(LITERAL_TYPE.CHAR)) {
+			return ExpressionEvaluator.multiply((Integer) x, (Character)y);
 		}
 		
 		return null;
@@ -110,6 +135,13 @@ public class ExpressionEvaluator {
 			return ExpressionEvaluator.divide((Float)x, (Integer)y);
 		}
 		
+		if(xType.equals(LITERAL_TYPE.CHAR) && yType.equals(LITERAL_TYPE.INT)) {
+			return ExpressionEvaluator.divide((Character) x, (Integer)y);
+		}
+		if(xType.equals(LITERAL_TYPE.INT) && yType.equals(LITERAL_TYPE.CHAR)) {
+			return ExpressionEvaluator.divide((Integer) x, (Character)y);
+		}
+		
 		return null;
 	}
 	
@@ -137,6 +169,13 @@ public class ExpressionEvaluator {
 			return ExpressionEvaluator.modulo((Float)x, (Integer)y);
 		}
 		
+		if(xType.equals(LITERAL_TYPE.CHAR) && yType.equals(LITERAL_TYPE.INT)) {
+			return ExpressionEvaluator.modulo((Character) x, (Integer)y);
+		}
+		if(xType.equals(LITERAL_TYPE.INT) && yType.equals(LITERAL_TYPE.CHAR)) {
+			return ExpressionEvaluator.modulo((Integer) x, (Character)y);
+		}
+		
 		return null;
 	}
 	
@@ -149,6 +188,14 @@ public class ExpressionEvaluator {
 	}
 	
 	public static Float add(Integer x, Float y) {
+		return x + y;
+	}
+	
+	public static Integer add(Integer x, Character y) {
+		return x + y;
+	}
+	
+	public static Integer add(Character x, Integer y) {
 		return x + y;
 	}
 
@@ -164,6 +211,14 @@ public class ExpressionEvaluator {
 		return x - y;
 	}
 	
+	public static Integer subtract(Integer x, Character y) {
+		return x - y;
+	}
+	
+	public static Integer subtract(Character x, Integer y) {
+		return x - y;
+	}
+	
 	public static Integer multiply(Integer x, Integer y) {
 		return x * y;
 	}
@@ -173,6 +228,14 @@ public class ExpressionEvaluator {
 	}
 	
 	public static Float multiply(Integer x, Float y) {
+		return x * y;
+	}
+	
+	public static Integer multiply(Integer x, Character y) {
+		return x * y;
+	}
+	
+	public static Integer multiply(Character x, Integer y) {
 		return x * y;
 	}
 	
@@ -188,6 +251,14 @@ public class ExpressionEvaluator {
 		return x / y;
 	}
 	
+	public static Integer divide(Integer x, Character y) {
+		return x / y;
+	}
+	
+	public static Integer divide(Character x, Integer y) {
+		return x / y;
+	}
+	
 	public static Integer modulo(Integer x, Integer y) {
 		return x % y;
 	}
@@ -197,6 +268,14 @@ public class ExpressionEvaluator {
 	}
 	
 	public static Float modulo(Integer x, Float y) {
+		return x % y;
+	}
+	
+	public static Integer modulo(Integer x, Character y) {
+		return x % y;
+	}
+	
+	public static Integer modulo(Character x, Integer y) {
 		return x % y;
 	}
 	
@@ -257,8 +336,6 @@ public class ExpressionEvaluator {
 		
 		if(xType.equals(LITERAL_TYPE.INT))
 			return ExpressionEvaluator.negate((Integer) x);
-		if(xType.equals(LITERAL_TYPE.CHAR))
-			return ExpressionEvaluator.negate((Character) x);
 		if(xType.equals(LITERAL_TYPE.FLOAT))
 			return ExpressionEvaluator.negate((Float) x);
 		
@@ -346,6 +423,10 @@ public class ExpressionEvaluator {
 		return +x;
 	}
 	
+	public static Integer positive(Character x) {
+		return +x;
+	}
+	
 	public static Integer add(Character x, Character y) {
 		return x + y;
 	}
@@ -385,30 +466,6 @@ public class ExpressionEvaluator {
 	public static String concat(String x, String y) {
 		return x + y;
 	}
-	
-//	public static String concat(String x, Integer y) {
-//		return x + y;
-//	}
-//	
-//	public static String concat(Integer x, String y) {
-//		return x + y;
-//	}
-//	
-//	public static String concat(String x, Float y) {
-//		return x + y;
-//	}
-//	
-//	public static String concat(Float x, String y) {
-//		return x + y;
-//	}
-//	
-//	public static String concat(String x, Character y) {
-//		return x + y;
-//	}
-//	
-//	public static String concat(Character x, String y) {
-//		return x + y;
-//	}
 	
 	public static Integer length(String x) {
 		return x.length();
@@ -543,8 +600,160 @@ public class ExpressionEvaluator {
 		return !x;
 	}
 	
+	public static Object equal(Object x, Object y) {
+		LITERAL_TYPE xType = LiteralMatcher.instance().getLiteralType(x);
+		LITERAL_TYPE yType = LiteralMatcher.instance().getLiteralType(y);
+		
+		if(xType.equals(LITERAL_TYPE.INT)) {
+			if(yType.equals(LITERAL_TYPE.CHAR))
+				return ExpressionEvaluator.equal((Integer) x, (Character)y);
+			if(yType.equals(LITERAL_TYPE.FLOAT))
+				return ExpressionEvaluator.equal((Integer) x, (Float)y);
+			if(yType.equals(LITERAL_TYPE.INT))
+				return ExpressionEvaluator.equal((Integer) x, (Integer)y);
+		}
+		if(xType.equals(LITERAL_TYPE.CHAR)) {
+			if(yType.equals(LITERAL_TYPE.INT))
+				return ExpressionEvaluator.equal((Character) x, (Integer)y);
+			if(yType.equals(LITERAL_TYPE.FLOAT))
+				return ExpressionEvaluator.equal((Character) x, (Float)y);
+			if(yType.equals(LITERAL_TYPE.CHAR))
+				return ExpressionEvaluator.equal((Character) x, (Character)y);
+		}
+		if(xType.equals(LITERAL_TYPE.FLOAT)) {
+			if(yType.equals(LITERAL_TYPE.CHAR))
+				return ExpressionEvaluator.equal((Float) x, (Character)y);
+			if(yType.equals(LITERAL_TYPE.INT))
+				return ExpressionEvaluator.equal((Float) x, (Integer)y);
+			if(yType.equals(LITERAL_TYPE.FLOAT))
+				return ExpressionEvaluator.equal((Float) x, (Float)y);
+		}
+		if(xType.equals(LITERAL_TYPE.STRING) && yType.equals(LITERAL_TYPE.STRING))
+			return ExpressionEvaluator.equal((String)x, (String)y);
+		
+		if(xType.equals(LITERAL_TYPE.BOOLEAN) && yType.equals(LITERAL_TYPE.BOOLEAN))
+			return ExpressionEvaluator.equal((Boolean)x, (Boolean)y);
+		return null;
+	}
+	
+	public static Object notEqual(Object x, Object y) {
+		LITERAL_TYPE xType = LiteralMatcher.instance().getLiteralType(x);
+		LITERAL_TYPE yType = LiteralMatcher.instance().getLiteralType(y);
+		
+		if(xType.equals(LITERAL_TYPE.INT)) {
+			if(yType.equals(LITERAL_TYPE.CHAR))
+				return ExpressionEvaluator.notEqual((Integer) x, (Character)y);
+			if(yType.equals(LITERAL_TYPE.FLOAT))
+				return ExpressionEvaluator.notEqual((Integer) x, (Float)y);
+			if(yType.equals(LITERAL_TYPE.INT))
+				return ExpressionEvaluator.notEqual((Integer) x, (Integer)y);
+		}
+		if(xType.equals(LITERAL_TYPE.CHAR)) {
+			if(yType.equals(LITERAL_TYPE.INT))
+				return ExpressionEvaluator.notEqual((Character) x, (Integer)y);
+			if(yType.equals(LITERAL_TYPE.FLOAT))
+				return ExpressionEvaluator.notEqual((Character) x, (Float)y);
+			if(yType.equals(LITERAL_TYPE.CHAR))
+				return ExpressionEvaluator.notEqual((Character) x, (Character)y);
+		}
+		if(xType.equals(LITERAL_TYPE.FLOAT)) {
+			if(yType.equals(LITERAL_TYPE.CHAR))
+				return ExpressionEvaluator.notEqual((Float) x, (Character)y);
+			if(yType.equals(LITERAL_TYPE.INT))
+				return ExpressionEvaluator.notEqual((Float) x, (Integer)y);
+			if(yType.equals(LITERAL_TYPE.FLOAT))
+				return ExpressionEvaluator.notEqual((Float) x, (Float)y);
+		}
+		if(xType.equals(LITERAL_TYPE.STRING) && yType.equals(LITERAL_TYPE.STRING))
+			return ExpressionEvaluator.notEqual((String)x, (String)y);
+		
+		if(xType.equals(LITERAL_TYPE.BOOLEAN) && yType.equals(LITERAL_TYPE.BOOLEAN))
+			return ExpressionEvaluator.notEqual((Boolean)x, (Boolean)y);
+		return null;
+	}
+	
+	public static Boolean equal(Integer x, Integer y) {
+		return x == y;
+	}
+	
+	public static Boolean equal(Integer x, Float y) {
+		return x.intValue() == y.floatValue();
+	}
+	
+	public static Boolean equal(Integer x, Character y) {
+		return x.intValue() == y.charValue();
+	}
+	
+	public static Boolean equal(Float x, Float y) {
+		return x == y;
+	}
+	
+	public static Boolean equal(Float x, Integer y) {
+		return x.floatValue() == y.intValue();
+	}
+	
+	public static Boolean equal(Float x, Character y) {
+		return x.floatValue() == y.charValue();
+	}
+	
+	public static Boolean equal(Character x, Character y) {
+		return x.charValue() == y.charValue();
+	}
+	
+	public static Boolean equal(Character x, Integer y) {
+		return x.charValue() == y.intValue();
+	}
+	
+	public static Boolean equal(Character x, Float y) {
+		return x.charValue() == y.floatValue();
+	}
+	
+	public static Boolean equal(String x, String y) {
+		return x.equals(y);
+	}
+	
 	public static Boolean equal(Boolean x, Boolean y) {
 		return x == y;
+	}
+	
+	public static Boolean notEqual(Integer x, Integer y) {
+		return x != y;
+	}
+	
+	public static Boolean notEqual(Integer x, Float y) {
+		return x.intValue() != y.floatValue();
+	}
+	
+	public static Boolean notEqual(Integer x, Character y) {
+		return x.intValue() != y.charValue();
+	}
+	
+	public static Boolean notEqual(Float x, Float y) {
+		return x != y;
+	}
+	
+	public static Boolean notEqual(Float x, Integer y) {
+		return x.floatValue() != y.intValue();
+	}
+	
+	public static Boolean notEqual(Float x, Character y) {
+		return x.floatValue() != y.charValue();
+	}
+	
+	public static Boolean notEqual(Character x, Character y) {
+		return x.charValue() != y.charValue();
+	}
+	
+	public static Boolean notEqual(Character x, Integer y) {
+		return x.charValue() != y.intValue();
+	}
+	
+	public static Boolean notEqual(Character x, Float y) {
+		return x.charValue() != y.floatValue();
+	}
+	
+	public static Boolean notEqual(String x, String y) {
+		return !x.equals(y);
 	}
 	
 	public static Boolean notEqual(Boolean x, Boolean y) {

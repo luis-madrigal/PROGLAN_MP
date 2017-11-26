@@ -1,18 +1,35 @@
 
-ACT main starring() {
- 	int x = 0;
+int counter = 0;
 
-	Say "Hello World";
-	
-	Say "Hello World";
-	Say "Hello World";
-	
- 	replay(int i = 0; i < 5; i++) {
- 		Say "Hello World";
- 	}
+composition subrecord{
+	int a;
+	int* b, cd;
+	string k;	
+	string[] c;
+}
 
- 	Say "Hello World 8";
- 	Say "Hello World 9";
- 	Say "Hello World 10"; 	
- 	Say "Hello World 11";
- }
+
+composition record {
+	composition subrecord*[] cd;
+	int*[] k;
+	int a, b, c;
+	float d;
+	
+}
+
+
+
+ACT main starring ()  {
+	composition subrecord rec;
+
+	int[][] array2 = new int[2][3];
+	int[][] array1 = "asd";
+	int[][] array = new int[][]{{1,2,34,x+5,2},{1,23,34,32,2}};
+
+	int[] a;
+	int[] c = a;
+
+	int* pointerc;
+	pointerc = c;
+
+}

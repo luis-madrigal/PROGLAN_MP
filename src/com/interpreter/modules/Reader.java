@@ -3,45 +3,102 @@ package com.interpreter.modules;
 import javax.swing.JOptionPane;
 
 public class Reader {
+	
+	private static boolean cancelled = false;
 
-	public static String readInput(){
-		String input = JOptionPane.showInputDialog("Enter Input: ");
-		return input;
+	public static Object readInput(String type){
+		Object value = null;
+		String errorMsg = "";
+		
+		do {
+			switch (type) {
+			case "int": value = readIntegerInput(errorMsg + "Enter integer input: "); break;
+			case "string": value = readStringInput(errorMsg + "Enter string input: "); break;
+			case "float": value = readFloatInput(errorMsg + "Enter float input: "); break;
+			case "char": value = readCharInput(errorMsg + "Enter character input: "); break;
+			case "boolean": value = readBoolInput(errorMsg + "Enter boolean input: "); break;
+			default:
+				break;
+			}
+			
+			if(value == null) 
+				errorMsg = "Invalid input. ";
+		} while(value == null && !cancelled);
+		
+		cancelled = false;
+		return value;
 	}
 
-	public static int readIntegerInput(String msg) {
+	public static Integer readIntegerInput(String msg) {
 		String input = JOptionPane.showInputDialog(msg);
-		return Integer.parseInt(input);
+		if(input != null && input.length() > 0) {
+			try {
+				return Integer.parseInt(input);
+			}catch(Exception e) {
+				return null;
+			}
+		} else {
+			cancelled = true;
+			return null;
+		}
+		
 	}
 
-	public static float readFloatInput(String msg) {
+	public static Float readFloatInput(String msg) {
 		String input = JOptionPane.showInputDialog(msg);
-		return Float.parseFloat(input);
+		if(input != null && input.length() > 0) {
+			try {
+				return Float.parseFloat(input);
+			}catch(Exception e) {
+				return null;
+			}
+		} else {
+			cancelled = true;
+			return null;
+		}
+		
 	}
 
-	public static double readDoubleInput(String msg) {
+	public static Character readCharInput(String msg) {
 		String input = JOptionPane.showInputDialog(msg);
-		return Double.parseDouble(input);
+		if(input != null && input.length() > 0) {
+			try {
+				if(input.length() > 1)
+					return null;
+				
+				return input.charAt(0);
+			}catch(Exception e) {
+				return null;
+			}
+		} else {
+			cancelled = true;
+			return null;
+		}
+	}
+	
+	public static String readStringInput(String msg) {
+		String input = JOptionPane.showInputDialog(msg);
+		if(input != null && input.length() > 0) {
+			return input;
+		} else {
+			cancelled = true;
+			return null;
+		}
 	}
 
-	public static long readLongInput(String msg) {
+	public static Boolean readBoolInput(String msg) {
 		String input = JOptionPane.showInputDialog(msg);
-		return Long.parseLong(input);
-	}
-
-	public static short readShortInput(String msg) {
-		String input = JOptionPane.showInputDialog(msg);
-		return Short.parseShort(input);
-	}
-
-	public static char readCharInput(String msg) {
-		String input = JOptionPane.showInputDialog(msg);
-		return input.charAt(0);
-	}
-
-	public static boolean readBoolInput(String msg) {
-		String input = JOptionPane.showInputDialog(msg);
-		return Boolean.parseBoolean(input);
+		if(input != null && input.length() > 0) {
+			try {
+				return Boolean.parseBoolean(input);
+			}catch(Exception e) {
+				return null;
+			}
+		} else {
+			cancelled = true;
+			return null;
+		}
+		
 	}
 
 }

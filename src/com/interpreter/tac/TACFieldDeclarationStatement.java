@@ -2,21 +2,20 @@ package com.interpreter.tac;
 
 import com.interpreter.AST.NodeType;
 
-public class TACFuncDeclarationStatement extends TACStatement{
-	
+public class TACFieldDeclarationStatement extends TACStatement {
+
 	private String methodName;
 
-	public TACFuncDeclarationStatement(NodeType type, String methodName, boolean isBreakpoint) {
+	public TACFieldDeclarationStatement(NodeType type, boolean isBreakpoint) {
 		super(type, isBreakpoint);
-		this.methodName = methodName;
+		this.methodName = "%FIELD";
 	}
 	
-	// TODO
-	public TACFuncDeclarationStatement(NodeType type, String methodName) {
+	public TACFieldDeclarationStatement(NodeType type) {
 		super(type, false);
-		this.methodName = methodName;
+		this.methodName = "%FIELD";
 	}
-
+	
 	public String getMethodName() {
 		return methodName;
 	}
@@ -26,7 +25,7 @@ public class TACFuncDeclarationStatement extends TACStatement{
 	}
 	
 	public String toString() {
-		if(this.getType().equals(NodeType.FUNCTION_DECLARATION))
+		if(this.getType().equals(NodeType.FIELD_DEC))
 			return this.getLabel() + ": declare " + this.methodName;
 		else
 			return this.getLabel() + ": end " + this.methodName;

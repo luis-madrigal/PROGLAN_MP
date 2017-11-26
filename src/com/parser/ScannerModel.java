@@ -24,8 +24,10 @@ import org.antlr.v4.runtime.dfa.DFA;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
+import com.ide.Panel;
 import com.interpreter.BaseListener;
 import com.interpreter.Scope;
+import com.interpreter.SemanticErrors;
 import com.parser.ManuScriptLexer;
 import com.parser.ManuScriptParser;
 import com.threads.CodeGeneratorRunnable;
@@ -35,7 +37,7 @@ import com.utils.Tokens;
 @SuppressWarnings("deprecation")
 public class ScannerModel {
 	private CodeGeneratorRunnable runnableCodeGenerator;
-	
+	private Panel pnlParent;
 	private String message;
 	private ParseTree tree;
 	private List<String> ruleNames;
@@ -46,6 +48,10 @@ public class ScannerModel {
 	private ManuScriptParser parser;
 	private CommonTokenStream tokens;
 	private Thread threadCodeGenerator;
+	
+	public ScannerModel(Panel pnlParent) {
+		this.pnlParent = pnlParent;
+	}
 	
 	public String getTokens(String input, Stack<Integer> listBreakpoints) {
 		ANTLRInputStream istream = new ANTLRInputStream(input);
@@ -102,25 +108,23 @@ public class ScannerModel {
 		this.methodTable = new HashMap<String, MethodContext>(); //the methods in the program. no overloading
 		
 		ParseTreeWalker.DEFAULT.walk(new BaseListener(scope, methodTable), this.tree);
-
-		scope.print();
-
-		this.astbv = new ASTBuildVisitor(scope, listBreakpoints);
-		astbv.visit(tree);
-		astbv.printAST("main");
 		
-//		this.threadCodeGenerator = new CodeGeneratorThread(this.astbv, methodTable);
-//		this.threadCodeGenerator.run(); // TODO
-		
-		if(this.threadCodeGenerator != null) {
-			this.runnableCodeGenerator.stop();
-			this.threadCodeGenerator.interrupt();
-			System.out.println("inter "+threadCodeGenerator.isAlive());
-		}
+		if(Console.instance().errorCount == 0) {
+			scope.print();
 			
-		this.runnableCodeGenerator = new CodeGeneratorRunnable(this.astbv, methodTable);
-		this.threadCodeGenerator = new Thread(runnableCodeGenerator);
-		threadCodeGenerator.start();
+			this.astbv = new ASTBuildVisitor(scope, listBreakpoints);
+			astbv.visit(tree);
+			if(astbv.getMethodASTTable().containsKey("main")) {
+				astbv.printAST("main");
+				
+				this.stopThread();
+					
+				this.runnableCodeGenerator = new CodeGeneratorRunnable(this.pnlParent, this.astbv, methodTable);
+				this.threadCodeGenerator = new Thread(runnableCodeGenerator);
+				threadCodeGenerator.start();
+			} else
+				SemanticErrors.throwError(SemanticErrors.NO_MAIN_METHOD);
+		}
 		
 	
 		String tokenized = "";
@@ -133,7 +137,14 @@ public class ScannerModel {
 
 		return tokenized;
 	}
-
+	
+	public void stopThread() {
+		if(this.threadCodeGenerator != null) {
+			this.runnableCodeGenerator.stop();
+			this.threadCodeGenerator.interrupt();
+			System.out.println("isAlive "+threadCodeGenerator.isAlive());
+		}
+	}
 	public ICGenerator getIcg() {
 		return icg;
 	}

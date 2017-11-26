@@ -4,8 +4,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 
 import com.interpreter.contexts.SymbolContext;
+import com.rits.cloning.Cloner;
 
 public class Scope extends HashSet<String>{
 
@@ -22,7 +24,7 @@ public class Scope extends HashSet<String>{
 	}
 	
 	public SymbolContext findVar(String varName) {
-		System.out.println("find var with name: "+varName);
+//		System.out.println("find var with name: "+varName);
 		if(this.symTable.containsKey(varName))
 			return this.symTable.get(varName);
 		else if(parent != null)
@@ -33,8 +35,15 @@ public class Scope extends HashSet<String>{
 		}
 	}
 	
+	public void setSymbolContext(String varName, Object value) {
+		if(this.symTable.containsKey(varName))
+			this.symTable.get(varName).setValue(value);
+		else if(parent != null)
+			this.parent.setSymbolContext(varName, value);
+	}
+	
 	public Scope findWithLabel(String label) {
-		System.out.println("looking for: "+label+" in "+this.label);
+//		System.out.println("looking for: "+label+" in "+this.label);
 		if(this.parent != null && this.label.equals(label)) {
 			return this;
 		}
@@ -42,13 +51,13 @@ public class Scope extends HashSet<String>{
 			for (Scope scope : children) {
 				Scope s;
 				if((s = scope.findWithLabel(label)) != null) {
-					System.out.println("found");
+//					System.out.println("found");
 					return s;
 				} else
 					System.out.println("not found");
 			}
 		}
-		System.out.println("nothing");
+//		System.out.println("nothing");
 		return null;
 	}
 	
@@ -67,7 +76,23 @@ public class Scope extends HashSet<String>{
 	public void print() {
 		print("", true);
 	}
-
+	
+	public String printString() {
+		return printString("", true);
+	}
+	public String printString(String prefix, boolean isTail) {
+		System.out.println(prefix + (isTail ? "└── " : "├── ") + "scope");
+		String print = "";
+		for (int i = 0; i < children.size() - 1; i++) {
+			print += "\n"+children.get(i).printString(prefix + (isTail ? "    " : "│   "), false);
+		}
+		if (children.size() > 0) {
+			print += "\n"+children.get(children.size() - 1)
+					.printString(prefix + (isTail ?"    " : "│   "), true);
+		}
+		return print;
+	}
+	
 	private void print(String prefix, boolean isTail) {
 		System.out.println(prefix + (isTail ? "└── " : "├── ") + "scope");
 		for (int i = 0; i < children.size() - 1; i++) {
@@ -120,5 +145,34 @@ public class Scope extends HashSet<String>{
 
 	public void setLabel(String label) {
 		this.label = label;
+	}
+	
+	public Scope clone() {
+		Scope s;
+		Cloner cloner = new Cloner();
+		s = cloner.deepClone(this);
+		s.setParent(getParent());
+		
+		return s;
+	}
+	
+	public HashMap<String, SymbolContext> cloneSymbolTable() {
+		HashMap<String, SymbolContext> sTable = new HashMap<>();
+		for(Map.Entry<String, SymbolContext> entry: this.symTable.entrySet()) {
+			sTable.put(entry.getKey(), entry.getValue().clone());
+		}
+		
+		return sTable;
+	}
+	
+	private ArrayList<Scope> cloneChildren() {
+		ArrayList<Scope> scopes = new ArrayList<Scope>();
+		for (Scope scope : this.getChildren()) {
+			Scope s = scope.clone();
+			s.setSymTable(s.cloneSymbolTable());
+			scopes.add(s);
+		}
+		
+		return scopes;
 	}
 }

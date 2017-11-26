@@ -49,7 +49,7 @@ compilationUnit
     ;
 
 bodyDeclaration
-	:	(memberDeclaration)*
+	:	memberDeclaration
 	;
 //packageDeclaration
 //    :   PACKAGE qualifiedName ';'
@@ -159,10 +159,8 @@ typeList
 //    ;
 
 memberDeclaration
-    :   methodDeclaration
+    :   startFieldStruct*   startMethodDeclaration
 //    |   genericMethodDeclaration
-    |   fieldDeclaration
-    |   structDefinition
 //    |   constructorDeclaration
 //    |   genericConstructorDeclaration
 //    |   interfaceDeclaration
@@ -171,6 +169,14 @@ memberDeclaration
 //    |   enumDeclaration
     ;
 
+startFieldStruct
+    :   fieldDeclaration
+    |   structDefinition
+    ;
+
+startMethodDeclaration
+    :   methodDeclaration   (methodDeclaration)*
+    ;
 /* We use rule this even for void methods which cannot have [] after parameters.
    This simplifies grammar and we can consider void to be a type, which
    renders the [] matching as a context-sensitive issue or a semantic check
@@ -270,7 +276,8 @@ variableDeclarator
     ;
 
 variableDeclaratorId
-    :   Identifier ('[' ']')*
+    :   Identifier
+//    Identifier ('[' ']')*
     ;
 
 variableInitializer
@@ -346,7 +353,7 @@ qualifier
 */
 
 structDeclaratorList
-    :   structDeclarator*
+    :   structDeclarator ( ',' structDeclarator)*
     ;
 
 structDeclarator
@@ -558,8 +565,7 @@ switchLabel
     ;
 
 forControl
-    :   enhancedForControl
-    |   forInit ';' expression? ';' forUpdate?
+    :   forInit ';' expression? ';' forUpdate?
     ;
 
 forInit
@@ -609,12 +615,12 @@ expression
 //    |   expression '.' NEW nonWildcardTypeArguments? innerCreator
 //    |   expression '.' SUPER superSuffix
 //    |   expression '.' explicitGenericInvocation
-    |   variableExpr '[' expression ']' # arrayExpr
-    |   variableExpr '(' expressionList? ')' # functionExpr
+    |   variableExpr '[' expression ']' ('[' expression ']')* # arrayExpr
+    |   Identifier '(' expressionList? ')' # functionExpr
     |   NEW creator #arrayInitExpr
 //    |   '(' typeType ')' expression
-    |   variableExpr ('++' | '--') # postIncDecExpr
-    |   ('+'|'-'|'++'|'--') variableExpr # preIncDecSignExpr
+    |   equationExpr ('++' | '--') # postIncDecExpr
+    |   ('+'|'-'|'++'|'--') equationExpr # preIncDecSignExpr
     |   ('~'|'!') expression # negationExpr
     |   expression ('*'|'/'|'%') expression # multDivModExpr
     |   expression ('+'|'-') expression # addSubExpr
@@ -644,25 +650,32 @@ expression
         )
         expression # assignExpr
     ;
-    
+
+structExpr
+    :   Identifier
+    |   structExpr '.' Identifier
+    |   structExpr '->' Identifier
+    ;
+
 variableExpr
 	:	Identifier
-	|	'*'Identifier
+//	|	'*'Identifier
+	|	structExpr
 	;
 	
 equationExpr
 	:	Identifier
-	|	'*'Identifier
-	|	variableExpr '[' expression ']'
+//	|	'*'Identifier
+	|	variableExpr ('[' expression ']')*
+	|	structExpr
 	;
 
 primary
-    :   '(' expression ')'
+    :   parExpression
 //    |   THIS
 //    |   SUPER
     |   literal
-    |   Identifier
-    |	'*'Identifier
+	|	equationExpr
 //    |	'&'Identifier
 //    |   typeType '.' 'class'
 //    |   nonWildcardTypeArguments (explicitGenericInvocationSuffix | THIS arguments)
@@ -675,6 +688,7 @@ creator
 createdName
     :   primitiveType 
     | 	pointerType
+    |   structType
     ;
 //
 //innerCreator
@@ -1135,5 +1149,5 @@ COMMENT
     ;
 
 LINE_COMMENT
-    :   '['Identifier']:' ~[\r\n]* -> channel(HIDDEN)
+    :   '['WS* Identifier (WS Identifier)* WS*']:' ~[\r\n]* -> channel(HIDDEN)
     ;

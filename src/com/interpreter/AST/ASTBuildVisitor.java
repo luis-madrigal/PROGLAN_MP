@@ -9,6 +9,7 @@ import org.antlr.v4.runtime.tree.RuleNode;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Stack;
@@ -18,6 +19,7 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
     private Scope curScope;
 
     private ArrayList<Integer> levelIndexTracker;
+    private ProcedureNode fieldDecNode;
     private int lvlDepth;
     private int lvlIndex;
     private int nExitBlock;
@@ -40,6 +42,10 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
         this.listBreakpoints = listBreakpoints;
         this.isBreakpoint = false;
         this.triggeringLineNumber = 0;
+
+        this.fieldDecNode = new ProcedureNode(null,"%FIELD");
+        this.fieldDecNode.setNodeType(NodeType.FIELD_DEC);
+        methodASTTable.put(this.fieldDecNode.procedureName,fieldDecNode);
     }
 
     public HashMap<String, ProcedureNode> getMethodASTTable() {
@@ -49,11 +55,6 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
     public void printAST(String rootName){
         methodASTTable.get(rootName).print();
     }
-
-    @Override public AbstractSyntaxTree visitCompilationUnit(ManuScriptParser.CompilationUnitContext ctx) {
-
-		return visitChildren(ctx);
-	}
 
     @Override
     protected AbstractSyntaxTree aggregateResult(AbstractSyntaxTree aggregate, AbstractSyntaxTree nextResult) {
@@ -65,44 +66,64 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
         }
     }
 
-    /**
-     * acts as the exitBlockListener
-     * @param node
-     * @return
-     */
-    public AbstractSyntaxTree visitBlockChildren(RuleNode node) {
-        AbstractSyntaxTree result = this.defaultResult();
-        int n = node.getChildCount();
-        
-        for(int i = 0; i < n && this.shouldVisitNextChild(node, result); ++i) {
-            ParseTree c = node.getChild(i);
-            AbstractSyntaxTree childResult = c.accept(this);
-            result = this.aggregateResult(result, childResult);
-        }
-        exitBlock();
 
-        return result;
-    }
+//    /**
+//     * acts as the exitBlockListener
+//     * @param node
+//     * @return
+//     */
+//    public AbstractSyntaxTree visitBlockChildren(RuleNode node) {
+//        AbstractSyntaxTree result = this.defaultResult();
+//        int n = node.getChildCount();
+//
+//        for(int i = 0; i < n && this.shouldVisitNextChild(node, result); ++i) {
+//            ParseTree c = node.getChild(i);
+//            AbstractSyntaxTree childResult = c.accept(this);
+//            result = this.aggregateResult(result, childResult);
+//        }
+//        exitBlock();
+//
+//        return result;
+//    }
 
     private void exitBlock(){
-        curScope = curScope.getParent();    //go deeper
+        curScope = curScope.getParent();    //go out
         //this.levelIndexTracker.set(lvlDepth,++lvlIndex);    //sets next expected index
-        lvlDepth--;
         nExitBlock++;
         if(nExitBlock >= 2){
             nExitBlock = 0;
-            levelIndexTracker.set(lvlDepth + 1, 0);
+            levelIndexTracker.set(lvlDepth , 0);
         }
+        lvlDepth--;
+        System.out.println("newnextIndex#: "+ Arrays.deepToString(levelIndexTracker.toArray()));
+
     }
 
     private void enterBlock(){
+        nExitBlock = 0;
         lvlIndex = this.levelIndexTracker.get(lvlDepth);
+        System.out.println("nextIndex#: "+ Arrays.deepToString(levelIndexTracker.toArray()));
+        System.out.println("Depth: "+lvlDepth+" ;block#: "+lvlIndex);
         curScope = curScope.getChildren().get(lvlIndex);    //go deeper
-//        System.out.println("scope: "+lvlIndex);
+
         this.levelIndexTracker.set(lvlDepth,++lvlIndex);    //sets next expected index
         lvlDepth++;
         if(lvlDepth >= this.levelIndexTracker.size())
             this.levelIndexTracker.add(0);
+
+    }
+
+    @Override
+    public AbstractSyntaxTree visitFieldDeclaration(ManuScriptParser.FieldDeclarationContext ctx) {
+        for(ManuScriptParser.VariableDeclaratorContext vCtx : ctx.variableDeclarators().variableDeclarator()){
+                AbstractSyntaxTree fieldDec = visit(vCtx);
+                if(fieldDec != null){
+                    fieldDec.setParent(fieldDecNode);
+                    fieldDecNode.addChild(fieldDec);
+            }
+        }
+
+        return super.visitFieldDeclaration(ctx);
     }
 
     private void configureIsBreakpoint(int lineNumber) {
@@ -207,12 +228,15 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
         if(isBreakpoint)
         	System.out.println("BP: "+node.getNodeType());
         
-        AbstractSyntaxTree child = visit(ctx.expression());
+        if(ctx.expression() != null) {
+        	AbstractSyntaxTree child = visit(ctx.expression());
 
-        if(child!=null) {
-            child.setParent(node);
-            node.addChild(child);
+            if(child!=null) {
+                child.setParent(node);
+                node.addChild(child);
+            }
         }
+        
 
         return node;
     }
@@ -406,12 +430,13 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
             node.addChild(var);
         }
 
-        AbstractSyntaxTree expression = visit(ctx.expression());
-        if(expression!=null) {
-            expression.setParent(node);
-            node.addChild(expression);
+        for(ManuScriptParser.ExpressionContext expr : ctx.expression()) {
+            AbstractSyntaxTree expression = visit(expr);
+            if (expression != null) {
+                expression.setParent(node);
+                node.addChild(expression);
+            }
         }
-
         return node;
     }
 
@@ -421,7 +446,7 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
 
         System.out.println("visitingFUNCEXP "+ctx.getStart().getLine()+"    "+ctx.getText());
         configureIsBreakpoint(ctx.getStart().getLine());
-        ProcedureNode node = new ProcedureNode(null, ctx.variableExpr().getText());
+        ProcedureNode node = new ProcedureNode(null, ctx.Identifier().getText());
         node.setNodeType(NodeType.FUNCTION_INVOKE);
         node.setBreakpoint(this.isBreakpoint);
         if(isBreakpoint)
@@ -453,7 +478,7 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
         
         node.setValue(ctx.getChild(1).getText());
 
-        AbstractSyntaxTree left = visit(ctx.variableExpr());
+        AbstractSyntaxTree left = visit(ctx.equationExpr());
         if(left!=null) {
             left.setParent(node);
             node.addChild(left);
@@ -476,7 +501,7 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
         if(isBreakpoint)
         	System.out.println("BP: "+node.getNodeType());
         
-        AbstractSyntaxTree right = visit(ctx.variableExpr());
+        AbstractSyntaxTree right = visit(ctx.equationExpr());
         if(right!=null) {
             right.setParent(node);
             node.addChild(right);
@@ -777,16 +802,14 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
         configureIsBreakpoint(ctx.getStart().getLine());
         LeafNode variable = new LeafNode(null);
         variable.setNodeType(NodeType.VARIABLE);
-        SymbolContext symContext = null;
         variable.setBreakpoint(this.isBreakpoint);
         if(isBreakpoint)
         	System.out.println("BP: "+variable.getNodeType());
         
-        symContext = curScope.checkTables(ctx.Identifier().getText());
-        String type = symContext.getSymbolType(); //todo: convert to enum?
+        SymbolContext symContext = curScope.checkTables(ctx.Identifier().getText());
 
         if(symContext != null) {
-            variable.setValue(symContext.getIdentifier());
+            variable.setValue(symContext);
             variable.setLiteralType(symContext.getSymbolType());
             return variable;
         }
@@ -800,7 +823,7 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
 
         System.out.println("visitingPRIMEXPR "+ctx.getStart().getLine()+"    "+ctx.getText());
         configureIsBreakpoint(ctx.getStart().getLine());
-        if(ctx.Identifier() != null){
+        if(ctx.equationExpr() != null && ctx.equationExpr().Identifier() != null){
 //            System.out.println("variable found");
             LeafNode variable = new LeafNode(null);
             variable.setNodeType(NodeType.VARIABLE);
@@ -810,11 +833,10 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
             	System.out.println("BP: "+variable.getNodeType());
             
 
-            symContext = curScope.checkTables(ctx.Identifier().getText());
+            symContext = curScope.checkTables(ctx.equationExpr().Identifier().getText());
 
             if(symContext != null){
-//                System.out.println("symcontext found");
-                variable.setValue(symContext.getIdentifier());
+                variable.setValue(symContext);
                 variable.setLiteralType(symContext.getSymbolType());
                 return variable;
             }
@@ -841,10 +863,9 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
         	System.out.println("BP: "+variable.getNodeType());
         
         symContext = curScope.checkTables(ctx.Identifier().getText());
-        String type = symContext.getSymbolType(); //todo: convert to enum?
 
         if(symContext != null) {
-            variable.setValue(symContext.getIdentifier());
+            variable.setValue(symContext);
             variable.setLiteralType(symContext.getSymbolType());
             return variable;
         }
@@ -866,11 +887,9 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
         	System.out.println("BP: "+variable.getNodeType());
         
         symContext = curScope.checkTables(ctx.Identifier().getText());
-//        System.out.println("var "+ctx.Identifier().getText() + " in table? "+curScope.inScope(ctx.Identifier().getText()));
-//        System.out.println(symContext.getSymbolType());
 
         if(symContext != null) {
-            variable.setValue(symContext.getIdentifier());
+            variable.setValue(symContext);
             variable.setLiteralType(symContext.getSymbolType());
             return variable;
         }

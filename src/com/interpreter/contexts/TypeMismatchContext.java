@@ -15,10 +15,6 @@ public class TypeMismatchContext {
 		this.charPositionInLine = charPositionInLine;
 	}
 
-	public void throwError() {
-		Console.instance().err(String.format(SemanticErrors.TYPE_MISMATCH, lineNumber, charPositionInLine, expectedType));
-	}
-
 	public String getExpectedType() {
 		return expectedType;
 	}

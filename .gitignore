@@ -19,3 +19,7 @@ build/classes/com/ide/Panel.class
 .idea/gradle.xml
 *.class
 autosave.txt
+*.xml
+autosave.txt
+*.txt
+autosave.txt

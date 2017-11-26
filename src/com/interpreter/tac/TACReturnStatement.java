@@ -21,6 +21,9 @@ public class TACReturnStatement extends TACStatement{
 	}
 	
 	public String toString() {
-		return this.getLabel() + ": return " + this.expression.toString();
+		if(this.expression != null)
+			return this.getLabel() + ": return " + this.expression.toString();
+		else
+			return this.getLabel() + ": return nothing";
 	}
 }
