@@ -46,6 +46,8 @@ import org.fife.ui.rsyntaxtextarea.Style;
 import org.fife.ui.rsyntaxtextarea.SyntaxScheme;
 import org.fife.ui.rsyntaxtextarea.Token;
 import org.fife.ui.rsyntaxtextarea.TokenMakerFactory;
+import org.fife.ui.rsyntaxtextarea.folding.CurlyFoldParser;
+import org.fife.ui.rsyntaxtextarea.folding.FoldParserManager;
 import org.fife.ui.rtextarea.RTextScrollPane;
 
 import com.ide.styles.IdeStyle;
@@ -240,13 +242,16 @@ public class Panel implements Runnable, ActionListener, KeyListener, MouseListen
 		this.codeInput.setSyntaxScheme(getExpressionColorScheme(this.codeInput.getSyntaxScheme()));
 		AbstractTokenMakerFactory atmf = (AbstractTokenMakerFactory)TokenMakerFactory.getDefaultInstance();
 		atmf.putMapping("text/manuscript", "com.ide.styles.ManuScriptTokenMaker");
-		
-	
 		this.codeInput.setSyntaxEditingStyle("text/manuscript");
+		FoldParserManager.get().addFoldParserMapping("text/manuscript", new CurlyFoldParser());
 
+		this.codeInput.setCodeFoldingEnabled(true);
+		this.codeInput.setBracketMatchingEnabled(true);
+		this.codeInput.setCloseCurlyBraces(true);
+		this.codeInput.setMatchedBracketBGColor(SUBLIME_HIGHLIGHT);
+		
 //		this.codeInput.setCurrentLineHighlightColor(Styles.PALE_GRAY);
 		this.codeInput.setCurrentLineHighlightColor(SUBLIME_HIGHLIGHT);
-		this.codeInput.setCodeFoldingEnabled(true);
 		this.codeInput.setSelectedTextColor(Styles.LIGHT_GRAY);
 		this.codeInput.setFont(new Font("Consolas", 150, baseFontSize));
 //		this.codeInput.setForeground(Styles.TEXT_GRAY);
