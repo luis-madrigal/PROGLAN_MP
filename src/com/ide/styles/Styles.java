@@ -32,13 +32,15 @@ public class Styles {
 	public final static Color UN_OPERATOR = TEXT_GRAY; //Color.WHITE;
 	public final static Color UN_SEPARATOR = new Color(97, 187, 229);
 		
-	public final static Color UN_CONSOLE_LOG = new Color(0, 168, 133);
+	public final static Color UN_CONSOLE_LOG = TEXT_GRAY;// new Color(0, 168, 133);
 	public final static Color UN_CONSOLE_ERR = Color.RED;
 
 	public final static Color VIOLET = new Color(178, 103, 244);
 
 	public final static Color TEAL = new Color(1, 127, 124);
-	public final static Color UN_CONSOLE_SYSTEM = TEAL; // VIOLET; // new Color(0, 0, 0);
+	public final static Color BRIGHT_BLUE = new Color(7, 218, 242);
+	public final static Color LIGHT_TEAL = new Color(64, 171, 183);
+	public final static Color UN_CONSOLE_SYSTEM = LIGHT_TEAL; // VIOLET; // new Color(0, 0, 0);
 	
 	private ArrayList<IdeStyle> styles;
 	
