@@ -32,8 +32,6 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTextPane;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.UIManager;
-import javax.swing.border.Border;
-import javax.swing.border.LineBorder;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.DefaultStyledDocument;
@@ -101,7 +99,7 @@ public class Panel implements Runnable, ActionListener, KeyListener, MouseListen
 	private JTextPane parsedOut;
 	public static JTextPane threeACOut;
 	public static JTextPane watchOut;
-	public static DocumentPanel documentOut;
+	public DocumentPanel documentOut;
 
 	private JPanel inputPaneParent;
 	private RTextScrollPane inputPane;
@@ -711,9 +709,16 @@ public class Panel implements Runnable, ActionListener, KeyListener, MouseListen
 
 		this.codeInput.addPropertyChangeListener(this); // Must be at the end
 //		this.pnlMain.setComponentZOrder(pnlMenu, pnlMain.getComponentCount()-1);
+
+//		if(this.codeInput.getText().contains("ACT ")) {
+			documentOut.generate(this.codeInput.getText());
+//			System.out.println(" "+this.codeInput.getText());
+//		}
 		this.pnlMain.revalidate();
 		this.pnlMain.repaint();
 		
+		documentOut.revalidate();
+		documentOut.repaint();
 	}
 	
 	public void initMenuButtons() {
@@ -1149,11 +1154,11 @@ public class Panel implements Runnable, ActionListener, KeyListener, MouseListen
 
 	@Override
 	public void propertyChange(PropertyChangeEvent e) {
+		this.documentSplitPane.revalidate();
+		this.documentSplitPane.repaint();
+		
 		if(this.codeInput.getText().contains("ACT ") && e.getSource() == this.codeInput) {
 			documentOut.generate(this.codeInput.getText());
-			this.documentSplitPane.revalidate();
-			this.documentSplitPane.repaint();
-			
 //			System.out.println(" "+this.codeInput.getText());
 		}
 		
