@@ -942,6 +942,8 @@ public class Panel implements CaretListener, Runnable, ActionListener, KeyListen
 			// START
 			else {
 				Console.instance().purge();
+				purgeWatch();
+				
 				this.changeToPause();
 				String text = this.codeInput.getText();		
 				
@@ -1228,6 +1230,12 @@ public class Panel implements CaretListener, Runnable, ActionListener, KeyListen
 //			System.out.println(" "+this.codeInput.getText());
 		}
 		
+	}
+	public static void printWatch(String strLog) {
+		watchOut.setText(watchOut.getText()+"\n"+strLog);
+	}
+	public static void purgeWatch() {
+		watchOut.setText("");
 	}
 
 	@Override

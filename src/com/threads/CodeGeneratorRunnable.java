@@ -155,6 +155,11 @@ public class CodeGeneratorRunnable implements Runnable {
 			methodScope.findVar(fnArgs.get(i)).setValue(args[i]);
 
 		}
+
+//		Panel.printWatch(methodScope.getSymTable().get("solanaceae").getValue().toString());
+//		Panel.printWatch(methodScope.getSymTable().keySet().toString());
+		
+//		System.out.println("METHSCOP "+methodScope.printString());
 		do {
 			if(isPlay) {
 				pnlParent.changeToInactive();
@@ -169,7 +174,6 @@ public class CodeGeneratorRunnable implements Runnable {
 //				}
 			}
 			else {
-				
 				pnlParent.changeToActive();
 			}
 		}while(pnlParent.isRunning() && this.checkEndRun(pointer));
@@ -200,6 +204,9 @@ public class CodeGeneratorRunnable implements Runnable {
 	}
 	
 	private int evaluate(Scope methodScope, HashMap<String, Register> registers, TACStatement statement, int pointerCount) {
+		
+		Panel.printWatch("P"+pointerCount+" "+statement+"    "+methodScope.getSymTable().keySet().toString());
+		
 		switch (statement.getType()) {
 		
 		case BLOCK:
