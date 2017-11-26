@@ -1,20 +1,27 @@
+int counter = 0;
 
-ACT generateFibo starring (int number) {
-	if(number == 1 || number == 2) {
-		give 1;
-	}
-
-	give generateFibo(number-1)+generateFibo(number-2);
+composition subrecord{
+	int a;
+	int* b, cd;
+	string a;	
+	string[] c;
 }
 
-ACT main starring () {
-	int x;
-	int fibo;
-	int i = 0;
 
-	Say "Enter a number: ";
-	Write to x;
+composition record {
+	composition record cd;
+	int a, b, c;
+	float d;
+	
+}
 
-	fibo = generateFibo(x);
-	Say "Fibonacci Number "+x+": "+fibo + ": "+i++;
+int* pointerA;
+int* pointerB = pointerA;
+
+ACT main starring ()  {
+	composition subrecord rec;
+
+	int c 5;
+	int* pointerc;
+	pointerc = c;
 }

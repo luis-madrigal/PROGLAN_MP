@@ -35,6 +35,13 @@ public class ExpressionEvaluator {
 			return ExpressionEvaluator.add((Integer) x, (Character)y);
 		}
 		
+		if(xType.equals(LITERAL_TYPE.CHAR)) {
+			x = ((Character) x).charValue();
+		}
+		if(yType.equals(LITERAL_TYPE.CHAR)) {
+			y = ((Character) y).charValue();
+		}
+		
 		return ExpressionEvaluator.concat(x.toString(), y.toString());
 	}
 	
@@ -329,8 +336,6 @@ public class ExpressionEvaluator {
 		
 		if(xType.equals(LITERAL_TYPE.INT))
 			return ExpressionEvaluator.negate((Integer) x);
-		if(xType.equals(LITERAL_TYPE.CHAR))
-			return ExpressionEvaluator.negate((Character) x);
 		if(xType.equals(LITERAL_TYPE.FLOAT))
 			return ExpressionEvaluator.negate((Float) x);
 		
@@ -415,6 +420,10 @@ public class ExpressionEvaluator {
 	}
 	
 	public static Float positive(Float x) {
+		return +x;
+	}
+	
+	public static Integer positive(Character x) {
 		return +x;
 	}
 	

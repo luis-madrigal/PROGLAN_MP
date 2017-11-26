@@ -80,7 +80,20 @@ public class Console {
 	 */
 	public void err(String msg) {
 		System.out.println("MSG "+msg);
-		this.err(msg, extractLineNumber(msg));
+//		this.err(msg, extractLineNumber(msg));
+		StyledDocument doc = this.textPane.getStyledDocument();
+		Style styleError = doc.addStyle("styleErrorM", StyleContext.getDefaultStyleContext().getStyle(StyleContext.DEFAULT_STYLE));
+		StyleConstants.setForeground(styleError, Styles.UN_CONSOLE_ERR);
+		try {
+//			findLineNumber(msg);
+			doc.insertString(findLineNumber(msg)/*doc.getLength()*/, msg+"\n", styleError);
+		} catch (BadLocationException e) {
+			e.printStackTrace();
+		}
+		
+		this.errorCount++;
+		this.pnlParent.changeToPlay();
+		this.textPane.setCaretPosition(0);
 	}
 
 	/**

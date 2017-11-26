@@ -78,7 +78,13 @@ public class ICGenerator {
 			case BLOCK: break;
 			case FIELD_DEC: this.addStatement(new TACFieldDeclarationStatement(n.getNodeType(), n.isBreakpoint())); break;
 			case FUNCTION_DECLARATION: this.declareFunc(n); this.addStatement(new TACFuncDeclarationStatement(n.getNodeType(), ((ProcedureNode)n).getProcedureName(), n.isBreakpoint())); break;
-			case RETURN: this.addStatement(new TACReturnStatement(n.getNodeType(), this.storeExpression(n.getChild(0)), n.isBreakpoint())); flag = false;break;
+			case RETURN: 
+				if(n.getChildren().size() > 0)//error here
+					this.addStatement(new TACReturnStatement(n.getNodeType(), this.storeExpression(n.getChild(0)), n.isBreakpoint()));
+				else
+					this.addStatement(new TACReturnStatement(n.getNodeType(), null, n.isBreakpoint())); 
+				flag = false;
+				break;
 			case PRINT: this.addStatement(new TACPrintStatement(n.getNodeType(), this.storeExpression(n.getChild(0)), n.isBreakpoint())); flag = false; break;
 			case SCAN: this.addStatement(new TACScanStatement(n.getNodeType(), (Variable) this.storeExpression(n.getChild(0)), n.isBreakpoint())); flag = false; break;
 			default:

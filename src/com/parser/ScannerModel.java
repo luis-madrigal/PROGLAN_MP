@@ -27,6 +27,7 @@ import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import com.ide.Panel;
 import com.interpreter.BaseListener;
 import com.interpreter.Scope;
+import com.interpreter.SemanticErrors;
 import com.parser.ManuScriptLexer;
 import com.parser.ManuScriptParser;
 import com.threads.CodeGeneratorRunnable;
@@ -110,17 +111,19 @@ public class ScannerModel {
 		
 		if(Console.instance().errorCount == 0) {
 			scope.print();
-	
+			
 			this.astbv = new ASTBuildVisitor(scope, listBreakpoints);
 			astbv.visit(tree);
-			astbv.printAST("main");
-	//		astbv.printAST("generateFibo");
-			
-			this.stopThread();
+			if(astbv.getMethodASTTable().containsKey("main")) {
+				astbv.printAST("main");
 				
-			this.runnableCodeGenerator = new CodeGeneratorRunnable(this.pnlParent, this.astbv, methodTable);
-			this.threadCodeGenerator = new Thread(runnableCodeGenerator);
-			threadCodeGenerator.start();
+				this.stopThread();
+					
+				this.runnableCodeGenerator = new CodeGeneratorRunnable(this.pnlParent, this.astbv, methodTable);
+				this.threadCodeGenerator = new Thread(runnableCodeGenerator);
+				threadCodeGenerator.start();
+			} else
+				SemanticErrors.throwError(SemanticErrors.NO_MAIN_METHOD);
 		}
 		
 	

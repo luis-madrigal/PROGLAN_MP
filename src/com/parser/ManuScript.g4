@@ -276,7 +276,8 @@ variableDeclarator
     ;
 
 variableDeclaratorId
-    :   Identifier ('[' ']')*
+    :   Identifier
+//    Identifier ('[' ']')*
     ;
 
 variableInitializer
@@ -658,13 +659,13 @@ structExpr
 
 variableExpr
 	:	Identifier
-	|	'*'Identifier
+//	|	'*'Identifier
 	|	structExpr
 	;
 	
 equationExpr
 	:	Identifier
-	|	'*'Identifier
+//	|	'*'Identifier
 	|	variableExpr ('[' expression ']')*
 	|	structExpr
 	;

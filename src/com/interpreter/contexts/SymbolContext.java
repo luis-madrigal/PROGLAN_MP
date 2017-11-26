@@ -5,6 +5,7 @@ import com.interpreter.matchers.LiteralMatcher;
 import com.parser.ManuScriptParser.LocalVariableDeclarationContext;
 import com.rits.cloning.Cloner;
 import com.utils.Types;
+import com.utils.Utils;
 
 public class SymbolContext extends Context{
 	
@@ -18,7 +19,7 @@ public class SymbolContext extends Context{
 		super(identifier, scope);
 		this.type = type;
 		this.value = Types.NULL;
-		this.ctxType = detectContextType(type);
+		this.ctxType = Utils.detectContextType(type);
 	}
 	
 	public SymbolContext(String type, Scope scope, String identifier, boolean isConstant) {
@@ -26,7 +27,7 @@ public class SymbolContext extends Context{
 		this.type = type;
 		this.isConstant = isConstant;
 		this.value = Types.NULL;
-		this.ctxType = detectContextType(type);
+		this.ctxType = Utils.detectContextType(type);
 	}
 
 	public String getSymbolType() {
@@ -62,16 +63,5 @@ public class SymbolContext extends Context{
 		ctx.setValue(Cloner.standard().deepClone(value));
 		
 		return ctx;
-	}
-
-	private ContextType detectContextType(String type){
-		if(type.contains("[]"))
-			return ContextType.ARRAY;
-		else if(type.contains("*"))
-			return ContextType.POINTER;
-		else if(type.contains("composition "))
-			return ContextType.STRUCT;
-		else
-			return ContextType.NORMAL;
 	}
 }

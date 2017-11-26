@@ -178,8 +178,11 @@ public class CodeGeneratorRunnable implements Runnable {
 		if(this.labelMap.containsKey(pointer) && this.labelMap.get(pointer).getType().equals(NodeType.RETURN)) {
 			stmt = this.labelMap.get(pointer);
 			TACReturnStatement rStmt = (TACReturnStatement) stmt;
-			System.out.println("RETURN: "+this.getValue(registers, rStmt.getExpression()));
-			value = this.getValue(registers, rStmt.getExpression());
+			if(rStmt.getExpression() == null)
+				value = null;
+			else
+				value = this.getValue(registers, rStmt.getExpression());
+			System.out.println("RETURN: "+value);
 		}
 		
 		this.returnScope();

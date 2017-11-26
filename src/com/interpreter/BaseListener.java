@@ -4,13 +4,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Stack;
 
+import com.interpreter.contexts.*;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.ParseTree;
 
-import com.interpreter.contexts.ArrayInfo;
-import com.interpreter.contexts.MethodContext;
-import com.interpreter.contexts.StructInfo;
-import com.interpreter.contexts.SymbolContext;
 import com.interpreter.matchers.LiteralMatcher;
 import com.parser.ManuScriptBaseListener;
 import com.parser.ManuScriptParser;
@@ -48,7 +45,7 @@ public class BaseListener extends ManuScriptBaseListener{
 	private HashMap<String, StructInfo> structDefTable;
 	
 	public BaseListener(Scope parentScope, HashMap<String, MethodContext> methodTable) {
-		this.scopes = new Stack<Scope>();;
+		this.scopes = new Stack<Scope>();
 		this.scopes.push(parentScope);
 		this.methodTable = methodTable;
 		this.structDefTable = new HashMap<>();
@@ -146,32 +143,51 @@ public class BaseListener extends ManuScriptBaseListener{
 		}
 		else {
 			
-			ArrayList<SymbolContext> members = new ArrayList<>();
+			ArrayList<SymbolContext> members = new ArrayList<SymbolContext>();
 			for (ManuScriptParser.StructDeclarationContext strCtx : ctx.structDeclarationList().structDeclaration()) {
-
+				//declares new type
 				int dimCount = (strCtx.typeType().getChildCount() - 1) / 2;
 				String varType = strCtx.typeType().getText();
-				SymbolContext symCtx = new SymbolContext(varType,null, null);
 
-//				for(ManuScriptParser.StructDeclaratorContext sdc : strCtx.structDeclaratorList().structDeclarator()) {
-//					if (dimCount > 0) {    //ARRAY INIT
-//						ArrayInfo arInf = new ArrayInfo(dimCount, varType);
-//						checkArraySemantics(arInf, dimCount, varType, strCtx,
-//								ctx.getStart().getLine(),
-//								ctx.getStart().getCharPositionInLine());
-//						symCtx.setOther(arInf);
-//					} else if (strCtx.typeType().structType() != null) {
-//
-//						if (!structDefTable.containsKey(strCtx.typeType().structType().Identifier().getText())) {
-//							SemanticErrors.throwError(SemanticErrors.UNDEFINED_STRUCT, strCtx.getStart().getLine(), strCtx.getStart().getCharPositionInLine(), strCtx.typeType().structType().Identifier());
-//						}
-//					} else if (strCtx.typeType().pointerType() != null) {
-//
-//					}
-//				}
+
+				if(strCtx.typeType().structType() != null) {
+					if (!structDefTable.containsKey(strCtx.typeType().structType().Identifier().getText())) {
+						SemanticErrors.throwError(SemanticErrors.UNDEFINED_STRUCT, strCtx.getStart().getLine(), strCtx.getStart().getCharPositionInLine(), strCtx.typeType().structType().Identifier());
+					}
+				}
+
+				for(ManuScriptParser.StructDeclaratorContext sdc : strCtx.structDeclaratorList().structDeclarator()) {
+					//same type declaration
+
+					for(SymbolContext member : members){	//check if identifier has been used within the structure
+						if(member.getIdentifier().equals(sdc.structDeclaratorId().Identifier().getText()))
+							SemanticErrors.throwError(SemanticErrors.DUPLICATE_VAR,
+									sdc.getStart().getLine(),
+									sdc.getStart().getCharPositionInLine(),
+									sdc.structDeclaratorId().Identifier().getText());
+					}
+
+					SymbolContext symCtx = new SymbolContext(varType,null, sdc.structDeclaratorId().getText());
+					if (dimCount > 0) {    //declaration is of type array
+						ArrayInfo arInf = new ArrayInfo(dimCount, varType);
+						symCtx.setOther(arInf);
+					} else if (strCtx.typeType().pointerType() != null) {	//declaration is pointer
+						PointerInfo ptrInf = new PointerInfo(varType);
+						symCtx.setOther(ptrInf);
+					} else if (strCtx.typeType().structType() != null) {	//declaration is of type struct
+						if (!structDefTable.containsKey(strCtx.typeType().structType().Identifier().getText())) {
+							StructInfo strInf = structDefTable.get(strCtx.typeType().structType().Identifier().getText()).clone();
+							symCtx.setOther(strInf);
+						}
+					} else{	//declaration is any other primitive
+
+					}
+					members.add(symCtx);
+				}
 			}
 
-			StructInfo strInfo = new StructInfo(name, null);
+			SymbolContext[] memArr = members.toArray(new SymbolContext[members.size()]);
+			StructInfo strInfo = new StructInfo(name, memArr);
 			structDefTable.put(strInfo.getStructName(), strInfo);
 		}
 	}
@@ -245,14 +261,16 @@ public class BaseListener extends ManuScriptBaseListener{
 		}
 
 		for (VariableDeclaratorContext vdctx : ctx.variableDeclarators().variableDeclarator()) {
+			//iterates through varname list (int a,b,...,z)
 			String varName = vdctx.variableDeclaratorId().getText();
 			
-			if(getCurrentSymTable().containsKey(varName)) {
+			if (getCurrentSymTable().containsKey(varName)) {//CHECK FOR DUPLICATE VARNAME
 				SemanticErrors.throwError(SemanticErrors.DUPLICATE_VAR, ctx.getStart().getLine(),ctx.getStart().getCharPositionInLine(), varName);
-			} else {
+			}
+			else {
 				SymbolContext symCtx = new SymbolContext(varType, scope, varName, isConstant);
 
-				if(dimCount>0) {    //ARRAY INIT
+				if(dimCount>0) {    //declaration is of type array
 					ArrayInfo arInf = new ArrayInfo(dimCount,varType);
 					checkArraySemantics(arInf, dimCount, varType, vdctx, ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine());
 					symCtx.setOther(arInf);
@@ -287,15 +305,18 @@ public class BaseListener extends ManuScriptBaseListener{
 		}
 
 		for (VariableDeclaratorContext vdctx : ctx.variableDeclarators().variableDeclarator()) {
+			//iterates through varname list (int a,b,...,z)
 			String varName = vdctx.variableDeclaratorId().getText();
 
-			if(getCurrentSymTable().containsKey(varName)) {
+			if(getCurrentSymTable().containsKey(varName)) {//CHECK FOR DUPLICATE VARNAME
 				SemanticErrors.throwError(SemanticErrors.DUPLICATE_VAR, vdctx.getStart().getLine(), vdctx.getStart().getCharPositionInLine(), varName);
-			} else {
+			}
+			else {
 				SymbolContext symCtx = new SymbolContext(varType, scope, varName, isConstant);
 
-				if(dimCount>0) {    //ARRAY INIT
+				if(dimCount>0) {	//if type array
 					ArrayInfo arInf = new ArrayInfo(dimCount,varType);
+					//array initialization checking
 					checkArraySemantics(arInf, dimCount, varType, vdctx, ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine());
 					symCtx.setOther(arInf);
 				}else {
@@ -347,9 +368,14 @@ public class BaseListener extends ManuScriptBaseListener{
 	@Override public void enterReturnStmt(ManuScriptParser.ReturnStmtContext ctx) {
 		MethodContext mctx = methodTable.get(currentMethod);
 		if(mctx.getReturnType().equals(Types.NULL)) {
-			mctx.setReturnType(this.expressionCheck(ctx.expression()));
+			if(ctx.expression() == null) {
+				mctx.setReturnType("void");
+			} else
+				mctx.setReturnType(this.expressionCheck(ctx.expression()));
 		} else {
-			if(!mctx.getReturnType().equals(this.expressionCheck(ctx.expression()))) {
+			if(mctx.getReturnType().equals("void") && ctx.expression() != null) {
+				SemanticErrors.throwError(SemanticErrors.INVALID_RETURN_TYPE, ctx.getStart().getLine(), ctx.getStop().getCharPositionInLine(), currentMethod, mctx.getReturnType());
+			} else if(!mctx.getReturnType().equals(this.expressionCheck(ctx.expression()))) {
 				SemanticErrors.throwError(SemanticErrors.INVALID_RETURN_TYPE, ctx.expression().getStart().getLine(), ctx.expression().getStop().getCharPositionInLine(), currentMethod, mctx.getReturnType());
 			}
 		}
@@ -363,7 +389,7 @@ public class BaseListener extends ManuScriptBaseListener{
 		int charPosInLine = ctx.getStart().getCharPositionInLine();
 
 		if(!methodTable.containsKey(methodName)) {
-			Console.instance().err(String.format(SemanticErrors.UNDEFINED_METHOD, lineNum, charPosInLine, methodName));
+			SemanticErrors.throwError(SemanticErrors.UNDEFINED_METHOD, lineNum, charPosInLine, methodName);
 			return "null";
 		}
 		MethodContext mcx = methodTable.get(methodName);
@@ -579,6 +605,8 @@ public class BaseListener extends ManuScriptBaseListener{
 	private String getExprReturnedType(int lineNum, int charPos, OPERATOR operator, String type) {
 		switch (operator) {
 		case ADD:
+			if(this.canBeOfType(type, "int", "float", "char"))
+				return type;
 		case SUB: 
 			if(this.canBeOfType(type, "int", "float"))
 				return type;
