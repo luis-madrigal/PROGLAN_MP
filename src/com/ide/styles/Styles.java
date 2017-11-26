@@ -36,7 +36,9 @@ public class Styles {
 	public final static Color UN_CONSOLE_ERR = Color.RED;
 
 	public final static Color VIOLET = new Color(178, 103, 244);
-		
+
+	public final static Color TEAL = new Color(1, 127, 124);
+	public final static Color UN_CONSOLE_SYSTEM = TEAL; // VIOLET; // new Color(0, 0, 0);
 	
 	private ArrayList<IdeStyle> styles;
 	

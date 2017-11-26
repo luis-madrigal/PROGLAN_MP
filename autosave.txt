@@ -5,7 +5,7 @@ composition subRecord{
 }
 
 composition Record {
-	int ;
+	int a ;
 	int b;
 	int c;
 	composition subRecord a;

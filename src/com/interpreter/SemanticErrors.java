@@ -28,7 +28,10 @@ public class SemanticErrors {
 	public static final String UN_OP_TYPE_MISMATCH = LINE_INFO + "The operator '%s' is undefined for arguments: %s";
 	public static final String BIN_OP_TYPE_MISMATCH = LINE_INFO + "The operator '%s' is undefined for arguments: %s, %s";
 	public static final String VAR_ASSIGN_MISMATCH = LINE_INFO + "Type mismatch. Variable '%s' should be of type '%s'";
-	public static final String IF_CONDITION_MISMATCH = LINE_INFO + "Type mismatch in condition. Value should be of type boolean";
+	public static final String IF_CONDITION_MISMATCH = LINE_INFO + "Type mismatch in if condition. Value should be of type boolean";
+	public static final String FOR_CONDITION_MISMATCH = LINE_INFO + "Type mismatch in for condition. Value should be of type boolean";
+	public static final String WHILE_CONDITION_MISMATCH = LINE_INFO + "Type mismatch in while condition. Value should be of type boolean";
+	public static final String DOWHILE_CONDITION_MISMATCH = LINE_INFO + "Type mismatch in do-while condition. Value should be of type boolean";
 	
 	//METHOD
 	public static final String UNDEFINED_METHOD = LINE_INFO + "Undefined method '%s'";

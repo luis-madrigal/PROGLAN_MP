@@ -670,7 +670,7 @@ equationExpr
 	;
 
 primary
-    :   '(' expression ')'
+    :   parExpression
 //    |   THIS
 //    |   SUPER
     |   literal

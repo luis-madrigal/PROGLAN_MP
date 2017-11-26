@@ -37,6 +37,7 @@ import com.interpreter.tac.operands.OperandTypes;
 import com.interpreter.tac.operands.Register;
 import com.interpreter.tac.operands.Variable;
 import com.rits.cloning.Cloner;
+import com.utils.Console;
 import com.utils.KeyTokens.LITERAL_TYPE;
 import com.utils.KeyTokens.OPERATOR;
 
@@ -135,6 +136,7 @@ public class CodeGeneratorRunnable implements Runnable {
 		System.out.println(this.run("main"));
 		
 		this.pnlParent.changeToPlay();
+		Console.instance().logFinished();
 	}
 	
 	private Object run(String methodName, Object ...args) {
@@ -167,10 +169,10 @@ public class CodeGeneratorRunnable implements Runnable {
 //				}
 			}
 			else {
-
+				
 				pnlParent.changeToActive();
 			}
-		}while(this.checkEndRun(pointer));
+		}while(pnlParent.isRunning() && this.checkEndRun(pointer));
 		
 		Object value = null;
 		if(this.labelMap.containsKey(pointer) && this.labelMap.get(pointer).getType().equals(NodeType.RETURN)) {
