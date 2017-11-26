@@ -175,8 +175,10 @@ public class BaseListener extends ManuScriptBaseListener{
 						PointerInfo ptrInf = new PointerInfo(varType);
 						symCtx.setOther(ptrInf);
 					} else if (strCtx.typeType().structType() != null) {	//declaration is of type struct
-						StructInfo strInf = structDefTable.get(strCtx.typeType().structType().Identifier().getText()).clone();
-						symCtx.setOther(strInf);
+						if (!structDefTable.containsKey(strCtx.typeType().structType().Identifier().getText())) {
+							StructInfo strInf = structDefTable.get(strCtx.typeType().structType().Identifier().getText()).clone();
+							symCtx.setOther(strInf);
+						}
 					} else{	//declaration is any other primitive
 
 					}
