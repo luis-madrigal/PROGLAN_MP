@@ -17,6 +17,7 @@ import com.parser.ManuScriptParser.ArrayInitExprContext;
 import com.parser.ManuScriptParser.ArrayInitializerContext;
 import com.parser.ManuScriptParser.AssignExprContext;
 import com.parser.ManuScriptParser.ComparisonExprContext;
+import com.parser.ManuScriptParser.CreatorContext;
 import com.parser.ManuScriptParser.EqualityExprContext;
 import com.parser.ManuScriptParser.EquationExprContext;
 import com.parser.ManuScriptParser.ExpressionContext;
@@ -337,6 +338,8 @@ public class BaseListener extends ManuScriptBaseListener{
 //							if(!varType.replace("*", "").equals(types))
 //								SemanticErrors.throwError(SemanticErrors.VAR_ASSIGN_MISMATCH, vdctx.getStart().getLine(), vdctx.getStart().getCharPositionInLine(), varName, types);
 //						}
+					} else if(isConstant) {
+						SemanticErrors.throwError(SemanticErrors.CONSTANT_INIT, vdctx.getStart().getLine(), vdctx.getStart().getCharPositionInLine(), varName);
 					}
 				}
 				System.out.println("added "+varName+" to symbol table"+" is constant:"+isConstant);
@@ -612,6 +615,61 @@ public class BaseListener extends ManuScriptBaseListener{
 		return maxDepth;
 	}
 	
+	private String enterArrayInitExpression(ManuScriptParser.AssignExprContext ctx) {
+		String arrName = ctx.equationExpr().getText();
+		SymbolContext sctx = getCurrentSymTable().get(arrName);
+		ArrayInfo arInf = (ArrayInfo) sctx.getOther();
+		int dimCount = arInf.getDims();
+		String varType = sctx.getSymbolType();
+		
+		ManuScriptParser.CreatorContext crCtx = ((ArrayInitExprContext) ctx.expression()).creator();
+		System.out.println("created text: " + crCtx.createdName().getText());
+		if (!crCtx.createdName().getText().equals(arInf.getArrType())) {
+			SemanticErrors.throwError(SemanticErrors.ARR_TYPE_MISMATCH,
+					crCtx.createdName().getStart().getLine(),
+					crCtx.createdName().getStart().getCharPositionInLine(),
+					arInf.getArrType());
+		} else {
+			if (crCtx.arrayCreatorRest().arrayInitializer() != null) {
+				//when init is 'new type[]...[]{....};'
+				System.out.println("START BUILDING ARRAY FROM ");
+				if ((crCtx.arrayCreatorRest().children.size() - 1) / 2 != dimCount)
+					SemanticErrors.throwError(SemanticErrors.INVALID_DIMS,
+							crCtx.arrayCreatorRest().arrayInitializer().getStart().getLine(),
+							crCtx.arrayCreatorRest().arrayInitializer().getStart().getCharPositionInLine(),
+							(crCtx.arrayCreatorRest().children.size() - 1) / 2,
+							dimCount);
+
+				ManuScriptParser.ArrayInitializerContext arInit = crCtx.arrayCreatorRest().arrayInitializer();
+				int height = getBlockHeight(arInit.getText());
+				if (height != dimCount)
+					SemanticErrors.throwError(SemanticErrors.ILLEGAL_INIT,
+							crCtx.arrayCreatorRest().arrayInitializer().getStart().getLine(),
+							crCtx.arrayCreatorRest().arrayInitializer().getStart().getCharPositionInLine(),
+							varType);
+				this.arrUniformityChecker(arInit, dimCount);
+				this.arrayInitCheck(arInit, arInf.getArrType());
+			} else {
+				//when init is 'new type[size]...[size];'
+				if (crCtx.arrayCreatorRest().expression().size() != dimCount)
+					SemanticErrors.throwError(SemanticErrors.INVALID_DIMS,
+							crCtx.arrayCreatorRest().getStart().getLine(),
+							crCtx.arrayCreatorRest().getStart().getCharPositionInLine(),
+							crCtx.arrayCreatorRest().expression().size(),
+							dimCount);
+
+				for (ExpressionContext expr : crCtx.arrayCreatorRest().expression()) {
+					String types = this.expressionCheck(expr);
+					if(!arInf.getArrType().matches(types)) {
+						SemanticErrors.throwError(SemanticErrors.ARR_TYPE_MISMATCH, expr.getStart().getLine(), expr.getStart().getCharPositionInLine(), arInf.getArrType());
+					}
+				}
+			}
+
+		}
+		return sctx.getSymbolType();
+	}
+	
 	private void arrayInitCheck(ParseTree node, String aType) {
 		if(node instanceof ExpressionContext) {
 			String type = this.expressionCheck(node);
@@ -715,6 +773,9 @@ public class BaseListener extends ManuScriptBaseListener{
 		}
 		SymbolContext sctx = getCurrentSymTable().get(arrName);
 		ArrayInfo aInfo = (ArrayInfo) sctx.getOther();
+
+		if(!aInfo.isInitialized())
+			SemanticErrors.throwError(SemanticErrors.INVALID_ACCESS, lineNum, charPos, arrName);
 		
 		if(aInfo.getDims() != ctx.expression().size()) {
 			SemanticErrors.throwError(SemanticErrors.INVALID_DIM_ACCESS, lineNum, charPos, aInfo.getDims());
@@ -767,7 +828,11 @@ public class BaseListener extends ManuScriptBaseListener{
 
 		} else if(this.isArrayExpression(node)) {
 			return this.enterArrayExpression(((EquationExprContext)node));
-
+			
+		} else if(node.getChildCount() == 2 && node.getChild(1) instanceof CreatorContext && node.getParent() instanceof AssignExprContext) {
+			System.out.println("array assignment initialization");
+			return this.enterArrayInitExpression((AssignExprContext) node.getParent());
+			
 		} else if(node instanceof VariableExprContext
 				|| node instanceof EquationExprContext) {
 			ParserRuleContext eCtx = (ParserRuleContext) node;
