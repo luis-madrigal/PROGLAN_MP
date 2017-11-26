@@ -68,6 +68,7 @@ public class Panel implements Runnable, ActionListener, KeyListener, MouseListen
 
 	private TextFileHandler textFileHandler;
 	private boolean isRunning;
+	private boolean isActive;
 	private JPanel pnlMain;
 	private JPanel pnlMenu;
 	private JButton btnRun;
@@ -356,6 +357,7 @@ public class Panel implements Runnable, ActionListener, KeyListener, MouseListen
         threeACOut.setForeground(Styles.TEXT_GRAY);
         threeACOut.setBackground(Color.WHITE);
         threeACOut.isOpaque();
+        threeACOut.setMargin(new Insets(5, 5, 0, 0));
 		
         
 		this.threeACPane = new JScrollPane(threeACOut);
@@ -402,7 +404,8 @@ public class Panel implements Runnable, ActionListener, KeyListener, MouseListen
 		watchOut.setForeground(Styles.TEXT_GRAY);
 		watchOut.setBackground(Color.WHITE);
         watchOut.isOpaque();
-		        
+        watchOut.setMargin(new Insets(5, 5, 0, 0));
+        
 		this.watchPane = new JScrollPane(watchOut);
 		this.watchPane.setPreferredSize(new Dimension((int) Frame.SCREEN_SIZE.getWidth()/2, 150));
 		this.watchPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
@@ -612,8 +615,9 @@ public class Panel implements Runnable, ActionListener, KeyListener, MouseListen
 		this.dlgOpen = new DialogOpen();
 		this.dlgOpen.setProgressColor(FrameStatic.clrLightBlue);
 		this.dlgOpen.getBtnOpen().addMouseListener(this);
-		
+
 		this.isRunning = false;
+		this.isActive = false;
 	}
 	
 	public void initMenuButtons() {
@@ -790,6 +794,24 @@ public class Panel implements Runnable, ActionListener, KeyListener, MouseListen
       
 	}
 	
+	public void changeToActive() {
+		this.isActive = true;
+		btnContinue.setIcon(new ImageIcon(getClass().getClassLoader().getResource("res/ico_continue_active_off.png")));
+		btnContinue.setRolloverIcon(new ImageIcon(getClass().getClassLoader().getResource("res/ico_continue_active_on.png")));
+		btnContinue.setPressedIcon(new ImageIcon(getClass().getClassLoader().getResource("res/ico_continue_active_on.png")));
+		
+	}
+	
+	public void changeToInactive() {
+		this.isActive = false;
+		btnContinue.setIcon(new ImageIcon(getClass().getClassLoader().getResource("res/ico_continue_off.png")));
+		btnContinue.setRolloverIcon(new ImageIcon(getClass().getClassLoader().getResource("res/ico_continue_on.png")));
+		btnContinue.setPressedIcon(new ImageIcon(getClass().getClassLoader().getResource("res/ico_continue_on.png")));
+		
+	}
+	
+	
+	
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if(e.getSource() == this.btnRun) {
@@ -799,8 +821,8 @@ public class Panel implements Runnable, ActionListener, KeyListener, MouseListen
 				this.scanner.stopThread();
 			}
 			else {
-				this.changeToPause();
 				Console.instance().purge();
+				this.changeToPause();
 				String text = this.codeInput.getText();		
 				
 				this.parsedOut.setText("");

@@ -155,6 +155,7 @@ public class CodeGeneratorRunnable implements Runnable {
 		}
 		do {
 			if(isPlay) {
+				pnlParent.changeToInactive();
 //				System.out.println("evaluating: "+pointer);
 				stmt = this.labelMap.get(pointer);
 				pointerCount = this.evaluate(methodScope, registers, stmt, pointerCount);
@@ -164,6 +165,10 @@ public class CodeGeneratorRunnable implements Runnable {
 //					System.out.println("BRK "+	stmt.getType()+": "+stmt.isBreakpoint());
 //					this.isPlay = false;
 //				}
+			}
+			else {
+
+				pnlParent.changeToActive();
 			}
 		}while(this.checkEndRun(pointer));
 		
