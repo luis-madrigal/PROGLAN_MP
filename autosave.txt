@@ -1,33 +1,27 @@
+int counter = 0;
 
-ACT sayHelloWorld starring() {
-	Say "Hello World";
-}
-
-[comment]: error2
-ACT sayHelloWorld starring() {
-	Say "Hello World";
-}
-
-[comment]: error3
-ACT sayHelloWorld starring(int x){
-	replay(int i = 0; i < x; i++) {
-		Say "Hello World";
-	}
+composition subrecord{
+	int a;
+	int* b, cd;
+	string a;	
+	string[] c;
 }
 
 
-ACT main starring() {
-	int x = 0, y = 5, z = 13;
+composition record {
+	composition record cd;
+	int a, b, c;
+	float d;
 	
-	float someValue = (x + y) / (y + z) * 1.0f; 
-	
-	z = assertNonZero(x); [comment]: error7
-	
-	if(z > 0) {
-		Say ("Computated value: " + someValue()); [comment]: error8
-		Say ("Computed value: " +someValue);
-	}
-	
-	int z = 0, x = 0; [comment]: error9 and 10
-	
+}
+
+int* pointerA;
+int* pointerB = pointerA;
+
+ACT main starring ()  {
+	composition subrecord rec;
+
+	int c 5;
+	int* pointerc;
+	pointerc = c;
 }
