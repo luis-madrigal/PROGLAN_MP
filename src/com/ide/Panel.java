@@ -226,9 +226,8 @@ public class Panel implements Runnable, ActionListener, KeyListener, MouseListen
 		
 		
 		JLabel pnlExtend = new JLabel();
-		
 		this.pnlMain.add(pnlExtend, gbc); // TODO
-		
+		pnlMain.setComponentZOrder(pnlExtend, 0);
 		//Code Input
 		this.lblCodeInput = new JLabel("Code Input:");
 		this.lblCodeInput.setFont(new Font("Segoe UI", 150, baseFontSize));
@@ -293,7 +292,7 @@ public class Panel implements Runnable, ActionListener, KeyListener, MouseListen
 		this.inputPane.setIconRowHeaderEnabled(true);
 
 		this.inputPane.setPreferredSize(new Dimension((int) Frame.SCREEN_SIZE.getWidth()/2, 150));//		this.inputPane.setSize(new Dimension((int) Frame.SCREEN_SIZE.getWidth()/2, 150));
-
+		
 		this.inputPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		this.inputPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
 
@@ -303,7 +302,6 @@ public class Panel implements Runnable, ActionListener, KeyListener, MouseListen
 		this.inputPane.getTextArea().setSelectionColor(Styles.UN_HIGHLIGHT);
 		this.inputPane.setBorder(null);
 		int horizontalHeight = 10;
-		
 		this.inputPane.getHorizontalScrollBar().setPreferredSize(new Dimension(
 		        (int)inputPane.getHorizontalScrollBar().getPreferredSize().getWidth(),
 		        (int)horizontalHeight
@@ -527,7 +525,7 @@ public class Panel implements Runnable, ActionListener, KeyListener, MouseListen
 		
 
 		// For watch variables
-		documentOut = new DocumentPanel(this.codeInput);
+		documentOut = new DocumentPanel(this, this.codeInput);
 		documentOut.setFont(new Font("Consolas", 150, baseFontSize));
 		documentOut.setForeground(Styles.TEXT_GRAY);
 		documentOut.setBackground(Color.WHITE);
@@ -539,7 +537,7 @@ public class Panel implements Runnable, ActionListener, KeyListener, MouseListen
 		
 		this.documentPane.setPreferredSize(new Dimension(180/*(int) Frame.SCREEN_SIZE.getWidth()/2*/, 150));
 		this.documentPane.setMaximumSize(documentPane.getSize());
-		this.documentPane.setMinimumSize(documentPane.getSize());
+//		this.documentPane.setMinimumSize(documentPane.getSize());
 		
 		this.documentPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 	
@@ -555,26 +553,37 @@ public class Panel implements Runnable, ActionListener, KeyListener, MouseListen
 		        (int)horizontalHeight,
 		        (int)documentPane.getVerticalScrollBar().getPreferredSize().getHeight()
 		));
+		this.documentPane.getVerticalScrollBar().addMouseListener(this);
 		
 		
-		
-		this.documentSplitPane = //new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
-			new JSplitPane(JSplitPane.HORIZONTAL_SPLIT){
-				private static final long serialVersionUID = 1L;
-				private final int location = documentPane.getWidth();
-			    {
-			        setDividerLocation(location);
-			    }
-			    @Override
-			    public int getDividerLocation() {
-			        return location ;
-			    }
-			    @Override
-			    public int getLastDividerLocation() {
-			        return location ;
-			    }
-			};
-		
+		this.documentSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
+//			new JSplitPane(JSplitPane.HORIZONTAL_SPLIT){
+//				private static final long serialVersionUID = 1L;
+//				private final int maxLocation = documentPane.getWidth();
+//				private int location = maxLocation;
+//
+//			    {
+//			        setDividerLocation(location);
+//			    }
+//			    
+//			    @Override
+//			    public void setDividerLocation(int newLocation) {
+//			    	if(newLocation > maxLocation) {
+//			    		newLocation = maxLocation;
+//			    	}
+//			    	this.dividerSize = location;
+////			    	location = newLocation;
+//			    }
+//			    @Override
+//			    public int getDividerLocation() {
+//			        return location ;
+//			    }
+//			    @Override
+//			    public int getLastDividerLocation() {
+//			        return location ;
+//			    }
+//			};
+		this.documentSplitPane.setEnabled(false);
 		this.documentSplitPane.setLeftComponent(this.documentPane);
 		this.documentSplitPane.setRightComponent(this.inputPaneParent);
 		this.documentSplitPane.setDividerSize(2);
@@ -589,7 +598,7 @@ public class Panel implements Runnable, ActionListener, KeyListener, MouseListen
 		this.topSplitPane.setLeftComponent(this.documentSplitPane);
 		topSplitPane.setBackground(FrameStatic.clrTransparent);
 		topSplitPane.setOpaque(false);
-		topSplitPane.setResizeWeight(1.0);
+//		topSplitPane.setResizeWeight(1.0);
 //		((JScrollPane)topSplitPane.getLeftComponent()).setBounds(0, 30, topSplitPane.getLeftComponent().getWidth(),
 //				topSplitPane.getLeftComponent().getHeight());
 //		
@@ -719,6 +728,7 @@ public class Panel implements Runnable, ActionListener, KeyListener, MouseListen
 		
 		documentOut.revalidate();
 		documentOut.repaint();
+		documentPane.addMouseListener(this);
 	}
 	
 	public void initMenuButtons() {
@@ -1056,9 +1066,57 @@ public class Panel implements Runnable, ActionListener, KeyListener, MouseListen
 		
 	}
 
+	
+	public void foldDoument() {
+		documentSplitPane.setDividerLocation(20);
+		documentSplitPane.revalidate();
+		documentSplitPane.repaint();
+	}
+		
+	public void unfoldDoument() {
+		documentSplitPane.setDividerLocation(180);
+		documentSplitPane.revalidate();
+		documentSplitPane.repaint();
+	}
+
+
+	public void documentFolding() {
+		
+		documentOut.generate(this.codeInput.getText());
+//		System.out.println(" "+this.codeInput.getText());
+//	}
+		this.pnlMain.revalidate();
+		this.pnlMain.repaint();
+	
+		documentOut.revalidate();
+		documentOut.repaint();
+		if(documentSplitPane.getDividerLocation() > 20) {
+			this.foldDoument();
+		}
+		else {
+			this.unfoldDoument();
+		}
+		
+	}
+	
 	@Override
 	public void mouseReleased(MouseEvent e) {
 		System.out.println(e.getSource());
+
+		documentSplitPane.revalidate();
+		documentSplitPane.repaint();
+		
+
+		documentPane.revalidate();
+		documentPane.repaint();
+		
+		if(e.getSource() == this.documentPane.getVerticalScrollBar()) {
+			System.out.println("Scroll");
+			this.documentFolding();
+		}
+		if(e.getSource() == this.documentPane) {
+			this.documentFolding();
+		}
 		if(e.getSource() == Console.instance().getTextPane()) {
 			gotoErrorLine(e);
 		}

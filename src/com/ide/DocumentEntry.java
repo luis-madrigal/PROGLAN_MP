@@ -41,10 +41,9 @@ public class DocumentEntry extends JPanel implements MouseListener {
 		this.setBackground(Styles.PALE_GRAY);
 		
 //		this.setText(lineNumber+" "+title);
-		Cursor.getPredefinedCursor(Cursor.HAND_CURSOR);
 //		this.btnEntry = new JButton(title);
 //		this.add(this.btnEntry);
-		
+
 
 		Font font = new Font("Consolas", Font.BOLD, 14);
 		Font fontLine = new Font("Consolas", Font.BOLD, 12);
@@ -101,7 +100,9 @@ public class DocumentEntry extends JPanel implements MouseListener {
 		this.setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
 		this.add(lblLineNumberBorder);
 		this.add(lblTextBorder);
-	
+
+		this.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		lblText.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 	}
 
 	public String getTitle() {

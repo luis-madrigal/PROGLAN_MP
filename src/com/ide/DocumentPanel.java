@@ -17,7 +17,10 @@ public class DocumentPanel extends JPanel implements MouseListener {
 	private ArrayList<DocumentEntry> listEntries;
 	private RSyntaxTextAreaManuscript codeInput; 
 	
-	public DocumentPanel(RSyntaxTextAreaManuscript codeInput) {
+	private Panel pnlParent;
+	
+	public DocumentPanel(Panel pnlParent, RSyntaxTextAreaManuscript codeInput) {
+		this.pnlParent = pnlParent;
 		this.listEntries = new ArrayList<DocumentEntry>();
 		this.codeInput= codeInput;
 		this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
@@ -141,6 +144,7 @@ public class DocumentPanel extends JPanel implements MouseListener {
 	@Override
 	public void mousePressed(MouseEvent e) {
 		if(e.getSource() instanceof DocumentEntry) {
+			pnlParent.unfoldDoument();
 			DocumentEntry entry = (DocumentEntry) e.getSource();
 			int linePosition = entry.getLinePosition();
 			System.out.println("Entered " + linePosition);
