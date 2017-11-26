@@ -67,7 +67,7 @@ public class Panel implements Runnable, ActionListener, KeyListener, MouseListen
 	private DialogOpen dlgOpen;
 
 	private TextFileHandler textFileHandler;
-	private boolean isRunning;
+	private volatile boolean isRunning;
 	private boolean isActive;
 	private JPanel pnlMain;
 	private JPanel pnlMenu;
@@ -488,7 +488,7 @@ public class Panel implements Runnable, ActionListener, KeyListener, MouseListen
 		
 		lblInput.setSize(900, 20);
 		lblInput.setPreferredSize(lblInput.getSize());
-		lblInput.setMinimumSize(new Dimension(210, lblInput.getHeight()));
+		lblInput.setMinimumSize(new Dimension(350, lblInput.getHeight()));
 		lblInput.setMaximumSize(lblInput.getSize());
 //		lblInput.setHorizontalAlignment(JLabel.LEFT);
 //		lblInput.setLayout(new FlowLayout());
@@ -500,7 +500,6 @@ public class Panel implements Runnable, ActionListener, KeyListener, MouseListen
 		
 		this.inputPaneParent.add(lblInput);
 		this.inputPaneParent.add(this.inputPane);
-		
 		this.topSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
 		this.topSplitPane.setLeftComponent(this.inputPaneParent);
 		topSplitPane.setBackground(FrameStatic.clrTransparent);
@@ -819,19 +818,20 @@ public class Panel implements Runnable, ActionListener, KeyListener, MouseListen
 	public void actionPerformed(ActionEvent e) {
 		if(e.getSource() == this.btnRun) {
 			System.out.println("isRunn "+isRunning);
+			// STOP
 			if(this.isRunning) {
 				this.changeToPlay();
+				this.changeToInactive();
+				System.out.println("Stop");
 				this.scanner.stopThread();
 			}
+			// START
 			else {
 				Console.instance().purge();
 				this.changeToPause();
 				String text = this.codeInput.getText();		
 				
 				this.parsedOut.setText("");
-//				this.parsedOut.setText(this.parsedOut.getText() + newline);
-//				this.scanner.processTokens(text+newline);
-//				this.threadCodeGenerator = this.scanner.getThreadCodeGenerator();
 				
 				this.parsedOut.setText(this.parsedOut.getText() + this.scanner.getTokens(text+newline, this.getListBreakpoints(text+newline)));
 				this.scanner.generateTree(); // Required to do this
@@ -1033,5 +1033,21 @@ public class Panel implements Runnable, ActionListener, KeyListener, MouseListen
 	@Override
 	public void run() {
 		
+	}
+
+	public boolean isRunning() {
+		return isRunning;
+	}
+
+	public boolean isActive() {
+		return isActive;
+	}
+
+	public void setRunning(boolean isRunning) {
+		this.isRunning = isRunning;
+	}
+
+	public void setActive(boolean isActive) {
+		this.isActive = isActive;
 	}
 }

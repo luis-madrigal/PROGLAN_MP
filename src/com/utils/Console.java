@@ -11,7 +11,7 @@ import com.ide.styles.RSyntaxTextAreaManuscript;
 import com.ide.styles.Styles;
 
 public class Console {
-	
+	private String messageFinished = "[EXIT]: ManuScript";
 	private static Console instance;
 	private JTextPane textPane;
 	private RSyntaxTextAreaManuscript codeInput;
@@ -33,6 +33,18 @@ public class Console {
 		return instance;
 	}
 	
+	public void logFinished() {
+		StyledDocument doc = this.textPane.getStyledDocument();
+		Style styleLog = doc.addStyle("styleLog", StyleContext.getDefaultStyleContext().getStyle(StyleContext.DEFAULT_STYLE));
+		StyleConstants.setForeground(styleLog, Styles.UN_CONSOLE_SYSTEM);
+		styleLog.addAttribute("log", "Log");
+		try {
+			doc.insertString(doc.getLength(), this.messageFinished, styleLog);
+		} catch (BadLocationException e) {
+			e.printStackTrace();
+		}
+	}
+	
 	public void log(String msg) {
 	
 		StyledDocument doc = this.textPane.getStyledDocument();
@@ -47,41 +59,28 @@ public class Console {
 	}
 	
 	public void logln(String msg) {
-		StyledDocument doc = this.textPane.getStyledDocument();
-		Style styleLog = doc.addStyle("styleLog", StyleContext.getDefaultStyleContext().getStyle(StyleContext.DEFAULT_STYLE));
-		StyleConstants.setForeground(styleLog, Styles.UN_CONSOLE_LOG);
-		styleLog.addAttribute("log", "Log");
-		try {
-			doc.insertString(findLineNumber(msg)/*doc.getLength()*/, msg+"\n", styleLog);
-		} catch (BadLocationException e) {
-			e.printStackTrace();
-		}
+		this.log(msg+"\n");
+		
+//		StyledDocument doc = this.textPane.getStyledDocument();
+//		Style styleLog = doc.addStyle("styleLog", StyleContext.getDefaultStyleContext().getStyle(StyleContext.DEFAULT_STYLE));
+//		StyleConstants.setForeground(styleLog, Styles.UN_CONSOLE_LOG);
+//		styleLog.addAttribute("log", "Log");
+//		try {
+//			doc.insertString(findLineNumber(msg)/*doc.getLength()*/, msg+"\n", styleLog);
+//		} catch (BadLocationException e) {
+//			e.printStackTrace();
+//		}
 	}
 	
-
 	/**
-	 * @see public void err(String msg, int lineNumber)
 	 * @param msg
 	 */
 	public void err(String msg) {
 		System.out.println("MSG "+msg);
 		this.err(msg, extractLineNumber(msg));
-//		StyledDocument doc = this.textPane.getStyledDocument();
-//		Style styleError = doc.addStyle("styleError", StyleContext.getDefaultStyleContext().getStyle(StyleContext.DEFAULT_STYLE));
-//		StyleConstants.setForeground(styleError, Styles.UN_CONSOLE_ERR);
-//		styleError.addAttribute("key", "Error");
-//		try {
-//			doc.insertString(findLineNumber(msg)/*doc.getLength()*/, msg+"\n", styleError);
-//			
-//		} catch (BadLocationException e) {
-//			e.printStackTrace();
-//		}
-//		this.errorCount++;
-//		this.pnlParent.changeToPlay();
 	}
 
 	/**
-	 * Preferred function 
 	 * @param msg
 	 * @param lineNumber
 	 */
@@ -106,8 +105,7 @@ public class Console {
 		}
 		this.errorCount++;
 		this.pnlParent.changeToPlay();
-		this.textPane.setSelectionStart(0);
-		this.textPane.setSelectionEnd(0);
+		this.textPane.setCaretPosition(0);
 	}
 	
 	public int findLineNumber(String message) {
@@ -183,5 +181,13 @@ public class Console {
 
 	public void setPnlParent(Panel pnlParent) {
 		this.pnlParent = pnlParent;
+	}
+
+	public String getMessageFinished() {
+		return messageFinished;
+	}
+
+	public void setMessageFinished(String messageFinished) {
+		this.messageFinished = messageFinished;
 	}
 }
