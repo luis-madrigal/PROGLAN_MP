@@ -1,4 +1,4 @@
-// Generated from C:/INTELLIJ Projects/PROGLAN_MP/src/com/parser\ManuScript.g4 by ANTLR 4.7
+// Generated from ManuScript.g4 by ANTLR 4.7
 package com.parser;
 import org.antlr.v4.runtime.tree.AbstractParseTreeVisitor;
 
@@ -486,13 +486,6 @@ public class ManuScriptBaseVisitor<T> extends AbstractParseTreeVisitor<T> implem
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitArrayExpr(ManuScriptParser.ArrayExprContext ctx) { return visitChildren(ctx); }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation returns the result of calling
-	 * {@link #visitChildren} on {@code ctx}.</p>
-	 */
 	@Override public T visitArrayInitExpr(ManuScriptParser.ArrayInitExprContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
@@ -578,6 +571,20 @@ public class ManuScriptBaseVisitor<T> extends AbstractParseTreeVisitor<T> implem
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
 	@Override public T visitStructExpr(ManuScriptParser.StructExprContext ctx) { return visitChildren(ctx); }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation returns the result of calling
+	 * {@link #visitChildren} on {@code ctx}.</p>
+	 */
+	@Override public T visitStructMember(ManuScriptParser.StructMemberContext ctx) { return visitChildren(ctx); }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation returns the result of calling
+	 * {@link #visitChildren} on {@code ctx}.</p>
+	 */
+	@Override public T visitStructName(ManuScriptParser.StructNameContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *

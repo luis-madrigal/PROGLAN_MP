@@ -163,8 +163,8 @@ public class CodeGeneratorRunnable implements Runnable {
 		do {
 			if(isPlay) {
 				pnlParent.changeToInactive();
-//				System.out.println("evaluating: "+pointer);
 				stmt = this.labelMap.get(pointer);
+				Panel.printWatch("evaluating: "+pointer);
 				pointerCount = this.evaluate(methodScope, registers, stmt, pointerCount);
 				pointer = ICGenerator.LABEL_ALIAS+pointerCount;
 				
@@ -418,6 +418,7 @@ public class CodeGeneratorRunnable implements Runnable {
 			return operand.getValue();
 		case VARIABLE:
 			Variable v = (Variable) operand;
+			//TODO not the case for arrays and pointers
 			Object valueClone = Cloner.standard().deepClone(this.currentScope.findVar(v.getAlias()).getValue());
 			return valueClone;
 		default:
