@@ -104,25 +104,19 @@ public class BaseListener extends ManuScriptBaseListener{
 				}
 			} else {
 				if(vdi.arrayInitializer() != null){
-
+					//checking if array init is of type = {1,2,32,4,21};
 					int height = getBlockHeight(vdi.arrayInitializer().getText());
-					if(dimCount != height)
+						if(dimCount != height)
 						SemanticErrors.throwError(SemanticErrors.ILLEGAL_INIT, line, charPosition, varType);
-					else{
-						for(ManuScriptParser.VariableInitializerContext varInit : vdi.arrayInitializer().variableInitializer()){
-
-							if(varInit.arrayInitializer() != null){
-								//checking if array init is of type = {1,2,32,4,21};
-
-							}
-							else{
-								String types = this.expressionCheck(varInit);
-								if (!arInf.getArrType().matches(types)) {
-									SemanticErrors.throwError(SemanticErrors.ARR_TYPE_MISMATCH, varInit.getStart().getLine(), varInit.getStart().getCharPositionInLine(), arInf.getArrType());
-								}
-							}
-						}
-					}
+//					else{
+//						for(ManuScriptParser.VariableInitializerContext varInit : vdi.arrayInitializer().variableInitializer()){
+//								String types = this.expressionCheck(varInit);
+//								if (!arInf.getArrType().matches(types)) {
+//									SemanticErrors.throwError(SemanticErrors.ARR_TYPE_MISMATCH, varInit.getStart().getLine(), varInit.getStart().getCharPositionInLine(), arInf.getArrType());
+//							}
+//						}
+//					}
+					this.arrayInitCheck(vdi.arrayInitializer(), arInf.getArrType());
 
 				}
 				else if(vdi.expression() instanceof PrimaryExprContext){
