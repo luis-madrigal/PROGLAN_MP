@@ -881,7 +881,6 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
 
         if(((SymbolContext)target.getValue()).getCtxType().equals(ContextType.ARRAY)){
             //array start
-            node.setNodeType(NodeType.ARRAY_ASSIGN);
             if(ctx.expression() instanceof ManuScriptParser.ArrayInitExprContext){
                 //for '= int[x];' && '= int[]{a,b,c};'
                 AbstractSyntaxTree value = visitArrayInitExpr((ManuScriptParser.ArrayInitExprContext)ctx.expression());
