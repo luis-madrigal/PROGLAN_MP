@@ -41,6 +41,7 @@ import com.utils.Console;
 import com.utils.KeyTokens.OPERATOR;
 import com.utils.Types;
 import com.utils.Utils;
+import sun.awt.Symbol;
 
 public class BaseListener extends ManuScriptBaseListener{
 	private Stack<Scope> scopes;
@@ -151,14 +152,27 @@ public class BaseListener extends ManuScriptBaseListener{
 			
 			ArrayList<SymbolContext> members = new ArrayList<>();
 			for (ManuScriptParser.StructDeclarationContext strCtx : ctx.structDeclarationList().structDeclaration()) {
-				if (strCtx.typeType().structType() != null) {
-					if (!getCurrentSymTable().containsKey(strCtx.typeType().structType().Identifier().getText())) {
-						SemanticErrors.throwError(SemanticErrors.UNDEFINED_STRUCT, ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), name);
-					}
 
-				} else if (strCtx.typeType().pointerType() != null) {
+				int dimCount = (strCtx.typeType().getChildCount() - 1) / 2;
+				String varType = strCtx.typeType().getText();
+				SymbolContext symCtx = new SymbolContext(varType,null, null);
 
-				}
+//				for(ManuScriptParser.StructDeclaratorContext sdc : strCtx.structDeclaratorList().structDeclarator()) {
+//					if (dimCount > 0) {    //ARRAY INIT
+//						ArrayInfo arInf = new ArrayInfo(dimCount, varType);
+//						checkArraySemantics(arInf, dimCount, varType, strCtx,
+//								ctx.getStart().getLine(),
+//								ctx.getStart().getCharPositionInLine());
+//						symCtx.setOther(arInf);
+//					} else if (strCtx.typeType().structType() != null) {
+//
+//						if (!structDefTable.containsKey(strCtx.typeType().structType().Identifier().getText())) {
+//							SemanticErrors.throwError(SemanticErrors.UNDEFINED_STRUCT, strCtx.getStart().getLine(), strCtx.getStart().getCharPositionInLine(), strCtx.typeType().structType().Identifier());
+//						}
+//					} else if (strCtx.typeType().pointerType() != null) {
+//
+//					}
+//				}
 			}
 
 			StructInfo strInfo = new StructInfo(name, null);
@@ -224,7 +238,16 @@ public class BaseListener extends ManuScriptBaseListener{
 
 		int dimCount = (ctx.typeType().getChildCount() - 1) / 2;
 
-        
+
+
+		if(ctx.typeType().structType() != null){
+			if(!structDefTable.containsKey(ctx.typeType().structType().Identifier().getText()))
+				SemanticErrors.throwError(SemanticErrors.UNDEFINED_STRUCT,
+						ctx.typeType().structType().getStart().getLine(),
+						ctx.typeType().structType().getStart().getCharPositionInLine(),
+						ctx.typeType().structType().Identifier());
+		}
+
 		for (VariableDeclaratorContext vdctx : ctx.variableDeclarators().variableDeclarator()) {
 			String varName = vdctx.variableDeclaratorId().getText();
 			
@@ -259,6 +282,14 @@ public class BaseListener extends ManuScriptBaseListener{
 		int dimCount = (ctx.typeType().getChildCount() - 1) / 2;
 		boolean isConstant = false;
 
+		if(ctx.typeType().structType() != null){
+			if(!structDefTable.containsKey(ctx.typeType().structType().Identifier().getText()))
+				SemanticErrors.throwError(SemanticErrors.UNDEFINED_STRUCT,
+						ctx.typeType().structType().getStart().getLine(),
+						ctx.typeType().structType().getStart().getCharPositionInLine(),
+						ctx.typeType().structType().Identifier());
+		}
+
 		for (VariableDeclaratorContext vdctx : ctx.variableDeclarators().variableDeclarator()) {
 			String varName = vdctx.variableDeclaratorId().getText();
 
@@ -289,7 +320,14 @@ public class BaseListener extends ManuScriptBaseListener{
 
 	}
 
-	@Override 
+	@Override
+	public void enterParExpression(ManuScriptParser.ParExpressionContext ctx) {
+		if(!this.expressionCheck(ctx.expression()).equals("boolean")){
+			SemanticErrors.throwError(SemanticErrors.IF_CONDITION_MISMATCH,ctx.getStart().getLine(),ctx.getStart().getCharPositionInLine(),"boolean");
+		}
+	}
+
+	@Override
 	public void enterAssignExpr(ManuScriptParser.AssignExprContext ctx) { 
 		String varName = ctx.equationExpr().getText();
 		varName = varName.split("\\[")[0];//TODO: bad implementation

@@ -352,7 +352,7 @@ qualifier
 */
 
 structDeclaratorList
-    :   structDeclarator*
+    :   structDeclarator ( ',' structDeclarator)*
     ;
 
 structDeclarator
