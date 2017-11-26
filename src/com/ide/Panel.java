@@ -533,9 +533,9 @@ public class Panel implements Runnable, ActionListener, KeyListener, MouseListen
         
 		
 		this.documentPane = new JScrollPane(documentOut);
-		this.documentPane.setSize(new Dimension(180/*(int) Frame.SCREEN_SIZE.getWidth()/2*/, 150));
+		this.documentPane.setSize(new Dimension(160/*(int) Frame.SCREEN_SIZE.getWidth()/2*/, 150));
 		
-		this.documentPane.setPreferredSize(new Dimension(180/*(int) Frame.SCREEN_SIZE.getWidth()/2*/, 150));
+		this.documentPane.setPreferredSize(new Dimension(160/*(int) Frame.SCREEN_SIZE.getWidth()/2*/, 150));
 		this.documentPane.setMaximumSize(documentPane.getSize());
 //		this.documentPane.setMinimumSize(documentPane.getSize());
 		
@@ -1074,7 +1074,7 @@ public class Panel implements Runnable, ActionListener, KeyListener, MouseListen
 	}
 		
 	public void unfoldDoument() {
-		documentSplitPane.setDividerLocation(180);
+		documentSplitPane.setDividerLocation(160);
 		documentSplitPane.revalidate();
 		documentSplitPane.repaint();
 	}
