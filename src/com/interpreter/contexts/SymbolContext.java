@@ -46,7 +46,7 @@ public class SymbolContext extends Context{
 		this.isConstant = isConstant;
 	}
 
-	public Object getOther() {
+	public GenericInfo getOther() {
 		return other;
 	}
 

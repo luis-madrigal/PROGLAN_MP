@@ -808,6 +808,7 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
             ManuScriptParser.VariableInitializerContext varInit = ctx.variableInitializer();
             //check if variable is of type array
             if(((SymbolContext)var.getValue()).getCtxType().equals(ContextType.ARRAY)){
+                //array start
                 node.setNodeType(NodeType.ARRAY_ASSIGN);
                 if(varInit.expression() instanceof ManuScriptParser.ArrayInitExprContext){
                     //for '= int[x];' && '= int[]{a,b,c};'
@@ -816,8 +817,7 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
                         value.setParent(node);
                         node.addChild(value);
                     }
-                }
-                else if(varInit.arrayInitializer() !=  null){
+                } else if(varInit.arrayInitializer() !=  null){
                     //for '= {a,b,c,d}'
                     AbstractSyntaxTree init = new AbstractSyntaxTree(node);
                     init.setNodeType(NodeType.ARRAY_INIT);
@@ -830,8 +830,25 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
                     }
 
                     node.addChild(init);
+                } else{
+                    //if arNew = arOld;
+                    AbstractSyntaxTree varRight = visit(varInit);
+                    if (varRight != null) {
+                        if(varRight.getChildren().size() == 0) {
+                            SymbolContext symCtxL = (SymbolContext)var.getValue();
+                            SymbolContext symCtxR = (SymbolContext)varRight.getValue();
+
+                            symCtxL.setOther(symCtxR.getOther());
+
+                            System.out.println("LEFT: "+symCtxL.getOther());
+                            System.out.println("RIGHT: "+symCtxR.getOther());
+
+                            varRight.setParent(node);
+                            node.addChild(varRight);
+                        }
+                    }
                 }
-            }
+            } //array end
             else {  //if variable is normal type
                 AbstractSyntaxTree value = visit(varInit);
                 if (value != null) {
@@ -846,10 +863,9 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
 
     @Override
     public AbstractSyntaxTree visitAssignExpr(ManuScriptParser.AssignExprContext ctx) {
-
-
         System.out.println("visitingASSIGNEXPR "+ctx.getStart().getLine()+"    "+ctx.getText());
         configureIsBreakpoint(ctx.getStart().getLine());
+
         AbstractSyntaxTree node = new AbstractSyntaxTree(null);
         node.setNodeType(NodeType.ASSIGN);
         node.setValue(ctx.getChild(1));
@@ -863,13 +879,44 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
             node.addChild(target);
         }
 
-        AbstractSyntaxTree value = visit(ctx.expression());
-        if(value!=null) {
-            value.setParent(node);
-            node.addChild(value);
-        }
-        return node;
+        if(((SymbolContext)target.getValue()).getCtxType().equals(ContextType.ARRAY)){
+            //array start
+            node.setNodeType(NodeType.ARRAY_ASSIGN);
+            if(ctx.expression() instanceof ManuScriptParser.ArrayInitExprContext){
+                //for '= int[x];' && '= int[]{a,b,c};'
+                AbstractSyntaxTree value = visitArrayInitExpr((ManuScriptParser.ArrayInitExprContext)ctx.expression());
+                if (value != null) {
+                    value.setParent(node);
+                    node.addChild(value);
+                }
+            } else{
+                //if arNew = arOld;
+                AbstractSyntaxTree varRight = visit(ctx.expression());
+                if (varRight != null) {
+                    if(varRight.getChildren().size() == 0) {
+                        SymbolContext symCtxL = (SymbolContext)target.getValue();
+                        SymbolContext symCtxR = (SymbolContext)varRight.getValue();
 
+                        symCtxL.setOther(symCtxR.getOther());
+
+                        System.out.println("LEFT: "+symCtxL.getOther());
+                        System.out.println("RIGHT: "+symCtxR.getOther());
+
+                        varRight.setParent(node);
+                        node.addChild(varRight);
+                    }
+                }
+            }
+        } //array end
+        else {
+            AbstractSyntaxTree value = visit(ctx.expression());
+            if (value != null) {
+                value.setParent(node);
+                node.addChild(value);
+            }
+        }
+
+        return node;
     }
 
     @Override
