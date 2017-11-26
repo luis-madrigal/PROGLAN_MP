@@ -15,7 +15,7 @@ public class Console {
 	private static Console instance;
 	private JTextPane textPane;
 	private RSyntaxTextAreaManuscript codeInput;
-	
+	private Panel pnlParent;
 	public int errorCount;
 	private Console(int fontSize) {
 		this.textPane = new JTextPane();
@@ -64,17 +64,20 @@ public class Console {
 	 * @param msg
 	 */
 	public void err(String msg) {
-		StyledDocument doc = this.textPane.getStyledDocument();
-		Style styleError = doc.addStyle("styleError", StyleContext.getDefaultStyleContext().getStyle(StyleContext.DEFAULT_STYLE));
-		StyleConstants.setForeground(styleError, Styles.UN_CONSOLE_ERR);
-		styleError.addAttribute("key", "Error");
-		try {
-			doc.insertString(findLineNumber(msg)/*doc.getLength()*/, msg+"\n", styleError);
-			
-		} catch (BadLocationException e) {
-			e.printStackTrace();
-		}
-		this.errorCount++;
+		System.out.println("MSG "+msg);
+		this.err(msg, extractLineNumber(msg));
+//		StyledDocument doc = this.textPane.getStyledDocument();
+//		Style styleError = doc.addStyle("styleError", StyleContext.getDefaultStyleContext().getStyle(StyleContext.DEFAULT_STYLE));
+//		StyleConstants.setForeground(styleError, Styles.UN_CONSOLE_ERR);
+//		styleError.addAttribute("key", "Error");
+//		try {
+//			doc.insertString(findLineNumber(msg)/*doc.getLength()*/, msg+"\n", styleError);
+//			
+//		} catch (BadLocationException e) {
+//			e.printStackTrace();
+//		}
+//		this.errorCount++;
+//		this.pnlParent.changeToPlay();
 	}
 
 	/**
@@ -83,6 +86,7 @@ public class Console {
 	 * @param lineNumber
 	 */
 	public void err(String msg, int lineNumber) {
+		System.out.println("ERR CALLED "+lineNumber);
 		StyledDocument doc = this.textPane.getStyledDocument();
 		Style styleError = doc.addStyle("styleError"+lineNumber, StyleContext.getDefaultStyleContext().getStyle(StyleContext.DEFAULT_STYLE));
 		StyleConstants.setForeground(styleError, Styles.UN_CONSOLE_ERR);
@@ -101,6 +105,9 @@ public class Console {
 			e.printStackTrace();
 		}
 		this.errorCount++;
+		this.pnlParent.changeToPlay();
+		this.textPane.setSelectionStart(0);
+		this.textPane.setSelectionEnd(0);
 	}
 	
 	public int findLineNumber(String message) {
@@ -168,5 +175,13 @@ public class Console {
 	
 	public void setCodeInput(RSyntaxTextAreaManuscript codeInput) {
 		this.codeInput = codeInput;
+	}
+
+	public Panel getPnlParent() {
+		return pnlParent;
+	}
+
+	public void setPnlParent(Panel pnlParent) {
+		this.pnlParent = pnlParent;
 	}
 }

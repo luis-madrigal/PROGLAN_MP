@@ -120,7 +120,7 @@ public class Panel implements Runnable, ActionListener, KeyListener, MouseListen
 	public static int baseFontSize = (int) Frame.SCREEN_SIZE.getHeight() / 60;
 	
 	public Panel() {
-		
+		Console.instance().setPnlParent(this);
 		// Remove JTabbedPane "Borders"
 		UIManager.getDefaults().put("TabbedPane.contentBorderInsets", new Insets(0,0,0,0));
 		UIManager.getDefaults().put("TabbedPane.tabsOverlapBorder", true);
@@ -534,6 +534,8 @@ public class Panel implements Runnable, ActionListener, KeyListener, MouseListen
 		this.lblConsole = new JLabel("Console:");
 //		this.lblConsole.setFont(new Font("Segoe UI", 150, baseFontSize));
 		this.lblConsole.setFont(FrameStatic.fntDefault);
+
+		this.lblConsole.setForeground(Styles.TEXT_GRAY);
 		lblConsole.setVerticalAlignment(JLabel.BOTTOM);
 		this.lblConsole.setForeground(Color.BLACK);
 		gbc = new GridBagConstraints();
@@ -546,7 +548,8 @@ public class Panel implements Runnable, ActionListener, KeyListener, MouseListen
 		gbc.weightx = 1;
 		gbc.weighty = 1;
 		this.bottomPane.add(this.lblConsole, gbc);
-				
+		
+		
 		this.consolePane = new JScrollPane(Console.instance().getTextPane());
 		this.consolePane.setPreferredSize(new Dimension(350, (int)Frame.SCREEN_SIZE.getHeight()-300));
 		this.consolePane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
@@ -1007,8 +1010,8 @@ public class Panel implements Runnable, ActionListener, KeyListener, MouseListen
 
 	void gotoErrorLine(MouseEvent e) {
 		JTextPane textPane = Console.instance().getTextPane();
-		Element ele = textPane.getStyledDocument().getCharacterElement(textPane.viewToModel(e.getPoint()));
-		AttributeSet attributeSet = ele.getAttributes();
+		Element element = textPane.getStyledDocument().getCharacterElement(textPane.viewToModel(e.getPoint()));
+		AttributeSet attributeSet = element.getAttributes();
 
 		if(attributeSet != null && attributeSet.getAttribute("key") != null) {
 
