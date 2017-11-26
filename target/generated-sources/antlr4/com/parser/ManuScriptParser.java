@@ -1,4 +1,4 @@
-// Generated from ManuScript.g4 by ANTLR 4.7
+// Generated from C:/INTELLIJ Projects/PROGLAN_MP/src/com/parser\ManuScript.g4 by ANTLR 4.7
 package com.parser;
 import org.antlr.v4.runtime.atn.*;
 import org.antlr.v4.runtime.dfa.DFA;
@@ -1103,7 +1103,6 @@ public class ManuScriptParser extends Parser {
 			case DEC:
 			case ADD:
 			case SUB:
-			case MUL:
 			case Identifier:
 				enterOuterAlt(_localctx, 2);
 				{
@@ -1165,7 +1164,7 @@ public class ManuScriptParser extends Parser {
 			setState(247);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
-			if (_la==NEW || ((((_la - 67)) & ~0x3f) == 0 && ((1L << (_la - 67)) & ((1L << (IntegerLiteral - 67)) | (1L << (FloatingPointLiteral - 67)) | (1L << (BooleanLiteral - 67)) | (1L << (CharacterLiteral - 67)) | (1L << (StringLiteral - 67)) | (1L << (NullLiteral - 67)) | (1L << (LPAREN - 67)) | (1L << (LBRACE - 67)) | (1L << (BANG - 67)) | (1L << (TILDE - 67)) | (1L << (INC - 67)) | (1L << (DEC - 67)) | (1L << (ADD - 67)) | (1L << (SUB - 67)) | (1L << (MUL - 67)) | (1L << (Identifier - 67)))) != 0)) {
+			if (_la==NEW || ((((_la - 67)) & ~0x3f) == 0 && ((1L << (_la - 67)) & ((1L << (IntegerLiteral - 67)) | (1L << (FloatingPointLiteral - 67)) | (1L << (BooleanLiteral - 67)) | (1L << (CharacterLiteral - 67)) | (1L << (StringLiteral - 67)) | (1L << (NullLiteral - 67)) | (1L << (LPAREN - 67)) | (1L << (LBRACE - 67)) | (1L << (BANG - 67)) | (1L << (TILDE - 67)) | (1L << (INC - 67)) | (1L << (DEC - 67)) | (1L << (ADD - 67)) | (1L << (SUB - 67)) | (1L << (Identifier - 67)))) != 0)) {
 				{
 				setState(236);
 				variableInitializer();
@@ -2664,7 +2663,7 @@ public class ManuScriptParser extends Parser {
 				setState(429);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
-				while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__2) | (1L << T__4) | (1L << BOOLEAN) | (1L << BREAK) | (1L << BYTE) | (1L << CHAR) | (1L << DO) | (1L << DOUBLE) | (1L << FLOAT) | (1L << FOR) | (1L << IF) | (1L << INT) | (1L << LONG) | (1L << NEW) | (1L << PRINT) | (1L << RETURN) | (1L << SCAN) | (1L << SHORT) | (1L << STRING) | (1L << STRUCT) | (1L << SWITCH))) != 0) || ((((_la - 66)) & ~0x3f) == 0 && ((1L << (_la - 66)) & ((1L << (WHILE - 66)) | (1L << (IntegerLiteral - 66)) | (1L << (FloatingPointLiteral - 66)) | (1L << (BooleanLiteral - 66)) | (1L << (CharacterLiteral - 66)) | (1L << (StringLiteral - 66)) | (1L << (NullLiteral - 66)) | (1L << (LPAREN - 66)) | (1L << (LBRACE - 66)) | (1L << (SEMI - 66)) | (1L << (BANG - 66)) | (1L << (TILDE - 66)) | (1L << (INC - 66)) | (1L << (DEC - 66)) | (1L << (ADD - 66)) | (1L << (SUB - 66)) | (1L << (MUL - 66)) | (1L << (Identifier - 66)))) != 0)) {
+				while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__2) | (1L << T__4) | (1L << BOOLEAN) | (1L << BREAK) | (1L << BYTE) | (1L << CHAR) | (1L << DO) | (1L << DOUBLE) | (1L << FLOAT) | (1L << FOR) | (1L << IF) | (1L << INT) | (1L << LONG) | (1L << NEW) | (1L << PRINT) | (1L << RETURN) | (1L << SCAN) | (1L << SHORT) | (1L << STRING) | (1L << STRUCT) | (1L << SWITCH))) != 0) || ((((_la - 66)) & ~0x3f) == 0 && ((1L << (_la - 66)) & ((1L << (WHILE - 66)) | (1L << (IntegerLiteral - 66)) | (1L << (FloatingPointLiteral - 66)) | (1L << (BooleanLiteral - 66)) | (1L << (CharacterLiteral - 66)) | (1L << (StringLiteral - 66)) | (1L << (NullLiteral - 66)) | (1L << (LPAREN - 66)) | (1L << (LBRACE - 66)) | (1L << (SEMI - 66)) | (1L << (BANG - 66)) | (1L << (TILDE - 66)) | (1L << (INC - 66)) | (1L << (DEC - 66)) | (1L << (ADD - 66)) | (1L << (SUB - 66)) | (1L << (Identifier - 66)))) != 0)) {
 					{
 					{
 					setState(426);
@@ -2699,7 +2698,7 @@ public class ManuScriptParser extends Parser {
 				setState(441);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
-				while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__2) | (1L << T__4) | (1L << BOOLEAN) | (1L << BREAK) | (1L << BYTE) | (1L << CHAR) | (1L << DO) | (1L << DOUBLE) | (1L << FLOAT) | (1L << FOR) | (1L << IF) | (1L << INT) | (1L << LONG) | (1L << NEW) | (1L << PRINT) | (1L << RETURN) | (1L << SCAN) | (1L << SHORT) | (1L << STRING) | (1L << STRUCT) | (1L << SWITCH))) != 0) || ((((_la - 66)) & ~0x3f) == 0 && ((1L << (_la - 66)) & ((1L << (WHILE - 66)) | (1L << (IntegerLiteral - 66)) | (1L << (FloatingPointLiteral - 66)) | (1L << (BooleanLiteral - 66)) | (1L << (CharacterLiteral - 66)) | (1L << (StringLiteral - 66)) | (1L << (NullLiteral - 66)) | (1L << (LPAREN - 66)) | (1L << (LBRACE - 66)) | (1L << (SEMI - 66)) | (1L << (BANG - 66)) | (1L << (TILDE - 66)) | (1L << (INC - 66)) | (1L << (DEC - 66)) | (1L << (ADD - 66)) | (1L << (SUB - 66)) | (1L << (MUL - 66)) | (1L << (Identifier - 66)))) != 0)) {
+				while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__2) | (1L << T__4) | (1L << BOOLEAN) | (1L << BREAK) | (1L << BYTE) | (1L << CHAR) | (1L << DO) | (1L << DOUBLE) | (1L << FLOAT) | (1L << FOR) | (1L << IF) | (1L << INT) | (1L << LONG) | (1L << NEW) | (1L << PRINT) | (1L << RETURN) | (1L << SCAN) | (1L << SHORT) | (1L << STRING) | (1L << STRUCT) | (1L << SWITCH))) != 0) || ((((_la - 66)) & ~0x3f) == 0 && ((1L << (_la - 66)) & ((1L << (WHILE - 66)) | (1L << (IntegerLiteral - 66)) | (1L << (FloatingPointLiteral - 66)) | (1L << (BooleanLiteral - 66)) | (1L << (CharacterLiteral - 66)) | (1L << (StringLiteral - 66)) | (1L << (NullLiteral - 66)) | (1L << (LPAREN - 66)) | (1L << (LBRACE - 66)) | (1L << (SEMI - 66)) | (1L << (BANG - 66)) | (1L << (TILDE - 66)) | (1L << (INC - 66)) | (1L << (DEC - 66)) | (1L << (ADD - 66)) | (1L << (SUB - 66)) | (1L << (Identifier - 66)))) != 0)) {
 					{
 					{
 					setState(438);
@@ -2734,7 +2733,7 @@ public class ManuScriptParser extends Parser {
 				setState(453);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
-				while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__2) | (1L << T__4) | (1L << BOOLEAN) | (1L << BREAK) | (1L << BYTE) | (1L << CHAR) | (1L << DO) | (1L << DOUBLE) | (1L << FLOAT) | (1L << FOR) | (1L << IF) | (1L << INT) | (1L << LONG) | (1L << NEW) | (1L << PRINT) | (1L << RETURN) | (1L << SCAN) | (1L << SHORT) | (1L << STRING) | (1L << STRUCT) | (1L << SWITCH))) != 0) || ((((_la - 66)) & ~0x3f) == 0 && ((1L << (_la - 66)) & ((1L << (WHILE - 66)) | (1L << (IntegerLiteral - 66)) | (1L << (FloatingPointLiteral - 66)) | (1L << (BooleanLiteral - 66)) | (1L << (CharacterLiteral - 66)) | (1L << (StringLiteral - 66)) | (1L << (NullLiteral - 66)) | (1L << (LPAREN - 66)) | (1L << (LBRACE - 66)) | (1L << (SEMI - 66)) | (1L << (BANG - 66)) | (1L << (TILDE - 66)) | (1L << (INC - 66)) | (1L << (DEC - 66)) | (1L << (ADD - 66)) | (1L << (SUB - 66)) | (1L << (MUL - 66)) | (1L << (Identifier - 66)))) != 0)) {
+				while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__2) | (1L << T__4) | (1L << BOOLEAN) | (1L << BREAK) | (1L << BYTE) | (1L << CHAR) | (1L << DO) | (1L << DOUBLE) | (1L << FLOAT) | (1L << FOR) | (1L << IF) | (1L << INT) | (1L << LONG) | (1L << NEW) | (1L << PRINT) | (1L << RETURN) | (1L << SCAN) | (1L << SHORT) | (1L << STRING) | (1L << STRUCT) | (1L << SWITCH))) != 0) || ((((_la - 66)) & ~0x3f) == 0 && ((1L << (_la - 66)) & ((1L << (WHILE - 66)) | (1L << (IntegerLiteral - 66)) | (1L << (FloatingPointLiteral - 66)) | (1L << (BooleanLiteral - 66)) | (1L << (CharacterLiteral - 66)) | (1L << (StringLiteral - 66)) | (1L << (NullLiteral - 66)) | (1L << (LPAREN - 66)) | (1L << (LBRACE - 66)) | (1L << (SEMI - 66)) | (1L << (BANG - 66)) | (1L << (TILDE - 66)) | (1L << (INC - 66)) | (1L << (DEC - 66)) | (1L << (ADD - 66)) | (1L << (SUB - 66)) | (1L << (Identifier - 66)))) != 0)) {
 					{
 					{
 					setState(450);
@@ -2840,7 +2839,6 @@ public class ManuScriptParser extends Parser {
 			case DEC:
 			case ADD:
 			case SUB:
-			case MUL:
 			case Identifier:
 				enterOuterAlt(_localctx, 2);
 				{
@@ -3445,7 +3443,7 @@ public class ManuScriptParser extends Parser {
 				setState(529);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
-				if (_la==NEW || ((((_la - 67)) & ~0x3f) == 0 && ((1L << (_la - 67)) & ((1L << (IntegerLiteral - 67)) | (1L << (FloatingPointLiteral - 67)) | (1L << (BooleanLiteral - 67)) | (1L << (CharacterLiteral - 67)) | (1L << (StringLiteral - 67)) | (1L << (NullLiteral - 67)) | (1L << (LPAREN - 67)) | (1L << (BANG - 67)) | (1L << (TILDE - 67)) | (1L << (INC - 67)) | (1L << (DEC - 67)) | (1L << (ADD - 67)) | (1L << (SUB - 67)) | (1L << (MUL - 67)) | (1L << (Identifier - 67)))) != 0)) {
+				if (_la==NEW || ((((_la - 67)) & ~0x3f) == 0 && ((1L << (_la - 67)) & ((1L << (IntegerLiteral - 67)) | (1L << (FloatingPointLiteral - 67)) | (1L << (BooleanLiteral - 67)) | (1L << (CharacterLiteral - 67)) | (1L << (StringLiteral - 67)) | (1L << (NullLiteral - 67)) | (1L << (LPAREN - 67)) | (1L << (BANG - 67)) | (1L << (TILDE - 67)) | (1L << (INC - 67)) | (1L << (DEC - 67)) | (1L << (ADD - 67)) | (1L << (SUB - 67)) | (1L << (Identifier - 67)))) != 0)) {
 					{
 					setState(528);
 					expression(0);
@@ -3593,7 +3591,7 @@ public class ManuScriptParser extends Parser {
 				setState(557); 
 				_errHandler.sync(this);
 				_la = _input.LA(1);
-			} while ( (((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__2) | (1L << T__4) | (1L << BOOLEAN) | (1L << BREAK) | (1L << BYTE) | (1L << CHAR) | (1L << DO) | (1L << DOUBLE) | (1L << FLOAT) | (1L << FOR) | (1L << IF) | (1L << INT) | (1L << LONG) | (1L << NEW) | (1L << PRINT) | (1L << RETURN) | (1L << SCAN) | (1L << SHORT) | (1L << STRING) | (1L << STRUCT) | (1L << SWITCH))) != 0) || ((((_la - 66)) & ~0x3f) == 0 && ((1L << (_la - 66)) & ((1L << (WHILE - 66)) | (1L << (IntegerLiteral - 66)) | (1L << (FloatingPointLiteral - 66)) | (1L << (BooleanLiteral - 66)) | (1L << (CharacterLiteral - 66)) | (1L << (StringLiteral - 66)) | (1L << (NullLiteral - 66)) | (1L << (LPAREN - 66)) | (1L << (LBRACE - 66)) | (1L << (SEMI - 66)) | (1L << (BANG - 66)) | (1L << (TILDE - 66)) | (1L << (INC - 66)) | (1L << (DEC - 66)) | (1L << (ADD - 66)) | (1L << (SUB - 66)) | (1L << (MUL - 66)) | (1L << (Identifier - 66)))) != 0) );
+			} while ( (((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__2) | (1L << T__4) | (1L << BOOLEAN) | (1L << BREAK) | (1L << BYTE) | (1L << CHAR) | (1L << DO) | (1L << DOUBLE) | (1L << FLOAT) | (1L << FOR) | (1L << IF) | (1L << INT) | (1L << LONG) | (1L << NEW) | (1L << PRINT) | (1L << RETURN) | (1L << SCAN) | (1L << SHORT) | (1L << STRING) | (1L << STRUCT) | (1L << SWITCH))) != 0) || ((((_la - 66)) & ~0x3f) == 0 && ((1L << (_la - 66)) & ((1L << (WHILE - 66)) | (1L << (IntegerLiteral - 66)) | (1L << (FloatingPointLiteral - 66)) | (1L << (BooleanLiteral - 66)) | (1L << (CharacterLiteral - 66)) | (1L << (StringLiteral - 66)) | (1L << (NullLiteral - 66)) | (1L << (LPAREN - 66)) | (1L << (LBRACE - 66)) | (1L << (SEMI - 66)) | (1L << (BANG - 66)) | (1L << (TILDE - 66)) | (1L << (INC - 66)) | (1L << (DEC - 66)) | (1L << (ADD - 66)) | (1L << (SUB - 66)) | (1L << (Identifier - 66)))) != 0) );
 			}
 		}
 		catch (RecognitionException re) {
@@ -3717,7 +3715,7 @@ public class ManuScriptParser extends Parser {
 			setState(570);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
-			if (_la==NEW || ((((_la - 67)) & ~0x3f) == 0 && ((1L << (_la - 67)) & ((1L << (IntegerLiteral - 67)) | (1L << (FloatingPointLiteral - 67)) | (1L << (BooleanLiteral - 67)) | (1L << (CharacterLiteral - 67)) | (1L << (StringLiteral - 67)) | (1L << (NullLiteral - 67)) | (1L << (LPAREN - 67)) | (1L << (BANG - 67)) | (1L << (TILDE - 67)) | (1L << (INC - 67)) | (1L << (DEC - 67)) | (1L << (ADD - 67)) | (1L << (SUB - 67)) | (1L << (MUL - 67)) | (1L << (Identifier - 67)))) != 0)) {
+			if (_la==NEW || ((((_la - 67)) & ~0x3f) == 0 && ((1L << (_la - 67)) & ((1L << (IntegerLiteral - 67)) | (1L << (FloatingPointLiteral - 67)) | (1L << (BooleanLiteral - 67)) | (1L << (CharacterLiteral - 67)) | (1L << (StringLiteral - 67)) | (1L << (NullLiteral - 67)) | (1L << (LPAREN - 67)) | (1L << (BANG - 67)) | (1L << (TILDE - 67)) | (1L << (INC - 67)) | (1L << (DEC - 67)) | (1L << (ADD - 67)) | (1L << (SUB - 67)) | (1L << (Identifier - 67)))) != 0)) {
 				{
 				setState(569);
 				expression(0);
@@ -3729,7 +3727,7 @@ public class ManuScriptParser extends Parser {
 			setState(574);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
-			if (_la==NEW || ((((_la - 67)) & ~0x3f) == 0 && ((1L << (_la - 67)) & ((1L << (IntegerLiteral - 67)) | (1L << (FloatingPointLiteral - 67)) | (1L << (BooleanLiteral - 67)) | (1L << (CharacterLiteral - 67)) | (1L << (StringLiteral - 67)) | (1L << (NullLiteral - 67)) | (1L << (LPAREN - 67)) | (1L << (BANG - 67)) | (1L << (TILDE - 67)) | (1L << (INC - 67)) | (1L << (DEC - 67)) | (1L << (ADD - 67)) | (1L << (SUB - 67)) | (1L << (MUL - 67)) | (1L << (Identifier - 67)))) != 0)) {
+			if (_la==NEW || ((((_la - 67)) & ~0x3f) == 0 && ((1L << (_la - 67)) & ((1L << (IntegerLiteral - 67)) | (1L << (FloatingPointLiteral - 67)) | (1L << (BooleanLiteral - 67)) | (1L << (CharacterLiteral - 67)) | (1L << (StringLiteral - 67)) | (1L << (NullLiteral - 67)) | (1L << (LPAREN - 67)) | (1L << (BANG - 67)) | (1L << (TILDE - 67)) | (1L << (INC - 67)) | (1L << (DEC - 67)) | (1L << (ADD - 67)) | (1L << (SUB - 67)) | (1L << (Identifier - 67)))) != 0)) {
 				{
 				setState(573);
 				forUpdate();
@@ -3812,7 +3810,6 @@ public class ManuScriptParser extends Parser {
 			case DEC:
 			case ADD:
 			case SUB:
-			case MUL:
 			case Identifier:
 				enterOuterAlt(_localctx, 2);
 				{
@@ -4651,7 +4648,7 @@ public class ManuScriptParser extends Parser {
 				setState(631);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
-				if (_la==NEW || ((((_la - 67)) & ~0x3f) == 0 && ((1L << (_la - 67)) & ((1L << (IntegerLiteral - 67)) | (1L << (FloatingPointLiteral - 67)) | (1L << (BooleanLiteral - 67)) | (1L << (CharacterLiteral - 67)) | (1L << (StringLiteral - 67)) | (1L << (NullLiteral - 67)) | (1L << (LPAREN - 67)) | (1L << (BANG - 67)) | (1L << (TILDE - 67)) | (1L << (INC - 67)) | (1L << (DEC - 67)) | (1L << (ADD - 67)) | (1L << (SUB - 67)) | (1L << (MUL - 67)) | (1L << (Identifier - 67)))) != 0)) {
+				if (_la==NEW || ((((_la - 67)) & ~0x3f) == 0 && ((1L << (_la - 67)) & ((1L << (IntegerLiteral - 67)) | (1L << (FloatingPointLiteral - 67)) | (1L << (BooleanLiteral - 67)) | (1L << (CharacterLiteral - 67)) | (1L << (StringLiteral - 67)) | (1L << (NullLiteral - 67)) | (1L << (LPAREN - 67)) | (1L << (BANG - 67)) | (1L << (TILDE - 67)) | (1L << (INC - 67)) | (1L << (DEC - 67)) | (1L << (ADD - 67)) | (1L << (SUB - 67)) | (1L << (Identifier - 67)))) != 0)) {
 					{
 					setState(630);
 					expressionList();
@@ -5031,7 +5028,7 @@ public class ManuScriptParser extends Parser {
 		VariableExprContext _localctx = new VariableExprContext(_ctx, getState());
 		enterRule(_localctx, 112, RULE_variableExpr);
 		try {
-			setState(696);
+			setState(694);
 			_errHandler.sync(this);
 			switch ( getInterpreter().adaptivePredict(_input,71,_ctx) ) {
 			case 1:
@@ -5045,15 +5042,6 @@ public class ManuScriptParser extends Parser {
 				enterOuterAlt(_localctx, 2);
 				{
 				setState(693);
-				match(MUL);
-				setState(694);
-				match(Identifier);
-				}
-				break;
-			case 3:
-				enterOuterAlt(_localctx, 3);
-				{
-				setState(695);
 				structExpr(0);
 				}
 				break;
@@ -5108,56 +5096,47 @@ public class ManuScriptParser extends Parser {
 		enterRule(_localctx, 114, RULE_equationExpr);
 		try {
 			int _alt;
-			setState(712);
+			setState(708);
 			_errHandler.sync(this);
 			switch ( getInterpreter().adaptivePredict(_input,73,_ctx) ) {
 			case 1:
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(698);
+				setState(696);
 				match(Identifier);
 				}
 				break;
 			case 2:
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(699);
-				match(MUL);
-				setState(700);
-				match(Identifier);
-				}
-				break;
-			case 3:
-				enterOuterAlt(_localctx, 3);
-				{
-				setState(701);
+				setState(697);
 				variableExpr();
-				setState(708);
+				setState(704);
 				_errHandler.sync(this);
 				_alt = getInterpreter().adaptivePredict(_input,72,_ctx);
 				while ( _alt!=2 && _alt!=org.antlr.v4.runtime.atn.ATN.INVALID_ALT_NUMBER ) {
 					if ( _alt==1 ) {
 						{
 						{
-						setState(702);
+						setState(698);
 						match(LBRACK);
-						setState(703);
+						setState(699);
 						expression(0);
-						setState(704);
+						setState(700);
 						match(RBRACK);
 						}
 						} 
 					}
-					setState(710);
+					setState(706);
 					_errHandler.sync(this);
 					_alt = getInterpreter().adaptivePredict(_input,72,_ctx);
 				}
 				}
 				break;
-			case 4:
-				enterOuterAlt(_localctx, 4);
+			case 3:
+				enterOuterAlt(_localctx, 3);
 				{
-				setState(711);
+				setState(707);
 				structExpr(0);
 				}
 				break;
@@ -5207,13 +5186,13 @@ public class ManuScriptParser extends Parser {
 		PrimaryContext _localctx = new PrimaryContext(_ctx, getState());
 		enterRule(_localctx, 116, RULE_primary);
 		try {
-			setState(717);
+			setState(713);
 			_errHandler.sync(this);
 			switch (_input.LA(1)) {
 			case LPAREN:
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(714);
+				setState(710);
 				parExpression();
 				}
 				break;
@@ -5225,15 +5204,14 @@ public class ManuScriptParser extends Parser {
 			case NullLiteral:
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(715);
+				setState(711);
 				literal();
 				}
 				break;
-			case MUL:
 			case Identifier:
 				enterOuterAlt(_localctx, 3);
 				{
-				setState(716);
+				setState(712);
 				equationExpr();
 				}
 				break;
@@ -5284,10 +5262,10 @@ public class ManuScriptParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(719);
+			setState(715);
 			createdName();
 			{
-			setState(720);
+			setState(716);
 			arrayCreatorRest();
 			}
 			}
@@ -5336,27 +5314,27 @@ public class ManuScriptParser extends Parser {
 		CreatedNameContext _localctx = new CreatedNameContext(_ctx, getState());
 		enterRule(_localctx, 120, RULE_createdName);
 		try {
-			setState(725);
+			setState(721);
 			_errHandler.sync(this);
 			switch ( getInterpreter().adaptivePredict(_input,75,_ctx) ) {
 			case 1:
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(722);
+				setState(718);
 				primitiveType();
 				}
 				break;
 			case 2:
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(723);
+				setState(719);
 				pointerType();
 				}
 				break;
 			case 3:
 				enterOuterAlt(_localctx, 3);
 				{
-				setState(724);
+				setState(720);
 				structType();
 				}
 				break;
@@ -5410,32 +5388,32 @@ public class ManuScriptParser extends Parser {
 			int _alt;
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(727);
+			setState(723);
 			match(LBRACK);
-			setState(755);
+			setState(751);
 			_errHandler.sync(this);
 			switch (_input.LA(1)) {
 			case RBRACK:
 				{
-				setState(728);
+				setState(724);
 				match(RBRACK);
-				setState(733);
+				setState(729);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 				while (_la==LBRACK) {
 					{
 					{
-					setState(729);
+					setState(725);
 					match(LBRACK);
-					setState(730);
+					setState(726);
 					match(RBRACK);
 					}
 					}
-					setState(735);
+					setState(731);
 					_errHandler.sync(this);
 					_la = _input.LA(1);
 				}
-				setState(736);
+				setState(732);
 				arrayInitializer();
 				}
 				break;
@@ -5453,48 +5431,47 @@ public class ManuScriptParser extends Parser {
 			case DEC:
 			case ADD:
 			case SUB:
-			case MUL:
 			case Identifier:
 				{
-				setState(737);
+				setState(733);
 				expression(0);
-				setState(738);
+				setState(734);
 				match(RBRACK);
-				setState(745);
+				setState(741);
 				_errHandler.sync(this);
 				_alt = getInterpreter().adaptivePredict(_input,77,_ctx);
 				while ( _alt!=2 && _alt!=org.antlr.v4.runtime.atn.ATN.INVALID_ALT_NUMBER ) {
 					if ( _alt==1 ) {
 						{
 						{
-						setState(739);
+						setState(735);
 						match(LBRACK);
-						setState(740);
+						setState(736);
 						expression(0);
-						setState(741);
+						setState(737);
 						match(RBRACK);
 						}
 						} 
 					}
-					setState(747);
+					setState(743);
 					_errHandler.sync(this);
 					_alt = getInterpreter().adaptivePredict(_input,77,_ctx);
 				}
-				setState(752);
+				setState(748);
 				_errHandler.sync(this);
 				_alt = getInterpreter().adaptivePredict(_input,78,_ctx);
 				while ( _alt!=2 && _alt!=org.antlr.v4.runtime.atn.ATN.INVALID_ALT_NUMBER ) {
 					if ( _alt==1 ) {
 						{
 						{
-						setState(748);
+						setState(744);
 						match(LBRACK);
-						setState(749);
+						setState(745);
 						match(RBRACK);
 						}
 						} 
 					}
-					setState(754);
+					setState(750);
 					_errHandler.sync(this);
 					_alt = getInterpreter().adaptivePredict(_input,78,_ctx);
 				}
@@ -5546,19 +5523,19 @@ public class ManuScriptParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(757);
+			setState(753);
 			match(LPAREN);
-			setState(759);
+			setState(755);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
-			if (_la==NEW || ((((_la - 67)) & ~0x3f) == 0 && ((1L << (_la - 67)) & ((1L << (IntegerLiteral - 67)) | (1L << (FloatingPointLiteral - 67)) | (1L << (BooleanLiteral - 67)) | (1L << (CharacterLiteral - 67)) | (1L << (StringLiteral - 67)) | (1L << (NullLiteral - 67)) | (1L << (LPAREN - 67)) | (1L << (BANG - 67)) | (1L << (TILDE - 67)) | (1L << (INC - 67)) | (1L << (DEC - 67)) | (1L << (ADD - 67)) | (1L << (SUB - 67)) | (1L << (MUL - 67)) | (1L << (Identifier - 67)))) != 0)) {
+			if (_la==NEW || ((((_la - 67)) & ~0x3f) == 0 && ((1L << (_la - 67)) & ((1L << (IntegerLiteral - 67)) | (1L << (FloatingPointLiteral - 67)) | (1L << (BooleanLiteral - 67)) | (1L << (CharacterLiteral - 67)) | (1L << (StringLiteral - 67)) | (1L << (NullLiteral - 67)) | (1L << (LPAREN - 67)) | (1L << (BANG - 67)) | (1L << (TILDE - 67)) | (1L << (INC - 67)) | (1L << (DEC - 67)) | (1L << (ADD - 67)) | (1L << (SUB - 67)) | (1L << (Identifier - 67)))) != 0)) {
 				{
-				setState(758);
+				setState(754);
 				expressionList();
 				}
 			}
 
-			setState(761);
+			setState(757);
 			match(RPAREN);
 			}
 		}
@@ -5612,7 +5589,7 @@ public class ManuScriptParser extends Parser {
 	}
 
 	public static final String _serializedATN =
-		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3{\u02fe\4\2\t\2\4"+
+		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3{\u02fa\4\2\t\2\4"+
 		"\3\t\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7\4\b\t\b\4\t\t\t\4\n\t\n\4\13\t"+
 		"\13\4\f\t\f\4\r\t\r\4\16\t\16\4\17\t\17\4\20\t\20\4\21\t\21\4\22\t\22"+
 		"\4\23\t\23\4\24\t\24\4\25\t\25\4\26\t\26\4\27\t\27\4\30\t\30\4\31\t\31"+
@@ -5661,14 +5638,14 @@ public class ManuScriptParser extends Parser {
 		"\n8\38\38\38\38\38\38\38\38\38\38\38\38\38\38\58\u028a\n8\38\38\38\38"+
 		"\38\38\38\38\38\38\38\38\38\38\38\38\38\38\38\38\38\38\38\38\78\u02a4"+
 		"\n8\f8\168\u02a7\138\39\39\39\39\39\39\39\39\39\79\u02b2\n9\f9\169\u02b5"+
-		"\139\3:\3:\3:\3:\5:\u02bb\n:\3;\3;\3;\3;\3;\3;\3;\3;\7;\u02c5\n;\f;\16"+
-		";\u02c8\13;\3;\5;\u02cb\n;\3<\3<\3<\5<\u02d0\n<\3=\3=\3=\3>\3>\3>\5>\u02d8"+
-		"\n>\3?\3?\3?\3?\7?\u02de\n?\f?\16?\u02e1\13?\3?\3?\3?\3?\3?\3?\3?\7?\u02ea"+
-		"\n?\f?\16?\u02ed\13?\3?\3?\7?\u02f1\n?\f?\16?\u02f4\13?\5?\u02f6\n?\3"+
-		"@\3@\5@\u02fa\n@\3@\3@\3@\2\4npA\2\4\6\b\n\f\16\20\22\24\26\30\32\34\36"+
-		" \"$&(*,.\60\62\64\668:<>@BDFHJLNPRTVXZ\\^`bdfhjlnprtvxz|~\2\r\13\2\20"+
+		"\139\3:\3:\5:\u02b9\n:\3;\3;\3;\3;\3;\3;\7;\u02c1\n;\f;\16;\u02c4\13;"+
+		"\3;\5;\u02c7\n;\3<\3<\3<\5<\u02cc\n<\3=\3=\3=\3>\3>\3>\5>\u02d4\n>\3?"+
+		"\3?\3?\3?\7?\u02da\n?\f?\16?\u02dd\13?\3?\3?\3?\3?\3?\3?\3?\7?\u02e6\n"+
+		"?\f?\16?\u02e9\13?\3?\3?\7?\u02ed\n?\f?\16?\u02f0\13?\5?\u02f2\n?\3@\3"+
+		"@\5@\u02f6\n@\3@\3@\3@\2\4npA\2\4\6\b\n\f\16\20\22\24\26\30\32\34\36 "+
+		"\"$&(*,.\60\62\64\668:<>@BDFHJLNPRTVXZ\\^`bdfhjlnprtvxz|~\2\r\13\2\20"+
 		"\20\22\22\25\25\33\33!!((**\65\6599\4\2\36\36;;\3\2EJ\3\2ab\3\2ad\3\2"+
-		"WX\5\2TTknrr\4\2efjj\3\2cd\4\2UV\\]\4\2[[^^\2\u032f\2\u0081\3\2\2\2\4"+
+		"WX\5\2TTknrr\4\2efjj\3\2cd\4\2UV\\]\4\2[[^^\2\u0329\2\u0081\3\2\2\2\4"+
 		"\u0085\3\2\2\2\6\u0087\3\2\2\2\b\u008f\3\2\2\2\n\u009a\3\2\2\2\f\u00a1"+
 		"\3\2\2\2\16\u00a3\3\2\2\2\20\u00aa\3\2\2\2\22\u00be\3\2\2\2\24\u00c4\3"+
 		"\2\2\2\26\u00cf\3\2\2\2\30\u00da\3\2\2\2\32\u00e2\3\2\2\2\34\u00e7\3\2"+
@@ -5681,8 +5658,8 @@ public class ManuScriptParser extends Parser {
 		"\3\2\2\2V\u0228\3\2\2\2X\u0237\3\2\2\2Z\u0239\3\2\2\2\\\u0244\3\2\2\2"+
 		"^\u0246\3\2\2\2`\u024b\3\2\2\2b\u024d\3\2\2\2d\u0250\3\2\2\2f\u0257\3"+
 		"\2\2\2h\u025b\3\2\2\2j\u0263\3\2\2\2l\u0265\3\2\2\2n\u0289\3\2\2\2p\u02a8"+
-		"\3\2\2\2r\u02ba\3\2\2\2t\u02ca\3\2\2\2v\u02cf\3\2\2\2x\u02d1\3\2\2\2z"+
-		"\u02d7\3\2\2\2|\u02d9\3\2\2\2~\u02f7\3\2\2\2\u0080\u0082\5\4\3\2\u0081"+
+		"\3\2\2\2r\u02b8\3\2\2\2t\u02c6\3\2\2\2v\u02cb\3\2\2\2x\u02cd\3\2\2\2z"+
+		"\u02d3\3\2\2\2|\u02d5\3\2\2\2~\u02f3\3\2\2\2\u0080\u0082\5\4\3\2\u0081"+
 		"\u0080\3\2\2\2\u0081\u0082\3\2\2\2\u0082\u0083\3\2\2\2\u0083\u0084\7\2"+
 		"\2\3\u0084\3\3\2\2\2\u0085\u0086\5\n\6\2\u0086\5\3\2\2\2\u0087\u008c\5"+
 		"\"\22\2\u0088\u0089\7g\2\2\u0089\u008b\5\"\22\2\u008a\u0088\3\2\2\2\u008b"+
@@ -5865,37 +5842,35 @@ public class ManuScriptParser extends Parser {
 		"\u02b2\7v\2\2\u02ae\u02af\f\3\2\2\u02af\u02b0\7\r\2\2\u02b0\u02b2\7v\2"+
 		"\2\u02b1\u02ab\3\2\2\2\u02b1\u02ae\3\2\2\2\u02b2\u02b5\3\2\2\2\u02b3\u02b1"+
 		"\3\2\2\2\u02b3\u02b4\3\2\2\2\u02b4q\3\2\2\2\u02b5\u02b3\3\2\2\2\u02b6"+
-		"\u02bb\7v\2\2\u02b7\u02b8\7e\2\2\u02b8\u02bb\7v\2\2\u02b9\u02bb\5p9\2"+
-		"\u02ba\u02b6\3\2\2\2\u02ba\u02b7\3\2\2\2\u02ba\u02b9\3\2\2\2\u02bbs\3"+
-		"\2\2\2\u02bc\u02cb\7v\2\2\u02bd\u02be\7e\2\2\u02be\u02cb\7v\2\2\u02bf"+
-		"\u02c6\5r:\2\u02c0\u02c1\7O\2\2\u02c1\u02c2\5n8\2\u02c2\u02c3\7P\2\2\u02c3"+
-		"\u02c5\3\2\2\2\u02c4\u02c0\3\2\2\2\u02c5\u02c8\3\2\2\2\u02c6\u02c4\3\2"+
-		"\2\2\u02c6\u02c7\3\2\2\2\u02c7\u02cb\3\2\2\2\u02c8\u02c6\3\2\2\2\u02c9"+
-		"\u02cb\5p9\2\u02ca\u02bc\3\2\2\2\u02ca\u02bd\3\2\2\2\u02ca\u02bf\3\2\2"+
-		"\2\u02ca\u02c9\3\2\2\2\u02cbu\3\2\2\2\u02cc\u02d0\5f\64\2\u02cd\u02d0"+
-		"\5J&\2\u02ce\u02d0\5t;\2\u02cf\u02cc\3\2\2\2\u02cf\u02cd\3\2\2\2\u02cf"+
-		"\u02ce\3\2\2\2\u02d0w\3\2\2\2\u02d1\u02d2\5z>\2\u02d2\u02d3\5|?\2\u02d3"+
-		"y\3\2\2\2\u02d4\u02d8\5(\25\2\u02d5\u02d8\5$\23\2\u02d6\u02d8\5&\24\2"+
-		"\u02d7\u02d4\3\2\2\2\u02d7\u02d5\3\2\2\2\u02d7\u02d6\3\2\2\2\u02d8{\3"+
-		"\2\2\2\u02d9\u02f5\7O\2\2\u02da\u02df\7P\2\2\u02db\u02dc\7O\2\2\u02dc"+
-		"\u02de\7P\2\2\u02dd\u02db\3\2\2\2\u02de\u02e1\3\2\2\2\u02df\u02dd\3\2"+
-		"\2\2\u02df\u02e0\3\2\2\2\u02e0\u02e2\3\2\2\2\u02e1\u02df\3\2\2\2\u02e2"+
-		"\u02f6\5 \21\2\u02e3\u02e4\5n8\2\u02e4\u02eb\7P\2\2\u02e5\u02e6\7O\2\2"+
-		"\u02e6\u02e7\5n8\2\u02e7\u02e8\7P\2\2\u02e8\u02ea\3\2\2\2\u02e9\u02e5"+
-		"\3\2\2\2\u02ea\u02ed\3\2\2\2\u02eb\u02e9\3\2\2\2\u02eb\u02ec\3\2\2\2\u02ec"+
-		"\u02f2\3\2\2\2\u02ed\u02eb\3\2\2\2\u02ee\u02ef\7O\2\2\u02ef\u02f1\7P\2"+
-		"\2\u02f0\u02ee\3\2\2\2\u02f1\u02f4\3\2\2\2\u02f2\u02f0\3\2\2\2\u02f2\u02f3"+
-		"\3\2\2\2\u02f3\u02f6\3\2\2\2\u02f4\u02f2\3\2\2\2\u02f5\u02da\3\2\2\2\u02f5"+
-		"\u02e3\3\2\2\2\u02f6}\3\2\2\2\u02f7\u02f9\7K\2\2\u02f8\u02fa\5h\65\2\u02f9"+
-		"\u02f8\3\2\2\2\u02f9\u02fa\3\2\2\2\u02fa\u02fb\3\2\2\2\u02fb\u02fc\7L"+
-		"\2\2\u02fc\177\3\2\2\2S\u0081\u008c\u0094\u009a\u00a1\u00a7\u00b2\u00b7"+
-		"\u00bb\u00be\u00ca\u00d4\u00df\u00e5\u00eb\u00f3\u00f7\u00f9\u0102\u010a"+
-		"\u0112\u0115\u0119\u012c\u0132\u0142\u0147\u0153\u0166\u016e\u0177\u0179"+
-		"\u0180\u0185\u018e\u0193\u0196\u01a6\u01af\u01b5\u01bb\u01c0\u01c7\u01cb"+
-		"\u01cf\u01dd\u01e0\u01f7\u01fa\u01ff\u0205\u020c\u020f\u0213\u0218\u0225"+
-		"\u022a\u022f\u0237\u023c\u0240\u0244\u0252\u0260\u0273\u0279\u0289\u02a3"+
-		"\u02a5\u02b1\u02b3\u02ba\u02c6\u02ca\u02cf\u02d7\u02df\u02eb\u02f2\u02f5"+
-		"\u02f9";
+		"\u02b9\7v\2\2\u02b7\u02b9\5p9\2\u02b8\u02b6\3\2\2\2\u02b8\u02b7\3\2\2"+
+		"\2\u02b9s\3\2\2\2\u02ba\u02c7\7v\2\2\u02bb\u02c2\5r:\2\u02bc\u02bd\7O"+
+		"\2\2\u02bd\u02be\5n8\2\u02be\u02bf\7P\2\2\u02bf\u02c1\3\2\2\2\u02c0\u02bc"+
+		"\3\2\2\2\u02c1\u02c4\3\2\2\2\u02c2\u02c0\3\2\2\2\u02c2\u02c3\3\2\2\2\u02c3"+
+		"\u02c7\3\2\2\2\u02c4\u02c2\3\2\2\2\u02c5\u02c7\5p9\2\u02c6\u02ba\3\2\2"+
+		"\2\u02c6\u02bb\3\2\2\2\u02c6\u02c5\3\2\2\2\u02c7u\3\2\2\2\u02c8\u02cc"+
+		"\5f\64\2\u02c9\u02cc\5J&\2\u02ca\u02cc\5t;\2\u02cb\u02c8\3\2\2\2\u02cb"+
+		"\u02c9\3\2\2\2\u02cb\u02ca\3\2\2\2\u02ccw\3\2\2\2\u02cd\u02ce\5z>\2\u02ce"+
+		"\u02cf\5|?\2\u02cfy\3\2\2\2\u02d0\u02d4\5(\25\2\u02d1\u02d4\5$\23\2\u02d2"+
+		"\u02d4\5&\24\2\u02d3\u02d0\3\2\2\2\u02d3\u02d1\3\2\2\2\u02d3\u02d2\3\2"+
+		"\2\2\u02d4{\3\2\2\2\u02d5\u02f1\7O\2\2\u02d6\u02db\7P\2\2\u02d7\u02d8"+
+		"\7O\2\2\u02d8\u02da\7P\2\2\u02d9\u02d7\3\2\2\2\u02da\u02dd\3\2\2\2\u02db"+
+		"\u02d9\3\2\2\2\u02db\u02dc\3\2\2\2\u02dc\u02de\3\2\2\2\u02dd\u02db\3\2"+
+		"\2\2\u02de\u02f2\5 \21\2\u02df\u02e0\5n8\2\u02e0\u02e7\7P\2\2\u02e1\u02e2"+
+		"\7O\2\2\u02e2\u02e3\5n8\2\u02e3\u02e4\7P\2\2\u02e4\u02e6\3\2\2\2\u02e5"+
+		"\u02e1\3\2\2\2\u02e6\u02e9\3\2\2\2\u02e7\u02e5\3\2\2\2\u02e7\u02e8\3\2"+
+		"\2\2\u02e8\u02ee\3\2\2\2\u02e9\u02e7\3\2\2\2\u02ea\u02eb\7O\2\2\u02eb"+
+		"\u02ed\7P\2\2\u02ec\u02ea\3\2\2\2\u02ed\u02f0\3\2\2\2\u02ee\u02ec\3\2"+
+		"\2\2\u02ee\u02ef\3\2\2\2\u02ef\u02f2\3\2\2\2\u02f0\u02ee\3\2\2\2\u02f1"+
+		"\u02d6\3\2\2\2\u02f1\u02df\3\2\2\2\u02f2}\3\2\2\2\u02f3\u02f5\7K\2\2\u02f4"+
+		"\u02f6\5h\65\2\u02f5\u02f4\3\2\2\2\u02f5\u02f6\3\2\2\2\u02f6\u02f7\3\2"+
+		"\2\2\u02f7\u02f8\7L\2\2\u02f8\177\3\2\2\2S\u0081\u008c\u0094\u009a\u00a1"+
+		"\u00a7\u00b2\u00b7\u00bb\u00be\u00ca\u00d4\u00df\u00e5\u00eb\u00f3\u00f7"+
+		"\u00f9\u0102\u010a\u0112\u0115\u0119\u012c\u0132\u0142\u0147\u0153\u0166"+
+		"\u016e\u0177\u0179\u0180\u0185\u018e\u0193\u0196\u01a6\u01af\u01b5\u01bb"+
+		"\u01c0\u01c7\u01cb\u01cf\u01dd\u01e0\u01f7\u01fa\u01ff\u0205\u020c\u020f"+
+		"\u0213\u0218\u0225\u022a\u022f\u0237\u023c\u0240\u0244\u0252\u0260\u0273"+
+		"\u0279\u0289\u02a3\u02a5\u02b1\u02b3\u02b8\u02c2\u02c6\u02cb\u02d3\u02db"+
+		"\u02e7\u02ee\u02f1\u02f5";
 	public static final ATN _ATN =
 		new ATNDeserializer().deserialize(_serializedATN.toCharArray());
 	static {

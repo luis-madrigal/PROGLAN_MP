@@ -263,9 +263,10 @@ public class BaseListener extends ManuScriptBaseListener{
 		}
 
 		for (VariableDeclaratorContext vdctx : ctx.variableDeclarators().variableDeclarator()) {
+			//iterates through varname list (int a,b,...,z)
 			String varName = vdctx.variableDeclaratorId().getText();
 			
-			if(getCurrentSymTable().containsKey(varName)) {
+			if (getCurrentSymTable().containsKey(varName)) {//CHECK FOR DUPLICATE VARNAME
 				SemanticErrors.throwError(SemanticErrors.DUPLICATE_VAR, ctx.getStart().getLine(),ctx.getStart().getCharPositionInLine(), varName);
 			}
 			else {
@@ -311,16 +312,18 @@ public class BaseListener extends ManuScriptBaseListener{
 		}
 
 		for (VariableDeclaratorContext vdctx : ctx.variableDeclarators().variableDeclarator()) {
+			//iterates through varname list (int a,b,...,z)
 			String varName = vdctx.variableDeclaratorId().getText();
 
-			if(getCurrentSymTable().containsKey(varName)) {
+			if(getCurrentSymTable().containsKey(varName)) {//CHECK FOR DUPLICATE VARNAME
 				SemanticErrors.throwError(SemanticErrors.DUPLICATE_VAR, vdctx.getStart().getLine(), vdctx.getStart().getCharPositionInLine(), varName);
 			}
 			else {
 				SymbolContext symCtx = new SymbolContext(varType, scope, varName, isConstant);
 
-				if(dimCount>0) {    //ARRAY INIT
+				if(dimCount>0) {	//if type array
 					ArrayInfo arInf = new ArrayInfo(dimCount,varType);
+					//array initialization checking
 					checkArraySemantics(arInf, dimCount, varType, vdctx, ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine());
 					symCtx.setOther(arInf);
 				}else {

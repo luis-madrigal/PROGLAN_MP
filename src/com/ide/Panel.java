@@ -1,6 +1,7 @@
 package com.ide;
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -31,8 +32,6 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTextPane;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.UIManager;
-import javax.swing.border.Border;
-import javax.swing.border.LineBorder;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.DefaultStyledDocument;
@@ -62,7 +61,7 @@ import com.utils.Console;
 
 
 
-public class Panel implements Runnable, ActionListener, KeyListener, MouseListener {
+public class Panel implements Runnable, ActionListener, KeyListener, MouseListener, PropertyChangeListener {
 	public static boolean status = true;
 	private Frame frameParent;
 	private DialogSave dlgSave;
@@ -88,7 +87,8 @@ public class Panel implements Runnable, ActionListener, KeyListener, MouseListen
 	private JLabel lblParsedOut;
 	private JLabel lblConsole;
 	
-	
+
+	private JSplitPane documentSplitPane;
 	private JSplitPane topSplitPane;
 	private JSplitPane bottomSplitPane;
 	
@@ -99,6 +99,7 @@ public class Panel implements Runnable, ActionListener, KeyListener, MouseListen
 	private JTextPane parsedOut;
 	public static JTextPane threeACOut;
 	public static JTextPane watchOut;
+	public DocumentPanel documentOut;
 
 	private JPanel inputPaneParent;
 	private RTextScrollPane inputPane;
@@ -107,6 +108,7 @@ public class Panel implements Runnable, ActionListener, KeyListener, MouseListen
 	private JScrollPane watchPane;
 	private JScrollPane treePane;
 	private JScrollPane consolePane;
+	private JScrollPane documentPane;
 
 	private JButton btnScaleUp;
 	private JButton btnScaleDown;
@@ -118,9 +120,8 @@ public class Panel implements Runnable, ActionListener, KeyListener, MouseListen
 	public final static String newline = "\n";
 	
 	private ScannerModel scanner;
-
 	public static int baseFontSize = (int) Frame.SCREEN_SIZE.getHeight() / 60;
-	
+
 	public Panel() {
 		Console.instance().setPnlParent(this);
 		// Remove JTabbedPane "Borders"
@@ -204,21 +205,29 @@ public class Panel implements Runnable, ActionListener, KeyListener, MouseListen
 		gbc.insets = new Insets(0, 0, 0, 0);
 		gbc.weightx = 1;
 		gbc.weighty = 0.5;
-
+		
 		this.pnlMenu = new JPanel();
 //		pnlMenu.setBackground(FrameStatic.clrTransparent);
-		pnlMenu.setOpaque(false);
-//		pnlMenu.setBackground(FrameStatic.clrAccent);
+//		pnlMenu.setOpaque(false);
+		pnlMenu.setBackground(Color.WHITE);
 		pnlMenu.setLayout(null);
-//		pnlMenu.setMaximumSize(new Dimension(1920, 100));
-//		pnlMenu.setSize(new Dimension(1920, 100));
-//		pnlMenu.setPreferredSize(new Dimension(1920, 100));
-		pnlMenu.setMinimumSize(new Dimension(400, 100));
+		
+//		pnlMenu.setLayout(new BoxLayout(pnlMenu, BoxLayout.X_AXIS));
+//		pnlMenu.setMinimumSize(new Dimension(400, 30));
+		pnlMenu.setSize(new Dimension(400, 30));
+		pnlMenu.setMinimumSize(pnlMenu.getSize());
+		pnlMenu.setMaximumSize(pnlMenu.getSize());
+		pnlMenu.setPreferredSize(pnlMenu.getSize());
+//		pnlMenu.setMaximumSize(new Dimension(400, 30));
+
+//		pnlMenu.setPreferredSize(new Dimension(400, 30));
 		this.initMenuButtons();
-//		pnlMenu.setBackground(Styles.LIGHT_GRAY);
 		
-		this.pnlMain.add(this.pnlMenu, gbc);
 		
+		
+		JLabel pnlExtend = new JLabel();
+		this.pnlMain.add(pnlExtend, gbc); // TODO
+		pnlMain.setComponentZOrder(pnlExtend, 0);
 		//Code Input
 		this.lblCodeInput = new JLabel("Code Input:");
 		this.lblCodeInput.setFont(new Font("Segoe UI", 150, baseFontSize));
@@ -283,7 +292,7 @@ public class Panel implements Runnable, ActionListener, KeyListener, MouseListen
 		this.inputPane.setIconRowHeaderEnabled(true);
 
 		this.inputPane.setPreferredSize(new Dimension((int) Frame.SCREEN_SIZE.getWidth()/2, 150));//		this.inputPane.setSize(new Dimension((int) Frame.SCREEN_SIZE.getWidth()/2, 150));
-
+		
 		this.inputPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		this.inputPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
 
@@ -293,7 +302,6 @@ public class Panel implements Runnable, ActionListener, KeyListener, MouseListen
 		this.inputPane.getTextArea().setSelectionColor(Styles.UN_HIGHLIGHT);
 		this.inputPane.setBorder(null);
 		int horizontalHeight = 10;
-		
 		this.inputPane.getHorizontalScrollBar().setPreferredSize(new Dimension(
 		        (int)inputPane.getHorizontalScrollBar().getPreferredSize().getWidth(),
 		        (int)horizontalHeight
@@ -485,15 +493,17 @@ public class Panel implements Runnable, ActionListener, KeyListener, MouseListen
 		
 		this.inputPaneParent = new JPanel();
 		this.inputPaneParent.setLayout(new BoxLayout(inputPaneParent, BoxLayout.Y_AXIS));
-		inputPaneParent.setOpaque(false);
-		inputPaneParent.setBackground(FrameStatic.clrTransparent);
+//		inputPaneParent.setOpaque(false);
+//		inputPaneParent.setBackground(FrameStatic.clrTransparent);
+		inputPaneParent.setBackground(Color.WHITE);
+		
 		JPanel lblInput = new JPanel();
 //		lblInput.setFont(FrameStatic.fntGothamLight20);
 		lblInput.setBackground(FrameStatic.clrTransparent);
 		
-		lblInput.setSize(900, 20);
+		lblInput.setSize(100, 20);
 		lblInput.setPreferredSize(lblInput.getSize());
-		lblInput.setMinimumSize(new Dimension(350, lblInput.getHeight()));
+		lblInput.setMinimumSize(new Dimension(100, lblInput.getHeight()));
 		lblInput.setMaximumSize(lblInput.getSize());
 //		lblInput.setHorizontalAlignment(JLabel.LEFT);
 //		lblInput.setLayout(new FlowLayout());
@@ -502,14 +512,93 @@ public class Panel implements Runnable, ActionListener, KeyListener, MouseListen
 
 
 		
-		
-		this.inputPaneParent.add(lblInput);
+		pnlMenu.setAlignmentX(Component.LEFT_ALIGNMENT);
+//		pnlMenu.setBackground(Color.CYAN);
+//		pnlMenu.setOpaque(true);
+//		pnlMenu.setBounds(0, 0, 400, 30);
+//		a.setAlignmentX( Component.LEFT_ALIGNMEN
+		this.inputPaneParent.add(this.pnlMenu);
+//		this.inputPaneParent.add(lblInput);
 		this.inputPaneParent.add(this.inputPane);
+		
+		
+		
+
+		// For watch variables
+		documentOut = new DocumentPanel(this, this.codeInput);
+		documentOut.setFont(new Font("Consolas", 150, baseFontSize));
+		documentOut.setForeground(Styles.TEXT_GRAY);
+		documentOut.setBackground(Color.WHITE);
+		documentOut.isOpaque();
+        
+		
+		this.documentPane = new JScrollPane(documentOut);
+		this.documentPane.setSize(new Dimension(160/*(int) Frame.SCREEN_SIZE.getWidth()/2*/, 150));
+		
+		this.documentPane.setPreferredSize(new Dimension(160/*(int) Frame.SCREEN_SIZE.getWidth()/2*/, 150));
+		this.documentPane.setMaximumSize(documentPane.getSize());
+//		this.documentPane.setMinimumSize(documentPane.getSize());
+		
+		this.documentPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+	
+		this.documentPane.getVerticalScrollBar().setUI(new CustomScrollBarUISky());
+		this.documentPane.getHorizontalScrollBar().setUI(new CustomScrollBarUISky());
+		this.documentPane.setBorder(null);
+		this.documentPane.getHorizontalScrollBar().setPreferredSize(new Dimension(
+		        (int)documentPane.getHorizontalScrollBar().getPreferredSize().getWidth(),
+		        (int)horizontalHeight
+		));
+		
+		this.documentPane.getVerticalScrollBar().setPreferredSize(new Dimension(
+		        (int)horizontalHeight,
+		        (int)documentPane.getVerticalScrollBar().getPreferredSize().getHeight()
+		));
+		this.documentPane.getVerticalScrollBar().addMouseListener(this);
+		
+		
+		this.documentSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
+//			new JSplitPane(JSplitPane.HORIZONTAL_SPLIT){
+//				private static final long serialVersionUID = 1L;
+//				private final int maxLocation = documentPane.getWidth();
+//				private int location = maxLocation;
+//
+//			    {
+//			        setDividerLocation(location);
+//			    }
+//			    
+//			    @Override
+//			    public void setDividerLocation(int newLocation) {
+//			    	if(newLocation > maxLocation) {
+//			    		newLocation = maxLocation;
+//			    	}
+//			    	this.dividerSize = location;
+////			    	location = newLocation;
+//			    }
+//			    @Override
+//			    public int getDividerLocation() {
+//			        return location ;
+//			    }
+//			    @Override
+//			    public int getLastDividerLocation() {
+//			        return location ;
+//			    }
+//			};
+		this.documentSplitPane.setEnabled(false);
+		this.documentSplitPane.setLeftComponent(this.documentPane);
+		this.documentSplitPane.setRightComponent(this.inputPaneParent);
+		this.documentSplitPane.setDividerSize(2);
+//		this.documentSplitPane.setDividerLocation(documentPane.getWidth());
+//		documentSplitPane.setBackground(FrameStatic.clrAccent);
+//		documentSplitPane.setOpaque(false);
+		documentSplitPane.setResizeWeight(0);
+		
+		
 		this.topSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
-		this.topSplitPane.setLeftComponent(this.inputPaneParent);
+//		this.topSplitPane.setLeftComponent(this.inputPaneParent);
+		this.topSplitPane.setLeftComponent(this.documentSplitPane);
 		topSplitPane.setBackground(FrameStatic.clrTransparent);
 		topSplitPane.setOpaque(false);
-		topSplitPane.setResizeWeight(1.0);
+//		topSplitPane.setResizeWeight(1.0);
 //		((JScrollPane)topSplitPane.getLeftComponent()).setBounds(0, 30, topSplitPane.getLeftComponent().getWidth(),
 //				topSplitPane.getLeftComponent().getHeight());
 //		
@@ -520,7 +609,7 @@ public class Panel implements Runnable, ActionListener, KeyListener, MouseListen
 //		topSplitPane.getLeftComponent().setBounds(0, 0, topSplitPane.getLeftComponent().getWidth(),
 //				topSplitPane.getLeftComponent().getHeight());
 		this.topSplitPane.setRightComponent(this.outputTabs);
-		this.topSplitPane.setDividerLocation((int) Frame.SCREEN_SIZE.getWidth()-440);
+		this.topSplitPane.setDividerLocation((int) Frame.SCREEN_SIZE.getWidth()-320);
 		gbc = new GridBagConstraints();
 		gbc.anchor = GridBagConstraints.NORTHEAST;
 		gbc.fill = GridBagConstraints.BOTH;
@@ -625,6 +714,21 @@ public class Panel implements Runnable, ActionListener, KeyListener, MouseListen
 
 		this.isRunning = false;
 		this.isActive = false;
+		
+
+		this.codeInput.addPropertyChangeListener(this); // Must be at the end
+//		this.pnlMain.setComponentZOrder(pnlMenu, pnlMain.getComponentCount()-1);
+
+//		if(this.codeInput.getText().contains("ACT ")) {
+			documentOut.generate(this.codeInput.getText());
+//			System.out.println(" "+this.codeInput.getText());
+//		}
+		this.pnlMain.revalidate();
+		this.pnlMain.repaint();
+		
+		documentOut.revalidate();
+		documentOut.repaint();
+		documentPane.addMouseListener(this);
 	}
 	
 	public void initMenuButtons() {
@@ -743,7 +847,7 @@ public class Panel implements Runnable, ActionListener, KeyListener, MouseListen
 
 		int offsetX = 0;
 
-		btnRun.setLocation(20, 6);
+		btnRun.setLocation(28, 0);
 		btnLoad.setLocation(btnRun.getX()+btnRun.getWidth()+offsetX, btnRun.getY());
 		btnSave.setLocation(btnLoad.getX()+btnLoad.getWidth()+offsetX, btnRun.getY());
 		btnWatch.setLocation(btnSave.getX()+btnSave.getWidth()+offsetX, btnRun.getY());
@@ -962,9 +1066,57 @@ public class Panel implements Runnable, ActionListener, KeyListener, MouseListen
 		
 	}
 
+	
+	public void foldDoument() {
+		documentSplitPane.setDividerLocation(20);
+		documentSplitPane.revalidate();
+		documentSplitPane.repaint();
+	}
+		
+	public void unfoldDoument() {
+		documentSplitPane.setDividerLocation(160);
+		documentSplitPane.revalidate();
+		documentSplitPane.repaint();
+	}
+
+
+	public void documentFolding() {
+		
+		documentOut.generate(this.codeInput.getText());
+//		System.out.println(" "+this.codeInput.getText());
+//	}
+		this.pnlMain.revalidate();
+		this.pnlMain.repaint();
+	
+		documentOut.revalidate();
+		documentOut.repaint();
+		if(documentSplitPane.getDividerLocation() > 20) {
+			this.foldDoument();
+		}
+		else {
+			this.unfoldDoument();
+		}
+		
+	}
+	
 	@Override
 	public void mouseReleased(MouseEvent e) {
 		System.out.println(e.getSource());
+
+		documentSplitPane.revalidate();
+		documentSplitPane.repaint();
+		
+
+		documentPane.revalidate();
+		documentPane.repaint();
+		
+		if(e.getSource() == this.documentPane.getVerticalScrollBar()) {
+			System.out.println("Scroll");
+			this.documentFolding();
+		}
+		if(e.getSource() == this.documentPane) {
+			this.documentFolding();
+		}
 		if(e.getSource() == Console.instance().getTextPane()) {
 			gotoErrorLine(e);
 		}
@@ -979,8 +1131,10 @@ public class Panel implements Runnable, ActionListener, KeyListener, MouseListen
 		}
 		
 		if(e.getSource() == btnContinue) {
+			if(isRunning && scanner.getRunnableCodeGenerator() != null) {
 
-			scanner.getRunnableCodeGenerator().play();
+				scanner.getRunnableCodeGenerator().play();
+			}
 		}
 		if(e.getSource() == btnPause) {
 
@@ -1054,5 +1208,17 @@ public class Panel implements Runnable, ActionListener, KeyListener, MouseListen
 
 	public void setActive(boolean isActive) {
 		this.isActive = isActive;
+	}
+
+	@Override
+	public void propertyChange(PropertyChangeEvent e) {
+		this.documentSplitPane.revalidate();
+		this.documentSplitPane.repaint();
+		
+		if(this.codeInput.getText().contains("ACT ") && e.getSource() == this.codeInput) {
+			documentOut.generate(this.codeInput.getText());
+//			System.out.println(" "+this.codeInput.getText());
+		}
+		
 	}
 }

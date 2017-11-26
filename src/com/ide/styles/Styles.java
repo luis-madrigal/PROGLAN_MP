@@ -20,7 +20,8 @@ public class Styles {
 
 	public final static Color TEXT_GRAY = new Color(96, 96, 96);
 
-	public final static Color SKY_BLUE = new Color(32, 227, 255, 200);
+	public final static Color SKY_BLUE = new Color(56, 231, 255);
+	public final static Color SKY_BLUE_TRANS = new Color(32, 227, 255, 200);
 	public final static Color UN_HIGHLIGHT = new Color(64, 64, 64);
 	public final static Color UN_LITERAL_STRING_DOUBLE_QUOTE = new Color(23, 198, 163);
 	public final static Color UN_VARIABLE = new Color(82, 227, 246);
