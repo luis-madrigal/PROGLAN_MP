@@ -206,7 +206,7 @@ public class CodeGeneratorRunnable implements Runnable {
 	private int evaluate(Scope methodScope, HashMap<String, Register> registers, TACStatement statement, int pointerCount) {
 		
 		Panel.printWatch("P"+pointerCount+"    "+methodScope.getSymTable().keySet().toString());
-		Panel.printWatch(methodScope.getLabel().toString());
+		Panel.printWatch(statement+"");
 		
 		switch (statement.getType()) {
 		
