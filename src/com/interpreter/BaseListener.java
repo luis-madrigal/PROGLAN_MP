@@ -108,25 +108,28 @@ public class BaseListener extends ManuScriptBaseListener{
 				if(vdi.arrayInitializer() != null){
 					//checking if array init is of type = {1,2,32,4,21};
 					int height = getBlockHeight(vdi.arrayInitializer().getText());
-					if(dimCount != height)
+						if(dimCount != height)
 						SemanticErrors.throwError(SemanticErrors.ILLEGAL_INIT, line, charPosition, varType);
-					else{
-						for(ManuScriptParser.VariableInitializerContext varInit : vdi.arrayInitializer().variableInitializer()){
-							String types = this.expressionCheck(varInit);
-							if(!arInf.getArrType().matches(types)) {
-								SemanticErrors.throwError(SemanticErrors.ARR_TYPE_MISMATCH, varInit.getStart().getLine(), varInit.getStart().getCharPositionInLine(), arInf.getArrType());
-							}
-						}
-					}
+//					else{
+//						for(ManuScriptParser.VariableInitializerContext varInit : vdi.arrayInitializer().variableInitializer()){
+//								String types = this.expressionCheck(varInit);
+//								if (!arInf.getArrType().matches(types)) {
+//									SemanticErrors.throwError(SemanticErrors.ARR_TYPE_MISMATCH, varInit.getStart().getLine(), varInit.getStart().getCharPositionInLine(), arInf.getArrType());
+//							}
+//						}
+//					}
+					this.arrayInitCheck(vdi.arrayInitializer(), arInf.getArrType());
 
 				}
 				else if(vdi.expression() instanceof PrimaryExprContext){
 					PrimaryContext primary = ((PrimaryExprContext) vdi.expression()).primary();
-					if(primary.equationExpr().Identifier() != null){
-						if(!getCurrentSymTable().containsKey(primary.equationExpr().Identifier().getText())){
-							SemanticErrors.throwError(SemanticErrors.UNDECLARED_VAR, line, charPosition, primary.equationExpr().Identifier().getText());
-						}else if(!getCurrentSymTable().get(primary.equationExpr().Identifier().getText()).getSymbolType().equals(varType)){
-							SemanticErrors.throwError(SemanticErrors.TYPE_MISMATCH, line, charPosition, varType);
+					if(primary.equationExpr() != null) {
+						if(primary.equationExpr().Identifier() != null){
+							if(!getCurrentSymTable().containsKey(primary.equationExpr().Identifier().getText())){
+								SemanticErrors.throwError(SemanticErrors.UNDECLARED_VAR, line, charPosition, primary.equationExpr().Identifier().getText());
+							}else if(!getCurrentSymTable().get(primary.equationExpr().Identifier().getText()).getSymbolType().equals(varType)){
+								SemanticErrors.throwError(SemanticErrors.TYPE_MISMATCH, line, charPosition, varType);
+							}
 						}
 					}
 				}
@@ -179,7 +182,7 @@ public class BaseListener extends ManuScriptBaseListener{
 						PointerInfo ptrInf = new PointerInfo(varType);
 						symCtx.setOther(ptrInf);
 					} else if (strCtx.typeType().structType() != null) {	//declaration is of type struct
-						if (!structDefTable.containsKey(strCtx.typeType().structType().Identifier().getText())) {
+						if (structDefTable.containsKey(strCtx.typeType().structType().Identifier().getText())) {
 							StructInfo strInf = structDefTable.get(strCtx.typeType().structType().Identifier().getText()).clone();
 							symCtx.setOther(strInf);
 						}
@@ -278,7 +281,18 @@ public class BaseListener extends ManuScriptBaseListener{
 					ArrayInfo arInf = new ArrayInfo(dimCount,varType);
 					checkArraySemantics(arInf, dimCount, varType, vdctx, ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine());
 					symCtx.setOther(arInf);
-				}else {
+				}
+				else if (ctx.typeType().pointerType() != null) {	//declaration is pointer
+					PointerInfo ptrInf = new PointerInfo(varType);
+					symCtx.setOther(ptrInf);
+				}
+				else if (ctx.typeType().structType() != null) {	//declaration is of type struct
+					if (structDefTable.containsKey(ctx.typeType().structType().Identifier().getText())) {
+						StructInfo strInf = structDefTable.get(ctx.typeType().structType().Identifier().getText()).clone();
+						symCtx.setOther(strInf);
+					}
+				}
+				else {	//declaration is of any other type
 					//do this if variable has initializer
 					if (vdctx.variableInitializer() != null) {
 						String types = this.expressionCheck(vdctx.variableInitializer().expression());
@@ -328,9 +342,18 @@ public class BaseListener extends ManuScriptBaseListener{
 					//array initialization checking
 					checkArraySemantics(arInf, dimCount, varType, vdctx, ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine());
 					symCtx.setOther(arInf);
-				} else if(ctx.typeType().structType() != null) {
-//					StructInfo sInfo = 
-				} else
+				}
+				else if (ctx.typeType().pointerType() != null) {	//declaration is pointer
+					PointerInfo ptrInf = new PointerInfo(varType);
+					symCtx.setOther(ptrInf);
+				}
+				else if (ctx.typeType().structType() != null) {	//declaration is of type struct
+					if (structDefTable.containsKey(ctx.typeType().structType().Identifier().getText())) {
+						StructInfo strInf = structDefTable.get(ctx.typeType().structType().Identifier().getText()).clone();
+						symCtx.setOther(strInf);
+					}
+				}
+				else {	//declaration is of any other type
 					//do this if variable has initializer
 					if (vdctx.variableInitializer() != null) {
 						String types = this.expressionCheck(vdctx.variableInitializer().expression());
@@ -438,7 +461,8 @@ public class BaseListener extends ManuScriptBaseListener{
 				i++;
 			}
 		} else {
-			SemanticErrors.throwError(SemanticErrors.PARAM_COUNT_MISMATCH_L, lineNum, charPosInLine, methodName, mcx.getArgTypes().size());
+			if(mcx.getArgs().size() > 0)
+				SemanticErrors.throwError(SemanticErrors.PARAM_COUNT_MISMATCH_L, lineNum, charPosInLine, methodName, mcx.getArgTypes().size());
 		}
 		return mcx.getReturnType();
 	}
@@ -606,21 +630,24 @@ public class BaseListener extends ManuScriptBaseListener{
 		if(ctx.structMember() != null) {
 			StructInfo sInfo = (StructInfo) sctx.getOther();
 			SymbolContext memCtx = null;
-			if((memCtx = sInfo.getMember(ctx.structMember().Identifier().getText())) == null) {
+			if((memCtx = sInfo.getMember(ctx.Identifier().getText())) == null) {
 				SemanticErrors.throwError(SemanticErrors.INVALID_MEMBER, 
 						ctx.structMember().getStart().getLine(),
 						ctx.structMember().getStart().getCharPositionInLine());
 				return "null";
-			} else
+			} else {
+				System.out.println(memCtx.getIdentifier());
 				return this.structMemberEval(ctx.structMember(), memCtx);
+			}
 		} else {
-			System.out.println(sctx.getOther());
 			StructInfo sInfo = (StructInfo) sctx.getOther();
 			SymbolContext memCtx = null;
 			if((memCtx = sInfo.getMember(ctx.Identifier().getText())) == null) {
 				SemanticErrors.throwError(SemanticErrors.INVALID_MEMBER, 
 						ctx.getStart().getLine(),
-						ctx.getStart().getCharPositionInLine());
+						ctx.getStart().getCharPositionInLine(),
+						ctx.Identifier().getText(),
+						sInfo.getStructName());
 				return "null";
 			}
 			return memCtx.getSymbolType();
@@ -640,8 +667,7 @@ public class BaseListener extends ManuScriptBaseListener{
 		}
 		SymbolContext sctx = getCurrentSymTable().get(structName);
 		
-//		return this.structMemberEval(ctx.structMember(), sctx);
-		return "null";
+		return this.structMemberEval(ctx.structMember(), sctx);
 	}
 	
 	private String enterArrayExpression(EquationExprContext ctx) {

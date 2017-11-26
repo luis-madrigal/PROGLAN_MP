@@ -115,7 +115,7 @@ public class Console {
 		}
 		
 		try {
-			this.codeInput.addLineHighlight(lineNumber-1, new Color(255, 0, 0, 100));
+			this.codeInput.addLineHighlight(lineNumber-1, Styles.UN_ERR_SELECTION /*new Color(255, 0, 0, 100)*/);
 		} catch (BadLocationException e) {
 			e.printStackTrace();
 		}

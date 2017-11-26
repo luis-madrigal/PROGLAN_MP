@@ -76,7 +76,23 @@ public class Scope extends HashSet<String>{
 	public void print() {
 		print("", true);
 	}
-
+	
+	public String printString() {
+		return printString("", true);
+	}
+	public String printString(String prefix, boolean isTail) {
+		System.out.println(prefix + (isTail ? "└── " : "├── ") + "scope");
+		String print = "";
+		for (int i = 0; i < children.size() - 1; i++) {
+			print += "\n"+children.get(i).printString(prefix + (isTail ? "    " : "│   "), false);
+		}
+		if (children.size() > 0) {
+			print += "\n"+children.get(children.size() - 1)
+					.printString(prefix + (isTail ?"    " : "│   "), true);
+		}
+		return print;
+	}
+	
 	private void print(String prefix, boolean isTail) {
 		System.out.println(prefix + (isTail ? "└── " : "├── ") + "scope");
 		for (int i = 0; i < children.size() - 1; i++) {

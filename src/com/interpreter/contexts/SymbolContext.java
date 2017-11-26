@@ -30,6 +30,10 @@ public class SymbolContext extends Context{
 		this.ctxType = Utils.detectContextType(type);
 	}
 
+	public ContextType getCtxType() {
+		return ctxType;
+	}
+
 	public String getSymbolType() {
 		return this.type;
 	}

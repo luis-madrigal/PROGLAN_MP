@@ -137,7 +137,7 @@ public class ScannerModel {
 
 		return tokenized;
 	}
-
+	
 	public void stopThread() {
 		if(this.threadCodeGenerator != null) {
 			this.runnableCodeGenerator.stop();

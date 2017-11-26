@@ -1,29 +1,8 @@
 
-composition record {
-	int a;
+ACT print starring () {
+	Say "hello";
 }
 
-ACT solve starring ( int n, string start, string auxilliary, string end) {
-	if (n == 1)
-		Say start + " -> " + end;
-	else {
-		solve(n-1, start, end, auxilliary);
-		Say start + " -> " + end;
-		solve(n-1, auxilliary, start, end);
-	}
-}
-
-ACT main starring ()  {
-	int x;
-
-	Write to x;
-
-	[sdsd]: solve(x, "A", "B", "C");
-
-	
-	int[] arr = new int[] {3, 4, 5};
-	arr[2] = 0;
-
-	composition record r;
-	r.a = 1;
+ACT main starring () {
+	print();
 }
