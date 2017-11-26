@@ -29,6 +29,20 @@ public class LiteralMatcher {
 		return "null";
 	}
 	
+	public String getPossibleLiteralTypes(LiteralContext ctx) {
+		if(ctx.IntegerLiteral() != null)
+			return "int|char|float";
+		if(ctx.CharacterLiteral() != null)
+			return "char|int|float";
+		if(ctx.StringLiteral() != null)
+			return "string";
+		if(ctx.FloatingPointLiteral() != null)
+			return "float";
+		if(ctx.BooleanLiteral() != null)
+			return "boolean";
+		return "null";
+	}
+	
 	public KeyTokens.LITERAL_TYPE getLiteralType(Object ob) {
 		if(ob instanceof Integer)
 			return KeyTokens.LITERAL_TYPE.INT;

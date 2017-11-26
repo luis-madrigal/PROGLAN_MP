@@ -97,7 +97,11 @@ public class BaseListener extends ManuScriptBaseListener{
 						if (crCtx.arrayCreatorRest().expression().size() != dimCount)
 							SemanticErrors.throwError(SemanticErrors.INVALID_DIMS, line, charPosition, crCtx.arrayCreatorRest().expression().size(), dimCount);
 						for (ExpressionContext expr : crCtx.arrayCreatorRest().expression()) {
-//							this.expressionChecker(expr, "int");
+							String types = this.expressionCheck(expr);
+							if(!arInf.getArrType().matches(types)) {
+								//TODO: semantic error
+//								SemanticErrors.throwError(SemanticErrors.VAR_ASSIGN_MISMATCH, varInit.getStart().getLine(), varInit.getStart().getCharPositionInLine(), varName, types);
+							}
 						}
 					}
 
@@ -110,7 +114,11 @@ public class BaseListener extends ManuScriptBaseListener{
 						SemanticErrors.throwError(SemanticErrors.ILLEGAL_INIT, line, charPosition, varType);
 					else{
 						for(ManuScriptParser.VariableInitializerContext varInit : vdi.arrayInitializer().variableInitializer()){
-							this.expressionChecker(varInit,arInf.getArrType());
+							String types = this.expressionCheck(varInit);
+							if(!arInf.getArrType().matches(types)) {
+								//TODO: semantic error
+//								SemanticErrors.throwError(SemanticErrors.VAR_ASSIGN_MISMATCH, varInit.getStart().getLine(), varInit.getStart().getCharPositionInLine(), varName, types);
+							}
 						}
 					}
 
@@ -232,7 +240,10 @@ public class BaseListener extends ManuScriptBaseListener{
 				}else {
 					//do this if variable has initializer
 					if (vdctx.variableInitializer() != null) {
-//						this.expressionChecker(vdctx.variableInitializer(), varType);
+						String types = this.expressionCheck(vdctx.variableInitializer().expression());
+						if(!varType.matches(types)) {
+							SemanticErrors.throwError(SemanticErrors.VAR_ASSIGN_MISMATCH, vdctx.getStart().getLine(), vdctx.getStart().getCharPositionInLine(), varName, types);
+						}
 					}
 				}
 				System.out.println("added "+varName+" to symbol table"+" is constant:"+isConstant);
@@ -263,7 +274,11 @@ public class BaseListener extends ManuScriptBaseListener{
 				}else {
 					//do this if variable has initializer
 					if (vdctx.variableInitializer() != null) {
-//						this.expressionChecker(vdctx.variableInitializer(), varType);
+						String types = this.expressionCheck(vdctx.variableInitializer().expression());
+						System.out.println(types);
+						if(!varType.matches(types)) {
+							SemanticErrors.throwError(SemanticErrors.VAR_ASSIGN_MISMATCH, vdctx.getStart().getLine(), vdctx.getStart().getCharPositionInLine(), varName, types);
+						}
 					}
 				}
 				System.out.println("added "+varName+" to symbol table");
@@ -291,7 +306,6 @@ public class BaseListener extends ManuScriptBaseListener{
 				if(!sctx.getSymbolType().matches(types)) {
 					SemanticErrors.throwError(SemanticErrors.VAR_ASSIGN_MISMATCH, lineNumStart, charNumStart, varName, types);
 				}
-//				this.expressionChecker(ctx.expression(), sctx.getSymbolType());
 			}
 		} else {
 			SemanticErrors.throwError(SemanticErrors.UNDECLARED_VAR, ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), varName);
@@ -301,9 +315,9 @@ public class BaseListener extends ManuScriptBaseListener{
 	@Override public void enterReturnStmt(ManuScriptParser.ReturnStmtContext ctx) {
 		MethodContext mctx = methodTable.get(currentMethod);
 		if(mctx.getReturnType().equals(Types.NULL)) {//TODO: bad implementation
-			mctx.setReturnType(this.getExpressionType(ctx.expression()));
+			mctx.setReturnType(this.expressionCheck(ctx.expression()));
 		} else {
-			if(!mctx.getReturnType().equals(this.getExpressionType(ctx.expression()))) {
+			if(!mctx.getReturnType().equals(this.expressionCheck(ctx.expression()))) {
 				SemanticErrors.throwError(SemanticErrors.INVALID_RETURN_TYPE, ctx.expression().getStart().getLine(), ctx.expression().getStop().getCharPositionInLine(), currentMethod, mctx.getReturnType());
 			}
 		}
@@ -343,7 +357,10 @@ public class BaseListener extends ManuScriptBaseListener{
 					SemanticErrors.throwError(SemanticErrors.UNDECLARED_VAR, ectxLineNum, ectxCharPosAtLine, arg);
 				} else {
 					//literal or expression
-//					this.expressionChecker(ectx, mcx.getArgTypes().get(i));
+					String type = this.expressionCheck(ectx);
+					if(!mcx.getArgTypes().get(i).matches(type)) {
+						//TODO: semantic error
+					}
 				}
 				i++;
 			}
@@ -354,7 +371,7 @@ public class BaseListener extends ManuScriptBaseListener{
 	
 	@Override
 	public void enterOutputStatement(ManuScriptParser.OutputStatementContext ctx) {
-		this.expressionChecker(ctx.expression());
+		this.expressionCheck(ctx.expression());
 	}
 	
 	@Override
@@ -366,6 +383,10 @@ public class BaseListener extends ManuScriptBaseListener{
 			if(sctx.isConstant())
 				SemanticErrors.throwError(SemanticErrors.CONSTANT_MOD, ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), varName);
 			else {
+				String type = this.expressionCheck(ctx);
+				if(!sctx.getSymbolType().matches(type)) {
+					//TODO: semantic error
+				}
 //				this.expressionChecker(ctx, sctx.getSymbolType());
 			}
 		} else {
@@ -382,6 +403,10 @@ public class BaseListener extends ManuScriptBaseListener{
 			if(sctx.isConstant())
 				SemanticErrors.throwError(SemanticErrors.CONSTANT_MOD, ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), varName);
 			else {
+				String type = this.expressionCheck(ctx);
+				if(!sctx.getSymbolType().matches(type)) {
+					//TODO: semantic error
+				}
 //				this.expressionChecker(ctx, sctx.getSymbolType());
 			}
 		} else {
@@ -389,230 +414,11 @@ public class BaseListener extends ManuScriptBaseListener{
 		}
 	}
 	
-	private String getExpressionType(ParseTree node) {
-		int i = 0;//TODO: bad implementation
-		while(node.getChild(i) != null) {
-			String type;
-        	if(!(type = getExpressionType(node.getChild(i))).equals(Types.NULL)) {
-        		return type;
-        	}
-        	i++;
-        }
-		
-		String actualType = "null";
-		
-//		if(node.getParent() instanceof LiteralContext) {
-//			LiteralContext lctx = (LiteralContext) node.getParent();
-//			actualType = LiteralMatcher.instance().getLiteralType(lctx);
-//			
-//			return actualType;
-//		} else if(node.getParent() instanceof PrimaryContext && ((PrimaryContext) node.getParent()).equationExpr().Identifier() != null) {
-//			PrimaryContext pctx = (PrimaryContext) node.getParent();
-//			String varName = node.getParent().getText();
-//			SymbolContext sctx;
-//			if((sctx = scopes.peek().checkTables(varName)) != null) {
-//				//Existing variable. now check for type mismatch
-//				actualType = sctx.getSymbolType();
-//			} else {
-//				SemanticErrors.throwError(SemanticErrors.UNDECLARED_VAR, pctx.getStart().getLine(), pctx.getStart().getCharPositionInLine(), varName);
-//			}
-//			return actualType;
-//		}
-		
-		return "null";
-	}
-	
-	private String expressionChecker(ParseTree node, String expectedType) {
-		String finalType = "null";
-    	int i = 0;
-        while(node.getChild(i) != null) {
-        	if(node instanceof ComparisonExprContext 
-    	    		|| node instanceof EqualityExprContext
-    	    		|| node instanceof AndExprContext
-    	    		|| node instanceof OrExprContext) {
-        		System.out.println("bool expression detected");
-        	} else if(!(node instanceof ExpressionListContext)){//TODO: bad implementation
-        		finalType = expressionChecker(node.getChild(i), expectedType);
-        	}
-        	i++;
-        }
-        
-		if (node.getChildCount() == 0) {
-			//check if either literal or variable then check type. return false if mismatch
-			String actualType = "null";
-			
-			if(node.getParent() instanceof LiteralContext) {
-				LiteralContext lctx = (LiteralContext) node.getParent();
-				actualType = LiteralMatcher.instance().getLiteralType(lctx);
-				
-				if(!lctx.getText().equals("null")) {
-					if(!expectedType.equals(actualType))
-						SemanticErrors.throwError(SemanticErrors.TYPE_MISMATCH, lctx.getStart().getLine(), lctx.getStart().getCharPositionInLine(), expectedType);
-				}
-			} else if(node.getParent() instanceof PrimaryContext && ((PrimaryContext) node.getParent()).equationExpr().Identifier() != null) {
-				PrimaryContext pctx = (PrimaryContext) node.getParent();
-				SymbolContext sctx;				
-				String varName = node.getParent().getText();
-
-				if((sctx = scopes.peek().checkTables(varName)) != null) {
-					//Existing variable. now check for type mismatch
-					actualType = sctx.getSymbolType();
-					if(!sctx.getSymbolType().equals(expectedType))
-						SemanticErrors.throwError(SemanticErrors.TYPE_MISMATCH, pctx.getStart().getLine(), pctx.getStart().getCharPositionInLine(), expectedType);
-				} else {
-					SemanticErrors.throwError(SemanticErrors.UNDECLARED_VAR, pctx.getStart().getLine(), pctx.getStart().getCharPositionInLine(), varName);
-				}
-			} else if(node.getParent() instanceof VariableExprContext) {
-				VariableExprContext vectx = (VariableExprContext) node.getParent();
-				MethodContext mctx;
-				String varName = node.getParent().getText();
-
-				if((mctx = methodTable.get(varName)) != null) {
-					//Existing method. now check for return type
-					actualType = mctx.getReturnType();
-					if(!actualType.equals(expectedType)) {
-						SemanticErrors.throwError(SemanticErrors.TYPE_MISMATCH, vectx.getStart().getLine(), vectx.getStart().getCharPositionInLine(), expectedType);
-					}
-				}
-			}
-			System.out.println(node.getText());
-			return actualType;
-	    } else if(node instanceof ComparisonExprContext 
-	    		|| node instanceof EqualityExprContext
-	    		|| node instanceof AndExprContext
-	    		|| node instanceof OrExprContext){
-//	    	ParserRuleContext prctx = (ParserRuleContext) node;
-//	    	if(!expectedType.equals(Literals.BOOLEAN)) {
-//	    		SemanticErrors.throwError(SemanticErrors.TYPE_MISMATCH, prctx.getStart().getLine(), prctx.getStart().getCharPositionInLine(), expectedType);
-//	    	} else
-//	    		this.boolExpressionCheck(node, expectedType);
-//    		return false;
-	    	this.boolExpressionCheck(node, expectedType);
-	    	return "boolean";
-	    } 
-		
-		return finalType;
-	    
-	}
-	
-	private String expressionChecker(ParseTree node) {
-		String finalType = Types.NULL;
-    	int i = 0;
-        while(node.getChild(i) != null) {
-        	if(node instanceof ComparisonExprContext 
-    	    		|| node instanceof EqualityExprContext
-    	    		|| node instanceof AndExprContext
-    	    		|| node instanceof OrExprContext) {
-        		System.out.println("bool expression detected");
-        	} else {
-        		finalType = expressionChecker(node.getChild(i));
-        	}
-        	i++;
-        }
-        
-        if(node.getParent() instanceof PrimaryContext && ((PrimaryContext) node.getParent()).equationExpr().Identifier() != null) {
-			PrimaryContext pctx = (PrimaryContext) node.getParent();
-			String varName = node.getParent().getText();
-			if(scopes.peek().checkTables(varName) == null) {
-				SemanticErrors.throwError(SemanticErrors.UNDECLARED_VAR, pctx.getStart().getLine(), pctx.getStart().getCharPositionInLine(), varName);
-			}
+	@Override
+	public void enterIfElseStmt(ManuScriptParser.IfElseStmtContext ctx) {//TODO: += cannot be seen in if conditions
+		if(!"boolean".matches(this.expressionCheck(ctx.parExpression()))) {
+			SemanticErrors.throwError(SemanticErrors.IF_CONDITION_MISMATCH, ctx.getStart().getLine(), ctx.getStop().getCharPositionInLine());
 		}
-        
-        return finalType;
-	}
-//	private boolean expressionTypeCheck(ParseTree node, String expectedType) {
-//		if (node.getChildCount() == 0) {
-//			//check if either literal or variable then check type. return false if mismatch
-//			if(node.getParent() instanceof LiteralContext) {
-//				LiteralContext lctx = (LiteralContext) node.getParent();
-//				if(!node.getParent().getText().equals("null")) {
-//					if((expectedType.equals(Literals.STRING) && lctx.StringLiteral() == null)
-//							|| (expectedType.equals(Literals.CHARACTER) && lctx.CharacterLiteral() == null)
-//							|| (expectedType.equals(Literals.INTEGER) && lctx.IntegerLiteral() == null)
-//							|| (expectedType.equals(Literals.BOOLEAN) && lctx.BooleanLiteral() == null)
-//							|| (expectedType.equals(Literals.FLOAT) && lctx.FloatingPointLiteral() == null))
-//						SemanticErrors.throwError(SemanticErrors.TYPE_MISMATCH, lctx.getStart().getLine(), lctx.getStart().getCharPositionInLine(), expectedType);
-//				}
-//			} else if(node.getParent() instanceof PrimaryContext && ((PrimaryContext) node.getParent()).Identifier() != null) {
-//				PrimaryContext pctx = (PrimaryContext) node.getParent();
-//				String varName = node.getParent().getText();
-//				SymbolContext sctx;
-//				if((sctx = scopes.peek().checkTables(varName)) != null) {
-//					//Existing variable. now check for type mismatch
-//					if(!sctx.getSymbolType().equals(expectedType))
-//						SemanticErrors.throwError(SemanticErrors.TYPE_MISMATCH, pctx.getStart().getLine(), pctx.getStart().getCharPositionInLine(), expectedType);
-//				} else {
-//					SemanticErrors.throwError(SemanticErrors.UNDECLARED_VAR, pctx.getStart().getLine(), pctx.getStart().getCharPositionInLine(), expectedType);
-//				}
-//			}
-//			System.out.println(node.getText());
-//			return true;
-//	    } else if(node instanceof ComparisonExprContext 
-//	    		|| node instanceof EqualityExprContext
-//	    		|| node instanceof AndExprContext
-//	    		|| node instanceof OrExprContext){
-//	    	System.out.println("comparison check");
-//	    	ParserRuleContext prctx = (ParserRuleContext) node;
-//	    	if(!expectedType.equals(Literals.BOOLEAN)) {
-//	    		SemanticErrors.throwError(SemanticErrors.TYPE_MISMATCH, prctx.getStart().getLine(), prctx.getStart().getCharPositionInLine(), expectedType);
-//	    	} else
-////	    		this.boolExpressionCheck(node, expectedType);
-//    		return false;
-//	    }
-//		else {
-//	    	int i = 0;
-//	        while(node.getChild(i) != null) {
-//	        	expressionTypeCheck(node.getChild(i), expectedType);
-//	        	i++;
-//	        }
-//	    }
-//	    return true;
-//	}
-	
-	//TODO: still not working
-	private boolean boolExpressionCheck(ParseTree node, String expectedType) {
-		//expression check left and right side
-		ParseTree leftNode = node.getChild(0);
-		ParseTree rightNode = node.getChild(2);
-		
-		if(Utils.getNthChild(leftNode, 2) instanceof LiteralContext && Utils.getNthChild(rightNode, 2) instanceof LiteralContext) {
-//			System.out.println("end of comparison expression check");
-			LiteralContext leftCtx = (LiteralContext) Utils.getNthChild(leftNode, 2);
-			LiteralContext rightCtx = (LiteralContext) Utils.getNthChild(rightNode, 2);
-			
-			String leftType = LiteralMatcher.instance().getLiteralType(leftCtx);
-			String rightType = LiteralMatcher.instance().getLiteralType(rightCtx);
-			
-			boolean hasError = false;
-			
-			if(leftType == null || rightType == null) {
-				hasError = true;
-				//error. null cannot be compared
-			}
-			else if(leftType.equals(Types.STRING) || rightType.equals(Types.STRING)) {
-				hasError = true;
-				//error. string cannot be compared
-			}
-			else if((leftType.equals(Types.BOOLEAN) && !rightType.equals(Types.BOOLEAN))
-					|| (!leftType.equals(Types.BOOLEAN) && rightType.equals(Types.BOOLEAN))) {
-				hasError = true;
-				//error. boolean cannot be compared to non boolean
-			}
-			
-			if(hasError) {
-				SemanticErrors.throwError(SemanticErrors.COMPARISON_ERR, leftCtx.getStart().getLine(), leftCtx.getStart().getCharPositionInLine(), node.getChild(1).getText(), leftType, rightType);
-				return false;
-			}
-			
-		} 
-
-//		if(!(leftNode instanceof LiteralContext)) {
-//			this.expressionChecker(leftNode, expectedType);
-//		} 
-//		if(!(rightNode instanceof LiteralContext)) {
-//			this.expressionChecker(rightNode, expectedType);
-//		}
-		return true;
 	}
 	
 	private HashMap<String, SymbolContext> getCurrentSymTable() {
@@ -693,7 +499,7 @@ public class BaseListener extends ManuScriptBaseListener{
 				return methodTable.get(text).getReturnType();
 			} else {
 				PrimaryContext ctx = (PrimaryContext) node;
-				return LiteralMatcher.instance().getLiteralType(ctx.literal());
+				return LiteralMatcher.instance().getPossibleLiteralTypes(ctx.literal());
 			}
 		} else {
 			return this.expressionCheck(node);

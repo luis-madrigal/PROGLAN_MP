@@ -1,19 +1,7 @@
 
-<<<<<<< HEAD
 ACT main starring () {
-	int value = (5 < 1) + (5 * 5 / 1 + 3 + (4 + (5 * 3)))/2.0f * 8.0f;
+	float value = 0;
 
-	Say value;
+	if(value > "asd")
+		Say value;
 }
-=======
-
-ACT main starring() {
- 	int x = 0;
-
-	Say "Hello World";
-	
- 	replay(int i = 0; i < 5; i++) {
- 		Say "Hello World";
- 	}
- }
->>>>>>> eea283ef01540948c1d37a51ac6c590a5d902f09
