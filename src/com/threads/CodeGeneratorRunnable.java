@@ -163,8 +163,8 @@ public class CodeGeneratorRunnable implements Runnable {
 		do {
 			if(isPlay) {
 				pnlParent.changeToInactive();
-//				System.out.println("evaluating: "+pointer);
 				stmt = this.labelMap.get(pointer);
+				Panel.printWatch("evaluating: "+pointer);
 				pointerCount = this.evaluate(methodScope, registers, stmt, pointerCount);
 				pointer = ICGenerator.LABEL_ALIAS+pointerCount;
 				

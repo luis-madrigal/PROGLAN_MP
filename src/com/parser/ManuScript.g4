@@ -693,9 +693,9 @@ creator
     ;
 
 createdName
-    :   primitiveType 
-    | 	pointerType
-    |   structType
+    :   pointerType
+    | 	structType
+    |   primitiveType
     ;
 //
 //innerCreator

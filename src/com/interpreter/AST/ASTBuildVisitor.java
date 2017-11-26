@@ -1,6 +1,7 @@
 package com.interpreter.AST;
 
 import com.interpreter.Scope;
+import com.interpreter.contexts.ContextType;
 import com.interpreter.contexts.SymbolContext;
 import com.parser.ManuScriptBaseVisitor;
 import com.parser.ManuScriptParser;
@@ -736,12 +737,61 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
     }
 
     @Override
+    public AbstractSyntaxTree visitArrayInitExpr(ManuScriptParser.ArrayInitExprContext ctx) {
+        System.out.println("visitingARRINITEXPR "+ctx.getStart().getLine()+"    "+ctx.getText());
+        configureIsBreakpoint(ctx.getStart().getLine());
+
+        AbstractSyntaxTree aiExpr = new AbstractSyntaxTree(null);
+        aiExpr.setNodeType(NodeType.ARRAY_INIT);
+
+        ManuScriptParser.ArrayCreatorRestContext arRest = ctx.creator().arrayCreatorRest();
+        if(arRest.arrayInitializer() != null) {
+            //for '= int[]{a,b,c};'
+            aiExpr.setValue("val");
+            AbstractSyntaxTree ai = visit(arRest.arrayInitializer());
+            if(ai != null){
+                ai.setParent(aiExpr);
+                aiExpr.addChild(ai);
+            }
+        }
+        else {
+            //for '= int[x];'
+            aiExpr.setValue("dim");
+            for(ManuScriptParser.ExpressionContext expr : arRest.expression()){
+                AbstractSyntaxTree exprNode = visit(expr);
+                if(exprNode != null){
+                    exprNode.setParent(aiExpr);
+                    aiExpr.addChild(exprNode);
+                }
+            }
+        }
+
+        return aiExpr;
+    }
+
+    @Override
+    public AbstractSyntaxTree visitArrayInitializer(ManuScriptParser.ArrayInitializerContext ctx) {
+        System.out.println("visitingARRINITIALIZER "+ctx.getStart().getLine()+"    "+ctx.getText());
+        configureIsBreakpoint(ctx.getStart().getLine());
+        AbstractSyntaxTree node = new AbstractSyntaxTree(null);
+        node.setNodeType(NodeType.ARRAY_BLOCK);
+        for(ManuScriptParser.VariableInitializerContext viCtx : ctx.variableInitializer()){
+            AbstractSyntaxTree vi = visit(viCtx);
+            if(vi != null){
+                vi.setParent(node);
+                node.addChild(vi);
+            }
+        }
+
+        return node;
+    }
+
+    @Override
     public AbstractSyntaxTree visitVariableDeclarator(ManuScriptParser.VariableDeclaratorContext ctx) {
-
-
         System.out.println("visitingVARDEC "+ctx.getStart().getLine()+"    "+ctx.getText());
         configureIsBreakpoint(ctx.getStart().getLine());
         AbstractSyntaxTree node = new AbstractSyntaxTree(null);
+
         node.setNodeType(NodeType.VAR_DECLARE);   //TODO: add nodetype if not assign
         node.setValue(ctx.getChild(1));
         node.setBreakpoint(this.isBreakpoint);
@@ -755,14 +805,41 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
         }
 
         if(ctx.variableInitializer() != null) {
-//            node.setNodeType(NodeType.ASSIGN);
-            AbstractSyntaxTree value = visit(ctx.variableInitializer());
-            if (value != null) {
-                value.setParent(node);
-                node.addChild(value);
+            ManuScriptParser.VariableInitializerContext varInit = ctx.variableInitializer();
+            //check if variable is of type array
+            if(((SymbolContext)var.getValue()).getCtxType().equals(ContextType.ARRAY)){
+                node.setNodeType(NodeType.ARRAY_ASSIGN);
+                if(varInit.expression() instanceof ManuScriptParser.ArrayInitExprContext){
+                    //for '= int[x];' && '= int[]{a,b,c};'
+                    AbstractSyntaxTree value = visitArrayInitExpr((ManuScriptParser.ArrayInitExprContext)varInit.expression());
+                    if (value != null) {
+                        value.setParent(node);
+                        node.addChild(value);
+                    }
+                }
+                else if(varInit.arrayInitializer() !=  null){
+                    //for '= {a,b,c,d}'
+                    AbstractSyntaxTree init = new AbstractSyntaxTree(node);
+                    init.setNodeType(NodeType.ARRAY_INIT);
+                    init.setValue("val");
+
+                    AbstractSyntaxTree value = visitArrayInitializer(varInit.arrayInitializer());
+                    if (value != null) {
+                        value.setParent(init);
+                        init.addChild(value);
+                    }
+
+                    node.addChild(init);
+                }
+            }
+            else {  //if variable is normal type
+                AbstractSyntaxTree value = visit(varInit);
+                if (value != null) {
+                    value.setParent(node);
+                    node.addChild(value);
+                }
             }
         }
-
 
         return node;
     }

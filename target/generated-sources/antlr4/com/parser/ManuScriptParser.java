@@ -5284,14 +5284,14 @@ public class ManuScriptParser extends Parser {
 	}
 
 	public static class CreatedNameContext extends ParserRuleContext {
-		public PrimitiveTypeContext primitiveType() {
-			return getRuleContext(PrimitiveTypeContext.class,0);
-		}
 		public PointerTypeContext pointerType() {
 			return getRuleContext(PointerTypeContext.class,0);
 		}
 		public StructTypeContext structType() {
 			return getRuleContext(StructTypeContext.class,0);
+		}
+		public PrimitiveTypeContext primitiveType() {
+			return getRuleContext(PrimitiveTypeContext.class,0);
 		}
 		public CreatedNameContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -5323,21 +5323,21 @@ public class ManuScriptParser extends Parser {
 				enterOuterAlt(_localctx, 1);
 				{
 				setState(710);
-				primitiveType();
+				pointerType();
 				}
 				break;
 			case 2:
 				enterOuterAlt(_localctx, 2);
 				{
 				setState(711);
-				pointerType();
+				structType();
 				}
 				break;
 			case 3:
 				enterOuterAlt(_localctx, 3);
 				{
 				setState(712);
-				structType();
+				primitiveType();
 				}
 				break;
 			}
@@ -5837,7 +5837,7 @@ public class ManuScriptParser extends Parser {
 		"\3\2\2\2\u02bfy\3\2\2\2\u02c0\u02c4\5f\64\2\u02c1\u02c4\5J&\2\u02c2\u02c4"+
 		"\5x=\2\u02c3\u02c0\3\2\2\2\u02c3\u02c1\3\2\2\2\u02c3\u02c2\3\2\2\2\u02c4"+
 		"{\3\2\2\2\u02c5\u02c6\5~@\2\u02c6\u02c7\5\u0080A\2\u02c7}\3\2\2\2\u02c8"+
-		"\u02cc\5(\25\2\u02c9\u02cc\5$\23\2\u02ca\u02cc\5&\24\2\u02cb\u02c8\3\2"+
+		"\u02cc\5$\23\2\u02c9\u02cc\5&\24\2\u02ca\u02cc\5(\25\2\u02cb\u02c8\3\2"+
 		"\2\2\u02cb\u02c9\3\2\2\2\u02cb\u02ca\3\2\2\2\u02cc\177\3\2\2\2\u02cd\u02e9"+
 		"\7N\2\2\u02ce\u02d3\7O\2\2\u02cf\u02d0\7N\2\2\u02d0\u02d2\7O\2\2\u02d1"+
 		"\u02cf\3\2\2\2\u02d2\u02d5\3\2\2\2\u02d3\u02d1\3\2\2\2\u02d3\u02d4\3\2"+
