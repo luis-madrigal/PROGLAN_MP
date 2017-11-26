@@ -29,10 +29,12 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
+import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextPane;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.UIManager;
+import javax.swing.table.DefaultTableModel;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.DefaultStyledDocument;
@@ -58,9 +60,6 @@ import com.override.CustomScrollBarUISky;
 import com.parser.ScannerModel;
 import com.save.TextFileHandler;
 import com.utils.Console;
-
-
-
 
 public class Panel implements Runnable, ActionListener, KeyListener, MouseListener {
 	public static boolean status = true;
@@ -100,12 +99,15 @@ public class Panel implements Runnable, ActionListener, KeyListener, MouseListen
 	private JTextPane parsedOut;
 	public static JTextPane threeACOut;
 	public static JTextPane watchOut;
-
+	private JTable watchTable;
+	private DefaultTableModel modelWatchTable;
+	
 	private JPanel inputPaneParent;
 	private RTextScrollPane inputPane;
 	private JScrollPane parsedPane;
 	private JScrollPane threeACPane;
 	private JScrollPane watchPane;
+	private JScrollPane tempWatchPane; //TODO: Delete when merged with watchPane
 	private JScrollPane treePane;
 	private JScrollPane consolePane;
 
@@ -153,7 +155,11 @@ public class Panel implements Runnable, ActionListener, KeyListener, MouseListen
         UIManager.put("TabbedPane.focus", Color.WHITE);
         UIManager.put("TabbedPane.selectHighlight", Color.WHITE);
         
-
+        //For Watch Table
+        UIManager.getLookAndFeelDefaults().put("Table.background", SUBLIME_BG);
+        UIManager.getLookAndFeelDefaults().put("Table.gridColor", Styles.SKY_BLUE);
+        UIManager.getLookAndFeelDefaults().put("Table.foreground", Color.WHITE);
+        
 		this.textFileHandler = new TextFileHandler();
 		this.styles = new Styles();
 		//-----------------------Syntax Highlighting (for output) TO REMOVE----------------------------------
@@ -190,9 +196,6 @@ public class Panel implements Runnable, ActionListener, KeyListener, MouseListen
 		this.pnlMain.setBackground(Color.WHITE);
 		this.pnlMain.isOpaque();
 		GridBagConstraints gbc;
-		
-		
-		
 		
 		//Run Button		
 		gbc = new GridBagConstraints();
@@ -399,8 +402,6 @@ public class Panel implements Runnable, ActionListener, KeyListener, MouseListen
 		// For watch variables
 		this.watcher = new Searcher();
 		
-		this.dlgWatch = new DialogWatch();
-		
 		watchOut = new JTextPane();
 		watchOut.setFont(new Font("Consolas", 150, baseFontSize));
 		watchOut.setEditable(false);
@@ -426,6 +427,27 @@ public class Panel implements Runnable, ActionListener, KeyListener, MouseListen
 		        (int)watchPane.getVerticalScrollBar().getPreferredSize().getHeight()
 		));
 		
+		String header[] = new String[] {"Variable", "Line", "In method", "Current Value"};
+		this.modelWatchTable = new DefaultTableModel(0, 0);
+		this.modelWatchTable.setColumnIdentifiers(header);
+		
+		this.watchTable = new JTable();
+//		this.watchTable.setUI(UIManager);
+		this.watchTable.setModel(this.modelWatchTable);
+		
+		//TODO: Delete when merged with watchPane
+		this.tempWatchPane = new JScrollPane(this.watchTable);
+		this.tempWatchPane.setPreferredSize(new Dimension((int) Frame.SCREEN_SIZE.getWidth()/2, 150));
+		this.tempWatchPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		this.tempWatchPane.getVerticalScrollBar().setUI(new CustomScrollBarUISky());
+		this.tempWatchPane.getHorizontalScrollBar().setUI(new CustomScrollBarUISky());
+		this.tempWatchPane.setBorder(null);
+		this.tempWatchPane.getHorizontalScrollBar().setPreferredSize(new Dimension(
+				(int)tempWatchPane.getHorizontalScrollBar().getPreferredSize().getWidth(),
+				(int)horizontalHeight));
+		this.tempWatchPane.getVerticalScrollBar().setPreferredSize(new Dimension(
+				(int)horizontalHeight,
+				(int)tempWatchPane.getVerticalScrollBar().getPreferredSize().getHeight()));
 		
 		JPanel parentPane = new JPanel();
 		parentPane.setLayout(new BoxLayout(parentPane, BoxLayout.Y_AXIS));
@@ -472,6 +494,7 @@ public class Panel implements Runnable, ActionListener, KeyListener, MouseListen
 		this.outputTabs.add("Parse Tree", parentPane);
 
 		this.outputTabs.add("Watch", this.watchPane);
+		this.outputTabs.add("Temp Watch", this.tempWatchPane); //TODO: Delete when merged with watchPane
 
 		this.outputTabs.setFont(FrameStatic.fntDefault);
 		outputTabs.setBackground(Color.WHITE);
@@ -949,7 +972,6 @@ public class Panel implements Runnable, ActionListener, KeyListener, MouseListen
 		
 		if(e.getSource() == btnLoad) {
 			this.dlgOpen.show(pnlMain);	
-
 		}
 		
 		if(e.getSource() == btnContinue) {
@@ -964,12 +986,24 @@ public class Panel implements Runnable, ActionListener, KeyListener, MouseListen
 			System.out.println("Watch");
 			
 			ArrayList<VariableNode> varList = new ArrayList<VariableNode>();
-			
 			watcher.generateVarList(this.codeInput.getText());
 			varList = watcher.getVarList();
 		
-			this.dlgWatch.placeVarList(varList);
+			this.dlgWatch = new DialogWatch(varList);
+			this.dlgWatch.placeVarList();
 			this.dlgWatch.setVisible(true);
+			
+			ArrayList<VariableNode> selectedVar = new ArrayList<VariableNode>();
+			selectedVar = this.dlgWatch.getSelectedVar();
+			
+			for(VariableNode var : selectedVar) {
+				this.modelWatchTable.addRow(new Object[] {var.getDataType()+" "+var.getLiteral(), var.getLineNumber(), var.getFuncParent()+" ("+var.getFuncChild()+")", "0"});
+				
+//				System.out.println("Line "+var.getLineNumber()+": "+var.getDataType()+" "+var.getLiteral()+
+//						" ("+var.getFuncParent()+", "+var.getFuncChild()+")");
+			}
+			
+			this.outputTabs.setSelectedIndex(this.outputTabs.getTabCount()-1);
 		}
 		
 		if(e.getSource() == this.dlgSave.getBtnSave()) {

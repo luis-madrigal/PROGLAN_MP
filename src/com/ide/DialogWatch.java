@@ -8,16 +8,13 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
 import java.util.ArrayList;
 
-import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
 import javax.swing.JSeparator;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
@@ -25,7 +22,7 @@ import javax.swing.border.EmptyBorder;
 import com.debug.watch.VariableNode;
 import com.ide.styles.Styles;
 
-public class DialogWatch extends JFrame implements WindowListener, MouseListener {
+public class DialogWatch extends JDialog implements MouseListener {
 	private static final long serialVersionUID = 1L;
 	private static final int MAX_WIDTH = 700;
 	private static final int MAX_HEIGHT = 450;
@@ -38,22 +35,28 @@ public class DialogWatch extends JFrame implements WindowListener, MouseListener
 	private JLabel lblMethod;
 	private JLabel lblBlock;
 	
+	private ArrayList<JCheckBox> checkboxList;
 	private JButton btnOK;
+	private JButton btnClose;
 	
-	public DialogWatch() {
+	private ArrayList<VariableNode> varList;
+	private ArrayList<VariableNode> selectedVar;
+	
+	public DialogWatch(ArrayList<VariableNode> varList) {
+		this.varList = varList;
+		this.selectedVar = new ArrayList<VariableNode>();
 		this.initComponents();
 	}
 	
 	public void initComponents() {
-		this.setMaximumSize(new Dimension(MAX_WIDTH, MAX_HEIGHT));
+		this.setSize(MAX_WIDTH, MAX_HEIGHT);
 		this.getContentPane().setBackground(Color.WHITE);
 		this.setLayout(new GridBagLayout());
-		this.setResizable(false);
+		this.setUndecorated(true);
+		this.setModal(true);
 		this.setLocationRelativeTo(null);
-		this.setFocusable(true);
-		this.setAutoRequestFocus(true);
+		this.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 		
-//		this.lblMainHeader = this.initLabelMain("Select which variable/s to watch:");
 		this.lblHeader = this.initLabelHeader("");
 		this.lblLine = this.initLabelHeader("Line No.");
 		this.lblVarName = this.initLabelHeader("Variable");
@@ -61,10 +64,130 @@ public class DialogWatch extends JFrame implements WindowListener, MouseListener
 		this.lblMethod = this.initLabelHeader("In method");
 		this.lblBlock = this.initLabelHeader("In method block");
 		
+		this.checkboxList = new ArrayList<JCheckBox>();
+		
 		this.btnOK = new JButton("OK");
 		this.btnOK.setRolloverEnabled(false);
 		this.btnOK.setOpaque(true);
 		this.btnOK.setBackground(Styles.SKY_BLUE);
+		this.btnOK.addMouseListener(this);
+		
+		this.btnClose = new JButton("Cancel");
+		this.btnClose.setRolloverEnabled(false);
+		this.btnClose.setOpaque(true);
+		this.btnClose.setBackground(Styles.SKY_BLUE);
+		this.btnClose.addMouseListener(this);
+	}
+	
+	public void placeVarList() {
+		GridBagConstraints gbc;
+		
+		gbc = new GridBagConstraints();
+		gbc.fill = GridBagConstraints.BOTH;
+		gbc.gridy = 0;
+		gbc.gridx = 0;
+		this.add(this.lblHeader, gbc);
+		
+		gbc = new GridBagConstraints();
+		gbc.fill = GridBagConstraints.BOTH;
+		gbc.ipadx = 70;
+		gbc.gridy = 0;
+		gbc.gridx = 1;
+		this.add(this.lblVarName, gbc);
+		
+		gbc = new GridBagConstraints();
+		gbc.fill = GridBagConstraints.BOTH;
+		gbc.ipadx = 50;
+		gbc.gridy = 0;
+		gbc.gridx = 2;
+		this.add(this.lblType, gbc);
+		
+		gbc = new GridBagConstraints();
+		gbc.fill = GridBagConstraints.BOTH;
+		gbc.ipadx = 50;
+		gbc.gridy = 0;
+		gbc.gridx = 3;
+		this.add(this.lblLine, gbc);
+		
+		gbc = new GridBagConstraints();
+		gbc.fill = GridBagConstraints.BOTH;
+		gbc.ipadx = 50;
+		gbc.gridy = 0;
+		gbc.gridx = 4;
+		this.add(this.lblMethod, gbc);
+		
+		gbc = new GridBagConstraints();
+		gbc.fill = GridBagConstraints.BOTH;
+		gbc.ipadx = 50;
+		gbc.gridy = 0;
+		gbc.gridx = 5;
+		this.add(this.lblBlock, gbc);
+		
+		gbc = new GridBagConstraints();
+		gbc.gridx = 0;
+		gbc.gridy = 1;
+		gbc.gridwidth = 6;
+		gbc.anchor = GridBagConstraints.NORTHWEST;
+		gbc.fill = GridBagConstraints.HORIZONTAL;
+		gbc.weightx = 1;
+		JSeparator mainSep = this.initSeparatorHorizontal();
+		this.add(mainSep, gbc);
+		
+		int y = 2;
+		
+		for(VariableNode variable : varList) {
+			gbc = new GridBagConstraints();
+			gbc.anchor = GridBagConstraints.NORTHWEST;
+			gbc.gridy = y;
+			
+			gbc.gridx = 0;
+			JCheckBox checkbox = this.initCheckbox();
+			checkbox.setSelected(false);
+			this.checkboxList.add(checkbox);
+			this.add(checkbox, gbc);
+			
+			gbc.gridx = 1;
+			JLabel varName = this.initLabelVarName(variable.getLiteral());
+			this.add(varName, gbc);
+			
+			gbc.gridx = 2;
+			JLabel dataType = this.initLabelDataType(variable.getDataType());
+			this.add(dataType, gbc);
+			
+			gbc.gridx = 3;
+			JLabel lineNo = this.initLabelLineNum(String.valueOf(variable.getLineNumber()));
+			this.add(lineNo, gbc);
+			
+			gbc.gridx = 4;
+			JLabel method = this.initLabelMethod(variable.getFuncParent());
+			this.add(method, gbc);
+			
+			gbc.gridx = 5;
+			JLabel methodBlock = this.initLabelMethod(variable.getFuncChild());
+			this.add(methodBlock, gbc);
+			
+			y+=2;
+		}
+		
+		gbc = new GridBagConstraints();
+		gbc.anchor = GridBagConstraints.SOUTHWEST;
+		gbc.gridy = y-1;
+		gbc.gridx = 0;
+		gbc.gridwidth = 6;
+		JSeparator lastSep = this.initSeparatorHorizontal();
+		this.add(lastSep, gbc);
+		
+		gbc = new GridBagConstraints();
+		gbc.anchor = GridBagConstraints.SOUTHEAST;
+		gbc.gridy = y;
+		gbc.gridx = 5;
+		gbc.insets = new Insets(10, 0, 10, 10);
+		this.add(this.btnClose, gbc);
+		
+		gbc.insets = new Insets(10, 0, 10, 100);
+		this.add(this.btnOK, gbc);
+		
+		this.pack();
 	}
 	
 	public JSeparator initSeparatorHorizontal() {
@@ -173,178 +296,44 @@ public class DialogWatch extends JFrame implements WindowListener, MouseListener
 		
 		return lbl;
 	}
+
+	public ArrayList<VariableNode> getSelectedVar() {
+		return this.selectedVar;
+	}
 	
-	public void placeVarList(ArrayList<VariableNode> varList) {
-		
-		GridBagConstraints gbc;
-		
-		gbc = new GridBagConstraints();
-		gbc.fill = GridBagConstraints.BOTH;
-		gbc.gridy = 0;
-		gbc.gridx = 0;
-		this.add(this.lblHeader, gbc);
-		
-		gbc = new GridBagConstraints();
-		gbc.fill = GridBagConstraints.BOTH;
-		gbc.ipadx = 70;
-		gbc.gridy = 0;
-		gbc.gridx = 1;
-		this.add(this.lblVarName, gbc);
-		
-		gbc = new GridBagConstraints();
-		gbc.fill = GridBagConstraints.BOTH;
-		gbc.ipadx = 50;
-		gbc.gridy = 0;
-		gbc.gridx = 2;
-		this.add(this.lblType, gbc);
-		
-		gbc = new GridBagConstraints();
-		gbc.fill = GridBagConstraints.BOTH;
-		gbc.ipadx = 50;
-		gbc.gridy = 0;
-		gbc.gridx = 3;
-		this.add(this.lblLine, gbc);
-		
-		gbc = new GridBagConstraints();
-		gbc.fill = GridBagConstraints.BOTH;
-		gbc.ipadx = 50;
-		gbc.gridy = 0;
-		gbc.gridx = 4;
-		this.add(this.lblMethod, gbc);
-		
-		gbc = new GridBagConstraints();
-		gbc.fill = GridBagConstraints.BOTH;
-		gbc.ipadx = 50;
-		gbc.gridy = 0;
-		gbc.gridx = 5;
-		this.add(this.lblBlock, gbc);
-		
-		gbc = new GridBagConstraints();
-		gbc.gridx = 0;
-		gbc.gridy = 1;
-		gbc.gridwidth = 6;
-		gbc.anchor = GridBagConstraints.NORTHWEST;
-		gbc.fill = GridBagConstraints.HORIZONTAL;
-		gbc.weightx = 1;
-		JSeparator mainSep = this.initSeparatorHorizontal();
-		this.add(mainSep, gbc);
-		
-		int y = 2;
-		
-		for(VariableNode variable : varList) {
-			gbc = new GridBagConstraints();
-			gbc.anchor = GridBagConstraints.NORTHWEST;
-			gbc.gridy = y;
+	@Override
+	public void mouseReleased(MouseEvent arg0) {
+		if(arg0.getSource().equals(this.btnOK)) {
+			for(int i = 0; i < this.checkboxList.size(); i++) {
+				if(this.checkboxList.get(i).isSelected()) {
+					this.selectedVar.add(this.varList.get(i));
+				}
+			}
 			
-			gbc.gridx = 0;
-			JCheckBox checkbox = this.initCheckbox();
-			checkbox.setSelected(false);
-			this.add(checkbox, gbc);
-			
-			gbc.gridx = 1;
-			JLabel varName = this.initLabelVarName(variable.getLiteral());
-			this.add(varName, gbc);
-			
-			gbc.gridx = 2;
-			JLabel dataType = this.initLabelDataType(variable.getDataType());
-			this.add(dataType, gbc);
-			
-			gbc.gridx = 3;
-			JLabel lineNo = this.initLabelLineNum(String.valueOf(variable.getLineNumber()));
-			this.add(lineNo, gbc);
-			
-			gbc.gridx = 4;
-			JLabel method = this.initLabelMethod(variable.getFuncParent());
-			this.add(method, gbc);
-			
-			gbc.gridx = 5;
-			JLabel methodBlock = this.initLabelMethod(variable.getFuncChild());
-			this.add(methodBlock, gbc);
-			
-			y+=2;
+			this.dispose();
 		}
-		
-		gbc = new GridBagConstraints();
-		gbc.anchor = GridBagConstraints.SOUTHWEST;
-		gbc.gridy = y-1;
-		gbc.gridx = 0;
-		gbc.gridwidth = 6;
-		JSeparator lastSep = this.initSeparatorHorizontal();
-		this.add(lastSep, gbc);
-		
-		gbc = new GridBagConstraints();
-		gbc.anchor = GridBagConstraints.SOUTHEAST;
-		gbc.gridy = y;
-		gbc.gridx = 5;
-		gbc.insets = new Insets(10, 0, 10, 10);
-		this.add(this.btnOK, gbc);
-		
-		this.pack();
+		else if(arg0.getSource().equals(this.btnClose))
+			this.dispose();
 	}
 	
-	@Override
-	public void windowActivated(WindowEvent arg0) {
-		
-	}
-
-	@Override
-	public void windowClosed(WindowEvent arg0) {
-		
-	}
-
-	@Override
-	public void windowClosing(WindowEvent arg0) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void windowDeactivated(WindowEvent arg0) {
-		
-	}
-
-	@Override
-	public void windowDeiconified(WindowEvent arg0) {
-	
-	}
-
-	@Override
-	public void windowIconified(WindowEvent arg0) {
-		
-	}
-
-	@Override
-	public void windowOpened(WindowEvent arg0) {
-		
-	}
-
 	@Override
 	public void mouseClicked(MouseEvent arg0) {
-		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
 	public void mouseEntered(MouseEvent arg0) {
-		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
 	public void mouseExited(MouseEvent arg0) {
-		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
 	public void mousePressed(MouseEvent arg0) {
-		// TODO Auto-generated method stub
 		
 	}
-
-	@Override
-	public void mouseReleased(MouseEvent arg0) {
-		// TODO Auto-generated method stub
-		
-	}
+	
 }
