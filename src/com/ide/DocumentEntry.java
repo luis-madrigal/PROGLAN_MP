@@ -4,15 +4,18 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Font;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 
 import javax.swing.BoxLayout;
-import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import com.ide.styles.Styles;
 
-public class DocumentEntry extends JPanel {
+import sun.font.TextLabel;
+
+public class DocumentEntry extends JPanel implements MouseListener {
 	private static final long serialVersionUID = 1L;
 
 	private String title;
@@ -24,19 +27,18 @@ public class DocumentEntry extends JPanel {
 	private JLabel lblLineNumberBorder;
 	private JLabel lblLineNumber;
 	
-//	private JButton btnEntry;
-	
 	public DocumentEntry(String title, int lineNumber, int linePosition, int width) {
 		this.title = title;
 		this.lineNumber = lineNumber;
 		this.linePosition = linePosition;
 		
+		this.addMouseListener(this);
 		
 		this.setSize(width, 30);
 		this.setMinimumSize(this.getSize());
 		this.setPreferredSize(this.getSize());
 		this.setOpaque(true);
-		this.setBackground(Styles.LIGHT_GRAY);
+		this.setBackground(Styles.PALE_GRAY);
 		
 //		this.setText(lineNumber+" "+title);
 		Cursor.getPredefinedCursor(Cursor.HAND_CURSOR);
@@ -52,8 +54,8 @@ public class DocumentEntry extends JPanel {
 		lblLineNumberBorder.setPreferredSize(lblLineNumberBorder.getSize());
 		lblLineNumberBorder.setMinimumSize(lblLineNumberBorder.getSize());
 		lblLineNumberBorder.setMaximumSize(lblLineNumberBorder.getSize());
-//		lblLineNumberBorder.setBackground(Color.WHITE);
-//		lblLineNumberBorder.setOpaque(true);
+		lblLineNumberBorder.setBackground(Color.WHITE);
+		lblLineNumberBorder.setOpaque(true);
 		
 		this.lblLineNumber = new JLabel();
 		lblLineNumber.setFont(fontLine);
@@ -64,7 +66,7 @@ public class DocumentEntry extends JPanel {
 		lblLineNumber.setPreferredSize(lblLineNumber.getSize());
 		lblLineNumber.setMinimumSize(lblLineNumber.getSize());
 		lblLineNumber.setMaximumSize(lblLineNumber.getSize());
-		lblLineNumber.setBackground(Styles.SKY_BLUE);
+		lblLineNumber.setBackground(Styles.PALE_GRAY);
 		lblLineNumber.setOpaque(true);
 		
 		lblLineNumberBorder.setAlignmentX(Component.RIGHT_ALIGNMENT);
@@ -125,4 +127,34 @@ public class DocumentEntry extends JPanel {
 	public void setLinePosition(int linePosition) {
 		this.linePosition = linePosition;
 	}
+
+	@Override
+	public void mouseClicked(MouseEvent e) {
+		
+	}
+
+	@Override
+	public void mouseEntered(MouseEvent e) {
+		lblLineNumber.setBackground(Styles.SKY_BLUE);
+//		lblText.setBackground(Styles.PALE_GRAY);
+	}
+
+	@Override
+	public void mouseExited(MouseEvent e) {
+
+		lblLineNumber.setBackground(Styles.PALE_GRAY);
+		lblText.setBackground(Color.WHITE);
+	}
+
+	@Override
+	public void mousePressed(MouseEvent e) {
+		
+	}
+
+	@Override
+	public void mouseReleased(MouseEvent e) {
+
+		lblLineNumber.setBackground(Styles.SKY_BLUE);
+	}
+
 }
