@@ -1,4 +1,3 @@
-
 int counter = 0;
 
 composition subrecord{
@@ -25,5 +24,4 @@ ACT main starring ()  {
 	int c 5;
 	int* pointerc;
 	pointerc = c;
-
 }
