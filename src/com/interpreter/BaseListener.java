@@ -74,6 +74,7 @@ public class BaseListener extends ManuScriptBaseListener{
 
 	private ArrayInfo checkArraySemantics(ArrayInfo arInf, int dimCount, String varType, VariableDeclaratorContext vdctx, int line, int charPosition){
 		if(vdctx.variableInitializer() != null) {
+			arInf.setInitialized(true);
 			ManuScriptParser.VariableInitializerContext vdi = vdctx.variableInitializer();
 			if (vdi.expression() instanceof ArrayInitExprContext) {
 				ManuScriptParser.CreatorContext crCtx = ((ArrayInitExprContext) vdi.expression()).creator();
@@ -128,7 +129,7 @@ public class BaseListener extends ManuScriptBaseListener{
 				if(vdi.arrayInitializer() != null){
 					//checking if array init is of type = {1,2,32,4,21};
 					int height = getBlockHeight(vdi.arrayInitializer().getText());
-						if(dimCount != height)
+					if(dimCount != height)
 						SemanticErrors.throwError(SemanticErrors.ILLEGAL_INIT,
 								vdi.arrayInitializer().getStart().getLine(),
 								vdi.arrayInitializer().getStart().getCharPositionInLine(),

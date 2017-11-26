@@ -114,6 +114,10 @@ public class ArrayInfo implements GenericInfo<ArrayInfo>{
         return isInitialized;
     }
 
+    public void setInitialized(boolean isInitialized){
+        this.isInitialized = isInitialized;
+    }
+
     public String toSring(){
         return Arrays.deepToString(array);
     }
