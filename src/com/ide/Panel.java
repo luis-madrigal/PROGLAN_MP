@@ -383,7 +383,8 @@ public class Panel implements CaretListener, Runnable, ActionListener, KeyListen
         threeACOut.setBackground(Color.WHITE);
         threeACOut.isOpaque();
         threeACOut.setMargin(new Insets(5, 5, 0, 0));
-		
+
+        threeACOut.setSelectionColor(Styles.UN_HIGHLIGHT_BLUE);
         
 		this.threeACPane = new JScrollPane(threeACOut);
 		this.threeACPane.setPreferredSize(new Dimension((int) Frame.SCREEN_SIZE.getWidth()/2, 150));
@@ -432,7 +433,7 @@ public class Panel implements CaretListener, Runnable, ActionListener, KeyListen
 		watchOut.setBackground(Color.WHITE);
         watchOut.isOpaque();
         watchOut.setMargin(new Insets(5, 5, 0, 0));
-        
+        watchOut.setSelectionColor(Styles.UN_HIGHLIGHT_BLUE);
 		this.watchPane = new JScrollPane(watchOut);
 		this.watchPane.setPreferredSize(new Dimension((int) Frame.SCREEN_SIZE.getWidth()/2, 150));
 		this.watchPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
@@ -1182,7 +1183,7 @@ public class Panel implements CaretListener, Runnable, ActionListener, KeyListen
 			scanner.getRunnableCodeGenerator().pause();
 		}
 		if(e.getSource() == btnWatch) {
-System.out.println("Watch");
+			System.out.println("Watch");
 			
 			ArrayList<VariableNode> varList = new ArrayList<VariableNode>();
 			watcher.generateVarList(this.codeInput.getText());

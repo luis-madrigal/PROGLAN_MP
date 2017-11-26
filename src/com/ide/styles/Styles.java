@@ -44,7 +44,8 @@ public class Styles {
 	public final static Color BRIGHT_BLUE = new Color(7, 218, 242);
 	public final static Color LIGHT_TEAL = new Color(64, 171, 183);
 	public final static Color UN_CONSOLE_SYSTEM = LIGHT_TEAL; // VIOLET; // new Color(0, 0, 0);
-	
+	public final static Color UN_HIGHLIGHT_BLUE = new Color(86, 231, 247); // new Color(214, 32, 77);//new Color(26, 140, 158); //new Color(170, 5, 96); //new Color(94, 18, 16);
+
 	private ArrayList<IdeStyle> styles;
 	
 //	public static Style LITERAL = new Style("\"(.*)\"", new SimpleAttributeSet());
