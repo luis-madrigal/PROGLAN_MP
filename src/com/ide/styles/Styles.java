@@ -35,6 +35,8 @@ public class Styles {
 		
 	public final static Color UN_CONSOLE_LOG = TEXT_GRAY;// new Color(0, 168, 133);
 	public final static Color UN_CONSOLE_ERR = Color.RED;
+	public final static Color UN_ERR_SELECTION = new Color(109, 7, 33);//new Color(130, 20, 99);// new Color(94, 18, 16);
+	public final static Color UN_ERR_HIGHLIGHT = new Color(221, 17, 68); // new Color(214, 32, 77);//new Color(26, 140, 158); //new Color(170, 5, 96); //new Color(94, 18, 16);
 
 	public final static Color VIOLET = new Color(178, 103, 244);
 

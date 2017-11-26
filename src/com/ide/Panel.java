@@ -29,9 +29,12 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
+import javax.swing.JTextArea;
 import javax.swing.JTextPane;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.UIManager;
+import javax.swing.event.CaretEvent;
+import javax.swing.event.CaretListener;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.DefaultStyledDocument;
@@ -61,7 +64,7 @@ import com.utils.Console;
 
 
 
-public class Panel implements Runnable, ActionListener, KeyListener, MouseListener, PropertyChangeListener {
+public class Panel implements CaretListener, Runnable, ActionListener, KeyListener, MouseListener, PropertyChangeListener {
 	public static boolean status = true;
 	private Frame frameParent;
 	private DialogSave dlgSave;
@@ -258,7 +261,7 @@ public class Panel implements Runnable, ActionListener, KeyListener, MouseListen
 		this.codeInput.setBracketMatchingEnabled(true);
 		this.codeInput.setCloseCurlyBraces(true);
 		this.codeInput.setMatchedBracketBGColor(SUBLIME_HIGHLIGHT);
-		
+		this.codeInput.addCaretListener(this);
 //		this.codeInput.setCurrentLineHighlightColor(Styles.PALE_GRAY);
 		this.codeInput.setCurrentLineHighlightColor(SUBLIME_HIGHLIGHT);
 		this.codeInput.setSelectedTextColor(Styles.LIGHT_GRAY);
@@ -1178,8 +1181,11 @@ public class Panel implements Runnable, ActionListener, KeyListener, MouseListen
 
 			int line = Integer.parseInt(attributeSet.getAttribute("key").toString());
 
+			
 			RXTextUtilities.gotoStartOfLine(codeInput, line);
 			RXTextUtilities.centerLineInScrollPane(codeInput);
+			this.codeInput.setCurrentLineHighlightColor(Styles.UN_ERR_HIGHLIGHT);
+
 		 }
 	}
 
@@ -1220,6 +1226,22 @@ public class Panel implements Runnable, ActionListener, KeyListener, MouseListen
 		if(this.codeInput.getText().contains("ACT ") && e.getSource() == this.codeInput) {
 			documentOut.generate(this.codeInput.getText());
 //			System.out.println(" "+this.codeInput.getText());
+		}
+		
+	}
+
+	@Override
+	public void caretUpdate(CaretEvent e) {
+		if(e.getSource() == this.codeInput) {
+
+				
+			if(this.codeInput.getCurrentLineHighlightColor() == Styles.UN_ERR_SELECTION) {
+				System.out.println("col"+this.codeInput.getCurrentLineHighlightColor());
+				this.codeInput.setCurrentLineHighlightColor(Styles.UN_ERR_HIGHLIGHT);
+			}
+			else {
+				this.codeInput.setCurrentLineHighlightColor(SUBLIME_HIGHLIGHT);	
+			}
 		}
 		
 	}
