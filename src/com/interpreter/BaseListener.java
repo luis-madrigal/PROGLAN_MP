@@ -14,6 +14,7 @@ import com.parser.ManuScriptParser;
 import com.parser.ManuScriptParser.AddSubExprContext;
 import com.parser.ManuScriptParser.AndExprContext;
 import com.parser.ManuScriptParser.ArrayInitExprContext;
+import com.parser.ManuScriptParser.ArrayInitializerContext;
 import com.parser.ManuScriptParser.AssignExprContext;
 import com.parser.ManuScriptParser.ComparisonExprContext;
 import com.parser.ManuScriptParser.EqualityExprContext;
@@ -34,7 +35,7 @@ import com.parser.ManuScriptParser.PrimaryExprContext;
 import com.parser.ManuScriptParser.StructExprContext;
 import com.parser.ManuScriptParser.VariableDeclaratorContext;
 import com.parser.ManuScriptParser.VariableExprContext;
-import com.utils.Console;
+import com.parser.ManuScriptParser.VariableInitializerContext;
 import com.utils.KeyTokens.OPERATOR;
 import com.utils.Types;
 
@@ -70,7 +71,6 @@ public class BaseListener extends ManuScriptBaseListener{
 	}
 
 	private void checkArraySemantics(ArrayInfo arInf, int dimCount, String varType, VariableDeclaratorContext vdctx, int line, int charPosition){
-
 		if(vdctx.variableInitializer() != null) {
 			ManuScriptParser.VariableInitializerContext vdi = vdctx.variableInitializer();
 			if (vdi.expression() instanceof ArrayInitExprContext) {
@@ -81,13 +81,14 @@ public class BaseListener extends ManuScriptBaseListener{
 				else {
 					if (crCtx.arrayCreatorRest().arrayInitializer() != null) {
 						//when init is 'new type[]...[]{....};'
+						System.out.println("START BUILDING ARRAY");
 						if ((crCtx.arrayCreatorRest().children.size() - 1) / 2 != dimCount)
 							SemanticErrors.throwError(SemanticErrors.INVALID_DIMS, line, charPosition, (crCtx.arrayCreatorRest().children.size() - 1) / 2, dimCount);
 						ManuScriptParser.ArrayInitializerContext arInit = crCtx.arrayCreatorRest().arrayInitializer();
 						int height = getBlockHeight(arInit.getText());
 						if (height != dimCount)
 							SemanticErrors.throwError(SemanticErrors.ILLEGAL_INIT, line, charPosition, varType);
-
+						this.arrayInitCheck(arInit, arInf.getArrType());
 					} else {
 						//when init is 'new type[size]...[size];'
 						if (crCtx.arrayCreatorRest().expression().size() != dimCount)
@@ -148,6 +149,7 @@ public class BaseListener extends ManuScriptBaseListener{
 				//declares new type
 				int dimCount = (strCtx.typeType().getChildCount() - 1) / 2;
 				String varType = strCtx.typeType().getText();
+				System.out.println(varType+"=====================");
 
 
 				if(strCtx.typeType().structType() != null) {
@@ -277,9 +279,14 @@ public class BaseListener extends ManuScriptBaseListener{
 					//do this if variable has initializer
 					if (vdctx.variableInitializer() != null) {
 						String types = this.expressionCheck(vdctx.variableInitializer().expression());
-						if(!varType.matches(types)) {
-							SemanticErrors.throwError(SemanticErrors.VAR_ASSIGN_MISMATCH, vdctx.getStart().getLine(), vdctx.getStart().getCharPositionInLine(), varName, types);
+						if(!this.regexComparison(varType, types)) {
+							if(!this.regexComparison(varType.replace("*", ""), types))
+								SemanticErrors.throwError(SemanticErrors.VAR_ASSIGN_MISMATCH, vdctx.getStart().getLine(), vdctx.getStart().getCharPositionInLine(), varName, types);
 						}
+//						if(!varType.replace("*", "~").matches(types.replace("*", "~"))) {
+//							if(!varType.replace("*", "").equals(types))
+//								SemanticErrors.throwError(SemanticErrors.VAR_ASSIGN_MISMATCH, vdctx.getStart().getLine(), vdctx.getStart().getCharPositionInLine(), varName, types);
+//						}
 					}
 				}
 				System.out.println("added "+varName+" to symbol table"+" is constant:"+isConstant);
@@ -320,9 +327,9 @@ public class BaseListener extends ManuScriptBaseListener{
 					//do this if variable has initializer
 					if (vdctx.variableInitializer() != null) {
 						String types = this.expressionCheck(vdctx.variableInitializer().expression());
-						System.out.println(types);
-						if(!varType.matches(types)) {
-							SemanticErrors.throwError(SemanticErrors.VAR_ASSIGN_MISMATCH, vdctx.getStart().getLine(), vdctx.getStart().getCharPositionInLine(), varName, types);
+						if(!this.regexComparison(varType, types)) {
+							if(!this.regexComparison(varType.replace("*", ""), types))
+								SemanticErrors.throwError(SemanticErrors.VAR_ASSIGN_MISMATCH, vdctx.getStart().getLine(), vdctx.getStart().getCharPositionInLine(), varName, types);
 						}
 					}
 				}
@@ -334,28 +341,32 @@ public class BaseListener extends ManuScriptBaseListener{
 
 	}
 
-	@Override
+	@Override//TODO: possibly executing twice
 	public void enterAssignExpr(ManuScriptParser.AssignExprContext ctx) { 
 		String varName = ctx.equationExpr().getText();
 		varName = varName.split("\\[")[0];//TODO: bad implementation
 		SymbolContext sctx;
+		System.out.println("assign expr");
 		
 		int lineNumStart = ctx.getStart().getLine();
 		int charNumStart = ctx.getStart().getCharPositionInLine();
 		
 		if((sctx = scopes.peek().checkTables(varName)) != null){
+//			String varType = sctx.getSymbolType();
 			if(sctx.isConstant())
 				SemanticErrors.throwError(SemanticErrors.CONSTANT_MOD, lineNumStart, charNumStart, varName);
-			else {
-				String types = this.expressionCheck(ctx.expression());
-				if(!sctx.getSymbolType().matches(types)) {
-					SemanticErrors.throwError(SemanticErrors.VAR_ASSIGN_MISMATCH, lineNumStart, charNumStart, varName, types);
-				}
+//			else {
+//				String types = this.expressionCheck(ctx.expression());
+//				if(!varType.replace("*", "~").matches(types.replace("*", "~"))) {
+//					if(!varType.replace("*", "").equals(types))
+//						SemanticErrors.throwError(SemanticErrors.VAR_ASSIGN_MISMATCH, lineNumStart, charNumStart, varName, types);
+//				}
 			}
-		} else {
-			SemanticErrors.throwError(SemanticErrors.UNDECLARED_VAR, ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), varName);
-		}
-	}
+		} 
+//	else {
+//			SemanticErrors.throwError(SemanticErrors.UNDECLARED_VAR, ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), varName);
+//		}
+//	}
 	
 	@Override
 	public void enterStatementExpression(ManuScriptParser.StatementExpressionContext ctx) {
@@ -537,20 +548,61 @@ public class BaseListener extends ManuScriptBaseListener{
 		return maxDepth;
 	}
 	
+	private void arrayInitCheck(ParseTree node, String aType) {
+		if(node instanceof ExpressionContext) {
+			String type = this.expressionCheck(node);
+			if(!this.regexComparison(aType, type)) {
+				ParserRuleContext pCtx = (ParserRuleContext) node;
+				SemanticErrors.throwError(SemanticErrors.ARR_INIT_ELEMENT_MISMATCH, pCtx.getStart().getLine(), pCtx.getStop().getCharPositionInLine(), aType);
+			}
+		} else {
+			for(int i = 0; i < node.getChildCount(); i++) {
+				if(node.getChild(i) instanceof VariableInitializerContext
+					|| node.getChild(i) instanceof ExpressionContext
+					|| node.getChild(i) instanceof ArrayInitializerContext) {
+					this.arrayInitCheck(node.getChild(i), aType);
+				}
+			}
+		}
+	}
+	
+	private int getArrayCount(ParseTree node, int dims) {
+		return 0;
+	}
+	
+	private int getArrayElemCount(ParseTree node) {
+		int count = 0;
+		for(int i = 0; i < node.getChildCount(); i++) {
+			if(node.getChild(i) instanceof VariableInitializerContext)
+				count++;
+		}
+		return count;
+	}
+	
+//	private void evaluateElemCount(String/)
+	
 	private String expressionCheck(ParseTree node) {
 		if(node.getChildCount() == 1) {
 			return this.getTypeOf(node.getChild(0));
+			
 		} else if(node instanceof ParExpressionContext) {
 			return this.getTypeOf(node.getChild(1));
-		} else if(node instanceof FunctionExprContext) {
+			
+		} else if(node instanceof ArrayInitializerContext) {
+			
+		}
+		else if(node instanceof FunctionExprContext) {
 			System.out.println("ENTER FUNCTION CALL");
 			return this.enterFunctionExpression((FunctionExprContext) node);
+			
 		} else if(node instanceof PostIncDecExprContext) {
 			this.enterPostIncDecExpression(((PostIncDecExprContext) node));
 			return this.getExprReturnedType(((PostIncDecExprContext) node).getStart().getLine(), ((PostIncDecExprContext) node).getStart().getCharPositionInLine(), OPERATOR.getEnum(node.getChild(1)), this.getTypeOf(node.getChild(0)));
+		
 		} else if(node instanceof PreIncDecSignExprContext) {
 			this.enterPreIncDecSignExpr(((PreIncDecSignExprContext) node));
 			return this.getExprReturnedType(((PreIncDecSignExprContext) node).getStart().getLine(), ((PreIncDecSignExprContext) node).getStart().getCharPositionInLine(), OPERATOR.getEnum(node.getChild(0)), this.getTypeOf(node.getChild(1)));
+		
 		} else if(node instanceof MultDivModExprContext
 				|| node instanceof AddSubExprContext
 				|| node instanceof ComparisonExprContext
@@ -577,7 +629,7 @@ public class BaseListener extends ManuScriptBaseListener{
 			return ctx.getSymbolType();
 		} else if (node instanceof PrimaryContext && node.getChildCount() == 1 && !(node.getChild(0) instanceof ParExpressionContext)){
 			String text = node.getText();
-			System.out.println(text+"-------------------------");
+//			System.out.println(text+"-------------------------");
 			PrimaryContext pCtx = (PrimaryContext) node;
 			if(pCtx.literal() != null) {
 				//node is a literal
@@ -637,6 +689,12 @@ public class BaseListener extends ManuScriptBaseListener{
 		case DIV:
 		case MOD:
 		case ASSIGN:
+			if(this.arrayAssignCheck(type1, type2)) //will also work for array of structs and array of pointers
+				return type1;
+			if(this.structAssignCheck(type1, type2)) //will only work for structs
+				return type1;
+			if(this.pointerAssignCheck(type1, type2)) //will work for all pointers
+				return type1;
 		case PLUSASSIGN:
 			if(this.canBeOfType(type1, "string") && this.canBeOfType(type2, "string"))
 				return type1;
@@ -690,10 +748,50 @@ public class BaseListener extends ManuScriptBaseListener{
 	}
 	
 	private boolean canBeOfType(String type, String ...args) {
+//		String t = type.replace("*", "\\*").replace("[", "\\[").replace("]", "\\]");
 		for(int i = 0; i < args.length; i++) {
-			if(args[i].matches(type))
+//			String arg = args[i].replace("*", "\\*").replace("[", "\\[").replace("]", "\\]");
+			if(this.regexComparison(args[i], type))
 				return true;
 		}
+		
+		return false;
+	}
+	
+	private boolean regexComparison(String val, String regex) {
+		String reg = regex.replace("*", "\\*").replace("[", "\\[").replace("]", "\\]");
+		
+		return val.matches(reg);
+	}
+	
+	private boolean arrayAssignCheck(String type1, String type2) {
+		String[] t1 = type1.split("\\[");
+		String[] t2 = type2.split("\\[");
+		
+		if(t1.length == 0 && t2.length == 0)
+			return false;
+		
+		if(t1[0].equals(t2[0]) && t1.length == t2.length)
+			return true;
+		
+		return false;
+	}
+	
+	private boolean structAssignCheck(String type1, String type2) {
+		return this.structDefTable.containsKey(type1)
+				&& this.structDefTable.containsKey(type2)
+				&& type1.equals(type2);
+	}
+	
+	private boolean pointerAssignCheck(String type1, String type2) {
+		if(!type1.contains("*"))
+			return false;
+		if(type1.equals(type2))
+			return true;
+		String t1WOpointer = type1.replace("*", "");
+		System.out.println(t1WOpointer+"~~~~~~~~~~~~~~~~~~"+type2);
+		if(t1WOpointer.equals(type2)) //if type1 without '*' equal to type2
+			return true;
 		
 		return false;
 	}
