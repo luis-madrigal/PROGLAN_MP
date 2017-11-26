@@ -153,32 +153,39 @@ public class BaseListener extends ManuScriptBaseListener{
 		}
 		else {
 			
-			ArrayList<SymbolContext> members = new ArrayList<>();
+			ArrayList<SymbolContext> members = new ArrayList<SymbolContext>();
 			for (ManuScriptParser.StructDeclarationContext strCtx : ctx.structDeclarationList().structDeclaration()) {
-
+				//declares new type
 				int dimCount = (strCtx.typeType().getChildCount() - 1) / 2;
 				String varType = strCtx.typeType().getText();
-				SymbolContext symCtx = new SymbolContext(varType,null, null);
 
-//				for(ManuScriptParser.StructDeclaratorContext sdc : strCtx.structDeclaratorList().structDeclarator()) {
-//					if (dimCount > 0) {    //ARRAY INIT
-//						ArrayInfo arInf = new ArrayInfo(dimCount, varType);
-//						checkArraySemantics(arInf, dimCount, varType, strCtx,
-//								ctx.getStart().getLine(),
-//								ctx.getStart().getCharPositionInLine());
-//						symCtx.setOther(arInf);
-//					} else if (strCtx.typeType().structType() != null) {
-//
-//						if (!structDefTable.containsKey(strCtx.typeType().structType().Identifier().getText())) {
-//							SemanticErrors.throwError(SemanticErrors.UNDEFINED_STRUCT, strCtx.getStart().getLine(), strCtx.getStart().getCharPositionInLine(), strCtx.typeType().structType().Identifier());
-//						}
-//					} else if (strCtx.typeType().pointerType() != null) {
-//
-//					}
-//				}
+
+				if(strCtx.typeType().structType() != null) {
+					if (!structDefTable.containsKey(strCtx.typeType().structType().Identifier().getText())) {
+						SemanticErrors.throwError(SemanticErrors.UNDEFINED_STRUCT, strCtx.getStart().getLine(), strCtx.getStart().getCharPositionInLine(), strCtx.typeType().structType().Identifier());
+					}
+				}
+
+				for(ManuScriptParser.StructDeclaratorContext sdc : strCtx.structDeclaratorList().structDeclarator()) {
+					//same type declaration
+					SymbolContext symCtx = new SymbolContext(varType,null, sdc.structDeclaratorId().getText());
+					if (dimCount > 0) {    //declaration is of type array
+						ArrayInfo arInf = new ArrayInfo(dimCount, varType);
+						symCtx.setOther(arInf);
+					} else if (strCtx.typeType().structType() != null) {	//declaration is of type struct
+						StructInfo strInf = structDefTable.get(strCtx.typeType().structType().Identifier().getText()).clone();
+						symCtx.setOther(strInf);
+					} else if (strCtx.typeType().pointerType() != null) {	//declaration is pointer
+
+					} else{	//declaration is any other primitive
+
+					}
+					members.add(symCtx);
+				}
 			}
 
-			StructInfo strInfo = new StructInfo(name, null);
+			SymbolContext[] memArr = members.toArray(new SymbolContext[members.size()]);
+			StructInfo strInfo = new StructInfo(name, memArr);
 			structDefTable.put(strInfo.getStructName(), strInfo);
 		}
 	}

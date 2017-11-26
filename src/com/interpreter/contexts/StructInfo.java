@@ -1,5 +1,7 @@
 package com.interpreter.contexts;
 
+import com.rits.cloning.Cloner;
+
 /** todo: implement a separate table for defined structinfo
  * data for struct type symbols
  */
@@ -35,5 +37,12 @@ public class StructInfo implements GenericInfo<StructInfo>{
     @Override
     public StructInfo getInfo() {
         return this;
+    }
+
+    public StructInfo clone(){
+        StructInfo ctx = new StructInfo(structName, members);
+        ctx.setMembers(Cloner.standard().deepClone(members));
+
+        return ctx;
     }
 }

@@ -276,7 +276,8 @@ variableDeclarator
     ;
 
 variableDeclaratorId
-    :   Identifier ('[' ']')*
+    :   Identifier
+//    Identifier ('[' ']')*
     ;
 
 variableInitializer
