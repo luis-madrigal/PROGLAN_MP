@@ -77,11 +77,14 @@ public class BaseListener extends ManuScriptBaseListener{
 			if (vdi.expression() instanceof ArrayInitExprContext) {
 				ManuScriptParser.CreatorContext crCtx = ((ArrayInitExprContext) vdi.expression()).creator();
 				System.out.println("created text: " + crCtx.createdName().getText());
-				if (!crCtx.createdName().getText().equals(arInf.getArrType()))
+				System.out.println("arType: "+arInf.getArrType());
+				if (!crCtx.createdName().getText().equals(arInf.getArrType())) {
+					System.out.println("ERROR 82");
 					SemanticErrors.throwError(SemanticErrors.ARR_TYPE_MISMATCH,
 							crCtx.createdName().getStart().getLine(),
 							crCtx.createdName().getStart().getCharPositionInLine(),
 							arInf.getArrType());
+				}
 				else {
 					if (crCtx.arrayCreatorRest().arrayInitializer() != null) {
 						//when init is 'new type[]...[]{....};'
@@ -113,7 +116,7 @@ public class BaseListener extends ManuScriptBaseListener{
 
 						for (ExpressionContext expr : crCtx.arrayCreatorRest().expression()) {
 							String types = this.expressionCheck(expr);
-							if(!arInf.getArrType().matches(types)) {
+							if(types.equals("int")) {
 								SemanticErrors.throwError(SemanticErrors.ARR_TYPE_MISMATCH, expr.getStart().getLine(), expr.getStart().getCharPositionInLine(), arInf.getArrType());
 							}
 						}
