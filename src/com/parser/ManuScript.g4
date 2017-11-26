@@ -674,9 +674,7 @@ primary
 //    |   THIS
 //    |   SUPER
     |   literal
-    |   Identifier
-    |	'*'Identifier
-   	|	structExpr
+	|	equationExpr
 //    |	'&'Identifier
 //    |   typeType '.' 'class'
 //    |   nonWildcardTypeArguments (explicitGenericInvocationSuffix | THIS arguments)

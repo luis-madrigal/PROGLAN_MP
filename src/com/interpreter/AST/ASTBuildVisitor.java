@@ -820,7 +820,7 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
 
         System.out.println("visitingPRIMEXPR "+ctx.getStart().getLine()+"    "+ctx.getText());
         configureIsBreakpoint(ctx.getStart().getLine());
-        if(ctx.Identifier() != null){
+        if(ctx.equationExpr() != null && ctx.equationExpr().Identifier() != null){
 //            System.out.println("variable found");
             LeafNode variable = new LeafNode(null);
             variable.setNodeType(NodeType.VARIABLE);
@@ -830,7 +830,7 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
             	System.out.println("BP: "+variable.getNodeType());
             
 
-            symContext = curScope.checkTables(ctx.Identifier().getText());
+            symContext = curScope.checkTables(ctx.equationExpr().Identifier().getText());
 
             if(symContext != null){
                 variable.setValue(symContext);

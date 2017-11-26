@@ -361,7 +361,7 @@ public class CodeGeneratorRunnable implements Runnable {
 		Object op1Value = this.getValue(registers, operand1);
 		Object op2Value = this.getValue(registers, operand2);
 		
-//		// System.out.println(op1Value + " " + operator.toString() + " " +op2Value);
+		System.out.println(op1Value + " " + operator.toString() + " " +op2Value);
 
 		switch (operator) {
 		case ADD: return ExpressionEvaluator.add(op1Value, op2Value);
