@@ -1,4 +1,4 @@
-// Generated from C:/INTELLIJ Projects/PROGLAN_MP/src/com/parser\ManuScript.g4 by ANTLR 4.7
+// Generated from ManuScript.g4 by ANTLR 4.7
 package com.parser;
 import org.antlr.v4.runtime.tree.ParseTreeListener;
 
@@ -706,18 +706,6 @@ public interface ManuScriptListener extends ParseTreeListener {
 	 */
 	void exitAddSubExpr(ManuScriptParser.AddSubExprContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code arrayExpr}
-	 * labeled alternative in {@link ManuScriptParser#expression}.
-	 * @param ctx the parse tree
-	 */
-	void enterArrayExpr(ManuScriptParser.ArrayExprContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code arrayExpr}
-	 * labeled alternative in {@link ManuScriptParser#expression}.
-	 * @param ctx the parse tree
-	 */
-	void exitArrayExpr(ManuScriptParser.ArrayExprContext ctx);
-	/**
 	 * Enter a parse tree produced by the {@code arrayInitExpr}
 	 * labeled alternative in {@link ManuScriptParser#expression}.
 	 * @param ctx the parse tree
@@ -871,6 +859,26 @@ public interface ManuScriptListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitStructExpr(ManuScriptParser.StructExprContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link ManuScriptParser#structMember}.
+	 * @param ctx the parse tree
+	 */
+	void enterStructMember(ManuScriptParser.StructMemberContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link ManuScriptParser#structMember}.
+	 * @param ctx the parse tree
+	 */
+	void exitStructMember(ManuScriptParser.StructMemberContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link ManuScriptParser#structName}.
+	 * @param ctx the parse tree
+	 */
+	void enterStructName(ManuScriptParser.StructNameContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link ManuScriptParser#structName}.
+	 * @param ctx the parse tree
+	 */
+	void exitStructName(ManuScriptParser.StructNameContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link ManuScriptParser#variableExpr}.
 	 * @param ctx the parse tree

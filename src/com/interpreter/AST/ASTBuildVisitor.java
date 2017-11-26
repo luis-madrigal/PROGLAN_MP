@@ -412,33 +412,33 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
 
 
 
-    @Override
-    public AbstractSyntaxTree visitArrayExpr(ManuScriptParser.ArrayExprContext ctx) {
-
-
-        System.out.println("visitingARREXP "+ctx.getStart().getLine()+"    "+ctx.getText());
-        configureIsBreakpoint(ctx.getStart().getLine());
-        AbstractSyntaxTree node = new AbstractSyntaxTree(null);
-        node.setNodeType(NodeType.ARRAY_ACCESS);
-        node.setBreakpoint(this.isBreakpoint);
-        if(isBreakpoint)
-        	System.out.println("BP: "+node.getNodeType());
-        
-        AbstractSyntaxTree var = visit(ctx.variableExpr());
-        if(var!=null) {
-            var.setParent(node);
-            node.addChild(var);
-        }
-
-        for(ManuScriptParser.ExpressionContext expr : ctx.expression()) {
-            AbstractSyntaxTree expression = visit(expr);
-            if (expression != null) {
-                expression.setParent(node);
-                node.addChild(expression);
-            }
-        }
-        return node;
-    }
+//    @Override
+//    public AbstractSyntaxTree visitArrayExpr(ManuScriptParser.ArrayExprContext ctx) {
+//
+//
+//        System.out.println("visitingARREXP "+ctx.getStart().getLine()+"    "+ctx.getText());
+//        configureIsBreakpoint(ctx.getStart().getLine());
+//        AbstractSyntaxTree node = new AbstractSyntaxTree(null);
+//        node.setNodeType(NodeType.ARRAY_ACCESS);
+//        node.setBreakpoint(this.isBreakpoint);
+//        if(isBreakpoint)
+//        	System.out.println("BP: "+node.getNodeType());
+//        
+//        AbstractSyntaxTree var = visit(ctx.variableExpr());
+//        if(var!=null) {
+//            var.setParent(node);
+//            node.addChild(var);
+//        }
+//
+//        for(ManuScriptParser.ExpressionContext expr : ctx.expression()) {
+//            AbstractSyntaxTree expression = visit(expr);
+//            if (expression != null) {
+//                expression.setParent(node);
+//                node.addChild(expression);
+//            }
+//        }
+//        return node;
+//    }
 
     @Override
     public AbstractSyntaxTree visitFunctionExpr(ManuScriptParser.FunctionExprContext ctx) {
@@ -452,13 +452,14 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
         if(isBreakpoint)
         	System.out.println("BP: "+node.getNodeType());
         
-        
-        for(ManuScriptParser.ExpressionContext c : ctx.expressionList().expression()){
-            AbstractSyntaxTree param = visit(c);
-            if(param != null) {
-                param.setParent(node);
-                node.addChild(param);
-            }
+        if(ctx.expressionList() != null) {
+	        for(ManuScriptParser.ExpressionContext c : ctx.expressionList().expression()){
+	            AbstractSyntaxTree param = visit(c);
+	            if(param != null) {
+	                param.setParent(node);
+	                node.addChild(param);
+	            }
+	        }
         }
 
         return node;

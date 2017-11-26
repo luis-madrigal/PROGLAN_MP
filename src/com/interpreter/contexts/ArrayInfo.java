@@ -121,4 +121,12 @@ public class ArrayInfo implements GenericInfo<ArrayInfo>{
     public ContextType getArrayCtxType() {
         return arrayCtxType;
     }
+
+	public int getDims() {
+		return dims;
+	}
+
+	public void setDims(int dims) {
+		this.dims = dims;
+	}
 }
