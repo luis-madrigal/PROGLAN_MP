@@ -831,6 +831,25 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
 
                     node.addChild(init);
                 }
+                else{
+                    //if arNew = arOld;
+                    System.out.println("ENTERED LAST ELSE");
+                    AbstractSyntaxTree varRight = visit(varInit);
+                    if (varRight != null) {
+                        if(varRight.getChildren().size() == 0) {
+                            SymbolContext symCtxL = (SymbolContext)var.getValue();
+                            SymbolContext symCtxR = (SymbolContext)varRight.getValue();
+
+                            symCtxL.setOther(symCtxR.getOther());
+
+                            System.out.println("LEFT: "+symCtxL.getOther());
+                            System.out.println("RIGHT: "+symCtxR.getOther());
+
+                            varRight.setParent(node);
+                            node.addChild(varRight);
+                        }
+                    }
+                }
             }
             else {  //if variable is normal type
                 AbstractSyntaxTree value = visit(varInit);
