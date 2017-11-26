@@ -16,6 +16,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.ArrayList;
 import java.util.Stack;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -29,12 +30,13 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
-import javax.swing.JTextArea;
+import javax.swing.JTable;
 import javax.swing.JTextPane;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.UIManager;
 import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
+import javax.swing.table.DefaultTableModel;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.DefaultStyledDocument;
@@ -52,6 +54,8 @@ import org.fife.ui.rsyntaxtextarea.folding.CurlyFoldParser;
 import org.fife.ui.rsyntaxtextarea.folding.FoldParserManager;
 import org.fife.ui.rtextarea.RTextScrollPane;
 
+import com.debug.watch.VariableNode;
+import com.debug.watch.Searcher;
 import com.ide.styles.IdeStyle;
 import com.ide.styles.ManuScriptGutter;
 import com.ide.styles.RSyntaxTextAreaManuscript;
@@ -69,6 +73,7 @@ public class Panel implements CaretListener, Runnable, ActionListener, KeyListen
 	private Frame frameParent;
 	private DialogSave dlgSave;
 	private DialogOpen dlgOpen;
+	private DialogWatch dlgWatch;
 
 	private TextFileHandler textFileHandler;
 	private volatile boolean isRunning;
@@ -90,7 +95,9 @@ public class Panel implements CaretListener, Runnable, ActionListener, KeyListen
 	private JLabel lblParsedOut;
 	private JLabel lblConsole;
 	
-
+	private DefaultTableModel modelWatchTable;
+	private JScrollPane tempWatchPane;
+	private JTable watchTable;
 	private JSplitPane documentSplitPane;
 	private JSplitPane topSplitPane;
 	private JSplitPane bottomSplitPane;
@@ -123,6 +130,8 @@ public class Panel implements CaretListener, Runnable, ActionListener, KeyListen
 	public final static String newline = "\n";
 	
 	private ScannerModel scanner;
+	private Searcher watcher;
+
 	public static int baseFontSize = (int) Frame.SCREEN_SIZE.getHeight() / 60;
 
 	public Panel() {
@@ -414,6 +423,8 @@ public class Panel implements CaretListener, Runnable, ActionListener, KeyListen
 		));
 		
 		// For watch variables
+		this.watcher = new Searcher();
+		
 		watchOut = new JTextPane();
 		watchOut.setFont(new Font("Consolas", 150, baseFontSize));
 		watchOut.setEditable(false);
@@ -439,6 +450,29 @@ public class Panel implements CaretListener, Runnable, ActionListener, KeyListen
 		        (int)horizontalHeight,
 		        (int)watchPane.getVerticalScrollBar().getPreferredSize().getHeight()
 		));
+		
+		String header[] = new String[] {"Variable", "Line", "In method", "Current Value"};
+		this.modelWatchTable = new DefaultTableModel(0, 0);
+		this.modelWatchTable.setColumnIdentifiers(header);
+		
+		this.watchTable = new JTable();
+//		this.watchTable.setUI(UIManager);
+		this.watchTable.setModel(this.modelWatchTable);
+		
+		//TODO: Delete when merged with watchPane
+		this.tempWatchPane = new JScrollPane(this.watchTable);
+		this.tempWatchPane.setBackground(SUBLIME_BG);
+		this.tempWatchPane.setPreferredSize(new Dimension((int) Frame.SCREEN_SIZE.getWidth()/2, 150));
+		this.tempWatchPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		this.tempWatchPane.getVerticalScrollBar().setUI(new CustomScrollBarUISky());
+		this.tempWatchPane.getHorizontalScrollBar().setUI(new CustomScrollBarUISky());
+		this.tempWatchPane.setBorder(null);
+		this.tempWatchPane.getHorizontalScrollBar().setPreferredSize(new Dimension(
+				(int)tempWatchPane.getHorizontalScrollBar().getPreferredSize().getWidth(),
+				(int)horizontalHeight));
+		this.tempWatchPane.getVerticalScrollBar().setPreferredSize(new Dimension(
+				(int)horizontalHeight,
+				(int)tempWatchPane.getVerticalScrollBar().getPreferredSize().getHeight()));
 		
 		
 		JPanel parentPane = new JPanel();
@@ -851,8 +885,7 @@ public class Panel implements CaretListener, Runnable, ActionListener, KeyListen
 
 		int offsetX = 0;
 
-//		btnRun.setLocation(28, 0);
-		btnRun.setLocation(22, 0);
+		btnRun.setLocation(28, 0);
 		btnLoad.setLocation(btnRun.getX()+btnRun.getWidth()+offsetX, btnRun.getY());
 		btnSave.setLocation(btnLoad.getX()+btnLoad.getWidth()+offsetX, btnRun.getY());
 		btnWatch.setLocation(btnSave.getX()+btnSave.getWidth()+offsetX, btnRun.getY());
@@ -949,7 +982,7 @@ public class Panel implements CaretListener, Runnable, ActionListener, KeyListen
 				String text = this.codeInput.getText();		
 				
 				this.parsedOut.setText("");
-				
+
 				this.parsedOut.setText(this.parsedOut.getText() + this.scanner.getTokens(text+newline, this.getListBreakpoints(text+newline)));
 				this.scanner.generateTree(); // Required to do this
 				this.treePane.setViewportView(this.scanner.getTree());			
@@ -958,7 +991,7 @@ public class Panel implements CaretListener, Runnable, ActionListener, KeyListen
 //				this.console.setText(this.console.getText() + this.scanner.getMessage());			
 				this.codeInput.selectAll();
 				this.parsedOut.setCaretPosition(parsedOut.getDocument().getLength());
-				
+
 		
 			}	
 		}
@@ -1149,7 +1182,27 @@ public class Panel implements CaretListener, Runnable, ActionListener, KeyListen
 			scanner.getRunnableCodeGenerator().pause();
 		}
 		if(e.getSource() == btnWatch) {
-			System.out.println("Watch");
+System.out.println("Watch");
+			
+			ArrayList<VariableNode> varList = new ArrayList<VariableNode>();
+			watcher.generateVarList(this.codeInput.getText());
+			varList = watcher.getVarList();
+		
+			this.dlgWatch = new DialogWatch(varList);
+			this.dlgWatch.placeVarList();
+			this.dlgWatch.setVisible(true);
+			
+			ArrayList<VariableNode> selectedVar = new ArrayList<VariableNode>();
+			selectedVar = this.dlgWatch.getSelectedVar();
+			
+			for(VariableNode var : selectedVar) {
+				this.modelWatchTable.addRow(new Object[] {var.getDataType()+" "+var.getLiteral(), var.getLineNumber(), var.getFuncParent()+" ("+var.getFuncChild()+")", "0"});
+				
+//				System.out.println("Line "+var.getLineNumber()+": "+var.getDataType()+" "+var.getLiteral()+
+//						" ("+var.getFuncParent()+", "+var.getFuncChild()+")");
+			}
+			
+			this.outputTabs.setSelectedIndex(this.outputTabs.getTabCount()-1);
 		}
 		
 		if(e.getSource() == this.dlgSave.getBtnSave()) {
