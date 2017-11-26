@@ -967,11 +967,8 @@ public class Panel implements Runnable, ActionListener, KeyListener, MouseListen
 			
 			watcher.generateVarList(this.codeInput.getText());
 			varList = watcher.getVarList();
-			
-			for(VariableNode var : varList)
-				System.out.println("Line "+var.getLineNumber()+": "+var.getDataType()+" "+var.getLiteral()+
-						" | Found in method "+var.getFuncParent()+" ("+var.getFuncChild()+")");
-			
+		
+			this.dlgWatch.placeVarList(varList);
 			this.dlgWatch.setVisible(true);
 		}
 		
