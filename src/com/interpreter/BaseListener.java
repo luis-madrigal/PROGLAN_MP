@@ -70,29 +70,46 @@ public class BaseListener extends ManuScriptBaseListener{
 		scopes.pop();
 	}
 
-	private void checkArraySemantics(ArrayInfo arInf, int dimCount, String varType, VariableDeclaratorContext vdctx, int line, int charPosition){
+	private ArrayInfo checkArraySemantics(ArrayInfo arInf, int dimCount, String varType, VariableDeclaratorContext vdctx, int line, int charPosition){
 		if(vdctx.variableInitializer() != null) {
 			ManuScriptParser.VariableInitializerContext vdi = vdctx.variableInitializer();
 			if (vdi.expression() instanceof ArrayInitExprContext) {
 				ManuScriptParser.CreatorContext crCtx = ((ArrayInitExprContext) vdi.expression()).creator();
 				System.out.println("created text: " + crCtx.createdName().getText());
 				if (!crCtx.createdName().getText().equals(arInf.getArrType()))
-					SemanticErrors.throwError(SemanticErrors.ARR_TYPE_MISMATCH, line, charPosition, arInf.getArrType());
+					SemanticErrors.throwError(SemanticErrors.ARR_TYPE_MISMATCH,
+							crCtx.createdName().getStart().getLine(),
+							crCtx.createdName().getStart().getCharPositionInLine(),
+							arInf.getArrType());
 				else {
 					if (crCtx.arrayCreatorRest().arrayInitializer() != null) {
 						//when init is 'new type[]...[]{....};'
 						System.out.println("START BUILDING ARRAY");
 						if ((crCtx.arrayCreatorRest().children.size() - 1) / 2 != dimCount)
-							SemanticErrors.throwError(SemanticErrors.INVALID_DIMS, line, charPosition, (crCtx.arrayCreatorRest().children.size() - 1) / 2, dimCount);
+							SemanticErrors.throwError(SemanticErrors.INVALID_DIMS,
+									crCtx.arrayCreatorRest().arrayInitializer().getStart().getLine(),
+									crCtx.arrayCreatorRest().arrayInitializer().getStart().getCharPositionInLine(),
+									(crCtx.arrayCreatorRest().children.size() - 1) / 2,
+									dimCount);
+
 						ManuScriptParser.ArrayInitializerContext arInit = crCtx.arrayCreatorRest().arrayInitializer();
 						int height = getBlockHeight(arInit.getText());
 						if (height != dimCount)
-							SemanticErrors.throwError(SemanticErrors.ILLEGAL_INIT, line, charPosition, varType);
+							SemanticErrors.throwError(SemanticErrors.ILLEGAL_INIT,
+									crCtx.arrayCreatorRest().arrayInitializer().getStart().getLine(),
+									crCtx.arrayCreatorRest().arrayInitializer().getStart().getCharPositionInLine(),
+									varType);
+
 						this.arrayInitCheck(arInit, arInf.getArrType());
 					} else {
 						//when init is 'new type[size]...[size];'
 						if (crCtx.arrayCreatorRest().expression().size() != dimCount)
-							SemanticErrors.throwError(SemanticErrors.INVALID_DIMS, line, charPosition, crCtx.arrayCreatorRest().expression().size(), dimCount);
+							SemanticErrors.throwError(SemanticErrors.INVALID_DIMS,
+									crCtx.arrayCreatorRest().getStart().getLine(),
+									crCtx.arrayCreatorRest().getStart().getCharPositionInLine(),
+									crCtx.arrayCreatorRest().expression().size(),
+									dimCount);
+
 						for (ExpressionContext expr : crCtx.arrayCreatorRest().expression()) {
 							String types = this.expressionCheck(expr);
 							if(!arInf.getArrType().matches(types)) {
@@ -107,7 +124,10 @@ public class BaseListener extends ManuScriptBaseListener{
 					//checking if array init is of type = {1,2,32,4,21};
 					int height = getBlockHeight(vdi.arrayInitializer().getText());
 						if(dimCount != height)
-						SemanticErrors.throwError(SemanticErrors.ILLEGAL_INIT, line, charPosition, varType);
+						SemanticErrors.throwError(SemanticErrors.ILLEGAL_INIT,
+								vdi.arrayInitializer().getStart().getLine(),
+								vdi.arrayInitializer().getStart().getCharPositionInLine(),
+								varType);
 //					else{
 //						for(ManuScriptParser.VariableInitializerContext varInit : vdi.arrayInitializer().variableInitializer()){
 //								String types = this.expressionCheck(varInit);
@@ -120,19 +140,32 @@ public class BaseListener extends ManuScriptBaseListener{
 
 				}
 				else if(vdi.expression() instanceof PrimaryExprContext){
+					//for derefencing other array variables
 					PrimaryContext primary = ((PrimaryExprContext) vdi.expression()).primary();
-					if(primary.equationExpr().Identifier() != null){
-						if(!getCurrentSymTable().containsKey(primary.equationExpr().Identifier().getText())){
-							SemanticErrors.throwError(SemanticErrors.UNDECLARED_VAR, line, charPosition, primary.equationExpr().Identifier().getText());
-						}else if(!getCurrentSymTable().get(primary.equationExpr().Identifier().getText()).getSymbolType().equals(varType)){
-							SemanticErrors.throwError(SemanticErrors.TYPE_MISMATCH, line, charPosition, varType);
+					if(primary.equationExpr() != null) {
+						if (primary.equationExpr().Identifier() != null) {
+							SymbolContext symRight = getCurrentSymTable().get(primary.equationExpr().Identifier().getText());
+							if (symRight == null) {
+								SemanticErrors.throwError(SemanticErrors.UNDECLARED_VAR,primary.equationExpr().getStart().getLine(), primary.equationExpr().getStart().getCharPositionInLine(), primary.equationExpr().Identifier().getText());
+							} else {
+								if (!symRight.getSymbolType().equals(varType)) {
+									SemanticErrors.throwError(SemanticErrors.TYPE_MISMATCH, primary.equationExpr().getStart().getLine(), primary.equationExpr().getStart().getCharPositionInLine(), varType);
+								}else if(symRight.getOther() instanceof ArrayInfo)
+									return (ArrayInfo)symRight.getOther();
+							}
 						}
+						else
+							SemanticErrors.throwError(SemanticErrors.INVALID_INIT,primary.equationExpr().getStart().getLine(), primary.equationExpr().getStart().getCharPositionInLine());
 					}
+					else
+						SemanticErrors.throwError(SemanticErrors.INVALID_INIT, primary.getStart().getLine(), primary.getStart().getCharPositionInLine());
 				}
 				else
-					SemanticErrors.throwError(SemanticErrors.INVALID_INIT, line, charPosition);
+					SemanticErrors.throwError(SemanticErrors.INVALID_INIT, vdi.getStart().getLine(), vdi.getStart().getCharPositionInLine());
 			}
 		}
+
+		return arInf;
 	}
 	
 
@@ -275,7 +308,7 @@ public class BaseListener extends ManuScriptBaseListener{
 
 				if(dimCount>0) {    //declaration is of type array
 					ArrayInfo arInf = new ArrayInfo(dimCount,varType);
-					checkArraySemantics(arInf, dimCount, varType, vdctx, ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine());
+					arInf = checkArraySemantics(arInf, dimCount, varType, vdctx, ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine());
 					symCtx.setOther(arInf);
 				}
 				else if (ctx.typeType().pointerType() != null) {	//declaration is pointer

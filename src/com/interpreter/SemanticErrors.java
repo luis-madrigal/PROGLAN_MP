@@ -14,7 +14,7 @@ public class SemanticErrors {
 	public static final String OUT_OF_BOUNDS = LINE_INFO + "Array index is out of bounds. index: %s -- array length: %s";
 	public static final String INVALID_DIMS = LINE_INFO + "Invalid dimensions. # initialized dims: %s -- # correct dims: %s";
 	public static final String ARR_TYPE_MISMATCH = LINE_INFO + "Array initialization type mismatch. Array should be of type '%s'";
-	public static final String INVALID_INIT = LINE_INFO + "Invalid array initialization. Initialization could only be of the format: 'new <type> [expr] ... [expr]? '";
+	public static final String INVALID_INIT = LINE_INFO + "Illegal array initialization.";
 	public static final String ARR_INIT_ELEMENT_MISMATCH = LINE_INFO + "Array initialization type mismatch. Elements can only be of type '%s'";
 	
 	//	public static final String DIMS_NOT_MATCH = LINE_INFO + "Array dimensions initialization doesn't match declared. init dim: %s ; declared dim: %s";
