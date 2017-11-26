@@ -1,0 +1,33 @@
+
+ACT sayHelloWorld starring() {
+	Say "Hello World";
+}
+
+[comment]: error2
+ACT sayHelloWorld starring() {
+	Say "Hello World";
+}
+
+[comment]: error3
+ACT sayHelloWorld starring(int x){
+	replay(int i = 0; i < x; i++) {
+		Say "Hello World";
+	}
+}
+
+
+ACT main starring() {
+	int x = 0, y = 5, z = 13;
+	
+	float someValue = (x + y) / (y + z) * 1.0f; 
+	
+	z = assertNonZero(x); [comment]: error7
+	
+	if(z > 0) {
+		Say ("Computated value: " + someValue()); [comment]: error8
+		Say ("Computed value: " +someValue);
+	}
+	
+	int z = 0, x = 0; [comment]: error9 and 10
+	
+}

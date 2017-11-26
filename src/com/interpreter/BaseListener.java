@@ -45,7 +45,7 @@ public class BaseListener extends ManuScriptBaseListener{
 	private HashMap<String, StructInfo> structDefTable;
 	
 	public BaseListener(Scope parentScope, HashMap<String, MethodContext> methodTable) {
-		this.scopes = new Stack<Scope>();;
+		this.scopes = new Stack<Scope>();
 		this.scopes.push(parentScope);
 		this.methodTable = methodTable;
 		this.structDefTable = new HashMap<>();
@@ -384,7 +384,7 @@ public class BaseListener extends ManuScriptBaseListener{
 		int charPosInLine = ctx.getStart().getCharPositionInLine();
 
 		if(!methodTable.containsKey(methodName)) {
-			Console.instance().err(String.format(SemanticErrors.UNDEFINED_METHOD, lineNum, charPosInLine, methodName));
+			SemanticErrors.throwError(SemanticErrors.UNDEFINED_METHOD, lineNum, charPosInLine, methodName);
 			return "null";
 		}
 		MethodContext mcx = methodTable.get(methodName);

@@ -39,7 +39,8 @@ public class SemanticErrors {
 	public static final String PARAM_COUNT_MISMATCH_L = LINE_INFO + "Method '%s' requires %d argument/s";
 	public static final String INVALID_RETURN_TYPE = LINE_INFO + "Invalid return type for method '%s'. Expecting type '%s'";
 	public static final String DUPLICATE_METHOD = LINE_INFO + "Duplicate method '%s'";
-	
+	public static final String NO_MAIN_METHOD = "No main method detected";
+
 	//SCOPE
 	public static final String UNDECLARED_VAR = LINE_INFO + "Undeclared variable '%s'";
 	public static final String DUPLICATE_VAR = LINE_INFO + "Duplicate variable '%s'";
@@ -55,5 +56,9 @@ public class SemanticErrors {
 	
 	public static void throwError(String error, Object ...args) {
 		Console.instance().err(String.format(error, args), (int)args[0]);
+	}
+	
+	public static void throwError(String error) {
+		Console.instance().err(error);
 	}
 }
