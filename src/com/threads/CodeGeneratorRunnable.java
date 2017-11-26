@@ -410,6 +410,7 @@ public class CodeGeneratorRunnable implements Runnable {
 			return operand.getValue();
 		case VARIABLE:
 			Variable v = (Variable) operand;
+			//TODO not the case for arrays and pointers
 			Object valueClone = Cloner.standard().deepClone(this.currentScope.findVar(v.getAlias()).getValue());
 			return valueClone;
 		default:

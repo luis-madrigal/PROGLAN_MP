@@ -33,6 +33,7 @@ import com.parser.ManuScriptParser.PreIncDecSignExprContext;
 import com.parser.ManuScriptParser.PrimaryContext;
 import com.parser.ManuScriptParser.PrimaryExprContext;
 import com.parser.ManuScriptParser.StructExprContext;
+import com.parser.ManuScriptParser.StructMemberContext;
 import com.parser.ManuScriptParser.VariableDeclaratorContext;
 import com.parser.ManuScriptParser.VariableExprContext;
 import com.parser.ManuScriptParser.VariableInitializerContext;
@@ -88,6 +89,7 @@ public class BaseListener extends ManuScriptBaseListener{
 						int height = getBlockHeight(arInit.getText());
 						if (height != dimCount)
 							SemanticErrors.throwError(SemanticErrors.ILLEGAL_INIT, line, charPosition, varType);
+						this.arrUniformityChecker(arInit, dimCount);
 						this.arrayInitCheck(arInit, arInf.getArrType());
 					} else {
 						//when init is 'new type[size]...[size];'
@@ -326,7 +328,9 @@ public class BaseListener extends ManuScriptBaseListener{
 					//array initialization checking
 					checkArraySemantics(arInf, dimCount, varType, vdctx, ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine());
 					symCtx.setOther(arInf);
-				}else {
+				} else if(ctx.typeType().structType() != null) {
+//					StructInfo sInfo = 
+				} else
 					//do this if variable has initializer
 					if (vdctx.variableInitializer() != null) {
 						String types = this.expressionCheck(vdctx.variableInitializer().expression());
@@ -569,7 +573,23 @@ public class BaseListener extends ManuScriptBaseListener{
 		}
 	}
 	
-	private int getArrayCount(ParseTree node, int dims) {
+	private int arrUniformityChecker(ParseTree node, int dims) {
+		if(dims == 1) {
+			return this.getArrayElemCount(node);
+		}
+		if(node instanceof ArrayInitializerContext) {
+			ArrayInitializerContext aCtx = (ArrayInitializerContext) node;
+			int count = -1;
+			int prevCount = -1;
+			for (VariableInitializerContext vctx : aCtx.variableInitializer()) {
+				count = this.arrUniformityChecker(vctx.arrayInitializer(), dims-1);
+				if(prevCount != -1 && count != prevCount) {
+					SemanticErrors.throwError(SemanticErrors.ARR_INIT_DIFF_COUNT, vctx.getStart().getLine(), vctx.getStop().getCharPositionInLine());
+				} else
+					prevCount = count;
+			}
+		}
+		
 		return 0;
 	}
 	
@@ -582,7 +602,74 @@ public class BaseListener extends ManuScriptBaseListener{
 		return count;
 	}
 	
-//	private void evaluateElemCount(String/)
+	private String structMemberEval(StructMemberContext ctx, SymbolContext sctx) {
+		if(ctx.structMember() != null) {
+			StructInfo sInfo = (StructInfo) sctx.getOther();
+			SymbolContext memCtx = null;
+			if((memCtx = sInfo.getMember(ctx.structMember().Identifier().getText())) == null) {
+				SemanticErrors.throwError(SemanticErrors.INVALID_MEMBER, 
+						ctx.structMember().getStart().getLine(),
+						ctx.structMember().getStart().getCharPositionInLine());
+				return "null";
+			} else
+				return this.structMemberEval(ctx.structMember(), memCtx);
+		} else {
+			System.out.println(sctx.getOther());
+			StructInfo sInfo = (StructInfo) sctx.getOther();
+			SymbolContext memCtx = null;
+			if((memCtx = sInfo.getMember(ctx.Identifier().getText())) == null) {
+				SemanticErrors.throwError(SemanticErrors.INVALID_MEMBER, 
+						ctx.getStart().getLine(),
+						ctx.getStart().getCharPositionInLine());
+				return "null";
+			}
+			return memCtx.getSymbolType();
+		}
+	}
+	
+	private String enterStructExpression(StructExprContext ctx) {
+		System.out.println("struct expr detected");
+		String structName = ctx.structName().getText();
+		
+		int lineNum = ctx.getStart().getLine();
+		int charPos = ctx.getStop().getCharPositionInLine();
+		
+		if(!getCurrentSymTable().containsKey(structName)) {
+			SemanticErrors.throwError(SemanticErrors.UNDECLARED_VAR, lineNum, charPos, structName);
+			return "null";
+		}
+		SymbolContext sctx = getCurrentSymTable().get(structName);
+		
+//		return this.structMemberEval(ctx.structMember(), sctx);
+		return "null";
+	}
+	
+	private String enterArrayExpression(EquationExprContext ctx) {
+		String arrName = ctx.variableExpr().getText();
+		
+		int lineNum = ctx.getStart().getLine();
+		int charPos = ctx.getStop().getCharPositionInLine();
+		
+		if(!getCurrentSymTable().containsKey(arrName)) {
+			SemanticErrors.throwError(SemanticErrors.UNDECLARED_VAR, lineNum, charPos, arrName);
+			return "null";
+		}
+		SymbolContext sctx = getCurrentSymTable().get(arrName);
+		ArrayInfo aInfo = (ArrayInfo) sctx.getOther();
+		
+		if(aInfo.getDims() != ctx.expression().size()) {
+			SemanticErrors.throwError(SemanticErrors.INVALID_DIM_ACCESS, lineNum, charPos, aInfo.getDims());
+		}
+		
+		for (ExpressionContext ectx : ctx.expression()) {
+			String type = this.expressionCheck(ectx);
+			if(!this.regexComparison(aInfo.getArrType(), type)) {
+				SemanticErrors.throwError(SemanticErrors.INVALID_INDEX, lineNum, charPos);
+			}
+		}
+		
+		return aInfo.getArrType();
+	}
 	
 	private String expressionCheck(ParseTree node) {
 		if(node.getChildCount() == 1) {
@@ -590,11 +677,7 @@ public class BaseListener extends ManuScriptBaseListener{
 			
 		} else if(node instanceof ParExpressionContext) {
 			return this.getTypeOf(node.getChild(1));
-			
-		} else if(node instanceof ArrayInitializerContext) {
-			
-		}
-		else if(node instanceof FunctionExprContext) {
+		} else if(node instanceof FunctionExprContext) {
 			System.out.println("ENTER FUNCTION CALL");
 			return this.enterFunctionExpression((FunctionExprContext) node);
 			
@@ -620,8 +703,13 @@ public class BaseListener extends ManuScriptBaseListener{
 	}
 	
 	private String getTypeOf(ParseTree node) {
-		if(node instanceof VariableExprContext
-				|| node instanceof StructExprContext
+		if(this.isStructExpression(node)) {
+			return this.enterStructExpression(((EquationExprContext) node).structExpr());
+
+		} else if(this.isArrayExpression(node)) {
+			return this.enterArrayExpression(((EquationExprContext)node));
+
+		} else if(node instanceof VariableExprContext
 				|| node instanceof EquationExprContext) {
 			ParserRuleContext eCtx = (ParserRuleContext) node;
 			SymbolContext ctx = scopes.peek().checkTables(node.getText());
@@ -643,6 +731,8 @@ public class BaseListener extends ManuScriptBaseListener{
 				//node is a variable
 				//TODO: check if var is constant based on operator
 				return scopes.peek().checkTables(text).getSymbolType();
+			} else if(node.getChild(0) instanceof EquationExprContext) {
+				return this.getTypeOf(node.getChild(0));
 			} else {
 				SemanticErrors.throwError(SemanticErrors.UNDECLARED_VAR, pCtx.getStart().getLine(), pCtx.getStop().getCharPositionInLine(), text);
 				return "null";
@@ -651,6 +741,16 @@ public class BaseListener extends ManuScriptBaseListener{
 			return this.expressionCheck(node);
 		}
 		
+	}
+	
+	private boolean isStructExpression(ParseTree node) {
+		return node instanceof EquationExprContext
+				&& ((EquationExprContext) node).structExpr() != null;
+	}
+	
+	private boolean isArrayExpression(ParseTree node) {
+		return node instanceof EquationExprContext
+				&& ((EquationExprContext) node).variableExpr() != null;
 	}
 
 	//expression checking for unary operations

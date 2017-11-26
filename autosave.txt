@@ -1,8 +1,29 @@
 
+composition record {
+	int a;
+}
+
+ACT solve starring ( int n, string start, string auxilliary, string end) {
+	if (n == 1)
+		Say start + " -> " + end;
+	else {
+		solve(n-1, start, end, auxilliary);
+		Say start + " -> " + end;
+		solve(n-1, auxilliary, start, end);
+	}
+}
+
 ACT main starring ()  {
-	int[] arr = new int[] {2};
-	[comm]: nt[] arr2 = new int[4];
-	[comm]: int[][] arr3 = new int[3][4];
-	int i = 5;
-	int[][][] arr4 = new int[][][] {{{3, 4, 5}, {3, 2+2, i++}}, {{3, 5}, {3, 4, 5}}, {{3, 4, 5}, {3, 4, 5}}};
+	int x;
+
+	Write to x;
+
+	[sdsd]: solve(x, "A", "B", "C");
+
+	
+	int[] arr = new int[] {3, 4, 5};
+	arr[2] = 0;
+
+	composition record r;
+	r.a = 1;
 }

@@ -1,4 +1,4 @@
-// Generated from C:/INTELLIJ Projects/PROGLAN_MP/src/com/parser\ManuScript.g4 by ANTLR 4.7
+// Generated from ManuScript.g4 by ANTLR 4.7
 package com.parser;
 import org.antlr.v4.runtime.tree.ParseTreeVisitor;
 
@@ -427,13 +427,6 @@ public interface ManuScriptVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitAddSubExpr(ManuScriptParser.AddSubExprContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code arrayExpr}
-	 * labeled alternative in {@link ManuScriptParser#expression}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitArrayExpr(ManuScriptParser.ArrayExprContext ctx);
-	/**
 	 * Visit a parse tree produced by the {@code arrayInitExpr}
 	 * labeled alternative in {@link ManuScriptParser#expression}.
 	 * @param ctx the parse tree
@@ -523,6 +516,18 @@ public interface ManuScriptVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitStructExpr(ManuScriptParser.StructExprContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link ManuScriptParser#structMember}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitStructMember(ManuScriptParser.StructMemberContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link ManuScriptParser#structName}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitStructName(ManuScriptParser.StructNameContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link ManuScriptParser#variableExpr}.
 	 * @param ctx the parse tree
