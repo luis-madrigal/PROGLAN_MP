@@ -602,6 +602,8 @@ public class BaseListener extends ManuScriptBaseListener{
 	private String getExprReturnedType(int lineNum, int charPos, OPERATOR operator, String type) {
 		switch (operator) {
 		case ADD:
+			if(this.canBeOfType(type, "int", "float", "char"))
+				return type;
 		case SUB: 
 			if(this.canBeOfType(type, "int", "float"))
 				return type;
