@@ -729,6 +729,7 @@ public class Panel implements Runnable, ActionListener, KeyListener, MouseListen
 		documentOut.revalidate();
 		documentOut.repaint();
 		documentPane.addMouseListener(this);
+		this.foldDoument();
 	}
 	
 	public void initMenuButtons() {
@@ -853,6 +854,7 @@ public class Panel implements Runnable, ActionListener, KeyListener, MouseListen
 		btnWatch.setLocation(btnSave.getX()+btnSave.getWidth()+offsetX, btnRun.getY());
 		btnContinue.setLocation(btnWatch.getX()+btnWatch.getWidth()+offsetX, btnRun.getY());
 		btnPause.setLocation(btnContinue.getX()+btnContinue.getWidth()+offsetX, btnRun.getY());
+		
 	}
 	
 	public RSyntaxTextAreaManuscript getCodeInput() {
