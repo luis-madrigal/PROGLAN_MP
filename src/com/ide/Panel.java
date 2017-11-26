@@ -256,7 +256,7 @@ public class Panel implements Runnable, ActionListener, KeyListener, MouseListen
 		this.codeInput.setBackground(SUBLIME_BG);
 //		this.codeInput.isOpaque();
 		this.codeInput.setCaretColor(Color.WHITE);
-		this.codeInput.setMargin(new Insets(5, 5, 0, 0));
+		this.codeInput.setMargin(new Insets(7, 7, 0, 0));
 //		Border roundedBorder = new LineBorder(Color.WHITE, 5, true); // the third parameter - true, says it's round
 //		this.codeInput.setBorder(roundedBorder);
 		
