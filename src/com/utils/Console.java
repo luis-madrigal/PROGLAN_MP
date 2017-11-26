@@ -2,6 +2,7 @@ package com.utils;
 
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.Insets;
 
 import javax.swing.JTextPane;
 import javax.swing.text.*;
@@ -11,7 +12,7 @@ import com.ide.styles.RSyntaxTextAreaManuscript;
 import com.ide.styles.Styles;
 
 public class Console {
-	private String messageFinished = "[EXIT]: ManuScript";
+	private String messageFinished = "[SYSTEM]: Finished";
 	private static Console instance;
 	private JTextPane textPane;
 	private RSyntaxTextAreaManuscript codeInput;
@@ -24,6 +25,7 @@ public class Console {
 		this.textPane.setForeground(Color.RED);
 		this.textPane.setBackground(Color.WHITE);
 		this.textPane.isOpaque();
+		this.textPane.setMargin(new Insets(3, 5, 0, 0));
 		this.errorCount = 0;
 	}
 	
@@ -37,6 +39,7 @@ public class Console {
 		StyledDocument doc = this.textPane.getStyledDocument();
 		Style styleLog = doc.addStyle("styleLog", StyleContext.getDefaultStyleContext().getStyle(StyleContext.DEFAULT_STYLE));
 		StyleConstants.setForeground(styleLog, Styles.UN_CONSOLE_SYSTEM);
+		StyleConstants.setBold(styleLog, true);
 		styleLog.addAttribute("log", "Log");
 		try {
 			doc.insertString(doc.getLength(), this.messageFinished, styleLog);
