@@ -1,7 +1,9 @@
 package com.interpreter.AST;
 
 import com.interpreter.Scope;
+import com.interpreter.contexts.ArrayInfo;
 import com.interpreter.contexts.ContextType;
+import com.interpreter.contexts.StructInfo;
 import com.interpreter.contexts.SymbolContext;
 import com.parser.ManuScriptBaseVisitor;
 import com.parser.ManuScriptParser;
@@ -743,6 +745,9 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
 
         AbstractSyntaxTree aiExpr = new AbstractSyntaxTree(null);
         aiExpr.setNodeType(NodeType.ARRAY_INIT);
+        aiExpr.setBreakpoint(this.isBreakpoint);
+        if(isBreakpoint)
+            System.out.println("BP: "+aiExpr.getNodeType());
 
         ManuScriptParser.ArrayCreatorRestContext arRest = ctx.creator().arrayCreatorRest();
         if(arRest.arrayInitializer() != null) {
@@ -775,6 +780,10 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
         configureIsBreakpoint(ctx.getStart().getLine());
         AbstractSyntaxTree node = new AbstractSyntaxTree(null);
         node.setNodeType(NodeType.ARRAY_BLOCK);
+        node.setBreakpoint(this.isBreakpoint);
+        if(isBreakpoint)
+            System.out.println("BP: "+node.getNodeType());
+
         for(ManuScriptParser.VariableInitializerContext viCtx : ctx.variableInitializer()){
             AbstractSyntaxTree vi = visit(viCtx);
             if(vi != null){
@@ -920,25 +929,77 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
 
     @Override
     public AbstractSyntaxTree visitEquationExpr(ManuScriptParser.EquationExprContext ctx) {
-
-
         System.out.println("visitingEQEXPR "+ctx.getStart().getLine()+"    "+ctx.getText());
         configureIsBreakpoint(ctx.getStart().getLine());
+
         LeafNode variable = new LeafNode(null);
         variable.setNodeType(NodeType.VARIABLE);
         variable.setBreakpoint(this.isBreakpoint);
         if(isBreakpoint)
         	System.out.println("BP: "+variable.getNodeType());
-        
-        SymbolContext symContext = curScope.checkTables(ctx.Identifier().getText());
 
-        if(symContext != null) {
-            variable.setValue(symContext);
-            variable.setLiteralType(symContext.getSymbolType());
-            return variable;
+        if(ctx.variableExpr() != null){
+            //array variable
+            SymbolContext symCtx;
+            if(ctx.variableExpr().structExpr() != null){
+                //struct array todo: struct access -- might have something wrong w/ grammar
+            }else{
+                //id array
+                symCtx = curScope.getSymTable().get(ctx.variableExpr().Identifier());
+                if(symCtx != null){
+                    variable.setValue(symCtx);
+                    variable.setLiteralType(((ArrayInfo)symCtx.getOther()).getArrType());   //todo: is dis wat is wanted?
+                    for(ManuScriptParser.ExpressionContext expr : ctx.expression()){
+                        AbstractSyntaxTree index = visit(expr);
+                        if(index != null){
+                            index.setParent(variable);
+                            variable.addChild(index);
+                        }
+                    }
+                    return variable;
+                }
+            }
         }
-        else
-            return null;
+        else if(ctx.structExpr() != null){
+            //struct variable
+            String structName = ctx.structExpr().structName().getText();
+            SymbolContext symContext = curScope.getSymTable().get(structName);
+            StructInfo stInf = (StructInfo) symContext.getOther();
+            System.out.println("initial str: "+stInf.getStructName());
+            ManuScriptParser.StructMemberContext smctx = ctx.structExpr().structMember();
+            while(smctx.structMember() != null){
+                symContext = stInf.getMember(smctx.Identifier().getText());
+                if(symContext == null)
+                    break; //todo better implementation
+                else
+                    stInf = (StructInfo) symContext.getOther();
+
+                smctx = smctx.structMember();
+            }
+
+            if(symContext != null){
+                System.out.println("deepest struct: "+stInf.getStructName());
+                variable.setValue(symContext);
+                variable.setLiteralType(symContext.getSymbolType());
+                return variable;
+            }
+            else{
+                System.out.println("eqEXP ERROR");
+                return null;
+            }
+        }
+        else {
+            //normal variable
+            SymbolContext symContext = curScope.checkTables(ctx.Identifier().getText());
+
+            if (symContext != null) {
+                variable.setValue(symContext);
+                variable.setLiteralType(symContext.getSymbolType());
+                return variable;
+            } else
+                return null;
+        }
+        return null;
     }
 
     @Override

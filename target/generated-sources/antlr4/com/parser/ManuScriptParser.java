@@ -1,4 +1,4 @@
-// Generated from ManuScript.g4 by ANTLR 4.7
+// Generated from C:/INTELLIJ Projects/PROGLAN_MP/src/com/parser\ManuScript.g4 by ANTLR 4.7
 package com.parser;
 import org.antlr.v4.runtime.atn.*;
 import org.antlr.v4.runtime.dfa.DFA;
@@ -4928,17 +4928,17 @@ public class ManuScriptParser extends Parser {
 				{
 				setState(673);
 				match(Identifier);
-				setState(674);
-				match(DOT);
-				setState(675);
-				structMember();
 				}
 				break;
 			case 2:
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(676);
+				setState(674);
 				match(Identifier);
+				setState(675);
+				match(DOT);
+				setState(676);
+				structMember();
 				}
 				break;
 			}
@@ -5825,8 +5825,8 @@ public class ManuScriptParser extends Parser {
 		"\u028b\3\2\2\2\u029a\u028e\3\2\2\2\u029a\u0291\3\2\2\2\u029a\u0294\3\2"+
 		"\2\2\u029b\u029e\3\2\2\2\u029c\u029a\3\2\2\2\u029c\u029d\3\2\2\2\u029d"+
 		"o\3\2\2\2\u029e\u029c\3\2\2\2\u029f\u02a0\5t;\2\u02a0\u02a1\7R\2\2\u02a1"+
-		"\u02a2\5r:\2\u02a2q\3\2\2\2\u02a3\u02a4\7u\2\2\u02a4\u02a5\7R\2\2\u02a5"+
-		"\u02a8\5r:\2\u02a6\u02a8\7u\2\2\u02a7\u02a3\3\2\2\2\u02a7\u02a6\3\2\2"+
+		"\u02a2\5r:\2\u02a2q\3\2\2\2\u02a3\u02a8\7u\2\2\u02a4\u02a5\7u\2\2\u02a5"+
+		"\u02a6\7R\2\2\u02a6\u02a8\5r:\2\u02a7\u02a3\3\2\2\2\u02a7\u02a4\3\2\2"+
 		"\2\u02a8s\3\2\2\2\u02a9\u02aa\7u\2\2\u02aau\3\2\2\2\u02ab\u02ae\7u\2\2"+
 		"\u02ac\u02ae\5p9\2\u02ad\u02ab\3\2\2\2\u02ad\u02ac\3\2\2\2\u02aew\3\2"+
 		"\2\2\u02af\u02bf\7u\2\2\u02b0\u02b1\5v<\2\u02b1\u02b2\7N\2\2\u02b2\u02b3"+
