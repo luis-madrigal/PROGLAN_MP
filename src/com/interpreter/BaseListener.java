@@ -4,13 +4,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Stack;
 
+import com.interpreter.contexts.*;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.ParseTree;
 
-import com.interpreter.contexts.ArrayInfo;
-import com.interpreter.contexts.MethodContext;
-import com.interpreter.contexts.StructInfo;
-import com.interpreter.contexts.SymbolContext;
 import com.interpreter.matchers.LiteralMatcher;
 import com.parser.ManuScriptBaseListener;
 import com.parser.ManuScriptParser;
@@ -161,15 +158,25 @@ public class BaseListener extends ManuScriptBaseListener{
 
 				for(ManuScriptParser.StructDeclaratorContext sdc : strCtx.structDeclaratorList().structDeclarator()) {
 					//same type declaration
+
+					for(SymbolContext member : members){	//check if identifier has been used within the structure
+						if(member.getIdentifier().equals(sdc.structDeclaratorId().Identifier().getText()))
+							SemanticErrors.throwError(SemanticErrors.DUPLICATE_VAR,
+									sdc.getStart().getLine(),
+									sdc.getStart().getCharPositionInLine(),
+									sdc.structDeclaratorId().Identifier().getText());
+					}
+
 					SymbolContext symCtx = new SymbolContext(varType,null, sdc.structDeclaratorId().getText());
 					if (dimCount > 0) {    //declaration is of type array
 						ArrayInfo arInf = new ArrayInfo(dimCount, varType);
 						symCtx.setOther(arInf);
+					} else if (strCtx.typeType().pointerType() != null) {	//declaration is pointer
+						PointerInfo ptrInf = new PointerInfo(varType);
+						symCtx.setOther(ptrInf);
 					} else if (strCtx.typeType().structType() != null) {	//declaration is of type struct
 						StructInfo strInf = structDefTable.get(strCtx.typeType().structType().Identifier().getText()).clone();
 						symCtx.setOther(strInf);
-					} else if (strCtx.typeType().pointerType() != null) {	//declaration is pointer
-
 					} else{	//declaration is any other primitive
 
 					}
@@ -256,10 +263,11 @@ public class BaseListener extends ManuScriptBaseListener{
 			
 			if(getCurrentSymTable().containsKey(varName)) {
 				SemanticErrors.throwError(SemanticErrors.DUPLICATE_VAR, ctx.getStart().getLine(),ctx.getStart().getCharPositionInLine(), varName);
-			} else {
+			}
+			else {
 				SymbolContext symCtx = new SymbolContext(varType, scope, varName, isConstant);
 
-				if(dimCount>0) {    //ARRAY INIT
+				if(dimCount>0) {    //declaration is of type array
 					ArrayInfo arInf = new ArrayInfo(dimCount,varType);
 					checkArraySemantics(arInf, dimCount, varType, vdctx, ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine());
 					symCtx.setOther(arInf);
@@ -298,7 +306,8 @@ public class BaseListener extends ManuScriptBaseListener{
 
 			if(getCurrentSymTable().containsKey(varName)) {
 				SemanticErrors.throwError(SemanticErrors.DUPLICATE_VAR, vdctx.getStart().getLine(), vdctx.getStart().getCharPositionInLine(), varName);
-			} else {
+			}
+			else {
 				SymbolContext symCtx = new SymbolContext(varType, scope, varName, isConstant);
 
 				if(dimCount>0) {    //ARRAY INIT

@@ -2,6 +2,7 @@ package com.interpreter.contexts;
 
 import com.interpreter.SemanticErrors;
 import com.rits.cloning.Cloner;
+import com.utils.Utils;
 
 import java.lang.reflect.Array;
 import java.util.Arrays;
@@ -14,11 +15,13 @@ public class ArrayInfo implements GenericInfo<ArrayInfo>{
     //number of dimensions of array
     private int dims;
     private boolean isInitialized = false;
+    private ContextType arrayCtxType;
 
     public ArrayInfo(int dims, String type){
         this.dims = dims;
         this.arrType = type.substring(0,type.indexOf('['));
         System.out.println("array type: "+this.arrType);
+        this.arrayCtxType = Utils.detectContextType(arrType);
     }
 
     public Object getObject(int ... index){
@@ -113,5 +116,9 @@ public class ArrayInfo implements GenericInfo<ArrayInfo>{
 
     public String toSring(){
         return Arrays.deepToString(array);
+    }
+
+    public ContextType getArrayCtxType() {
+        return arrayCtxType;
     }
 }
