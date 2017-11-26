@@ -1,23 +1,23 @@
 
-composition subRecord{
-	float d;
-	float c;
-}
+int counter = 0;
 
-composition Record {
-	int a ;
-	int b;
-	int c;
-	composition subRecord a;
-}
-
-ACT main starring () {
-	int value = 0;
-	composition subRecord a;
-
-	Say value;
-
-	replay (int i=0;i<5;i++){
-		Say "Hi ";
+ACT solve starring ( int n, string start, string auxilliary, string end) {
+	counter++;
+	if (n == 1)
+		Say start + " -> " + end + ": "+counter;
+	else {
+		solve(n-1, start, end, auxilliary);
+		Say start + " -> " + end;
+		solve(n-1, auxilliary, start, end);
 	}
+}
+
+ACT main starring ()  {
+	int x;
+
+	Write to x;
+
+	solve(x, "A", "B", "C");
+
+	Say "final count: "+(counter+1);
 }

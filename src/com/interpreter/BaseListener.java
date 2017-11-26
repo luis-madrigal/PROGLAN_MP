@@ -324,13 +324,6 @@ public class BaseListener extends ManuScriptBaseListener{
 	}
 
 	@Override
-	public void enterParExpression(ManuScriptParser.ParExpressionContext ctx) {
-		if(!this.expressionCheck(ctx.expression()).equals("boolean")){
-			SemanticErrors.throwError(SemanticErrors.IF_CONDITION_MISMATCH,ctx.getStart().getLine(),ctx.getStart().getCharPositionInLine(),"boolean");
-		}
-	}
-
-	@Override
 	public void enterAssignExpr(ManuScriptParser.AssignExprContext ctx) { 
 		String varName = ctx.equationExpr().getText();
 		varName = varName.split("\\[")[0];//TODO: bad implementation
