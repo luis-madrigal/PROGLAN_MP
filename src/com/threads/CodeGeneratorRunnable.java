@@ -432,7 +432,9 @@ public class CodeGeneratorRunnable implements Runnable {
 	private boolean checkEndRun(String pointer) {
 		return !this.labelMap.get(pointer).getType().equals(NodeType.FUNCTION_END) 
 				&& !this.labelMap.get(pointer).getType().equals(NodeType.FIELD_DEC_END)
-				&& !this.labelMap.get(pointer).getType().equals(NodeType.RETURN) && this.isRunning;
+				&& !this.labelMap.get(pointer).getType().equals(NodeType.RETURN) 
+				&& this.isRunning
+				&& Console.instance().errorCount == 0;
 	}
 	
 	private void returnScope() {

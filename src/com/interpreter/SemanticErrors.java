@@ -19,6 +19,7 @@ public class SemanticErrors {
 	public static final String ARR_INIT_DIFF_COUNT = LINE_INFO + "Invalid array initialization. Element counts must be of uniform size.";
 	public static final String INVALID_DIM_ACCESS = LINE_INFO + "Invalid access dimensions. Expecting '%s' dimensions.";
 	public static final String INVALID_INDEX = LINE_INFO + "Invalid index. Index can only be of type 'int'";
+	public static final String INVALID_ACCESS = LINE_INFO + "Trying to access array '%s' when it has not yet been initialized.";
 	
 	//	public static final String DIMS_NOT_MATCH = LINE_INFO + "Array dimensions initialization doesn't match declared. init dim: %s ; declared dim: %s";
 
@@ -52,6 +53,7 @@ public class SemanticErrors {
 	
 	//CONSTANT
 	public static final String CONSTANT_MOD = LINE_INFO + "Cannont modify constant variable '%s'";
+	public static final String CONSTANT_INIT = LINE_INFO + "Constant '%s' should be initialized";
 	
 	//COMPARISON
 	public static final String COMPARISON_ERR = LINE_INFO + "The operator %s is undefined for the argument types '%s' and '%s'";

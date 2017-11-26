@@ -1,8 +1,35 @@
 
-ACT print starring () {
+permanent int FINAL_X = 0;
+
+composition record {
+	int x;
+}
+
+composition record2 {
+	composition record rd;
+	string g;
+}
+
+ACT print starring (composition record r) {
 	Say "hello";
 }
 
 ACT main starring () {
-	print();
+	composition record r;
+	composition record2 r2;
+	composition record *rp;
+	
+	print(r);
+
+	rp = r;
+
+	int[] arr3;
+	arr3 = new int[2];
+	arr3 = new int[] {3, FINAL_X};
+
+	int x = 3 + FINAL_X;
+	Say x;
+
+	int y;
+	Say ++y;
 }
