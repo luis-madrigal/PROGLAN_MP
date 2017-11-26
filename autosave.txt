@@ -1,27 +1,35 @@
+
 int counter = 0;
 
 composition subrecord{
 	int a;
 	int* b, cd;
-	string a;	
+	string k;	
 	string[] c;
 }
 
 
 composition record {
-	composition record cd;
+	composition subrecord*[] cd;
+	int*[] k;
 	int a, b, c;
 	float d;
 	
 }
 
-int* pointerA;
-int* pointerB = pointerA;
+
 
 ACT main starring ()  {
 	composition subrecord rec;
 
-	int c 5;
+	int[][] array2 = new int[2][3];
+	int[][] array1 = "asd";
+	int[][] array = new int[][]{{1,2,34,x+5,2},{1,23,34,32,2}};
+
+	int[] a;
+	int[] c = a;
+
 	int* pointerc;
 	pointerc = c;
+
 }
