@@ -11,25 +11,26 @@ composition subrecord{
 
 composition record {
 	composition subrecord*[] cd;
+	composition subrecord rd;
 	int*[] k;
 	int a, b, c;
 	float d;
 	
 }
 
-
-
 ACT main starring ()  {
 	composition subrecord rec;
+	composition record rec2;
+	rec2.rd.a = 2;
 
+	int x = 3;
 	int[][] array2 = new int[2][3];
 	int[][] array1 = "asd";
+	int[][] array3 = array1;
 	int[][] array = new int[][]{{1,2,34,x+5,2},{1,23,34,32,2}};
 
 	int[] a;
 	int[] c = a;
 
 	int* pointerc;
-	pointerc = c;
-
 }
