@@ -1,4 +1,6 @@
 
+permanent int FINAL = 1;
+
 ACT generateFibo starring (int number) {
 	if(number == 1 || number == 2) {
 		give 1;
@@ -10,11 +12,15 @@ ACT generateFibo starring (int number) {
 ACT main starring () {
 	int x;
 	int fibo;
-	int i = 0;
+	int i = FINAL;
 
+	if(true)
+		give;
+
+	int j = (i = 1+2);
 	Say "Enter a number: ";
 	Write to x;
 
 	fibo = generateFibo(x);
-	Say "Fibonacci Number "+x+": "+fibo + ": "+i++;
+	Say "Fibonacci Number "+x+": "+fibo + ": "+(++i);
 }

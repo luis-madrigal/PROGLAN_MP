@@ -228,12 +228,15 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
         if(isBreakpoint)
         	System.out.println("BP: "+node.getNodeType());
         
-        AbstractSyntaxTree child = visit(ctx.expression());
+        if(ctx.expression() != null) {
+        	AbstractSyntaxTree child = visit(ctx.expression());
 
-        if(child!=null) {
-            child.setParent(node);
-            node.addChild(child);
+            if(child!=null) {
+                child.setParent(node);
+                node.addChild(child);
+            }
         }
+        
 
         return node;
     }

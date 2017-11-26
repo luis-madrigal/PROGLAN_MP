@@ -347,9 +347,14 @@ public class BaseListener extends ManuScriptBaseListener{
 	@Override public void enterReturnStmt(ManuScriptParser.ReturnStmtContext ctx) {
 		MethodContext mctx = methodTable.get(currentMethod);
 		if(mctx.getReturnType().equals(Types.NULL)) {
-			mctx.setReturnType(this.expressionCheck(ctx.expression()));
+			if(ctx.expression() == null) {
+				mctx.setReturnType("void");
+			} else
+				mctx.setReturnType(this.expressionCheck(ctx.expression()));
 		} else {
-			if(!mctx.getReturnType().equals(this.expressionCheck(ctx.expression()))) {
+			if(mctx.getReturnType().equals("void") && ctx.expression() != null) {
+				SemanticErrors.throwError(SemanticErrors.INVALID_RETURN_TYPE, ctx.getStart().getLine(), ctx.getStop().getCharPositionInLine(), currentMethod, mctx.getReturnType());
+			} else if(!mctx.getReturnType().equals(this.expressionCheck(ctx.expression()))) {
 				SemanticErrors.throwError(SemanticErrors.INVALID_RETURN_TYPE, ctx.expression().getStart().getLine(), ctx.expression().getStop().getCharPositionInLine(), currentMethod, mctx.getReturnType());
 			}
 		}
