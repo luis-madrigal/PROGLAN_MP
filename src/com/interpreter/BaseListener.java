@@ -4,35 +4,30 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Stack;
 
-import com.interpreter.contexts.ArrayInfo;
-import com.interpreter.contexts.StructInfo;
-
-import org.antlr.v4.runtime.atn.SemanticContext.Operator;
+import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.ParseTree;
 
+import com.interpreter.contexts.ArrayInfo;
 import com.interpreter.contexts.MethodContext;
+import com.interpreter.contexts.StructInfo;
 import com.interpreter.contexts.SymbolContext;
 import com.interpreter.matchers.LiteralMatcher;
 import com.parser.ManuScriptBaseListener;
 import com.parser.ManuScriptParser;
 import com.parser.ManuScriptParser.AddSubExprContext;
 import com.parser.ManuScriptParser.AndExprContext;
-import com.parser.ManuScriptParser.ArrayCreatorRestContext;
 import com.parser.ManuScriptParser.ArrayInitExprContext;
 import com.parser.ManuScriptParser.AssignExprContext;
 import com.parser.ManuScriptParser.ComparisonExprContext;
 import com.parser.ManuScriptParser.EqualityExprContext;
 import com.parser.ManuScriptParser.EquationExprContext;
 import com.parser.ManuScriptParser.ExpressionContext;
-import com.parser.ManuScriptParser.ExpressionListContext;
 import com.parser.ManuScriptParser.ForInitContext;
 import com.parser.ManuScriptParser.ForUpdateContext;
 import com.parser.ManuScriptParser.FormalParameterContext;
 import com.parser.ManuScriptParser.FunctionExprContext;
-import com.parser.ManuScriptParser.LiteralContext;
 import com.parser.ManuScriptParser.MethodBodyContext;
 import com.parser.ManuScriptParser.MultDivModExprContext;
-import com.parser.ManuScriptParser.NegationExprContext;
 import com.parser.ManuScriptParser.OrExprContext;
 import com.parser.ManuScriptParser.ParExpressionContext;
 import com.parser.ManuScriptParser.PostIncDecExprContext;
@@ -45,8 +40,6 @@ import com.parser.ManuScriptParser.VariableExprContext;
 import com.utils.Console;
 import com.utils.KeyTokens.OPERATOR;
 import com.utils.Types;
-import com.utils.Utils;
-import sun.awt.Symbol;
 
 public class BaseListener extends ManuScriptBaseListener{
 	private Stack<Scope> scopes;
@@ -414,47 +407,34 @@ public class BaseListener extends ManuScriptBaseListener{
 		this.expressionCheck(ctx.expression());
 	}
 	
-	@Override
-	public void enterPostIncDecExpr(ManuScriptParser.PostIncDecExprContext ctx) {
+	//not overriden. primary function is to assure no constant modification
+	public boolean enterPostIncDecExpression(ManuScriptParser.PostIncDecExprContext ctx) {
 		String varName = ctx.equationExpr().getText();
 		SymbolContext sctx;
 		
 		if((sctx = scopes.peek().checkTables(varName)) != null){
-			if(sctx.isConstant())
+			if(sctx.isConstant()) {
 				SemanticErrors.throwError(SemanticErrors.CONSTANT_MOD, ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), varName);
-			else {
-				String type = this.expressionCheck(ctx);
-				if(!sctx.getSymbolType().matches(type)) {
-					//TODO: semantic error
-//					SemanticErrors.throwError(SemanticErrors., args);
-				}
-//				this.expressionChecker(ctx, sctx.getSymbolType());
+				return false;
 			}
-		} else {
-			SemanticErrors.throwError(SemanticErrors.UNDECLARED_VAR, ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), varName);
 		}
+		return true;
 	}
 	
-	@Override
-	public void enterPreIncDecSignExpr(ManuScriptParser.PreIncDecSignExprContext ctx) {
+	//not overriden. primary function is to assure no constant modification
+	public boolean enterPreIncDecSignExpression(ManuScriptParser.PreIncDecSignExprContext ctx) {
 		String varName = ctx.equationExpr().getText();
 		SymbolContext sctx;
 		
 		if((sctx = scopes.peek().checkTables(varName)) != null){
-			if(sctx.isConstant())
+			if(sctx.isConstant()) {
 				SemanticErrors.throwError(SemanticErrors.CONSTANT_MOD, ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), varName);
-			else {
-				String type = this.expressionCheck(ctx);
-				if(!sctx.getSymbolType().matches(type)) {
-					//TODO: semantic error
-				}
-//				this.expressionChecker(ctx, sctx.getSymbolType());
+				return false;
 			}
-		} else {
-			SemanticErrors.throwError(SemanticErrors.UNDECLARED_VAR, ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), varName);
 		}
+		return true;	
 	}
-	
+		
 	@Override
 	public void enterIfElseStmt(ManuScriptParser.IfElseStmtContext ctx) {//TODO: += cannot be seen in if conditions
 		if(!"boolean".matches(this.expressionCheck(ctx.parExpression()))) {
@@ -543,45 +523,34 @@ public class BaseListener extends ManuScriptBaseListener{
 			System.out.println("ENTER FUNCTION CALL");
 			return this.enterFunctionExpression((FunctionExprContext) node);
 		} else if(node instanceof PostIncDecExprContext) {
+			this.enterPostIncDecExpression(((PostIncDecExprContext) node));
 			return this.getExprReturnedType(((PostIncDecExprContext) node).getStart().getLine(), ((PostIncDecExprContext) node).getStart().getCharPositionInLine(), OPERATOR.getEnum(node.getChild(1)), this.getTypeOf(node.getChild(0)));
 		} else if(node instanceof PreIncDecSignExprContext) {
+			this.enterPreIncDecSignExpr(((PreIncDecSignExprContext) node));
 			return this.getExprReturnedType(((PreIncDecSignExprContext) node).getStart().getLine(), ((PreIncDecSignExprContext) node).getStart().getCharPositionInLine(), OPERATOR.getEnum(node.getChild(0)), this.getTypeOf(node.getChild(1)));
-		} else {
-			int lineNum = 0;
-			int charPos = 0;
-			
-			if(node instanceof MultDivModExprContext) {
-				lineNum = ((MultDivModExprContext) node).getStart().getLine();
-				charPos = ((MultDivModExprContext) node).getStart().getCharPositionInLine();
-			} else if(node instanceof AddSubExprContext) {
-				lineNum = ((AddSubExprContext) node).getStart().getLine();
-				charPos = ((AddSubExprContext) node).getStart().getCharPositionInLine();
-			} else if(node instanceof ComparisonExprContext) {
-				lineNum = ((ComparisonExprContext) node).getStart().getLine();
-				charPos = ((ComparisonExprContext) node).getStart().getCharPositionInLine();
-			} else if(node instanceof EqualityExprContext) {
-				lineNum = ((EqualityExprContext) node).getStart().getLine();
-				charPos = ((EqualityExprContext) node).getStart().getCharPositionInLine();
-			} else if(node instanceof AndExprContext) {
-				lineNum = ((AndExprContext) node).getStart().getLine();
-				charPos = ((AndExprContext) node).getStart().getCharPositionInLine();
-			} else if(node instanceof OrExprContext) {
-				lineNum = ((OrExprContext) node).getStart().getLine();
-				charPos = ((OrExprContext) node).getStart().getCharPositionInLine();
-			} else if(node instanceof AssignExprContext) {
-				lineNum = ((AssignExprContext) node).getStart().getLine();
-				charPos = ((AssignExprContext) node).getStart().getCharPositionInLine();
-			}
-			System.out.println(lineNum + " " + charPos + " " +node.getChild(1).getText());
-			return this.getExprReturnedType(lineNum, charPos, OPERATOR.getEnum(node.getChild(1)), this.getTypeOf(node.getChild(0)), this.getTypeOf(node.getChild(2)));
+		} else if(node instanceof MultDivModExprContext
+				|| node instanceof AddSubExprContext
+				|| node instanceof ComparisonExprContext
+				|| node instanceof EqualityExprContext
+				|| node instanceof AndExprContext
+				|| node instanceof OrExprContext
+				|| node instanceof AssignExprContext){
+			ParserRuleContext pCtx = (ParserRuleContext) node;
+			return this.getExprReturnedType(pCtx.getStart().getLine(), pCtx.getStart().getCharPositionInLine(), OPERATOR.getEnum(node.getChild(1)), this.getTypeOf(node.getChild(0)), this.getTypeOf(node.getChild(2)));
 		}
+		return "null";
 	}
 	
 	private String getTypeOf(ParseTree node) {
 		if(node instanceof VariableExprContext
 				|| node instanceof StructExprContext
 				|| node instanceof EquationExprContext) {
+			ParserRuleContext eCtx = (ParserRuleContext) node;
 			SymbolContext ctx = scopes.peek().checkTables(node.getText());
+			if(ctx == null) {
+				SemanticErrors.throwError(SemanticErrors.UNDECLARED_VAR, eCtx.getStart().getLine(), eCtx.getStop().getCharPositionInLine(), node.getText());
+				return "null";
+			}
 			return ctx.getSymbolType();
 		} else if (node instanceof PrimaryContext && node.getChildCount() == 1 && !(node.getChild(0) instanceof ParExpressionContext)){
 			String text = node.getText();
