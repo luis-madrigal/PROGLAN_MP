@@ -851,7 +851,8 @@ public class Panel implements CaretListener, Runnable, ActionListener, KeyListen
 
 		int offsetX = 0;
 
-		btnRun.setLocation(28, 0);
+//		btnRun.setLocation(28, 0);
+		btnRun.setLocation(22, 0);
 		btnLoad.setLocation(btnRun.getX()+btnRun.getWidth()+offsetX, btnRun.getY());
 		btnSave.setLocation(btnLoad.getX()+btnLoad.getWidth()+offsetX, btnRun.getY());
 		btnWatch.setLocation(btnSave.getX()+btnSave.getWidth()+offsetX, btnRun.getY());
