@@ -75,12 +75,8 @@ public class Panel implements CaretListener, Runnable, ActionListener, KeyListen
 	private DialogWatch dlgWatch;
 
 	private TextFileHandler textFileHandler;
-<<<<<<< HEAD
 	private volatile boolean isRunning;
 	private boolean isActive;
-=======
-	private boolean isRunning;
->>>>>>> DebugThread
 	private JPanel pnlMain;
 	private JPanel pnlMenu;
 	private JButton btnRun;
@@ -131,11 +127,8 @@ public class Panel implements CaretListener, Runnable, ActionListener, KeyListen
 	public final static String newline = "\n";
 	
 	private ScannerModel scanner;
-<<<<<<< HEAD
-=======
 	private Searcher watcher;
 
->>>>>>> DebugThread
 	public static int baseFontSize = (int) Frame.SCREEN_SIZE.getHeight() / 60;
 
 	public Panel() {
@@ -731,7 +724,6 @@ public class Panel implements CaretListener, Runnable, ActionListener, KeyListen
 		this.dlgOpen = new DialogOpen();
 		this.dlgOpen.setProgressColor(FrameStatic.clrLightBlue);
 		this.dlgOpen.getBtnOpen().addMouseListener(this);
-<<<<<<< HEAD
 
 		this.isRunning = false;
 		this.isActive = false;
@@ -751,11 +743,6 @@ public class Panel implements CaretListener, Runnable, ActionListener, KeyListen
 		documentOut.repaint();
 		documentPane.addMouseListener(this);
 		this.foldDoument();
-=======
-		
-		this.isRunning = false;
-		
->>>>>>> DebugThread
 	}
 	
 	public void initMenuButtons() {
@@ -891,16 +878,6 @@ public class Panel implements CaretListener, Runnable, ActionListener, KeyListen
 		this.codeInput = codeInput;
 	}
 
-<<<<<<< HEAD
-=======
-	public JTextArea getInputLines() {
-		return inputLines;
-	}
-
-	public void setInputLines(JTextArea inputLines) {
-		this.inputLines = inputLines;
-	}
->>>>>>> DebugThread
 	/*
 	 * Specify the color for a Token type here using syntaxScheme.
 	 * 
@@ -927,31 +904,22 @@ public class Panel implements CaretListener, Runnable, ActionListener, KeyListen
 		return this.pnlMain;
 	}
 	
-<<<<<<< HEAD
 	public void changeToPlay() {
 		this.isRunning = false;
-=======
-	public void changeToPlayIcon() {
->>>>>>> DebugThread
 		btnRun.setIcon(new ImageIcon(getClass().getClassLoader().getResource("res/ico_play_off.png")));
         btnRun.setRolloverIcon(new ImageIcon(getClass().getClassLoader().getResource("res/ico_play_on.png")));
         btnRun.setPressedIcon(new ImageIcon(getClass().getClassLoader().getResource("res/ico_play_on.png")));
       
 	}
 	
-<<<<<<< HEAD
 	public void changeToPause() {
 		this.isRunning = true;
-=======
-	public void changeToPauseIcon() {
->>>>>>> DebugThread
 		btnRun.setIcon(new ImageIcon(getClass().getClassLoader().getResource("res/ico_pause_off.png")));
         btnRun.setRolloverIcon(new ImageIcon(getClass().getClassLoader().getResource("res/ico_pause_on.png")));
         btnRun.setPressedIcon(new ImageIcon(getClass().getClassLoader().getResource("res/ico_pause_on.png")));
       
 	}
 	
-<<<<<<< HEAD
 	public void changeToActive() {
 		this.isActive = true;
 		btnContinue.setIcon(new ImageIcon(getClass().getClassLoader().getResource("res/ico_continue_active_off.png")));
@@ -990,27 +958,7 @@ public class Panel implements CaretListener, Runnable, ActionListener, KeyListen
 				String text = this.codeInput.getText();		
 				
 				this.parsedOut.setText("");
-=======
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		if(e.getSource() == this.btnRun) {
-			if(this.isRunning) {
-				this.changeToPlayIcon();
-				this.isRunning = false;
-				this.scanner.stopThread();
-			}
-			else {
-				this.changeToPauseIcon();
-				this.isRunning = true;
-				Console.instance().purge();
-				String text = this.codeInput.getText();		
-				
-				this.parsedOut.setText("");
-//				this.parsedOut.setText(this.parsedOut.getText() + newline);
-//				this.scanner.processTokens(text+newline);
-//				this.threadCodeGenerator = this.scanner.getThreadCodeGenerator();
->>>>>>> DebugThread
-				
+
 				this.parsedOut.setText(this.parsedOut.getText() + this.scanner.getTokens(text+newline, this.getListBreakpoints(text+newline)));
 				this.scanner.generateTree(); // Required to do this
 				this.treePane.setViewportView(this.scanner.getTree());			
@@ -1019,10 +967,7 @@ public class Panel implements CaretListener, Runnable, ActionListener, KeyListen
 //				this.console.setText(this.console.getText() + this.scanner.getMessage());			
 				this.codeInput.selectAll();
 				this.parsedOut.setCaretPosition(parsedOut.getDocument().getLength());
-<<<<<<< HEAD
-				
-=======
->>>>>>> DebugThread
+
 		
 			}	
 		}
