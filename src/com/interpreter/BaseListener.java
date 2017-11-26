@@ -178,7 +178,7 @@ public class BaseListener extends ManuScriptBaseListener{
 						PointerInfo ptrInf = new PointerInfo(varType);
 						symCtx.setOther(ptrInf);
 					} else if (strCtx.typeType().structType() != null) {	//declaration is of type struct
-						if (!structDefTable.containsKey(strCtx.typeType().structType().Identifier().getText())) {
+						if (structDefTable.containsKey(strCtx.typeType().structType().Identifier().getText())) {
 							StructInfo strInf = structDefTable.get(strCtx.typeType().structType().Identifier().getText()).clone();
 							symCtx.setOther(strInf);
 						}
@@ -277,7 +277,18 @@ public class BaseListener extends ManuScriptBaseListener{
 					ArrayInfo arInf = new ArrayInfo(dimCount,varType);
 					checkArraySemantics(arInf, dimCount, varType, vdctx, ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine());
 					symCtx.setOther(arInf);
-				}else {
+				}
+				else if (ctx.typeType().pointerType() != null) {	//declaration is pointer
+					PointerInfo ptrInf = new PointerInfo(varType);
+					symCtx.setOther(ptrInf);
+				}
+				else if (ctx.typeType().structType() != null) {	//declaration is of type struct
+					if (structDefTable.containsKey(ctx.typeType().structType().Identifier().getText())) {
+						StructInfo strInf = structDefTable.get(ctx.typeType().structType().Identifier().getText()).clone();
+						symCtx.setOther(strInf);
+					}
+				}
+				else {	//declaration is of any other type
 					//do this if variable has initializer
 					if (vdctx.variableInitializer() != null) {
 						String types = this.expressionCheck(vdctx.variableInitializer().expression());
@@ -327,7 +338,18 @@ public class BaseListener extends ManuScriptBaseListener{
 					//array initialization checking
 					checkArraySemantics(arInf, dimCount, varType, vdctx, ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine());
 					symCtx.setOther(arInf);
-				}else {
+				}
+				else if (ctx.typeType().pointerType() != null) {	//declaration is pointer
+					PointerInfo ptrInf = new PointerInfo(varType);
+					symCtx.setOther(ptrInf);
+				}
+				else if (ctx.typeType().structType() != null) {	//declaration is of type struct
+					if (structDefTable.containsKey(ctx.typeType().structType().Identifier().getText())) {
+						StructInfo strInf = structDefTable.get(ctx.typeType().structType().Identifier().getText()).clone();
+						symCtx.setOther(strInf);
+					}
+				}
+				else {	//declaration is of any other type
 					//do this if variable has initializer
 					if (vdctx.variableInitializer() != null) {
 						String types = this.expressionCheck(vdctx.variableInitializer().expression());
