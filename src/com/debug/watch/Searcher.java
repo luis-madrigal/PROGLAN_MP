@@ -18,6 +18,9 @@ public class Searcher {
 	}
 	
 	public void generateVarList(String inputCode) {
+		if(!this.varList.isEmpty())
+			this.varList.clear();
+		
 		int lineNumber = 0;
 		String dataType = "";
 		String literal = "";
