@@ -104,7 +104,10 @@ public class ICGenerator {
 	}
 	
 	private void assignArray(AbstractSyntaxTree n) {//TODO assign sctx to current scope
-		TACArrayAssignStatement stmt = new TACArrayAssignStatement((SymbolContext) n.getChild(0).getValue(), n.getNodeType(), n.isBreakpoint());
+		SymbolContext sctx = (SymbolContext) n.getChild(0).getValue();
+		this.currentScope.addToScope(sctx);
+		
+		TACArrayAssignStatement stmt = new TACArrayAssignStatement(sctx, n.getNodeType(), n.isBreakpoint());
 		AbstractSyntaxTree arrInit = n.getChild(1);
 		if(arrInit.getChild(0).getNodeType() == NodeType.ARRAY_BLOCK) {
 			for (AbstractSyntaxTree ast : arrInit.getChildren()) {

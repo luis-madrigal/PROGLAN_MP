@@ -7,12 +7,28 @@ import com.interpreter.tac.operands.Operand;
 public class TACArrayAssignStatement extends TACStatement {
 	
 	private SymbolContext ctx;
-	private Operand[] arr;
+	private Operand value;
 	private int dims;
 
 	public TACArrayAssignStatement(SymbolContext ctx, NodeType type, boolean isBreakpoint) {
 		super(type, isBreakpoint);
-		// TODO Auto-generated constructor stub
+		this.ctx = ctx;
+	}
+	
+	public Operand getValue() {
+		return value;
 	}
 
+
+
+	public void setValue(Operand value) {
+		this.value = value;
+	}
+
+
+
+	public String toString() {
+		return this.getLabel() + ": " + ctx.getIdentifier() + " assign " + value.toString();
+	}
+	
 }
