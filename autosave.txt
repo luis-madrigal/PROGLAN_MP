@@ -3,40 +3,27 @@ int counter = 0;
 
 composition subrecord{
 	int a;
-	int b;
-	string a;
+	int* b, cd;
+	string a;	
 	string[] c;
 }
 
 
 composition record {
+	composition record cd;
 	int a, b, c;
 	float d;
-	composition subrecord b;
-	composition subrecord[] arrB;
-	composition subrec[] a;
-	composition norecord error;
+	
 }
 
-
-ACT solve starring ( int n, string start, string auxilliary, string end) {
-	counter++;
-	if (n == 1)
-		Say start + " -> " + end + ": "+counter;
-	else {
-		solve(n-1, start, end, auxilliary);
-		Say start + " -> " + end;
-		solve(n-1, auxilliary, start, end);
-	}
-}
+int* pointerA;
+int* pointerB = pointerA;
 
 ACT main starring ()  {
-	int j,k,l;
-	int x;
+	composition subrecord rec;
 
-	Write to x;
+	int c 5;
+	int* pointerc;
+	pointerc = c;
 
-	solve(x, "A", "B", "C");
-
-	Say "final count: "+(counter+1);
 }
