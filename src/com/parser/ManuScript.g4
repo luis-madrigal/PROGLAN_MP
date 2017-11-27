@@ -1156,5 +1156,5 @@ COMMENT
     ;
 
 LINE_COMMENT
-    :   '['WS* Identifier (WS Identifier)* WS*']:' ~[\r\n]* -> channel(HIDDEN)
+    :   '['WS* (WS* Identifier WS*)* WS*']:' ~[\r\n]* -> channel(HIDDEN)
     ;

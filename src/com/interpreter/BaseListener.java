@@ -263,15 +263,58 @@ public class BaseListener extends ManuScriptBaseListener{
 		scopes.push(scope);
 		
 		if(ctx.formalParameters().formalParameterList() != null) {
+			//parameter semantic checking
 			for (FormalParameterContext fpctx : ctx.formalParameters().formalParameterList().formalParameter()) {
 				String varName = fpctx.variableDeclaratorId().getText();
+				System.out.println("type: "+fpctx.typeType().getText()+"|| name: "+varName);
+				SymbolContext symCtx = new SymbolContext(fpctx.typeType().getText(), scope, varName);
 
-				System.out.println("added "+varName+" from method " +methodName+ " to symbol table");
-				scope.add(varName);
 				if(getCurrentSymTable().containsKey(varName)){
 					SemanticErrors.throwError(SemanticErrors.DUPLICATE_VAR, ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), varName);
 				}
-				getCurrentSymTable().put(varName, new SymbolContext(fpctx.typeType().getText(), scope, varName));
+				if(symCtx.getCtxType().equals(ContextType.ARRAY)){
+					System.out.println("TYPE ARR: "+varName);
+					int dimCount = (fpctx.typeType().getChildCount() - 1) / 2;
+					ArrayInfo arInf = new ArrayInfo(dimCount,fpctx.typeType().getText());
+					symCtx.setOther(arInf);
+					if(arInf.getArrayCtxType().equals(ContextType.STRUCT)){
+						if (!structDefTable.containsKey(fpctx.typeType().structType().Identifier().getText()))
+							SemanticErrors.throwError(SemanticErrors.UNDEFINED_STRUCT,
+									fpctx.typeType().getStart().getLine(),
+									fpctx.typeType().getStart().getCharPositionInLine(),
+									arInf.getArrType().replace("composition",""));
+
+					}
+				}
+				else if(symCtx.getCtxType().equals(ContextType.POINTER)){
+					System.out.println("TYPE PTR: "+varName);
+					PointerInfo ptrInf = new PointerInfo(fpctx.typeType().getText());
+					symCtx.setOther(ptrInf);
+				}
+				else if(symCtx.getCtxType().equals(ContextType.STRUCT)){
+					System.out.println("TYPE STRUCT: "+varName);
+					if (structDefTable.containsKey(fpctx.typeType().structType().Identifier().getText())) {
+						StructInfo strInf = structDefTable.get(fpctx.typeType().structType().Identifier().getText()).clone();
+						symCtx.setOther(strInf);
+						System.out.println("STRUCTNAME  :"+strInf.getStructName());
+					}
+					else
+						SemanticErrors.throwError(SemanticErrors.UNDEFINED_STRUCT,
+								fpctx.typeType().getStart().getLine(),
+								fpctx.typeType().getStart().getCharPositionInLine(),
+								fpctx.typeType().getText());
+				}
+
+
+				getCurrentSymTable().put(varName,symCtx);
+
+//
+//				System.out.println("added "+varName+" from method " +methodName+ " to symbol table");
+//				scope.add(varName);
+//				if(getCurrentSymTable().containsKey(varName)){
+//					SemanticErrors.throwError(SemanticErrors.DUPLICATE_VAR, ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), varName);
+//				}
+//				getCurrentSymTable().put(varName, new SymbolContext(fpctx.typeType().getText(), scope, varName));
 			}
 		}
 	}
