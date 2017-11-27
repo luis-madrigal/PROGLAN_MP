@@ -1,7 +1,11 @@
 
+[]* a
+	asdsd
+*[]
 
 ACT main starring() {
  	int x = 0;
+ 	[]* asd
  	
 	[]* Comment 1
 		What is your 
