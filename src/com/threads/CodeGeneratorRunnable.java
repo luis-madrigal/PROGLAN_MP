@@ -38,7 +38,6 @@ import com.interpreter.tac.operands.Register;
 import com.interpreter.tac.operands.Variable;
 import com.rits.cloning.Cloner;
 import com.utils.Console;
-import com.utils.KeyTokens.LITERAL_TYPE;
 import com.utils.KeyTokens.OPERATOR;
 
 public class CodeGeneratorRunnable implements Runnable {
@@ -164,10 +163,11 @@ public class CodeGeneratorRunnable implements Runnable {
 			if(isPlay) {
 				pnlParent.changeToInactive();
 				stmt = this.labelMap.get(pointer);
-				Panel.printWatch("evaluating: "+pointer);
+				// Method Name | methodScope.getSymTable().keySet()
+				Panel.printWatch("[ "+methodName+" ]");
+				Panel.printWatch("value "+ methodScope.getSymTable().get("x").getValue()+"");
 				pointerCount = this.evaluate(methodScope, registers, stmt, pointerCount);
 				pointer = ICGenerator.LABEL_ALIAS+pointerCount;
-				
 //				if(stmt.isBreakpoint()) {
 //					System.out.println("BRK "+	stmt.getType()+": "+stmt.isBreakpoint());
 //					this.isPlay = false;
@@ -203,11 +203,15 @@ public class CodeGeneratorRunnable implements Runnable {
 		this.currentScope = this.prevBlocks.pop();
 	}
 	
+	public void printKeyValues(Scope methodScope) {
+		
+		
+	}
+	
 	private int evaluate(Scope methodScope, HashMap<String, Register> registers, TACStatement statement, int pointerCount) {
 		
 		Panel.printWatch("P"+pointerCount+"    "+methodScope.getSymTable().keySet().toString());
-		Panel.printWatch(statement+"");
-		
+
 		switch (statement.getType()) {
 		
 		case BLOCK:
