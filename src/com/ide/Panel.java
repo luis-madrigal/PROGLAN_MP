@@ -164,6 +164,10 @@ public class Panel implements CaretListener, Runnable, ActionListener, KeyListen
         UIManager.put("TabbedPane.focus", Color.WHITE);
         UIManager.put("TabbedPane.selectHighlight", Color.WHITE);
         
+      //For Watch Table
+        UIManager.getLookAndFeelDefaults().put("Table.background", SUBLIME_BG);
+        UIManager.getLookAndFeelDefaults().put("Table.gridColor", Styles.SKY_BLUE);
+        UIManager.getLookAndFeelDefaults().put("Table.foreground", Color.WHITE);
 
 		this.textFileHandler = new TextFileHandler();
 		this.styles = new Styles();
@@ -393,7 +397,6 @@ public class Panel implements CaretListener, Runnable, ActionListener, KeyListen
 		this.threeACPane.getVerticalScrollBar().setUI(new CustomScrollBarUISky());
 		this.threeACPane.getHorizontalScrollBar().setUI(new CustomScrollBarUISky());
 		this.threeACPane.setBorder(null);
-	
 		this.threeACPane.getHorizontalScrollBar().setPreferredSize(new Dimension(
 		        (int)threeACPane.getHorizontalScrollBar().getPreferredSize().getWidth(),
 		        (int)horizontalHeight
@@ -516,11 +519,12 @@ public class Panel implements CaretListener, Runnable, ActionListener, KeyListen
 		parentPane.add(treePane);
 		
 		this.outputTabs = new JTabbedPane();
-		this.outputTabs.add("3 Address Code", this.threeACPane);
+		this.outputTabs.add("IR Code", this.threeACPane);
 //		this.outputTabs.add("Parsed Out", this.parsedPane);
 		this.outputTabs.add("Parse Tree", parentPane);
 
 		this.outputTabs.add("Watch", this.watchPane);
+		this.outputTabs.add("Temp Watch", this.tempWatchPane); //TODO: Delete after
 
 		this.outputTabs.setFont(FrameStatic.fntDefault);
 		outputTabs.setBackground(Color.WHITE);
@@ -647,7 +651,7 @@ public class Panel implements CaretListener, Runnable, ActionListener, KeyListen
 //		topSplitPane.getLeftComponent().setBounds(0, 0, topSplitPane.getLeftComponent().getWidth(),
 //				topSplitPane.getLeftComponent().getHeight());
 		this.topSplitPane.setRightComponent(this.outputTabs);
-		this.topSplitPane.setDividerLocation((int) Frame.SCREEN_SIZE.getWidth()-320);
+		this.topSplitPane.setDividerLocation((int) Frame.SCREEN_SIZE.getWidth()-380); // TODO
 		gbc = new GridBagConstraints();
 		gbc.anchor = GridBagConstraints.NORTHEAST;
 		gbc.fill = GridBagConstraints.BOTH;
@@ -734,11 +738,11 @@ public class Panel implements CaretListener, Runnable, ActionListener, KeyListen
 		//Scanner for input string
 		this.scanner = new ScannerModel(this);
 		
-		this.topSplitPane.setDividerSize(2);
+		this.topSplitPane.setDividerSize(5);
 		this.topSplitPane.setBackground(Color.WHITE);
 		this.topSplitPane.setContinuousLayout(true);
 		
-		this.bottomSplitPane.setDividerSize(2);
+		this.bottomSplitPane.setDividerSize(5);
 		this.bottomSplitPane.setBackground(Color.WHITE);
 		this.bottomSplitPane.setContinuousLayout(true);
 
@@ -758,6 +762,8 @@ public class Panel implements CaretListener, Runnable, ActionListener, KeyListen
 //		this.pnlMain.setComponentZOrder(pnlMenu, pnlMain.getComponentCount()-1);
 
 //		if(this.codeInput.getText().contains("ACT ")) {
+		this.codeInput.repaint();
+		this.codeInput.revalidate();
 			documentOut.generate(this.codeInput.getText());
 //			System.out.println(" "+this.codeInput.getText());
 //		}
@@ -767,7 +773,8 @@ public class Panel implements CaretListener, Runnable, ActionListener, KeyListen
 		documentOut.revalidate();
 		documentOut.repaint();
 		documentPane.addMouseListener(this);
-		this.foldDoument();
+//		this.foldDoument();
+		documentOut.generate(this.codeInput.getText());
 	}
 	
 	public void initMenuButtons() {
@@ -903,6 +910,7 @@ public class Panel implements CaretListener, Runnable, ActionListener, KeyListen
 		this.codeInput = codeInput;
 	}
 
+	
 	/*
 	 * Specify the color for a Token type here using syntaxScheme.
 	 * 
@@ -1198,9 +1206,6 @@ public class Panel implements CaretListener, Runnable, ActionListener, KeyListen
 			
 			for(VariableNode var : selectedVar) {
 				this.modelWatchTable.addRow(new Object[] {var.getDataType()+" "+var.getLiteral(), var.getLineNumber(), var.getFuncParent()+" ("+var.getFuncChild()+")", "0"});
-				
-//				System.out.println("Line "+var.getLineNumber()+": "+var.getDataType()+" "+var.getLiteral()+
-//						" ("+var.getFuncParent()+", "+var.getFuncChild()+")");
 			}
 			
 			this.outputTabs.setSelectedIndex(this.outputTabs.getTabCount()-1);

@@ -43,7 +43,8 @@ public class ManuScriptTokenMaker extends AbstractTokenMaker {
 
 	   int currentTokenStart = offset;
 	   int currentTokenType  = startTokenType;
-
+	   boolean multiLineFlag = false;
+	   
 	   for (int i=offset; i<end; i++) {
 
 	      // char c = array[i];
@@ -54,156 +55,231 @@ public class ManuScriptTokenMaker extends AbstractTokenMaker {
 	         case Token.NULL:
 
 	            currentTokenStart = i;   // Starting a new token here.
-
-	            switch (c) {
-
-	               case ' ':
-	               case '\t':
-	                  currentTokenType = Token.WHITESPACE;
-	                  break;
-
-	               case '"':
-	                  currentTokenType = Token.LITERAL_STRING_DOUBLE_QUOTE;
-	                  break;
-
-	               case '#':
-	                  currentTokenType = Token.COMMENT_EOL;
-	                  break;
-
-	                
-	               
-	               case '[':
-	            	   String line = "";
-	            	   for(int k = i; k < end; k++) {
-	            		   line += array[k];
-	            	   }
-	            	   System.out.println("LINE out "+line);
-	            	   if(line.contains("]:") || line.contains("]*")) {
-	            		   currentTokenType = Token.COMMENT_EOL;
-			               break;
-	            	   }
+	            
+	            if(multiLineFlag) {
+         		   currentTokenType = Token.COMMENT_EOL;
+	            	   // End of Coment
+	            	switch(c) {
+	            	  case '*':
+		            	   String line = "";
+		            	   for(int k = i; k < end; k++) {
+		            		   line += array[k];
+		            	   }
+		            	   System.out.println("LINE out "+line);
+		            	   if(line.contains("*[]")) {
+		            		   multiLineFlag = false;
+		            		   currentTokenType = Token.COMMENT_EOL;
+				               break;
+		            	   }
+	            	}
+	            	break;
+	             
+	            }
+	            else {
+		            switch (c) {
+	
+		               case ' ':
+		               case '\t':
+		                  currentTokenType = Token.WHITESPACE;
+		                  break;
+	
+		               case '"':
+		                  currentTokenType = Token.LITERAL_STRING_DOUBLE_QUOTE;
+		                  break;
+	
+		               case '#':
+		                  currentTokenType = Token.COMMENT_EOL;
+		                  break;
+	
+		                
+		               
+		               case '[':
+		            	   String line = "";
+		            	   for(int k = i; k < end; k++) {
+		            		   line += array[k];
+		            	   }
+		            	   System.out.println("LINE out "+line);
+		            	   
+		            	   if(line.length() > 3 &&
+		            			   line.substring(0, 3).contains("[]*")) {
+		            		   multiLineFlag = true;
+		            		   System.out.println("multiLine true");
+		            		   currentTokenType = Token.COMMENT_EOL;
+		            		   break;
+		            	   }
+		            	   
+		            	   if(line.contains("]:")) {
+		            		   currentTokenType = Token.COMMENT_EOL;
+				               break;
+		            	   }
+			                  
+		            	   // End of Comennt
+		               case '*':
+		            	   line = "";
+		            	   for(int k = i; k < end; k++) {
+		            		   line += array[k];
+		            	   }
+		            	   System.out.println("LINE out "+line);
+		            	   if(line.contains("*[]")) {
+		            		   multiLineFlag = false;
+		            		   currentTokenType = Token.COMMENT_EOL;
+				               break;
+		            	   }
+		            	   
+		               default:
+		                  if (RSyntaxUtilities.isDigit(c)) {
+		                     currentTokenType = Token.LITERAL_NUMBER_DECIMAL_INT;
+		                     break;
+		                  }
+		                  else if (RSyntaxUtilities.isLetter(c) || c=='/' || c=='_') {
+		                     currentTokenType = Token.IDENTIFIER;
+		                     break;
+		                  }
 		                  
-	            	   // End of Comennt
-	               case '*':
-	            	   line = "";
-	            	   for(int k = i; k < end; k++) {
-	            		   line += array[k];
-	            	   }
-	            	   System.out.println("LINE out "+line);
-	            	   if(line.contains("[]")) {
-	            		   currentTokenType = Token.COMMENT_EOL;
-			               break;
-	            	   }
-	            	   
-	               default:
-	                  if (RSyntaxUtilities.isDigit(c)) {
-	                     currentTokenType = Token.LITERAL_NUMBER_DECIMAL_INT;
-	                     break;
-	                  }
-	                  else if (RSyntaxUtilities.isLetter(c) || c=='/' || c=='_') {
-	                     currentTokenType = Token.IDENTIFIER;
-	                     break;
-	                  }
-	                  
-	                  // Anything not currently handled - mark as an identifier
-	                  currentTokenType = Token.IDENTIFIER;
-	                  break;
-
-	            } // End of switch (c).
-
+		                  // Anything not currently handled - mark as an identifier
+		                  currentTokenType = Token.IDENTIFIER;
+		                  break;
+	
+		            } // End of switch (c).
+	            }
 	            break;
 
 	         case Token.WHITESPACE:
-
-	            switch (c) {
-
-	               case ' ':
-	               case '\t':
-	                  break;   // Still whitespace.
-
-	               case '"':
-	                  addToken(text, currentTokenStart,i-1, Token.WHITESPACE, newStartOffset+currentTokenStart);
-	                  currentTokenStart = i;
-	                  currentTokenType = Token.LITERAL_STRING_DOUBLE_QUOTE;
-	                  break;
-
-	               case '[':
-	            	   String line = "";
-	            	   for(int k = i; k < end; k++) {
-	            		   line += array[k];
-	            	   }
-
-	            	   System.out.println("LINE in  "+line);
-	            	   if(line.contains("]:") || line.contains("]*")) {
-	            		  addToken(text, currentTokenStart,i-1, Token.WHITESPACE, newStartOffset+currentTokenStart);
-	 	                  currentTokenStart = i;
-	 	                  currentTokenType = Token.COMMENT_EOL;
-	 	                  break;
-	            	   }
-		                  
-	            	   // End of Comennt
-	               case '*':
-	            	   line = "";
-	            	   for(int k = i; k < end; k++) {
-	            		   line += array[k];
-	            	   }
-	            	   System.out.println("LINE out "+line);
-	            	   if(line.contains("[]")) {
-	            		   currentTokenType = Token.COMMENT_EOL;
-			               break;
-	            	   }
-//	                  addToken(text, currentTokenStart,i-1, Token.WHITESPACE, newStartOffset+currentTokenStart);
-//	                  currentTokenStart = i;
-//	                  currentTokenType = Token.COMMENT_EOL;
-//	                  break;
-
-	               default:   // Add the whitespace token and start anew.
-
-	                  addToken(text, currentTokenStart,i-1, Token.WHITESPACE, newStartOffset+currentTokenStart);
-	                  currentTokenStart = i;
-
-	                  if (RSyntaxUtilities.isDigit(c)) {
-	                     currentTokenType = Token.LITERAL_NUMBER_DECIMAL_INT;
-	                     break;
-	                  }
-	                  else if (RSyntaxUtilities.isLetter(c) || c=='/' || c=='_') {
-	                     currentTokenType = Token.IDENTIFIER;
-	                     break;
-	                  }
-
-	                  // Anything not currently handled - mark as identifier
-	                  currentTokenType = Token.IDENTIFIER;
-
-	            } // End of switch (c).
-
+	        	 if(multiLineFlag) {
+          		   currentTokenType = Token.COMMENT_EOL;
+	        		 switch(c) {
+		            	  case '*':
+			            	   String line = "";
+			            	   for(int k = i; k < end; k++) {
+			            		   line += array[k];
+			            	   }
+			            	   System.out.println("LINE out "+line);
+			            	   if(line.contains("*[]")) {
+			            		   multiLineFlag = false;
+			            		   currentTokenType = Token.COMMENT_EOL;
+					               break;
+			            	   }
+		            	}
+	        		 break;
+		             
+	        	 }
+	        	 else {
+		            switch (c) {
+	
+		               case ' ':
+		               case '\t':
+		                  break;   // Still whitespace.
+	
+		               case '"':
+		                  addToken(text, currentTokenStart,i-1, Token.WHITESPACE, newStartOffset+currentTokenStart);
+		                  currentTokenStart = i;
+		                  currentTokenType = Token.LITERAL_STRING_DOUBLE_QUOTE;
+		                  break;
+	
+		               case '[':
+		            	   String line = "";
+		            	   for(int k = i; k < end; k++) {
+		            		   line += array[k];
+		            	   }
+	
+		            	   System.out.println("LINE in  "+line);
+		            	   
+		            	   if(line.length() > 2 &&
+		            			   line.substring(0, 3).contains("]*")) {
+		            		   multiLineFlag = true;
+		            		   System.out.println("multiLine true");
+		            		   currentTokenType = Token.COMMENT_EOL;
+		            		   break;
+		            	   }
+		            	   
+		            	   if(line.contains("]:")) {
+		            		   currentTokenType = Token.COMMENT_EOL;
+				               break;
+		            	   }
+			                  
+		            	   // End of Coment
+		               case '*':
+		            	   line = "";
+		            	   for(int k = i; k < end; k++) {
+		            		   line += array[k];
+		            	   }
+		            	   System.out.println("LINE out "+line);
+		            	   if(line.contains("*[]")) {
+		            		   currentTokenType = Token.COMMENT_EOL;
+				               break;
+		            	   }
+	//	                  addToken(text, currentTokenStart,i-1, Token.WHITESPACE, newStartOffset+currentTokenStart);
+	//	                  currentTokenStart = i;
+	//	                  currentTokenType = Token.COMMENT_EOL;
+	//	                  break;
+	
+		               default:   // Add the whitespace token and start anew.
+	
+		                  addToken(text, currentTokenStart,i-1, Token.WHITESPACE, newStartOffset+currentTokenStart);
+		                  currentTokenStart = i;
+	
+		                  if (RSyntaxUtilities.isDigit(c)) {
+		                     currentTokenType = Token.LITERAL_NUMBER_DECIMAL_INT;
+		                     break;
+		                  }
+		                  else if (RSyntaxUtilities.isLetter(c) || c=='/' || c=='_') {
+		                     currentTokenType = Token.IDENTIFIER;
+		                     break;
+		                  }
+	
+		                  // Anything not currently handled - mark as identifier
+		                  currentTokenType = Token.IDENTIFIER;
+	
+		            } // End of switch (c).
+	      		}
 	            break;
 
 	         default: // Should never happen
 	         case Token.IDENTIFIER:
-
-	            switch (c) {
-
-	               case ' ':
-	               case '\t':
-	                  addToken(text, currentTokenStart,i-1, Token.IDENTIFIER, newStartOffset+currentTokenStart);
-	                  currentTokenStart = i;
-	                  currentTokenType = Token.WHITESPACE;
-	                  break;
-
-	               case '"':
-	                  addToken(text, currentTokenStart,i-1, Token.IDENTIFIER, newStartOffset+currentTokenStart);
-	                  currentTokenStart = i;
-	                  currentTokenType = Token.LITERAL_STRING_DOUBLE_QUOTE;
-	                  break;
-
-	               default:
-	                  if (RSyntaxUtilities.isLetterOrDigit(c) || c=='/' || c=='_') {
-	                     break;   // Still an identifier of some type.
-	                  }
-	                  // Otherwise, we're still an identifier (?).
-
-	            } // End of switch (c).
-
+	        	   if(multiLineFlag) {
+	         		   currentTokenType = Token.COMMENT_EOL;
+		            	   // End of Coment
+		            	switch(c) {
+		            	  case '*':
+			            	   String line = "";
+			            	   for(int k = i; k < end; k++) {
+			            		   line += array[k];
+			            	   }
+			            	   System.out.println("LINE out "+line);
+			            	   if(line.contains("*[]")) {
+			            		   multiLineFlag = false;
+			            		   currentTokenType = Token.COMMENT_EOL;
+					               break;
+			            	   }
+		            	}
+	        	   }
+		            	else {
+		            		
+		            	
+		            		System.out.println("IDENTIFIER");
+				            switch (c) {
+			
+				               case ' ':
+				               case '\t':
+				                  addToken(text, currentTokenStart,i-1, Token.IDENTIFIER, newStartOffset+currentTokenStart);
+				                  currentTokenStart = i;
+				                  currentTokenType = Token.WHITESPACE;
+				                  break;
+			
+				               case '"':
+				                  addToken(text, currentTokenStart,i-1, Token.IDENTIFIER, newStartOffset+currentTokenStart);
+				                  currentTokenStart = i;
+				                  currentTokenType = Token.LITERAL_STRING_DOUBLE_QUOTE;
+				                  break;
+			
+				               default:
+				                  if (RSyntaxUtilities.isLetterOrDigit(c) || c=='/' || c=='_') {
+				                     break;   // Still an identifier of some type.
+				                  }
+				                  // Otherwise, we're still an identifier (?).
+			
+				            	} // End of switch (c).
+		            		}
 	            break;
 
 	         case Token.LITERAL_NUMBER_DECIMAL_INT:
