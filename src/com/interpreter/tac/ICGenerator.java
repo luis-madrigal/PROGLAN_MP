@@ -91,8 +91,10 @@ public class ICGenerator {
 			default:
 				break;
 			}
-			if(currentMethodBlock != null && currentMethodBlock.getChildren().size() > 0 && currentMethodBlock.getChild(currentMethodBlock.getChildren().size()-1).equals(n)) { //if block is finished
-				this.exitBlock(n.isBreakpoint());
+			if(currentMethodBlock != null) {
+				if(currentMethodBlock.getChildren().size() > 0 && currentMethodBlock != null && currentMethodBlock.getChild(currentMethodBlock.getChildren().size()-1).equals(n)) { //if block is finished
+					this.exitBlock(n.isBreakpoint());
+				}
 			}
 			if(flag) 
 				for (AbstractSyntaxTree child : n.getChildren()) {

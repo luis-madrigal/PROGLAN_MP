@@ -193,7 +193,6 @@ public class ManuScriptTokenMaker extends AbstractTokenMaker {
 
 	         default: // Should never happen
 	         case Token.IDENTIFIER:
-	        	   	            	
 		            		switch (c) {
 			
 				               case ' ':
