@@ -28,6 +28,10 @@ public class TACIndexingStatement extends TACOutputStatement {
 		this.indeces.add(op);
 	}
 	
+	public ArrayList<Operand> getIndeces() {
+		return indeces;
+	}
+
 	public String toString() {
 		String str = super.toString() + this.arrayName;
 		for (Operand index : indeces) {

@@ -17,7 +17,6 @@ public class Variable extends Operand{
 	}
 	
 	public String toString() {
-		System.out.println("ALSIASDASD: "+this.alias);
 		return this.alias;
 	}
 	
