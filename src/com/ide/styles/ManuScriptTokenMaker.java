@@ -46,8 +46,9 @@ public class ManuScriptTokenMaker extends AbstractTokenMaker {
 
 	   for (int i=offset; i<end; i++) {
 
+	      // char c = array[i];
 	      char c = array[i];
-
+	     
 	      switch (currentTokenType) {
 
 	         case Token.NULL:
@@ -69,18 +70,31 @@ public class ManuScriptTokenMaker extends AbstractTokenMaker {
 	                  currentTokenType = Token.COMMENT_EOL;
 	                  break;
 
+	                
+	               
 	               case '[':
 	            	   String line = "";
 	            	   for(int k = i; k < end; k++) {
 	            		   line += array[k];
 	            	   }
-	            	   if(line.contains("]:")) {
+	            	   System.out.println("LINE out "+line);
+	            	   if(line.contains("]:") || line.contains("]*")) {
 	            		   currentTokenType = Token.COMMENT_EOL;
 			               break;
 	            	   }
 		                  
-
-		                  
+	            	   // End of Comennt
+	               case '*':
+	            	   line = "";
+	            	   for(int k = i; k < end; k++) {
+	            		   line += array[k];
+	            	   }
+	            	   System.out.println("LINE out "+line);
+	            	   if(line.contains("[]")) {
+	            		   currentTokenType = Token.COMMENT_EOL;
+			               break;
+	            	   }
+	            	   
 	               default:
 	                  if (RSyntaxUtilities.isDigit(c)) {
 	                     currentTokenType = Token.LITERAL_NUMBER_DECIMAL_INT;
@@ -118,14 +132,26 @@ public class ManuScriptTokenMaker extends AbstractTokenMaker {
 	            	   for(int k = i; k < end; k++) {
 	            		   line += array[k];
 	            	   }
-	            	   if(line.contains("]:")) {
+
+	            	   System.out.println("LINE in  "+line);
+	            	   if(line.contains("]:") || line.contains("]*")) {
 	            		  addToken(text, currentTokenStart,i-1, Token.WHITESPACE, newStartOffset+currentTokenStart);
 	 	                  currentTokenStart = i;
 	 	                  currentTokenType = Token.COMMENT_EOL;
 	 	                  break;
 	            	   }
 		                  
-	            	   
+	            	   // End of Comennt
+	               case '*':
+	            	   line = "";
+	            	   for(int k = i; k < end; k++) {
+	            		   line += array[k];
+	            	   }
+	            	   System.out.println("LINE out "+line);
+	            	   if(line.contains("[]")) {
+	            		   currentTokenType = Token.COMMENT_EOL;
+			               break;
+	            	   }
 //	                  addToken(text, currentTokenStart,i-1, Token.WHITESPACE, newStartOffset+currentTokenStart);
 //	                  currentTokenStart = i;
 //	                  currentTokenType = Token.COMMENT_EOL;

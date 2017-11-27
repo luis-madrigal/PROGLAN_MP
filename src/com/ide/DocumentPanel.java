@@ -37,13 +37,13 @@ public class DocumentPanel extends JPanel implements MouseListener {
 		ArrayList<Integer> listLinePositions = extractLinePositions(listCode, listLineNumbers);
 		
 		
-		System.out.println("SIZE "+listLinePositions.size());
+//		System.out.println("SIZE "+listLinePositions.size());
 		
 		while(strCode.contains(regexStart)
 			&& strCode.contains(regexEnd)
 			&& strCode.indexOf(regexEnd) > strCode.indexOf(regexStart)) {
 			
-			System.out.println(strCode.substring(strCode.indexOf(regexStart), strCode.indexOf(regexEnd)));
+//			System.out.println(strCode.substring(strCode.indexOf(regexStart), strCode.indexOf(regexEnd)));
 			
 			strCode = strCode.substring(strCode.indexOf(regexStart)+regexStart.length());
 			strFunction = strCode.substring(0, strCode.indexOf(regexEnd)).trim();
@@ -52,13 +52,13 @@ public class DocumentPanel extends JPanel implements MouseListener {
 			listLineNumbers.remove(0);
 			listLinePositions.remove(0);
 			
-			System.out.println(listLinePositions.size());
+//			System.out.println(listLinePositions.size());
 			
 			
 //			System.out.println(strCode.indexOf(regexStart+strFunction));
 
-			System.out.println("| "+strFunction+" ");
-			System.out.println();
+//			System.out.println("| "+strFunction+" ");
+//			System.out.println();
 			strCode =  strCode.substring(strCode.indexOf(regexEnd)+regexEnd.length());
 			
 		}
@@ -147,7 +147,7 @@ public class DocumentPanel extends JPanel implements MouseListener {
 			pnlParent.unfoldDoument();
 			DocumentEntry entry = (DocumentEntry) e.getSource();
 			int linePosition = entry.getLinePosition();
-			System.out.println("Entered " + linePosition);
+//			System.out.println("Entered " + linePosition);
 			this.codeInput.setCaretPosition(linePosition);
 		}
 	}
