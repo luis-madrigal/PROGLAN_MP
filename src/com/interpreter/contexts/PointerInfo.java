@@ -1,11 +1,13 @@
 package com.interpreter.contexts;
 
+import com.interpreter.tac.operands.Operand;
 import com.utils.Utils;
 
 public class PointerInfo implements  GenericInfo<PointerInfo>{
     private SymbolContext pointee;
     private ContextType pointsToCtxType;
     private String pointsToType;
+    private Operand pointsToOp;
 
     public PointerInfo(String type){
         this.pointsToType = type.substring(0,type.indexOf('*'));
@@ -39,6 +41,14 @@ public class PointerInfo implements  GenericInfo<PointerInfo>{
 
 	public void setPointsToType(String pointsToType) {
 		this.pointsToType = pointsToType;
+	}
+
+	public Operand getPointsToOp() {
+		return pointsToOp;
+	}
+
+	public void setPointsToOp(Operand pointsToOp) {
+		this.pointsToOp = pointsToOp;
 	}
 
 }

@@ -71,10 +71,15 @@ public class ICGenerator {
 			switch(n.getNodeType()) {
 			case UNIPOST_ARITHMETIC:
 			case UNIPRE_ARITHMETIC:
+			case UNI_LOGIC:
+			case ARRAY_ACCESS: 
+			case STRUCT_ACCESS: 
+			case BIN_ARITHMETIC:
+			case BIN_LOGIC:
+			case FUNCTION_INVOKE: this.storeExpression(n); flag = false; break;
 			case ASSIGN: TACAssignStatement aStmt = new TACAssignStatement(n.getNodeType(), OPERATOR.getEnum(n.getValue()), this.storeExpression(n.getChild(0)), this.storeExpression(n.getChild(1)), n.isBreakpoint());
 			 			 this.addAssignStatement(aStmt); flag = false; break;
 			case VAR_DECLARE: this.declareVar(n); break;
-			case FUNCTION_INVOKE: this.storeExpression(n); flag = false; break;
 			case BRANCH: this.branch(n); flag = false; break;
 			case WHILE: this.whileStmt(n); flag = false; break;
 			case DO_WHILE: this.doWhileStmt(n); flag = false; break;

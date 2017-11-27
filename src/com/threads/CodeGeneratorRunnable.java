@@ -161,14 +161,26 @@ public class CodeGeneratorRunnable implements Runnable {
 		
 		ArrayList<String> fnArgs = this.methodTable.get(methodName).getArgs();
 		for(int i = 0; i < args.length; i++) {
+			SymbolContext ctx = methodScope.findVar(fnArgs.get(i));
 			if(args[i] instanceof SymbolContext) {
 				SymbolContext argCtx = (SymbolContext) args[i];
-				SymbolContext ctx = methodScope.findVar(fnArgs.get(i));
 				if(argCtx.getCtxType() != ContextType.NORMAL) {
 					ctx.setOther(argCtx.getOther());
 				} 
+				if(ctx.getCtxType() == ContextType.POINTER) {
+					PointerInfo p = (PointerInfo) ctx.getOther();
+					p.setPointee(argCtx);
+					ctx.setOther(p);
+					System.out.println("pointer argument");
+				}
 				ctx.setValue(argCtx.getValue());
 			} else {
+				if(this.isPointer(ctx)) {
+					PointerInfo p = (PointerInfo) ctx.getOther();
+					if(args[i] instanceof Operand) {
+						p.setPointsToOp((Operand)args[i]);
+					}
+				}
 				methodScope.findVar(fnArgs.get(i)).setValue(args[i]);
 			}
 		}
@@ -179,6 +191,7 @@ public class CodeGeneratorRunnable implements Runnable {
 //		System.out.println("METHSCOP "+methodScope.printString());
 		do {
 			if(isPlay) {
+				System.out.println(pointer);
 				pnlParent.changeToInactive();
 				stmt = this.labelMap.get(pointer);
 				Panel.printWatch("evaluating: "+pointer);
@@ -356,25 +369,28 @@ public class CodeGeneratorRunnable implements Runnable {
 			} else if(aStmt.getOperand().getOperandType() == OperandTypes.VARIABLE) {
 				Variable v = (Variable) aStmt.getOperand();
 				SymbolContext sctx = this.currentScope.findVar(v.getAlias());
+				SymbolContext assignCtx = this.currentScope.findVar(aStmt.getValue().toString());
 				
 				//if its type is a pointer TODO: also include for structs
 				if(this.isPointer(sctx)) {
 					PointerInfo ptrInf = (PointerInfo) sctx.getOther();
-					if(aStmt.getValue().getOperandType() == OperandTypes.VARIABLE) { //pointer assigned should be variable
-						System.out.println("POINTER ASSIGN: "+aStmt.getValue().toString());
-						SymbolContext assignCtx = this.currentScope.findVar(aStmt.getValue().toString());
-						if(this.isPointer(assignCtx)) {
-							sctx.setOther(assignCtx.getOther());
-						} else {
-							ptrInf.setPointee(assignCtx);
-							ptrInf.setPointsToCtxType(assignCtx.getCtxType());
-							ptrInf.setPointsToType(assignCtx.getSymbolType());
-						}
-						
+//					if(aStmt.getValue().getOperandType() == OperandTypes.VARIABLE) { //pointer assigned should be variable
+					System.out.println("POINTER ASSIGN: "+aStmt.getValue().toString());
+//						SymbolContext assignCtx = this.currentScope.findVar(aStmt.getValue().toString());
+					if(this.isPointer(assignCtx)) {
+						System.out.println(assignCtx.getOther());
+						sctx.setOther(assignCtx.getOther());
 					} else {
-						SymbolContext assignCtx = ptrInf.getPointee();
-						assignCtx.setValue(this.getValue(registers, aStmt.getValue()));
+						ptrInf.setPointee(assignCtx);
+						ptrInf.setPointsToCtxType(assignCtx.getCtxType());
+						ptrInf.setPointsToType(assignCtx.getSymbolType());
 					}
+						
+//					} 
+//					else {
+//						SymbolContext assignCtx = ptrInf.getPointee();
+//						assignCtx.setValue(this.getValue(registers, aStmt.getValue()));
+//					}
 				} else if (this.isArray(sctx) || this.isStruct(sctx)) {
 					Object val = this.getValue(registers, aStmt.getValue());
 					if(val instanceof SymbolContext) {//this gets the array returned
@@ -382,6 +398,11 @@ public class CodeGeneratorRunnable implements Runnable {
 						this.currentScope.getSymTable().put(v.getAlias(), Cloner.standard().deepClone((SymbolContext)val));
 //						sctx = (SymbolContext) val;
 					}
+				} else if(assignCtx != null && this.isPointer(assignCtx)) {
+					PointerInfo pInfo = (PointerInfo) assignCtx.getOther();
+					if(pInfo != null && pInfo.getPointsToOp() != null)
+						sctx.setValue(pInfo.getPointsToOp().getValue());
+//					this.currentScope.getSymTable().put(sctx.getIdentifier(), pInfo.getPointee());
 				} else
 					sctx.setValue(this.getValue(registers, aStmt.getValue()));
 				
