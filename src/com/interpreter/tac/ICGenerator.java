@@ -197,8 +197,8 @@ public class ICGenerator {
 	}
 	
 	private void forStmt(AbstractSyntaxTree node) {
-		this.enterBlock(node.isBreakpoint());
 		this.storeStatement(node.getChild(0));
+		this.enterBlock(node.isBreakpoint());
 		int currentLblCount = this.labelCount + 1;
 		TACLoopStatement stmt = new TACLoopStatement(node.getNodeType(), this.storeExpression(node.getChild(1)), node.isBreakpoint());
 		this.addStatement(stmt);

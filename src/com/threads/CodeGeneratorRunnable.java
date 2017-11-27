@@ -226,7 +226,7 @@ public class CodeGeneratorRunnable implements Runnable {
 		// TODO
 //		Panel.printWatch("P"+pointerCount+"    "+methodScope.getSymTable().keySet().toString());
 //		Panel.printWatch(statement+"");
-		System.out.println("BRK "+	statement.getLabel() + " " + statement.getType()+": "+statement.isBreakpoint());
+//		System.out.println("BRK "+	statement.getLabel() + " " + statement.getType()+": "+statement.isBreakpoint());
 		
 		if(statement.isBreakpoint()) {
 //			System.out.println("BRK "+	statement.getLabel() + " " + statement.getType()+": "+statement.isBreakpoint());
@@ -416,8 +416,20 @@ public class CodeGeneratorRunnable implements Runnable {
 			break;
 		case PRINT:
 			TACPrintStatement printStmt = (TACPrintStatement) statement;
-
-			Writer.printText(this.getValue(registers, printStmt.getExpression()).toString());
+			
+			if(printStmt.getExpression().getOperandType() == OperandTypes.VARIABLE) {
+				Variable v= (Variable) printStmt.getExpression();
+				SymbolContext ctx = this.currentScope.findVar(v.getAlias());
+				if(ctx.getSymbolType().contains("char")) {
+					if(ctx.getValue() instanceof Integer)
+						Writer.printText((char)Integer.parseInt(ctx.getValue().toString()));
+					else
+						Writer.printText((Character) ctx.getValue());
+				}else
+					Writer.printText(this.getValue(registers, printStmt.getExpression()).toString());
+			} else {
+				Writer.printText(this.getValue(registers, printStmt.getExpression()).toString());
+			}
 			
 //			if(printStmt.isBreakpoint()) {
 //				System.out.println("BRK "+	printStmt.getType()+": "+printStmt.isBreakpoint());
