@@ -164,6 +164,10 @@ public class Panel implements CaretListener, Runnable, ActionListener, KeyListen
         UIManager.put("TabbedPane.focus", Color.WHITE);
         UIManager.put("TabbedPane.selectHighlight", Color.WHITE);
         
+      //For Watch Table
+        UIManager.getLookAndFeelDefaults().put("Table.background", SUBLIME_BG);
+        UIManager.getLookAndFeelDefaults().put("Table.gridColor", Styles.SKY_BLUE);
+        UIManager.getLookAndFeelDefaults().put("Table.foreground", Color.WHITE);
 
 		this.textFileHandler = new TextFileHandler();
 		this.styles = new Styles();
@@ -520,6 +524,7 @@ public class Panel implements CaretListener, Runnable, ActionListener, KeyListen
 		this.outputTabs.add("Parse Tree", parentPane);
 
 		this.outputTabs.add("Watch", this.watchPane);
+		this.outputTabs.add("Temp Watch", this.tempWatchPane); //TODO: Delete after
 
 		this.outputTabs.setFont(FrameStatic.fntDefault);
 		outputTabs.setBackground(Color.WHITE);
