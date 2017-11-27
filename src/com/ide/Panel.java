@@ -25,6 +25,7 @@ import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -34,9 +35,14 @@ import javax.swing.JTable;
 import javax.swing.JTextPane;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.UIManager;
+import javax.swing.border.Border;
+import javax.swing.border.LineBorder;
 import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.JTableHeader;
+import javax.swing.table.TableCellRenderer;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.DefaultStyledDocument;
@@ -168,10 +174,15 @@ public class Panel implements CaretListener, Runnable, ActionListener, KeyListen
         UIManager.put("TabbedPane.selectHighlight", Color.WHITE);
         
       //For Watch Table
-        UIManager.getLookAndFeelDefaults().put("Table.background", SUBLIME_BG);
-        UIManager.getLookAndFeelDefaults().put("Table.gridColor", Styles.SKY_BLUE);
-        UIManager.getLookAndFeelDefaults().put("Table.foreground", Color.WHITE);
+//        UIManager.getLookAndFeelDefaults().put("Table.background", SUBLIME_BG);
+//        UIManager.getLookAndFeelDefaults().put("Table.gridColor", Styles.SKY_BLUE);
+//        UIManager.getLookAndFeelDefaults().put("Table.foreground", Color.WHITE);
 
+        UIManager.getLookAndFeelDefaults().put("Table.background", Color.WHITE);
+        UIManager.getLookAndFeelDefaults().put("Table.gridColor", Styles.PALE_GRAY);
+        UIManager.getLookAndFeelDefaults().put("Table.foreground", Styles.TEXT_GRAY);
+
+         
 		this.textFileHandler = new TextFileHandler();
 		this.styles = new Styles();
 		//-----------------------Syntax Highlighting (for output) TO REMOVE----------------------------------
@@ -458,17 +469,86 @@ public class Panel implements CaretListener, Runnable, ActionListener, KeyListen
 		        (int)watchPane.getVerticalScrollBar().getPreferredSize().getHeight()
 		));
 		
-		String header[] = new String[] {"Variable", "Line", "In method", "Current Value"};
-		this.modelWatchTable = new DefaultTableModel(0, 0);
-		this.modelWatchTable.setColumnIdentifiers(header);
+		String header[] = new String[] {"Variable", "Line", "In method", "Value"};
+		this.modelWatchTable = new DefaultTableModel(0, 0) {
+			private static final long serialVersionUID = 1L;
+			public boolean isCellEditable(int row, int column) {
 		
+		      return false; // This causes all cells to be not editable
+		    }
+		};
+		
+		this.modelWatchTable.setColumnIdentifiers(header);
 		this.watchTable = new JTable();
 //		this.watchTable.setUI(UIManager);
+		this.watchTable.setFocusable(false);
+		this.watchTable.setRowHeight(25);
+		this.watchTable.setFont(FrameStatic.fntDefault);
+//		this.watchTable.setRowMargin(3);
 		this.watchTable.setModel(this.modelWatchTable);
+		this.watchTable.setSelectionBackground(Styles.UN_RESERVED_WORD);
 		
+
+
+
+        UIManager.put("TableHeader.cellBorder",
+        				new LineBorder(Styles.PALE_GRAY));
+        		
+		JTableHeader tableHeader = new JTableHeader();
+//		tableHeader.getColumnModel().getColumn(0).setCellRenderer(new TableCellRenderer() {
+//			
+//			@Override
+//			public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus,
+//					int row, int column) {
+//				  JComponent component = (JComponent)table.getTableHeader().getDefaultRenderer().getTableCellRendererComponent(table, value, false, false, -1, -2);
+////		            component.setBackground(new Color(250, 250, 250));
+//		            component.setBorder(BorderFactory.createEmptyBorder());
+//		            return component;
+//			}
+//		});
+
+		tableHeader.setBackground(Color.WHITE);
+		tableHeader.setForeground(Styles.TEXT_GRAY);
+		tableHeader.setBorder(null);
+		tableHeader.setFont(FrameStatic.fntDefault);
+		tableHeader.setMinimumSize(new Dimension(40, watchTable.getRowHeight()+40));
+		tableHeader.setPreferredSize(new Dimension(40, watchTable.getRowHeight()+40));
+		tableHeader.setSize(new Dimension(40, watchTable.getRowHeight()+40));
+		tableHeader.setMaximumSize(new Dimension(40, watchTable.getRowHeight()+40));
+		
+		watchTable.setBorder(null);
+		watchTable.getColumnModel().getColumn(0).setPreferredWidth(70);
+		watchTable.getColumnModel().getColumn(0).setMinWidth(70);
+		watchTable.getColumnModel().getColumn(0).setWidth(70);
+//		watchTable.getColumnModel().getColumn(0).setMaxWidth(190);
+				
+
+		watchTable.getColumnModel().getColumn(1).setPreferredWidth(38);
+		watchTable.getColumnModel().getColumn(1).setMinWidth(38);
+		watchTable.getColumnModel().getColumn(1).setWidth(38);
+		watchTable.getColumnModel().getColumn(1).setMaxWidth(38);
+		
+		watchTable.getColumnModel().getColumn(2).setPreferredWidth(90);
+		watchTable.getColumnModel().getColumn(2).setMinWidth(90);
+		watchTable.getColumnModel().getColumn(2).setWidth(90);
+//		watchTable.getColumnModel().getColumn(2).setMaxWidth(75);
+		
+		watchTable.getColumnModel().getColumn(3).setPreferredWidth(60);
+		watchTable.getColumnModel().getColumn(3).setMinWidth(60);
+		watchTable.getColumnModel().getColumn(3).setWidth(60);
+		watchTable.getColumnModel().getColumn(3).setMaxWidth(190);
+		
+		DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+		centerRenderer.setHorizontalAlignment( JLabel.CENTER );
+		watchTable.getColumnModel().getColumn(1).setCellRenderer(centerRenderer);
+		watchTable.getColumnModel().getColumn(3).setCellRenderer(centerRenderer);
+		watchTable.setBackground(Color.WHITE);
 		//TODO: Delete when merged with watchPane
 		this.tempWatchPane = new JScrollPane(this.watchTable);
-		this.tempWatchPane.setBackground(SUBLIME_BG);
+		this.tempWatchPane.setBackground(Color.WHITE);
+
+		this.tempWatchPane.setOpaque(false);
+//		this.tempWatchPane.setForeground(Color.WHITE);
 		this.tempWatchPane.setPreferredSize(new Dimension((int) Frame.SCREEN_SIZE.getWidth()/2, 150));
 		this.tempWatchPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		this.tempWatchPane.getVerticalScrollBar().setUI(new CustomScrollBarUISky());
@@ -480,6 +560,20 @@ public class Panel implements CaretListener, Runnable, ActionListener, KeyListen
 		this.tempWatchPane.getVerticalScrollBar().setPreferredSize(new Dimension(
 				(int)horizontalHeight,
 				(int)tempWatchPane.getVerticalScrollBar().getPreferredSize().getHeight()));
+		
+		tempWatchPane.setBorder(null);
+		JLabel lblPadding = new JLabel();
+		lblPadding.setSize(tempWatchPane.getWidth(), 9);
+		lblPadding.setMinimumSize(lblPadding.getSize());
+		lblPadding.setPreferredSize(lblPadding.getSize());
+		lblPadding.setMaximumSize(lblPadding.getSize());
+
+		JPanel parentWatchPane = new JPanel();
+		parentWatchPane.setLayout(new BoxLayout(parentWatchPane, BoxLayout.Y_AXIS));
+		parentWatchPane.setBackground(Color.WHITE);
+		parentWatchPane.setBorder(null);
+		parentWatchPane.add(lblPadding);
+		parentWatchPane.add(tempWatchPane);
 		
 		
 		JPanel parentPane = new JPanel();
@@ -520,14 +614,14 @@ public class Panel implements CaretListener, Runnable, ActionListener, KeyListen
 		pnlScaleMenu.setBackground(Color.WHITE);
 		parentPane.add(pnlScaleMenu);
 		parentPane.add(treePane);
-		
+		parentWatchPane.setBorder(null);
 		this.outputTabs = new JTabbedPane();
 		this.outputTabs.add("IR Code", this.threeACPane);
 //		this.outputTabs.add("Parsed Out", this.parsedPane);
 		this.outputTabs.add("Parse Tree", parentPane);
 
-		this.outputTabs.add("Watch", this.watchPane);
-		this.outputTabs.add("Temp Watch", this.tempWatchPane); //TODO: Delete after
+//		this.outputTabs.add("Watch", this.watchPane); // TODO
+		this.outputTabs.add("Watch", parentWatchPane);//this.tempWatchPane); //TODO: Delete after
 
 		this.outputTabs.setFont(FrameStatic.fntDefault);
 		outputTabs.setBackground(Color.WHITE);
@@ -1277,9 +1371,9 @@ public class Panel implements CaretListener, Runnable, ActionListener, KeyListen
 			selectedVar = this.dlgWatch.getSelectedVar();
 			
 			this.listWatchVariables = this.dlgWatch.getSelectedVar();
-			
+			String strTab = "   ";
 			for(VariableNode var : selectedVar) {
-				this.modelWatchTable.addRow(new Object[] {var.getDataType()+" "+var.getLiteral(), var.getLineNumber(), var.getFuncParent()+" ("+var.getFuncChild()+")", "0"});
+				this.modelWatchTable.addRow(new Object[] {strTab+var.getDataType()+" "+var.getLiteral(), var.getLineNumber(), strTab+var.getFuncParent()+" ("+var.getFuncChild()+")", "0"});
 				System.out.println("var "+var.getLiteral()+" "+var.getCount());
 			}
 			
