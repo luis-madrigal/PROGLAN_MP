@@ -104,6 +104,10 @@ public class ArrayInfo implements GenericInfo<ArrayInfo>{
     public Object[] getArray() {
         return array;
     }
+    
+    public void setArray(Object[] arr) {
+        this.array = arr;
+    }
 
     @Override
     public ArrayInfo getInfo() {

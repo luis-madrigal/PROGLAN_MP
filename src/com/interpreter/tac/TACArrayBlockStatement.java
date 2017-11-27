@@ -19,9 +19,18 @@ public class TACArrayBlockStatement extends TACOutputStatement{
 		this.arr[i] = op;
 	}
 
+	public Operand[] getArr() {
+		return arr;
+	}
+
+	public void setArr(Operand[] arr) {
+		this.arr = arr;
+	}
+
 	public String toString() {
 		String print = super.toString() + "{";
 		for(int i = 0; i < arr.length; i++) {
+			System.out.println(arr[i]);
 			print = print.concat(arr[i].toString());
 			if(i < arr.length-1)
 				print = print.concat(", ");

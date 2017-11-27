@@ -8,7 +8,6 @@ public class TACArrayAssignStatement extends TACStatement {
 	
 	private SymbolContext ctx;
 	private Operand value;
-	private int dims;
 
 	public TACArrayAssignStatement(SymbolContext ctx, NodeType type, boolean isBreakpoint) {
 		super(type, isBreakpoint);
@@ -25,10 +24,12 @@ public class TACArrayAssignStatement extends TACStatement {
 		this.value = value;
 	}
 
-
+	public String getArrName() {
+		return ctx.getIdentifier();
+	}
 
 	public String toString() {
-		return this.getLabel() + ": " + ctx.getIdentifier() + " assign " + value.toString();
+		return this.getLabel() + ": declare " + ctx.getIdentifier() + " = " + value.toString();
 	}
 	
 }

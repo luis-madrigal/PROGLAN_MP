@@ -27,17 +27,8 @@ ACT main starring ()  {
 	composition subrecord rec;
 
 	int x = 4; 
-	
-	int[][] array2 = new int[2][3];
-	array2 = new int[2][4];
-	array2 = new int[][] {{}, {}};
 
-	composition record[] recArr = new composition record[1];
-	int*[] arrPoint = new int*[4];
+	int[][] array2 = new int[2][3];
 	int[][] array = new int[][]{{1,2,34,x+5,2},{1,23,34,32,2}};
-	int[][] array1 = {{1,2,34,x+5,2},{1,23,34,32,2}};
-	int[][] array3;
-	[asd]: int[][] array4 = array1 + 2;
-	array3 = new int[][]{{1,2,34,x+5,2},{1,23,34,32,2}};
 	
 }
