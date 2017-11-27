@@ -1,4 +1,5 @@
 package com.interpreter.AST;
+import com.interpreter.contexts.SymbolContext;
 import com.interpreter.modules.Writer;
 import java.util.ArrayList;
 import java.util.List;
@@ -26,19 +27,22 @@ public class AbstractSyntaxTree {
     private void print(String prefix, boolean isTail) {
 
         if(nodeType == NodeType.VARIABLE){
-            System.out.println(prefix + (isTail ? "--------- " : "--------- ") + "VAR :"+ ((LeafNode)this).getLiteralType()+ " "+ this.getValue());
+            if(this instanceof  LeafNode)
+                System.out.println(prefix + (isTail ? "└── " : "├── ") + "VAR :"+ ((LeafNode)this).getLiteralType()+ " "+ this.getValue());
+            else
+                System.out.println(prefix + (isTail ? "└── " : "├── ") + "VAR :"+ ((SymbolContext)this.getValue()).getIdentifier() + " "+ this.getValue());
         }
         else if(nodeType == NodeType.LITERAL){
-            System.out.println(prefix + (isTail ? "--------- " : "--------- ") + "LIT :"+ ((LeafNode)this).getLiteralType()+ " "+ this.getValue());
+            System.out.println(prefix + (isTail ? "└── " : "├── ") + "LIT :"+ ((LeafNode)this).getLiteralType()+ " "+ this.getValue());
         }
         else
-            System.out.println(prefix + (isTail ? "--------- " : "--------- ") + nodeType +"| val: "+value);
+            System.out.println(prefix + (isTail ? "└── " : "├── ") + nodeType +"| val: "+value);
         for (int i = 0; i < children.size() - 1; i++) {
-            children.get(i).print(prefix + (isTail ? "    " : "|��   "), false);
+            children.get(i).print(prefix + (isTail ? "    " : "│   "), false);
         }
         if (children.size() > 0) {
             children.get(children.size() - 1)
-                    .print(prefix + (isTail ? "    " : "|��   "), true);
+                    .print(prefix + (isTail ? "    " : "│   "), true);
 
         }
     }

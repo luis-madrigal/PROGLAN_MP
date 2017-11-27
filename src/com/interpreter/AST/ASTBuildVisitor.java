@@ -923,6 +923,28 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
         return node;
     }
 
+//    @Override
+//    public AbstractSyntaxTree visitStructMember(ManuScriptParser.StructMemberContext ctx) {
+//        System.out.println("visitingStructMem "+ctx.getStart().getLine()+"    "+ctx.getText());
+//        configureIsBreakpoint(ctx.getStart().getLine());
+//
+//        AbstractSyntaxTree member = new AbstractSyntaxTree(null);
+//        member.setNodeType(NodeType.VARIABLE);
+//        member.setBreakpoint(this.isBreakpoint);
+//        if(isBreakpoint)
+//            System.out.println("BP: "+member.getNodeType());
+//
+//        if(ctx.structMember() != null) {
+//            AbstractSyntaxTree child = visit(ctx.structMember());
+//            if(child != null){
+//                child.setParent();
+//            }
+//        }
+//
+//
+//        return member;
+//    }
+
     @Override
     public AbstractSyntaxTree visitEquationExpr(ManuScriptParser.EquationExprContext ctx) {
         System.out.println("visitingEQEXPR "+ctx.getStart().getLine()+"    "+ctx.getText());
@@ -961,25 +983,42 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
         }
         else if(ctx.structExpr() != null){
             //struct variable
+            variable.setNodeType(NodeType.STRUCT_ACCESS);
             String structName = ctx.structExpr().structName().getText();
             SymbolContext symContext = curScope.getSymTable().get(structName);
+            variable.setValue(symContext);
             StructInfo stInf = (StructInfo) symContext.getOther();
             System.out.println("initial str: "+stInf.getStructName());
             ManuScriptParser.StructMemberContext smctx = ctx.structExpr().structMember();
-            while(smctx.structMember() != null){
+            AbstractSyntaxTree parent = variable , child = new AbstractSyntaxTree(parent);
+            while(smctx != null){
+
                 symContext = stInf.getMember(smctx.Identifier().getText());
-                if(symContext == null)
+
+
+                if(symContext == null)  //if member of current struct doesnt exist
                     break; //todo better implementation
                 else
                     stInf = (StructInfo) symContext.getOther();
 
+
                 smctx = smctx.structMember();
+                if(smctx == null)
+                    child = new LeafNode(parent);
+                else
+                    child = new AbstractSyntaxTree(parent);
+                child.setNodeType(NodeType.VARIABLE);
+                child.setValue(symContext);
+                parent.addChild(child);
+
+
+                parent = child;
             }
 
             if(symContext != null){
-                System.out.println("deepest struct: "+stInf.getStructName());
-                variable.setValue(symContext);
-                variable.setLiteralType(symContext.getSymbolType());
+//                System.out.println("deepest struct: "+stInf.getStructName());
+
+                ((LeafNode)child).setLiteralType(symContext.getSymbolType());
                 return variable;
             }
             else{
