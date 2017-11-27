@@ -951,15 +951,23 @@ public class Panel implements CaretListener, Runnable, ActionListener, KeyListen
 		
 		
 		
-		syntaxScheme.setStyle(Token.DATA_TYPE, new Style(Styles.UN_RESERVED_WORD, null, keywordFont));
+		syntaxScheme.setStyle(Token.DATA_TYPE, new Style(Styles.SKY_BLUE, null, keywordFont));
 		syntaxScheme.setStyle(Token.RESERVED_WORD, new Style(Styles.UN_RESERVED_WORD, null, keywordFont));
 		syntaxScheme.setStyle(Token.RESERVED_WORD_2, new Style(Styles.UN_RESERVED_WORD_2, null, keywordFont));
+		syntaxScheme.setStyle(Token.VARIABLE, new Style(Styles.UN_RESERVED_WORD_3, null, keywordFont));
+		syntaxScheme.setStyle(Token.FUNCTION, new Style(Styles.UN_FUNCTION, null, keywordFont));
 
 //		styles[RESERVED_WORD]				= new Style(keyword, null, keywordFont);
 //		styles[RESERVED_WORD_2]			= new Style(keyword, null, keywordFont);
 //		styles[FUNCTION]					= new Style(function);
 //		styles[DATA_TYPE]				= new Style(dataType, null, keywordFont);
 		
+		syntaxScheme.setStyle(Token.LITERAL_BOOLEAN, new Style(Styles.UN_BOOLEAN));
+		syntaxScheme.setStyle(Token.LITERAL_NUMBER_DECIMAL_INT, new Style(Styles.UN_LITERAL_NUMBER_DECIMAL));
+		syntaxScheme.setStyle(Token.LITERAL_NUMBER_FLOAT, new Style(Styles.UN_RUN_LITERAL_NUMBER_FLOAT));
+
+		syntaxScheme.setStyle(Token.LITERAL_NUMBER_HEXADECIMAL, new Style(Styles.UN_LITERAL_NUMBER_HEXADECIMAL));
+
 		return syntaxScheme;
 	}
 	public JPanel getUI() {
