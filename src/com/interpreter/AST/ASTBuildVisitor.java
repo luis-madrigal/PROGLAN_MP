@@ -368,8 +368,6 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
 
     @Override
     public AbstractSyntaxTree visitOutputStatement(ManuScriptParser.OutputStatementContext ctx) {
-
-
         System.out.println("visitingOUT "+ctx.getStart().getLine()+"    "+ctx.getText());
         configureIsBreakpoint(ctx.getStart().getLine());
         AbstractSyntaxTree node = new AbstractSyntaxTree(null);
@@ -922,28 +920,6 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
 
         return node;
     }
-
-//    @Override
-//    public AbstractSyntaxTree visitStructMember(ManuScriptParser.StructMemberContext ctx) {
-//        System.out.println("visitingStructMem "+ctx.getStart().getLine()+"    "+ctx.getText());
-//        configureIsBreakpoint(ctx.getStart().getLine());
-//
-//        AbstractSyntaxTree member = new AbstractSyntaxTree(null);
-//        member.setNodeType(NodeType.VARIABLE);
-//        member.setBreakpoint(this.isBreakpoint);
-//        if(isBreakpoint)
-//            System.out.println("BP: "+member.getNodeType());
-//
-//        if(ctx.structMember() != null) {
-//            AbstractSyntaxTree child = visit(ctx.structMember());
-//            if(child != null){
-//                child.setParent();
-//            }
-//        }
-//
-//
-//        return member;
-//    }
 
     @Override
     public AbstractSyntaxTree visitEquationExpr(ManuScriptParser.EquationExprContext ctx) {
