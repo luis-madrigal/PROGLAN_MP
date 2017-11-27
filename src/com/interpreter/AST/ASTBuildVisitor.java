@@ -854,6 +854,7 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
                             node.addChild(varRight);
                         }
                     }
+
                 }
             } //array end
             else {  //if variable is normal type
@@ -897,9 +898,14 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
                     node.addChild(value);
                 }
             } else{
-                //if arNew = arOld;
                 AbstractSyntaxTree varRight = visit(ctx.expression());
-                if (varRight != null) {
+                //if function invoke
+                if(ctx.expression() instanceof ManuScriptParser.FunctionExprContext){
+                    varRight.setParent(node);
+                    node.addChild(varRight);
+                }
+                //if arNew = arOld;
+                else if (varRight != null) {
                     if(varRight.getChildren().size() == 0) {
                         SymbolContext symCtxL = (SymbolContext)target.getValue();
                         SymbolContext symCtxR = (SymbolContext)varRight.getValue();
