@@ -15,6 +15,7 @@ import com.interpreter.AST.ProcedureNode;
 import com.interpreter.contexts.MethodContext;
 import com.interpreter.contexts.SymbolContext;
 import com.interpreter.matchers.LiteralMatcher;
+import com.interpreter.tac.arrassign.ArrayAssignType;
 import com.interpreter.tac.operands.ArrayAccess;
 import com.interpreter.tac.operands.Literal;
 import com.interpreter.tac.operands.Operand;
@@ -114,7 +115,20 @@ public class ICGenerator {
 		this.currentScope.addToScope(sctx);
 		
 		TACArrayAssignStatement stmt = new TACArrayAssignStatement(sctx, n.getNodeType(), n.isBreakpoint());
-		stmt.setValue(this.evalArrayInit(n.getChild(1)));
+		
+		if(n.getChild(1).getNodeType() == NodeType.VARIABLE) {
+			stmt.setAssignType(ArrayAssignType.ARRAY_DEREF);
+		} else {
+			if(n.getChild(1).getChild(0).getNodeType() == NodeType.ARRAY_BLOCK)
+				stmt.setAssignType(ArrayAssignType.ARRAY_BLOCK);
+			else
+				stmt.setAssignType(ArrayAssignType.ARRAY_DIMS);
+		}
+		
+		if(n.getChild(1).getNodeType() == NodeType.VARIABLE)
+			stmt.setValue(this.storeExpression(n.getChild(1)));
+		else
+			stmt.setValue(this.evalArrayInit(n.getChild(1)));
 		
 		this.addStatement(stmt);	
 	}

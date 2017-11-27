@@ -38,6 +38,7 @@ import com.interpreter.tac.TACReturnStatement;
 import com.interpreter.tac.TACScanStatement;
 import com.interpreter.tac.TACStatement;
 import com.interpreter.tac.TACUnaryOpStatement;
+import com.interpreter.tac.arrassign.ArrayAssignType;
 import com.interpreter.tac.operands.ArrayAccess;
 import com.interpreter.tac.operands.Operand;
 import com.interpreter.tac.operands.OperandTypes;
@@ -245,15 +246,29 @@ public class CodeGeneratorRunnable implements Runnable {
 			break;		
 		case ARRAY_ASSIGN:
 			TACArrayAssignStatement asStmt = (TACArrayAssignStatement) statement;
-			if(this.labelMap.containsKey(ICGenerator.LABEL_ALIAS+(pointerCount-1))
-					&& this.labelMap.get(ICGenerator.LABEL_ALIAS+(pointerCount-1)).getType() == NodeType.ARRAY_BLOCK) {
-				System.out.println("ARRAY BLOCK");
+			
+			if(asStmt.getAssignType() == ArrayAssignType.ARRAY_BLOCK) {
+				System.out.println("ENTER ARR BLOCK");
 				this.setArrayBlockValues(methodScope, registers, asStmt);
-			}
-			else {
-				System.out.println("ARRAY DIMS");
+			} else if(asStmt.getAssignType() == ArrayAssignType.ARRAY_DIMS) {
 				this.setArrayDims(methodScope, registers, asStmt);
+			} else if(asStmt.getAssignType() == ArrayAssignType.ARRAY_DEREF) {//code not used because array is automatically derefed
+				Variable v = (Variable) asStmt.getValue();
+				SymbolContext vCtx = this.currentScope.findVar(v.getAlias());
+				SymbolContext aCtx = this.currentScope.findVar(asStmt.getArrName());
+				ArrayInfo arInf = (ArrayInfo) aCtx.getOther();
+				
+//				arInf.setArrayDeref(vCtx);
 			}
+//			if(this.labelMap.containsKey(ICGenerator.LABEL_ALIAS+(pointerCount-1))
+//					&& this.labelMap.get(ICGenerator.LABEL_ALIAS+(pointerCount-1)).getType() == NodeType.ARRAY_BLOCK) {
+//				System.out.println("ARRAY BLOCK");
+//				
+//			}
+//			else {
+//				System.out.println("ARRAY DIMS");
+//				
+//			}
 				
 			pointerCount++;
 			break;
@@ -592,6 +607,10 @@ public class CodeGeneratorRunnable implements Runnable {
 			ArrayAccess a = (ArrayAccess) operand;
 			SymbolContext aCtx = this.currentScope.findVar(a.getAlias());
 			ArrayInfo arInfo = (ArrayInfo) aCtx.getOther();
+//			while(arInfo.getArrayDeref() != null) {
+//				System.out.println(arInfo.getArrayDeref().getIdentifier());
+//				arInfo = (ArrayInfo) arInfo.getArrayDeref().getOther();
+//			}
 			
 			int[] indeces = new int[arInfo.getDims()];
 			for(int i = 0; i < indeces.length; i++) {

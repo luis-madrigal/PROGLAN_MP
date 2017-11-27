@@ -22,26 +22,27 @@ ACT asd starring(){
 	Say "asd";
 }
 
+ACT bubbleSort starring (int[] arr, int len) {
+	replay ( int i = 0; i < len-1; i++) {
+		replay ( int j = 0; j < len-i-1; j++) {
+			if ( arr[j] > arr[j+1] ) {
+				int temp = arr[j];
+				arr[j] = arr[j+1];
+				arr[j+1] = temp;
+			}
+		}
+	}
+
+	give arr;
+}
+
 
 ACT main starring ()  {
 	composition subrecord rec;
 
-	int x = 4; 
-
-	int[][] array2 = new int[2][3];
-	int[][] array = new int[][]{{1,2,34,x+5,2},{1,23,34,32,2}};
-
-	[]*int* ptr = x;
-	int* ptr2 = ptr;
-	Say ptr;
-	Say ptr2;
-	x += 5;
-	Say x;
-	Say ptr;
-	Say ptr2;*[]
-
-	rec.a = 1;
-
-	array[0][0] = array[1][1];
-	Say "ASD"+array[0][0];
+	int[] toSort = new int[] {1, 10, 9, 8, 3, 5, 6, 1, 4, 6};
+	toSort = bubbleSort(toSort);
+	replay (int i = 0; i < 10; i++) {
+		Say toSort[i];
+	}
 }

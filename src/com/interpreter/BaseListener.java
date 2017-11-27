@@ -695,6 +695,7 @@ public class BaseListener extends ManuScriptBaseListener{
 			String arrName = ctx.equationExpr().getText();
 			sctx = getCurrentSymTable().get(arrName);
 			arInf = (ArrayInfo) sctx.getOther();
+			arInf.setInitialized(true);
 		}
 
 		if(arInf != null && sctx != null) {
@@ -923,9 +924,14 @@ public class BaseListener extends ManuScriptBaseListener{
 				|| node instanceof EquationExprContext) {
 			ParserRuleContext eCtx = (ParserRuleContext) node;
 			SymbolContext ctx = scopes.peek().checkTables(node.getText());
+			
 			if(ctx == null) {
 				SemanticErrors.throwError(SemanticErrors.UNDECLARED_VAR, eCtx.getStart().getLine(), eCtx.getStop().getCharPositionInLine(), node.getText());
 				return "null";
+			}
+			if(ctx.getCtxType() == ContextType.ARRAY) {
+				ArrayInfo a = (ArrayInfo) ctx.getOther();
+				a.setInitialized(true);
 			}
 			return ctx.getSymbolType();
 		} else if (node instanceof PrimaryContext && node.getChildCount() == 1 && !(node.getChild(0) instanceof ParExpressionContext)){

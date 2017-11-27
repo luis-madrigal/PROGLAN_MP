@@ -16,6 +16,7 @@ public class ArrayInfo implements GenericInfo<ArrayInfo>{
     private int dims;
     private boolean isInitialized = false;
     private ContextType arrayCtxType;
+//    private SymbolContext arrayDeref;
 
     public ArrayInfo(int dims, String type){
         this.dims = dims;
@@ -106,7 +107,15 @@ public class ArrayInfo implements GenericInfo<ArrayInfo>{
         this.array = arr;
     }
 
-    @Override
+//    public SymbolContext getArrayDeref() {
+//		return arrayDeref;
+//	}
+//
+//	public void setArrayDeref(SymbolContext arrayDeref) {
+//		this.arrayDeref = arrayDeref;
+//	}
+
+	@Override
     public ArrayInfo getInfo() {
         return this;
     }
