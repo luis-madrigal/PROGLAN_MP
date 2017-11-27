@@ -165,7 +165,7 @@ public class CodeGeneratorRunnable implements Runnable {
 				stmt = this.labelMap.get(pointer);
 				// Method Name | methodScope.getSymTable().keySet()
 				Panel.printWatch("[ "+methodName+" ]");
-				Panel.printWatch("value "+ methodScope.getSymTable().get("x").getValue()+"");
+//				Panel.printWatch("value "+ methodScope.getSymTable().get("x").getValue()+"");
 				pointerCount = this.evaluate(methodScope, registers, stmt, pointerCount);
 				pointer = ICGenerator.LABEL_ALIAS+pointerCount;
 //				if(stmt.isBreakpoint()) {

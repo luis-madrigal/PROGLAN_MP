@@ -68,13 +68,17 @@ public class ManuScriptTokenMaker extends AbstractTokenMaker {
 	               case '#':
 	                  currentTokenType = Token.COMMENT_EOL;
 	                  break;
-
+	                  
+	                  
+	               
 	               case '[':
 	            	   String line = "";
 	            	   for(int k = i; k < end; k++) {
 	            		   line += array[k];
 	            	   }
-	            	   if(line.contains("]:")) {
+
+            		   System.out.println("LINE "+line);
+	            	   if(line.contains("]:") || line.contains("]*")) {
 	            		   currentTokenType = Token.COMMENT_EOL;
 			               break;
 	            	   }
