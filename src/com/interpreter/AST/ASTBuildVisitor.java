@@ -884,7 +884,7 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
             node.addChild(target);
         }
 
-        if(((SymbolContext)target.getValue()).getCtxType().equals(ContextType.ARRAY)){
+        if(!target.nodeType.equals(NodeType.ARRAY_ACCESS) && ((SymbolContext)target.getValue()).getCtxType().equals(ContextType.ARRAY)){
             //array start
             if(ctx.expression() instanceof ManuScriptParser.ArrayInitExprContext){
                 //for '= int[x];' && '= int[]{a,b,c};'
@@ -941,8 +941,10 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
                 //struct array todo: struct access -- might have something wrong w/ grammar
             }else{
                 //id array
+                System.out.println("entered array access");
                 variable.setNodeType(NodeType.ARRAY_ACCESS);
-                symCtx = curScope.getSymTable().get(ctx.variableExpr().Identifier());
+                symCtx = curScope.getSymTable().get(ctx.variableExpr().Identifier().getText());
+                System.out.println("arr access: "+symCtx);
                 if(symCtx != null){
                     variable.setValue(symCtx);
                     variable.setLiteralType(((ArrayInfo)symCtx.getOther()).getArrType());   //todo: is dis wat is wanted?
