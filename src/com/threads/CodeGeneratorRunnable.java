@@ -219,11 +219,6 @@ public class CodeGeneratorRunnable implements Runnable {
 	}
 	
 	private int evaluate(Scope methodScope, HashMap<String, Register> registers, TACStatement statement, int pointerCount) {
-<<<<<<< HEAD
-		
-		Panel.printWatch("P"+pointerCount+"    "+methodScope.getSymTable().keySet().toString());
-		Panel.printWatch(statement+"");
-=======
 		// TODO
 //		Panel.printWatch("P"+pointerCount+"    "+methodScope.getSymTable().keySet().toString());
 //		Panel.printWatch(statement+"");
@@ -231,8 +226,6 @@ public class CodeGeneratorRunnable implements Runnable {
 //			System.out.println("BRK "+	bStmt.getType()+": "+bStmt.isBreakpoint());
 			this.isPlay = false;
 		}
->>>>>>> ca49665432073ac29609b4591cc4eb8d27038bde
-		
 		switch (statement.getType()) {
 		
 		case BLOCK:
