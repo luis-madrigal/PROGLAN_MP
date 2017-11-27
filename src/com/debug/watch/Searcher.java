@@ -12,9 +12,7 @@ public class Searcher {
 	
 	private int depth;
 	private boolean shouldAdd;
-	
-	private boolean isDepthAdded;
-	
+		
 	public Searcher() {
 		this.varList = new ArrayList<VariableNode>();
 		this.blocks = new Stack<String>();
@@ -23,21 +21,8 @@ public class Searcher {
 		
 		this.depth = -1;
 		this.shouldAdd = false;
-		
-		this.isDepthAdded = false;
 	}
 	
-	public void reset() {
-		this.varList = new ArrayList<VariableNode>();
-		this.blocks = new Stack<String>();
-		this.count = "";
-		this.counter = new ArrayList<Integer>();
-		
-		this.depth = -1;
-		this.shouldAdd = false;
-		
-		this.isDepthAdded = false;
-	}
 	public ArrayList<VariableNode> getVarList() {
 		return this.varList;
 	}
@@ -68,68 +53,75 @@ public class Searcher {
 				}
 			}
 			
-			if(line.contains("rehearse")) {
+			if(line.contains("rehearse {") || line.contains("rehearse{")) {
 				funcBlock = "rehearse-when";
 				
-				if(!this.blocks.isEmpty()) {
-					if(!this.isDepthAdded) {
-						this.depth++;
+				if(!this.blocks.isEmpty() && !this.counter.isEmpty()) {
+					if(this.blocks.peek().equals("MULTIPLE") && this.counter.size()*2 > this.blocks.size()) {
+						int counterSize = this.counter.size()*2;
 						
-						this.counter.add(0);
-						this.isDepthAdded = true;
+						this.shouldAdd = false;
+						
+						if(counterSize-this.blocks.size() > 2) {
+							int diff = counterSize-this.blocks.size();
+							diff /= 2;
+							diff -= 1;
+							int oldDepth = this.depth;
+							this.depth = oldDepth - diff;
+							
+							int lastIndex = this.counter.size()-1;
+							for(int i = 1; i <= diff; i++) {
+								this.counter.remove(lastIndex);
+								lastIndex--;
+							}
+						}
 					}
-					else if(this.isDepthAdded) {
-						int prevVal = this.counter.get(this.depth);
-						this.counter.set(this.depth, prevVal+1);
+					else if(this.blocks.peek().equals("MULTIPLE") && this.counter.size()*2 == this.blocks.size()) {
+						this.shouldAdd = true;
 					}
 				}
-				else {
+				
+				if(this.blocks.isEmpty()) {
 					this.depth = 0;
 					
 					if(!this.counter.isEmpty()) {
 						int prevVal = this.counter.get(this.depth);
 						this.counter.set(this.depth, prevVal+1);
+						
+						int n = this.counter.size()-1;
+						int lastIndex = n;
+						for(int i = 0; i < n; i++) {
+							this.counter.remove(lastIndex);
+							lastIndex--;
+						}
 					}
 					else {
 						this.counter.add(0);
 					}
-					
+				}
+				else {
+					if(this.shouldAdd) {
+						this.depth++;
+						this.counter.add(0);
+					}
+					else {
+						int prevVal = this.counter.get(this.depth);
+						this.counter.set(this.depth, prevVal+1);
+					}
 				}
 				
 				this.blocks.push("DOWHILE");
+				this.blocks.push("MULTIPLE");
+				System.out.println("Pushed DoWhile & Multiple.");
 			}
 			
 			if(line.contains("when(") || line.contains("when (")) {
-				if(!this.blocks.isEmpty() && this.blocks.peek().equals("DOWHILE") && line.contains(";")) {
-					this.blocks.pop();
-					
-					if(!this.blocks.isEmpty()) {
-						System.out.println("Peek: "+this.blocks.peek());
-						boolean hasMultiple = false;
-						
-						if(this.blocks.peek().equals("MULTIPLE")) {
-							this.blocks.pop();
-							hasMultiple = true;
-						}
-						
-						if(this.blocks.peek().equals("IF"))
-							funcBlock = "if";
-						else if(this.blocks.peek().equals("FOR"))
-							funcBlock = "replay";
-						else if(this.blocks.peek().equals("WHILE"))
-							funcBlock = "when";
-						else if(this.blocks.peek().equals("DOWHILE"))
-							funcBlock = "rehearse-when";
-						
-						if(hasMultiple)
-							this.blocks.push("MULTIPLE");
-					}
-					else
-						funcBlock = "";
-				}
-				else {
+				System.out.println("Enter When.");
+				System.out.println("Block Size: "+this.blocks.size());
+				if(!line.contains(";")) {
+					System.out.println("Loop While1.");
 					funcBlock = "when";
-
+					
 					if(!this.blocks.isEmpty() && !this.counter.isEmpty()) {
 						if(this.blocks.peek().equals("MULTIPLE") && this.counter.size()*2 > this.blocks.size()) {
 							int counterSize = this.counter.size()*2;
@@ -168,9 +160,11 @@ public class Searcher {
 								this.counter.remove(lastIndex);
 								lastIndex--;
 							}
+							
 						}
-						else
+						else {
 							this.counter.add(0);
+						}
 					}
 					else {
 						if(this.shouldAdd) {
@@ -184,9 +178,105 @@ public class Searcher {
 					}
 					
 					this.blocks.push("WHILE");
-					if(line.contains("{"))
+					if(line.contains("{")) {
 						this.blocks.push("MULTIPLE");
+						System.out.println("Pushed While & Multiple.");
+					}
+					
+//					System.out.println("Do-While When.");
+//					this.blocks.pop();
+//					this.blocks.pop();
+//					
+//					System.out.println("Blocks Size: "+this.blocks.size());
+//					
+//					if(!this.blocks.isEmpty()) {
+//						boolean hasMultiple = false;
+//						
+//						if(this.blocks.peek().equals("MULTIPLE")) {
+//							this.blocks.pop();
+//							hasMultiple = true;
+//						}
+//						
+//						if(this.blocks.peek().equals("IF"))
+//							funcBlock = "if";
+//						else if(this.blocks.peek().equals("FOR"))
+//							funcBlock = "replay";
+//						else if(this.blocks.peek().equals("WHILE"))
+//							funcBlock = "when";
+//						else if(this.blocks.peek().equals("DOWHILE"))
+//							funcBlock = "rehearse-when";
+//						
+//						if(hasMultiple)
+//							this.blocks.push("MULTIPLE");
+//					}
+//					else
+//						funcBlock = "";
 				}
+//				else {
+//					System.out.println("Loop While.");
+//					funcBlock = "when";
+//					
+//					if(!this.blocks.isEmpty() && !this.counter.isEmpty()) {
+//						if(this.blocks.peek().equals("MULTIPLE") && this.counter.size()*2 > this.blocks.size()) {
+//							int counterSize = this.counter.size()*2;
+//							
+//							this.shouldAdd = false;
+//							
+//							if(counterSize-this.blocks.size() > 2) {
+//								int diff = counterSize-this.blocks.size();
+//								diff /= 2;
+//								diff -= 1;
+//								int oldDepth = this.depth;
+//								this.depth = oldDepth - diff;
+//								
+//								int lastIndex = this.counter.size()-1;
+//								for(int i = 1; i <= diff; i++) {
+//									this.counter.remove(lastIndex);
+//									lastIndex--;
+//								}
+//							}
+//						}
+//						else if(this.blocks.peek().equals("MULTIPLE") && this.counter.size()*2 == this.blocks.size()) {
+//							this.shouldAdd = true;
+//						}
+//					}
+//					
+//					if(this.blocks.isEmpty()) {
+//						this.depth = 0;
+//						
+//						if(!this.counter.isEmpty()) {
+//							int prevVal = this.counter.get(this.depth);
+//							this.counter.set(this.depth, prevVal+1);
+//							
+//							int n = this.counter.size()-1;
+//							int lastIndex = n;
+//							for(int i = 0; i < n; i++) {
+//								this.counter.remove(lastIndex);
+//								lastIndex--;
+//							}
+//							
+//						}
+//						else {
+//							this.counter.add(0);
+//						}
+//					}
+//					else {
+//						if(this.shouldAdd) {
+//							this.depth++;
+//							this.counter.add(0);
+//						}
+//						else {
+//							int prevVal = this.counter.get(this.depth);
+//							this.counter.set(this.depth, prevVal+1);
+//						}
+//					}
+//					
+//					this.blocks.push("WHILE");
+//					if(line.contains("{")) {
+//						this.blocks.push("MULTIPLE");
+//						System.out.println("Pushed While & Multiple.");
+//					}
+//				}
 			}
 			
 			if(line.contains("{") && !this.blocks.isEmpty() &&
@@ -529,7 +619,6 @@ public class Searcher {
 								this.blocks.pop();
 								
 								if(!this.blocks.isEmpty()) {
-									System.out.println("Peek: "+this.blocks.peek());
 									boolean hasMultiple = false;
 									
 									if(this.blocks.peek().equals("MULTIPLE")) {
@@ -567,7 +656,6 @@ public class Searcher {
 						count += n+"-";
 					}
 					
-					System.out.println("Searcher: Count "+count);
 					
 					VariableNode var = new VariableNode(lineNumber, dataType, literal, funcName, funcBlock, count);
 					this.varList.add(var);
@@ -578,7 +666,6 @@ public class Searcher {
 						this.blocks.pop();
 						
 						if(!this.blocks.isEmpty()) {
-							System.out.println("Peek: "+this.blocks.peek());
 							boolean hasMultiple = false;
 							
 							if(this.blocks.peek().equals("MULTIPLE")) {
@@ -605,6 +692,16 @@ public class Searcher {
 			}
 			
 		}
+	}
+	
+	public void reset() {
+		this.varList = new ArrayList<VariableNode>();
+		this.blocks = new Stack<String>();
+		this.count = "";
+		this.counter = new ArrayList<Integer>();
+		
+		this.depth = -1;
+		this.shouldAdd = false;
 	}
 	
 }
