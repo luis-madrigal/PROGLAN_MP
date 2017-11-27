@@ -285,6 +285,7 @@ public class BaseListener extends ManuScriptBaseListener{
 									arInf.getArrType().replace("composition",""));
 
 					}
+					arInf.setInitialized(true);
 				}
 				else if(symCtx.getCtxType().equals(ContextType.POINTER)){
 					System.out.println("TYPE PTR: "+varName);
@@ -305,7 +306,7 @@ public class BaseListener extends ManuScriptBaseListener{
 								fpctx.typeType().getText());
 				}
 
-
+				System.out.println("Placed "+varName+" of type "+symCtx.getSymbolType());
 				getCurrentSymTable().put(varName,symCtx);
 
 //
@@ -438,6 +439,7 @@ public class BaseListener extends ManuScriptBaseListener{
 					if (vdctx.variableInitializer() != null) {
 						String types = this.expressionCheck(vdctx.variableInitializer().expression());
 						if(!this.regexComparison(varType, types)) {
+							System.out.println("fault "+types);
 							if(!this.regexComparison(varType.replace("*", ""), types))
 								SemanticErrors.throwError(SemanticErrors.VAR_ASSIGN_MISMATCH, vdctx.getStart().getLine(), vdctx.getStart().getCharPositionInLine(), varName, types);
 						}
@@ -838,26 +840,29 @@ public class BaseListener extends ManuScriptBaseListener{
 		int lineNum = ctx.getStart().getLine();
 		int charPos = ctx.getStop().getCharPositionInLine();
 		
-		if(!getCurrentSymTable().containsKey(structName)) {
+
+		SymbolContext sctx = scopes.peek().checkTables(structName);
+
+		if(sctx == null) {
 			SemanticErrors.throwError(SemanticErrors.UNDECLARED_VAR, lineNum, charPos, structName);
 			return "null";
 		}
-		SymbolContext sctx = getCurrentSymTable().get(structName);
 		
 		return this.structMemberEval(ctx.structMember(), sctx);
 	}
 	
 	private String enterArrayExpression(EquationExprContext ctx) {
 		String arrName = ctx.variableExpr().getText();
-		
+		SymbolContext sctx = scopes.peek().checkTables(arrName);
 		int lineNum = ctx.getStart().getLine();
 		int charPos = ctx.getStop().getCharPositionInLine();
-		
-		if(!getCurrentSymTable().containsKey(arrName)) {
+
+
+		if(sctx == null){
 			SemanticErrors.throwError(SemanticErrors.UNDECLARED_VAR, lineNum, charPos, arrName);
 			return "null";
 		}
-		SymbolContext sctx = getCurrentSymTable().get(arrName);
+
 		ArrayInfo aInfo = (ArrayInfo) sctx.getOther();
 
 		if(!aInfo.isInitialized())
@@ -1097,15 +1102,21 @@ public class BaseListener extends ManuScriptBaseListener{
 	}
 	
 	private boolean pointerAssignCheck(String type1, String type2) {
-		if(!type1.contains("*"))
-			return false;
+//		if(!type1.contains("*"))
+//			return false;
 		if(type1.equals(type2))
 			return true;
+
 		String t1WOpointer = type1.replace("*", "");
 		System.out.println(t1WOpointer+"~~~~~~~~~~~~~~~~~~"+type2);
 		if(t1WOpointer.equals(type2)) //if type1 without '*' equal to type2
 			return true;
-		
+
+		String t2WOpointer = type2.replace("*", "");
+		System.out.println(t2WOpointer+"~~~~~~~~~~~~~~~~~~"+type1);
+		if(t2WOpointer.equals(type1)) //if type1 without '*' equal to type2
+			return true;
+
 		return false;
 	}
 }
