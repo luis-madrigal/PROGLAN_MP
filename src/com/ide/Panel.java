@@ -1086,14 +1086,14 @@ public class Panel implements CaretListener, Runnable, ActionListener, KeyListen
 		String listText = codeInput.getText();
 		int length = listText.split("\n").length;
 		
-		for(int i = 0; i < length; i++) {
+		for(int i = length-1; i >= 0; i--) {
 			if(gutter.hasBookmark(i)) {
 
 				listBreakpoints.push(i);
 //				System.out.println(i+" has");
 			}
 		}
-
+		System.out.println("LISTBRK "+listBreakpoints.size());
 //		this.gutter.hasBookmark(5);
 		
 		

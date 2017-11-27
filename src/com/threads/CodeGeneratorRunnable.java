@@ -42,6 +42,7 @@ import com.interpreter.tac.operands.ArrayAccess;
 import com.interpreter.tac.operands.Operand;
 import com.interpreter.tac.operands.OperandTypes;
 import com.interpreter.tac.operands.Register;
+import com.interpreter.tac.operands.StructAccess;
 import com.interpreter.tac.operands.Variable;
 import com.rits.cloning.Cloner;
 import com.utils.Console;
@@ -133,10 +134,12 @@ public class CodeGeneratorRunnable implements Runnable {
 		TACStatement stmt = null;
 		
 		do {
-			System.out.println(pointer);
-			stmt = this.labelMap.get(pointer);
-			pointerCount = this.evaluate(this.globalScope, registers, stmt, pointerCount);
-			pointer = ICGenerator.LABEL_ALIAS+pointerCount;
+//			if(isPlay) {
+				System.out.println(pointer);
+				stmt = this.labelMap.get(pointer);
+				pointerCount = this.evaluate(this.globalScope, registers, stmt, pointerCount);
+				pointer = ICGenerator.LABEL_ALIAS+pointerCount;	
+//			}			
 		}while(this.checkEndRun(pointer));
 		
 		System.out.println("+++++++++++ RUN MAIN");
@@ -222,9 +225,12 @@ public class CodeGeneratorRunnable implements Runnable {
 		// TODO
 //		Panel.printWatch("P"+pointerCount+"    "+methodScope.getSymTable().keySet().toString());
 //		Panel.printWatch(statement+"");
+		System.out.println("BRK "+	statement.getLabel() + " " + statement.getType()+": "+statement.isBreakpoint());
+		
 		if(statement.isBreakpoint()) {
-//			System.out.println("BRK "+	bStmt.getType()+": "+bStmt.isBreakpoint());
+//			System.out.println("BRK "+	statement.getLabel() + " " + statement.getType()+": "+statement.isBreakpoint());
 			this.isPlay = false;
+//			return pointerCount++;
 		}
 		switch (statement.getType()) {
 		
@@ -319,6 +325,16 @@ public class CodeGeneratorRunnable implements Runnable {
 				}
 				
 				arInf.setObject(this.getValue(registers, aStmt.getValue()), indeces);
+			} else if(aStmt.getOperand().getOperandType() == OperandTypes.STRUCT_ACCESS) {
+				StructAccess s= (StructAccess) aStmt.getOperand();
+				SymbolContext sctx = this.currentScope.findVar(s.getAlias());
+				StructInfo sInf = (StructInfo) sctx.getOther();
+				
+				for(int i = 0; i < s.getVars().size(); i++) {
+					sctx = sInf.getMember(s.getVars().get(i).getAlias());
+				}
+				
+				sctx.setValue(this.getValue(registers, aStmt.getValue()));
 			} else if(aStmt.getOperand().getOperandType() == OperandTypes.VARIABLE) {
 				Variable v = (Variable) aStmt.getOperand();
 				SymbolContext sctx = this.currentScope.findVar(v.getAlias());
@@ -338,10 +354,6 @@ public class CodeGeneratorRunnable implements Runnable {
 						}
 						
 					}
-//						sctx.setValue(this.getValue(registers, aStmt.getValue()));
-				} else if(this.isStruct(sctx)) {
-					StructInfo strInf = (StructInfo) sctx.getOther();
-//						strInf.
 				} else {
 					sctx.setValue(this.getValue(registers, aStmt.getValue()));
 				}
@@ -451,15 +463,15 @@ public class CodeGeneratorRunnable implements Runnable {
 				
 			}
 			
-			if(statement.isBreakpoint()) {
-				System.out.println("BRK "+	statement.getType()+": "+statement.isBreakpoint());
-				this.isPlay = false;
-			}
+			
 			
 			pointerCount++;
 			break;
 		}
-		
+//		if(statement.isBreakpoint()) {
+//			System.out.println("BRK "+	statement.getType()+": "+statement.isBreakpoint());
+//			this.isPlay = false;
+//		}
 		return pointerCount;
 	}
 	
@@ -592,6 +604,16 @@ public class CodeGeneratorRunnable implements Runnable {
 			}
 			
 			return arInfo.getObject(indeces);
+		case STRUCT_ACCESS:
+			StructAccess s = (StructAccess) operand;
+			SymbolContext sCtx = this.currentScope.findVar(s.getAlias());
+			StructInfo sInfo = (StructInfo) sCtx.getOther();
+			
+			for(int i = 0; i < s.getVars().size(); i++) {
+				sCtx = sInfo.getMember(s.getVars().get(i).getAlias());
+			}
+			
+			return sCtx.getValue();
 		default:
 			return null;
 		}

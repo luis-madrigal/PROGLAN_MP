@@ -20,6 +20,7 @@ import com.interpreter.tac.operands.Literal;
 import com.interpreter.tac.operands.Operand;
 import com.interpreter.tac.operands.OperandTypes;
 import com.interpreter.tac.operands.Register;
+import com.interpreter.tac.operands.StructAccess;
 import com.interpreter.tac.operands.Variable;
 import com.utils.KeyTokens.LITERAL_TYPE;
 import com.utils.KeyTokens.OPERATOR;
@@ -258,15 +259,16 @@ public class ICGenerator {
 				SymbolContext ctx = (SymbolContext)n.getValue();
 				return new Variable(OperandTypes.VARIABLE, ctx.getValue(), ctx.getIdentifier());
 			case LITERAL: return new Literal(OperandTypes.LITERAL, LiteralMatcher.instance().parseAttempt(n.getValue()), LITERAL_TYPE.getEnum(((LeafNode)n).getLiteralType()));
-			case ARRAY_ACCESS: return this.arrayAccess(node);
+			case ARRAY_ACCESS: return this.arrayAccess(n);
+			case STRUCT_ACCESS: return this.structAccess(n);
 			case ASSIGN: TACAssignStatement aStmt = new TACAssignStatement(n.getNodeType(), OPERATOR.getEnum(n.getValue()), this.storeExpression(n.getChild(0)), this.storeExpression(n.getChild(1)), n.isBreakpoint());
 						 this.addAssignStatement(aStmt);
 			case BIN_ARITHMETIC:
-			case BIN_LOGIC: stmt = new TACBinaryOpStatement(node.getNodeType(), OPERATOR.getEnum(n.getValue()), this.storeExpression(n.getChild(0)), this.storeExpression(n.getChild(1)), n.isBreakpoint());
+			case BIN_LOGIC: stmt = new TACBinaryOpStatement(n.getNodeType(), OPERATOR.getEnum(n.getValue()), this.storeExpression(n.getChild(0)), this.storeExpression(n.getChild(1)), n.isBreakpoint());
 							return this.addOutputStatement(stmt);
 			case UNIPOST_ARITHMETIC:
 			case UNIPRE_ARITHMETIC:
-			case UNI_LOGIC: stmt = new TACUnaryOpStatement(node.getNodeType(), OPERATOR.getEnum(n.getValue()), this.storeExpression(n.getChild(0)), n.isBreakpoint());
+			case UNI_LOGIC: stmt = new TACUnaryOpStatement(n.getNodeType(), OPERATOR.getEnum(n.getValue()), this.storeExpression(n.getChild(0)), n.isBreakpoint());
 							return this.addOutputStatement(stmt);
 			case ARRAY_INIT: return this.evalArrayInit(n);
 			case ARRAY_BLOCK: return this.genArrayBlock(n);
@@ -282,20 +284,16 @@ public class ICGenerator {
 		return null;
 	}
 	
-//	private void assign(AbstractSyntaxTree node, OPERATOR op) { 
-//		TACAssignStatement aStmt = new TACAssignStatement(NodeType.ASSIGN, op, this.storeExpression(node.getChild(1)), node.isBreakpoint());
-//		if(node.getChild(0).getNodeType() == NodeType.ARRAY_ACCESS) {
-//			AbstractSyntaxTree accessNode = node.getChild(0);
-//			accessNode.setNodeType(NodeType.VARIABLE);
-//			aStmt.setVariable((Variable) this.storeExpression(accessNode));
-//
-//			for(int i = 0; i < accessNode.getChildren().size(); i++) {
-//				aStmt.addIndex(this.storeExpression(accessNode.getChild(i)));
-//			}
-//		} 
-//
-//		this.addAssignStatement(aStmt);
-//	}
+	private StructAccess structAccess(AbstractSyntaxTree node) {
+		SymbolContext ctx = (SymbolContext) node.getValue();
+		StructAccess s = new StructAccess(ctx.getIdentifier(), OperandTypes.STRUCT_ACCESS, ctx.getValue());
+		
+		for(int i = 0; i < node.getChildren().size(); i++) {
+			s.addVar((Variable) this.storeExpression(node.getChild(i)));
+		}
+		
+		return s;
+	}
 	
 	private ArrayAccess arrayAccess(AbstractSyntaxTree node) {
 		SymbolContext ctx = (SymbolContext) node.getValue();
