@@ -329,7 +329,7 @@ public class Panel implements CaretListener, Runnable, ActionListener, KeyListen
 		        (int)horizontalHeight,
 		        (int)inputPane.getVerticalScrollBar().getPreferredSize().getWidth()
 		));
-
+	      
 		gbc = new GridBagConstraints();
 		gbc.anchor = GridBagConstraints.NORTHWEST;
 		gbc.fill = GridBagConstraints.BOTH;
