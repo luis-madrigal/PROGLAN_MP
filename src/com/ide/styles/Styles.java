@@ -20,14 +20,17 @@ public class Styles {
 
 	public final static Color TEXT_GRAY = new Color(96, 96, 96);
 
+	public final static Color VIOLET = new Color(178, 103, 244);
 	public final static Color SKY_BLUE = new Color(56, 231, 255);
 	public final static Color SKY_BLUE_TRANS = new Color(32, 227, 255, 200);
 	public final static Color UN_HIGHLIGHT = new Color(64, 64, 64);
-	public final static Color UN_LITERAL_STRING_DOUBLE_QUOTE = new Color(23, 198, 163);
+	public final static Color UN_LITERAL_STRING_DOUBLE_QUOTE = new Color(14, 247, 177); // SUBLIME_KEYWORD; // new Color(117, 219, 27); // new Color(23, 198, 163);
 	public final static Color UN_VARIABLE = new Color(82, 227, 246);
 
-	public final static Color UN_RESERVED_WORD = new Color(103, 194, 217); // new Color(255, 0, 127);	
-	public final static Color UN_COMMENT_KEYWORD = new Color(99, 221, 221);// new Color(167, 236, 33);	
+	public final static Color UN_RESERVED_WORD = SKY_BLUE; //new Color(103, 194, 217); // new Color(255, 0, 127);	
+	public final static Color UN_RESERVED_WORD_2 = new Color(178, 0, 255); // new Color(247,  2,  124); //new Color(103, 194, 217); // new Color(255, 0, 127);	
+	public final static Color UN_COMMENT_KEYWORD = new Color(89, 255, 0); //VIOLET; // new Color(99, 221, 221);// new Color(167, 236, 33);	
+	public final static Color UN_COMMENT_MULTILINE = UN_COMMENT_KEYWORD; // new Color(99, 221, 221);// new Color(167, 236, 33);	
 	public final static Color UN_COMMENT_EOL = UN_COMMENT_KEYWORD;// new Color(167, 236, 33);	
 	
 	public final static Color UN_OPERATOR = TEXT_GRAY; //Color.WHITE;
@@ -38,7 +41,6 @@ public class Styles {
 	public final static Color UN_ERR_SELECTION = new Color(109, 7, 33);//new Color(130, 20, 99);// new Color(94, 18, 16);
 	public final static Color UN_ERR_HIGHLIGHT = new Color(221, 17, 68); // new Color(214, 32, 77);//new Color(26, 140, 158); //new Color(170, 5, 96); //new Color(94, 18, 16);
 
-	public final static Color VIOLET = new Color(178, 103, 244);
 
 	public final static Color TEAL = new Color(1, 127, 124);
 	public final static Color BRIGHT_BLUE = new Color(7, 218, 242);

@@ -72,6 +72,8 @@ public class DocumentPanel extends JPanel implements MouseListener {
 		entry.addMouseListener(this);
 		entry.setAlignmentX(Component.LEFT_ALIGNMENT);
 		this.add(entry);
+		entry.revalidate();
+		entry.repaint();
 	}
 	
 	
@@ -144,6 +146,8 @@ public class DocumentPanel extends JPanel implements MouseListener {
 	@Override
 	public void mousePressed(MouseEvent e) {
 		if(e.getSource() instanceof DocumentEntry) {
+			this.revalidate();
+			this.repaint();
 			pnlParent.unfoldDoument();
 			DocumentEntry entry = (DocumentEntry) e.getSource();
 			int linePosition = entry.getLinePosition();
@@ -155,6 +159,14 @@ public class DocumentPanel extends JPanel implements MouseListener {
 	@Override
 	public void mouseReleased(MouseEvent e) {
 		
+	}
+
+	public Panel getPnlParent() {
+		return pnlParent;
+	}
+
+	public void setPnlParent(Panel pnlParent) {
+		this.pnlParent = pnlParent;
 	}
 
 }

@@ -43,7 +43,6 @@ public class ManuScriptTokenMaker extends AbstractTokenMaker {
 
 	   int currentTokenStart = offset;
 	   int currentTokenType  = startTokenType;
-	   boolean multiLineFlag = false;
 	   
 	   for (int i=offset; i<end; i++) {
 
@@ -55,27 +54,7 @@ public class ManuScriptTokenMaker extends AbstractTokenMaker {
 	         case Token.NULL:
 
 	            currentTokenStart = i;   // Starting a new token here.
-	            
-	            if(multiLineFlag) {
-         		   currentTokenType = Token.COMMENT_EOL;
-	            	   // End of Coment
-	            	switch(c) {
-	            	  case '*':
-		            	   String line = "";
-		            	   for(int k = i; k < end; k++) {
-		            		   line += array[k];
-		            	   }
-		            	   System.out.println("LINE out "+line);
-		            	   if(line.contains("*[]")) {
-		            		   multiLineFlag = false;
-		            		   currentTokenType = Token.COMMENT_EOL;
-				               break;
-		            	   }
-	            	}
-	            	break;
-	             
-	            }
-	            else {
+	       
 		            switch (c) {
 	
 		               case ' ':
@@ -86,6 +65,10 @@ public class ManuScriptTokenMaker extends AbstractTokenMaker {
 		               case '"':
 		                  currentTokenType = Token.LITERAL_STRING_DOUBLE_QUOTE;
 		                  break;
+		                  
+		               case '\'':
+			                  currentTokenType = Token.LITERAL_CHAR;
+			                  break;
 	
 		               case '#':
 		                  currentTokenType = Token.COMMENT_EOL;
@@ -99,30 +82,24 @@ public class ManuScriptTokenMaker extends AbstractTokenMaker {
 		            		   line += array[k];
 		            	   }
 		            	   System.out.println("LINE out "+line);
-		            	   
-		            	   if(line.length() > 3 &&
-		            			   line.substring(0, 3).contains("[]*")) {
-		            		   multiLineFlag = true;
-		            		   System.out.println("multiLine true");
-		            		   currentTokenType = Token.COMMENT_EOL;
-		            		   break;
-		            	   }
+		            	 
 		            	   
 		            	   if(line.contains("]:")) {
 		            		   currentTokenType = Token.COMMENT_EOL;
 				               break;
 		            	   }
-			                  
-		            	   // End of Comennt
+		            	   
+		            	   
 		               case '*':
 		            	   line = "";
 		            	   for(int k = i; k < end; k++) {
 		            		   line += array[k];
 		            	   }
-		            	   System.out.println("LINE out "+line);
-		            	   if(line.contains("*[]")) {
-		            		   multiLineFlag = false;
-		            		   currentTokenType = Token.COMMENT_EOL;
+		            	 
+		            	   
+		            	   if(line.length() > 2 &&
+		            			   line.substring(0, 3).contains("]*")) {
+		            		   currentTokenType = Token.COMMENT_MULTILINE;
 				               break;
 		            	   }
 		            	   
@@ -141,29 +118,11 @@ public class ManuScriptTokenMaker extends AbstractTokenMaker {
 		                  break;
 	
 		            } // End of switch (c).
-	            }
+	            
 	            break;
 
 	         case Token.WHITESPACE:
-	        	 if(multiLineFlag) {
-          		   currentTokenType = Token.COMMENT_EOL;
-	        		 switch(c) {
-		            	  case '*':
-			            	   String line = "";
-			            	   for(int k = i; k < end; k++) {
-			            		   line += array[k];
-			            	   }
-			            	   System.out.println("LINE out "+line);
-			            	   if(line.contains("*[]")) {
-			            		   multiLineFlag = false;
-			            		   currentTokenType = Token.COMMENT_EOL;
-					               break;
-			            	   }
-		            	}
-	        		 break;
-		             
-	        	 }
-	        	 else {
+	        
 		            switch (c) {
 	
 		               case ' ':
@@ -175,43 +134,41 @@ public class ManuScriptTokenMaker extends AbstractTokenMaker {
 		                  currentTokenStart = i;
 		                  currentTokenType = Token.LITERAL_STRING_DOUBLE_QUOTE;
 		                  break;
-	
+		                  
+		               case '\'':
+			                  addToken(text, currentTokenStart,i-1, Token.WHITESPACE, newStartOffset+currentTokenStart);
+			                  currentTokenStart = i;
+			                  currentTokenType = Token.LITERAL_CHAR;
+			                  break;
+		
+			                  
 		               case '[':
 		            	   String line = "";
 		            	   for(int k = i; k < end; k++) {
 		            		   line += array[k];
 		            	   }
 	
-		            	   System.out.println("LINE in  "+line);
-		            	   
-		            	   if(line.length() > 3 &&
-		            			   line.substring(0, 3).contains("[]*")) {
-		            		   multiLineFlag = true;
-		            		   System.out.println("multiLine true");
-		            		   currentTokenType = Token.COMMENT_EOL;
-		            		   break;
-		            	   }
-		            	   
+		            	  
 		            	   if(line.contains("]:")) {
 		            		   currentTokenType = Token.COMMENT_EOL;
 				               break;
 		            	   }
 			                  
-		            	   // End of Coment
 		               case '*':
 		            	   line = "";
 		            	   for(int k = i; k < end; k++) {
 		            		   line += array[k];
 		            	   }
-		            	   System.out.println("LINE out "+line);
-		            	   if(line.contains("*[]")) {
-		            		   currentTokenType = Token.COMMENT_EOL;
-				               break;
+	
+		            	  
+		            	   if(line.length() > 2 &&
+		            			   line.substring(0, 3).contains("]*")) {
+		            		   addToken(text, currentTokenStart,i-1, Token.WHITESPACE, newStartOffset+currentTokenStart);
+				                  currentTokenStart = i;
+				                  currentTokenType = Token.COMMENT_MULTILINE;
+				                  break;
 		            	   }
-	//	                  addToken(text, currentTokenStart,i-1, Token.WHITESPACE, newStartOffset+currentTokenStart);
-	//	                  currentTokenStart = i;
-	//	                  currentTokenType = Token.COMMENT_EOL;
-	//	                  break;
+			                
 	
 		               default:   // Add the whitespace token and start anew.
 	
@@ -231,33 +188,13 @@ public class ManuScriptTokenMaker extends AbstractTokenMaker {
 		                  currentTokenType = Token.IDENTIFIER;
 	
 		            } // End of switch (c).
-	      		}
+	      		
 	            break;
 
 	         default: // Should never happen
 	         case Token.IDENTIFIER:
-	        	   if(multiLineFlag) {
-	         		   currentTokenType = Token.COMMENT_EOL;
-		            	   // End of Coment
-		            	switch(c) {
-		            	  case '*':
-			            	   String line = "";
-			            	   for(int k = i; k < end; k++) {
-			            		   line += array[k];
-			            	   }
-			            	   System.out.println("LINE out "+line);
-			            	   if(line.contains("*[]")) {
-			            		   multiLineFlag = false;
-			            		   currentTokenType = Token.COMMENT_EOL;
-					               break;
-			            	   }
-		            	}
-	        	   }
-		            	else {
-		            		
-		            	
-//		            		System.out.println("IDENTIFIER");
-				            switch (c) {
+	        	   	            	
+		            		switch (c) {
 			
 				               case ' ':
 				               case '\t':
@@ -271,6 +208,27 @@ public class ManuScriptTokenMaker extends AbstractTokenMaker {
 				                  currentTokenStart = i;
 				                  currentTokenType = Token.LITERAL_STRING_DOUBLE_QUOTE;
 				                  break;
+				                  
+				               case '\'':
+					                  addToken(text, currentTokenStart,i-1, Token.IDENTIFIER, newStartOffset+currentTokenStart);
+					                  currentTokenStart = i;
+					                  currentTokenType = Token.LITERAL_CHAR;
+					                  break;
+					                  
+				               case '*':
+				            	   String line = "";
+				            	   for(int k = i; k < end; k++) {
+				            		   line += array[k];
+				            	   }
+			
+				            	  
+				            	   if(line.length() > 2 &&
+				            			   line.substring(0, 3).contains("]*")) {
+				            		   addToken(text, currentTokenStart,i-1, Token.IDENTIFIER, newStartOffset+currentTokenStart);
+						                  currentTokenStart = i;
+						                  currentTokenType = Token.COMMENT_MULTILINE;
+						                  break;
+				            	   }					                 
 			
 				               default:
 				                  if (RSyntaxUtilities.isLetterOrDigit(c) || c=='/' || c=='_') {
@@ -279,7 +237,7 @@ public class ManuScriptTokenMaker extends AbstractTokenMaker {
 				                  // Otherwise, we're still an identifier (?).
 			
 				            	} // End of switch (c).
-		            		}
+		            		
 	            break;
 
 	         case Token.LITERAL_NUMBER_DECIMAL_INT:
@@ -299,6 +257,29 @@ public class ManuScriptTokenMaker extends AbstractTokenMaker {
 	                  currentTokenType = Token.LITERAL_STRING_DOUBLE_QUOTE;
 	                  break;
 
+	               case '\'':
+		                  addToken(text, currentTokenStart,i-1, Token.LITERAL_NUMBER_DECIMAL_INT, newStartOffset+currentTokenStart);
+		                  currentTokenStart = i;
+		                  currentTokenType = Token.LITERAL_CHAR;
+		                  break;
+
+		               
+	               case '[': // TODO [S]
+	            	   String line = "";
+	            	   for(int k = i; k < end; k++) {
+	            		   line += array[k];
+	            	   }
+
+	            	  
+	            	   if(line.length() > 2 &&
+	            			   line.substring(0, 3).contains("]*")) {
+	            		      addToken(text, currentTokenStart,i-1, Token.LITERAL_NUMBER_DECIMAL_INT, newStartOffset+currentTokenStart);
+			                  currentTokenStart = i;
+			                  currentTokenType = Token.COMMENT_MULTILINE;
+			                  break;
+	            	   }					                 
+		            
+		                  
 	               default:
 
 	                  if (RSyntaxUtilities.isDigit(c)) {
@@ -327,7 +308,33 @@ public class ManuScriptTokenMaker extends AbstractTokenMaker {
 	               currentTokenType = Token.NULL;
 	            }
 	            break;
+	         case Token.LITERAL_CHAR:
+		            if (c=='\'') {
+		               addToken(text, currentTokenStart,i, Token.LITERAL_CHAR, newStartOffset+currentTokenStart);
+		               currentTokenType = Token.NULL;
+		            }
+		            break;
+	         case Token.COMMENT_MULTILINE:
+		            if (c==']') {
+		            	 String line = "";
+		            	 if(i-2 >= 0) {
+		            		 for(int k = i-2; k < end; k++) {
+			            		   line += array[k];
+			            	   }
+			            	   
+		            	 }
+		            	  
+		            	   if(line.length() > 2 &&
+		            			   line.substring(0, 3).contains("*[]")) {
+		            		   System.out.println("SUBLINE "+line.substring(0, 3));
+//		            		   addToken(segment, start, end, tokenType, newStartOffset);
+		            		   addToken(text, currentTokenStart,i, Token.COMMENT_MULTILINE, newStartOffset+currentTokenStart);
+				               currentTokenType = Token.NULL;
 
+				               break;
+		            	   }
+		            }
+//		            break;
 	      } // End of switch (currentTokenType).
 
 	   } // End of for (int i=offset; i<end; i++).
@@ -338,6 +345,15 @@ public class ManuScriptTokenMaker extends AbstractTokenMaker {
 	      case Token.LITERAL_STRING_DOUBLE_QUOTE:
 	         addToken(text, currentTokenStart,end-1, currentTokenType, newStartOffset+currentTokenStart);
 	         break;
+	         
+	         // Remember what token type to begin the next line with.
+	      case Token.LITERAL_CHAR:
+	         addToken(text, currentTokenStart,end-1, currentTokenType, newStartOffset+currentTokenStart);
+	         break;
+	         
+	      case Token.COMMENT_MULTILINE:
+		         addToken(text, currentTokenStart,end-1, currentTokenType, newStartOffset+currentTokenStart);
+		         break;
 
 	      // Do nothing if everything was okay.
 	      case Token.NULL:
@@ -364,7 +380,11 @@ public class ManuScriptTokenMaker extends AbstractTokenMaker {
 	   String[] keywords = Tokens.KEYWORDS.trim().split("\\|");
 	   String[] operators = Tokens.OPERATORS.trim().split("\\|");
 	   String[] separators = Tokens.SEPARATORS.trim().split("\\|");
-		  
+	   
+	   String[] keywords_1 = Tokens.KEYWORDS_1.trim().split("\\|");
+	   String[] keywords_2 = Tokens.KEYWORDS_2.trim().split("\\|");
+	   String[] data_type = Tokens.DATA_TYPE.trim().split("\\|");
+			
 	   String token;
 	   
 	   for(int i = 0; i < keywords.length; i++) {
@@ -384,6 +404,25 @@ public class ManuScriptTokenMaker extends AbstractTokenMaker {
 		   if(!token.isEmpty())
 			   tokenMap.put(token, Token.SEPARATOR);
 	   }
+	   
+	   for(int i = 0; i < keywords_1.length; i++) {
+		   token = keywords_1[i].trim().replace("\\", "");
+		   if(!token.isEmpty())
+			   tokenMap.put(token, Token.RESERVED_WORD);
+	   }
+	   
+	   for(int i = 0; i < keywords_2.length; i++) {
+		   token = keywords_2[i].trim().replace("\\", "");
+		   if(!token.isEmpty())
+			   tokenMap.put(token, Token.RESERVED_WORD_2);
+	   }
+	   
+	   for(int i = 0; i < data_type.length; i++) {
+		   token = data_type[i].trim().replace("\\", "");
+		   if(!token.isEmpty())
+			   tokenMap.put(token, Token.DATA_TYPE);
+	   }
+	   
 	   
 	   
 	   return tokenMap;

@@ -1,20 +1,33 @@
+composition subrecord{
+	int a;
+	int* b, cd;
+	string k;	
+	string[] c;
+}
 
-[]* a
-	asdsd
-*[]
 
-ACT main starring() {
- 	int x = 0;
- 	[]* asd
- 	
-	[]* Comment 1
-		What is your 
-	*[]
+composition record {
+	composition subrecord*[] cd;
+	int*[] k;
+	int a, b, c;
+	float d;
 	
-	[Comment]: What
-	Say "Hello World";
-	
- 	replay(int i = 0; i < 5; i++) {
- 		Say "Hello World";
- 	}
- }
+}
+
+[ asd]: composition subred rec;
+
+ACT asd starring(){
+	Say "asd";
+}
+
+
+ACT main starring ()  {
+	composition subrecord rec;
+
+	int x = 4; 
+
+	int[][] array2 = new int[2][3];
+	int[][] array = new int[][]{{1,2,34,x+5,2},{1,23,34,32,2}};
+
+	Say array[0][0];
+}

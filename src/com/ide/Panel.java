@@ -43,9 +43,11 @@ import javax.swing.text.DefaultStyledDocument;
 import javax.swing.text.Element;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
+import javax.swing.text.StyleContext;
 
 import org.antlr.v4.gui.TreeViewer;
 import org.fife.ui.rsyntaxtextarea.AbstractTokenMakerFactory;
+import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rsyntaxtextarea.Style;
 import org.fife.ui.rsyntaxtextarea.SyntaxScheme;
 import org.fife.ui.rsyntaxtextarea.Token;
@@ -164,6 +166,10 @@ public class Panel implements CaretListener, Runnable, ActionListener, KeyListen
         UIManager.put("TabbedPane.focus", Color.WHITE);
         UIManager.put("TabbedPane.selectHighlight", Color.WHITE);
         
+      //For Watch Table
+        UIManager.getLookAndFeelDefaults().put("Table.background", SUBLIME_BG);
+        UIManager.getLookAndFeelDefaults().put("Table.gridColor", Styles.SKY_BLUE);
+        UIManager.getLookAndFeelDefaults().put("Table.foreground", Color.WHITE);
 
 		this.textFileHandler = new TextFileHandler();
 		this.styles = new Styles();
@@ -393,7 +399,6 @@ public class Panel implements CaretListener, Runnable, ActionListener, KeyListen
 		this.threeACPane.getVerticalScrollBar().setUI(new CustomScrollBarUISky());
 		this.threeACPane.getHorizontalScrollBar().setUI(new CustomScrollBarUISky());
 		this.threeACPane.setBorder(null);
-	
 		this.threeACPane.getHorizontalScrollBar().setPreferredSize(new Dimension(
 		        (int)threeACPane.getHorizontalScrollBar().getPreferredSize().getWidth(),
 		        (int)horizontalHeight
@@ -516,11 +521,12 @@ public class Panel implements CaretListener, Runnable, ActionListener, KeyListen
 		parentPane.add(treePane);
 		
 		this.outputTabs = new JTabbedPane();
-		this.outputTabs.add("3 Address Code", this.threeACPane);
+		this.outputTabs.add("IR Code", this.threeACPane);
 //		this.outputTabs.add("Parsed Out", this.parsedPane);
 		this.outputTabs.add("Parse Tree", parentPane);
 
 		this.outputTabs.add("Watch", this.watchPane);
+		this.outputTabs.add("Temp Watch", this.tempWatchPane); //TODO: Delete after
 
 		this.outputTabs.setFont(FrameStatic.fntDefault);
 		outputTabs.setBackground(Color.WHITE);
@@ -647,7 +653,7 @@ public class Panel implements CaretListener, Runnable, ActionListener, KeyListen
 //		topSplitPane.getLeftComponent().setBounds(0, 0, topSplitPane.getLeftComponent().getWidth(),
 //				topSplitPane.getLeftComponent().getHeight());
 		this.topSplitPane.setRightComponent(this.outputTabs);
-		this.topSplitPane.setDividerLocation((int) Frame.SCREEN_SIZE.getWidth()-320);
+		this.topSplitPane.setDividerLocation((int) Frame.SCREEN_SIZE.getWidth()-380); // TODO
 		gbc = new GridBagConstraints();
 		gbc.anchor = GridBagConstraints.NORTHEAST;
 		gbc.fill = GridBagConstraints.BOTH;
@@ -734,11 +740,11 @@ public class Panel implements CaretListener, Runnable, ActionListener, KeyListen
 		//Scanner for input string
 		this.scanner = new ScannerModel(this);
 		
-		this.topSplitPane.setDividerSize(2);
+		this.topSplitPane.setDividerSize(5);
 		this.topSplitPane.setBackground(Color.WHITE);
 		this.topSplitPane.setContinuousLayout(true);
 		
-		this.bottomSplitPane.setDividerSize(2);
+		this.bottomSplitPane.setDividerSize(5);
 		this.bottomSplitPane.setBackground(Color.WHITE);
 		this.bottomSplitPane.setContinuousLayout(true);
 
@@ -758,6 +764,8 @@ public class Panel implements CaretListener, Runnable, ActionListener, KeyListen
 //		this.pnlMain.setComponentZOrder(pnlMenu, pnlMain.getComponentCount()-1);
 
 //		if(this.codeInput.getText().contains("ACT ")) {
+		this.codeInput.repaint();
+		this.codeInput.revalidate();
 			documentOut.generate(this.codeInput.getText());
 //			System.out.println(" "+this.codeInput.getText());
 //		}
@@ -767,7 +775,8 @@ public class Panel implements CaretListener, Runnable, ActionListener, KeyListen
 		documentOut.revalidate();
 		documentOut.repaint();
 		documentPane.addMouseListener(this);
-		this.foldDoument();
+//		this.foldDoument();
+		documentOut.generate(this.codeInput.getText());
 	}
 	
 	public void initMenuButtons() {
@@ -903,6 +912,7 @@ public class Panel implements CaretListener, Runnable, ActionListener, KeyListen
 		this.codeInput = codeInput;
 	}
 
+	
 	/*
 	 * Specify the color for a Token type here using syntaxScheme.
 	 * 
@@ -916,13 +926,40 @@ public class Panel implements CaretListener, Runnable, ActionListener, KeyListen
 	private SyntaxScheme getExpressionColorScheme(SyntaxScheme textAreaSyntaxScheme) {
 		SyntaxScheme syntaxScheme = textAreaSyntaxScheme;
 
-		syntaxScheme.setStyle(Token.RESERVED_WORD, new Style(Styles.UN_RESERVED_WORD));
+//		syntaxScheme.setStyle(Token.RESERVED_WORD, new Style(Styles.UN_RESERVED_WORD));
 		syntaxScheme.setStyle(Token.SEPARATOR, new Style(Styles.UN_SEPARATOR));
 		syntaxScheme.setStyle(Token.LITERAL_STRING_DOUBLE_QUOTE, new Style(Styles.UN_LITERAL_STRING_DOUBLE_QUOTE));
 		syntaxScheme.setStyle(Token.VARIABLE, new Style(Styles.UN_VARIABLE));
 		syntaxScheme.setStyle(Token.COMMENT_KEYWORD, new Style(Styles.UN_COMMENT_KEYWORD));
 		syntaxScheme.setStyle(Token.COMMENT_EOL, new Style(Styles.UN_COMMENT_EOL));
 		syntaxScheme.setStyle(Token.OPERATOR, new Style(Styles.UN_OPERATOR));
+	
+
+		// Colors used by tokens.
+		Color comment = Styles.UN_COMMENT_MULTILINE;
+		Font baseFont = codeInput.getFont(); // RSyntaxTextArea.getDefaultFont();
+		
+		StyleContext sc = StyleContext.getDefaultStyleContext();
+		Font boldFont = sc.getFont(baseFont.getFamily(), Font.BOLD, baseFont.getSize());
+		Font italicFont = sc.getFont(baseFont.getFamily(), Font.ITALIC, baseFont.getSize());
+		Font commentFont = italicFont;//baseFont.deriveFont(Font.ITALIC);
+		Font keywordFont = boldFont;//baseFont.deriveFont(Font.BOLD);
+		
+		syntaxScheme.setStyle(Token.COMMENT_MULTILINE, new Style(comment, null, commentFont));
+		syntaxScheme.setStyle(Token.COMMENT_EOL, new Style(comment, null, commentFont));
+		
+		
+		
+		
+		syntaxScheme.setStyle(Token.DATA_TYPE, new Style(Styles.UN_RESERVED_WORD, null, keywordFont));
+		syntaxScheme.setStyle(Token.RESERVED_WORD, new Style(Styles.UN_RESERVED_WORD, null, keywordFont));
+		syntaxScheme.setStyle(Token.RESERVED_WORD_2, new Style(Styles.UN_RESERVED_WORD_2, null, keywordFont));
+
+//		styles[RESERVED_WORD]				= new Style(keyword, null, keywordFont);
+//		styles[RESERVED_WORD_2]			= new Style(keyword, null, keywordFont);
+//		styles[FUNCTION]					= new Style(function);
+//		styles[DATA_TYPE]				= new Style(dataType, null, keywordFont);
+		
 		return syntaxScheme;
 	}
 	public JPanel getUI() {
@@ -1113,16 +1150,12 @@ public class Panel implements CaretListener, Runnable, ActionListener, KeyListen
 		documentSplitPane.setDividerLocation(20);
 		documentSplitPane.revalidate();
 		documentSplitPane.repaint();
-		documentPane.revalidate();
-		documentPane.repaint();
 	}
 		
 	public void unfoldDoument() {
 		documentSplitPane.setDividerLocation(160);
 		documentSplitPane.revalidate();
 		documentSplitPane.repaint();
-		documentPane.revalidate();
-		documentPane.repaint();
 	}
 
 
@@ -1202,9 +1235,6 @@ public class Panel implements CaretListener, Runnable, ActionListener, KeyListen
 			
 			for(VariableNode var : selectedVar) {
 				this.modelWatchTable.addRow(new Object[] {var.getDataType()+" "+var.getLiteral(), var.getLineNumber(), var.getFuncParent()+" ("+var.getFuncChild()+")", "0"});
-				
-//				System.out.println("Line "+var.getLineNumber()+": "+var.getDataType()+" "+var.getLiteral()+
-//						" ("+var.getFuncParent()+", "+var.getFuncChild()+")");
 			}
 			
 			this.outputTabs.setSelectedIndex(this.outputTabs.getTabCount()-1);
