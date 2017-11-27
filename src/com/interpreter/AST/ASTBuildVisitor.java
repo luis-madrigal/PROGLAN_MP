@@ -941,6 +941,7 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
                 //struct array todo: struct access -- might have something wrong w/ grammar
             }else{
                 //id array
+                variable.setNodeType(NodeType.ARRAY_ACCESS);
                 symCtx = curScope.getSymTable().get(ctx.variableExpr().Identifier());
                 if(symCtx != null){
                     variable.setValue(symCtx);
