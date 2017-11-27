@@ -48,7 +48,10 @@ public class AbstractSyntaxTree {
     }
 
     public AbstractSyntaxTree getChild(int index) {
-        return children.get(index);
+    	if(children.size() > index)
+    		return children.get(index);
+    	else
+    		return null;
     }
 
     public void addChild(AbstractSyntaxTree child) {
