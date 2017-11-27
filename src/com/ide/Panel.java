@@ -43,9 +43,11 @@ import javax.swing.text.DefaultStyledDocument;
 import javax.swing.text.Element;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
+import javax.swing.text.StyleContext;
 
 import org.antlr.v4.gui.TreeViewer;
 import org.fife.ui.rsyntaxtextarea.AbstractTokenMakerFactory;
+import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rsyntaxtextarea.Style;
 import org.fife.ui.rsyntaxtextarea.SyntaxScheme;
 import org.fife.ui.rsyntaxtextarea.Token;
@@ -924,13 +926,40 @@ public class Panel implements CaretListener, Runnable, ActionListener, KeyListen
 	private SyntaxScheme getExpressionColorScheme(SyntaxScheme textAreaSyntaxScheme) {
 		SyntaxScheme syntaxScheme = textAreaSyntaxScheme;
 
-		syntaxScheme.setStyle(Token.RESERVED_WORD, new Style(Styles.UN_RESERVED_WORD));
+//		syntaxScheme.setStyle(Token.RESERVED_WORD, new Style(Styles.UN_RESERVED_WORD));
 		syntaxScheme.setStyle(Token.SEPARATOR, new Style(Styles.UN_SEPARATOR));
 		syntaxScheme.setStyle(Token.LITERAL_STRING_DOUBLE_QUOTE, new Style(Styles.UN_LITERAL_STRING_DOUBLE_QUOTE));
 		syntaxScheme.setStyle(Token.VARIABLE, new Style(Styles.UN_VARIABLE));
 		syntaxScheme.setStyle(Token.COMMENT_KEYWORD, new Style(Styles.UN_COMMENT_KEYWORD));
 		syntaxScheme.setStyle(Token.COMMENT_EOL, new Style(Styles.UN_COMMENT_EOL));
 		syntaxScheme.setStyle(Token.OPERATOR, new Style(Styles.UN_OPERATOR));
+	
+
+		// Colors used by tokens.
+		Color comment = Styles.UN_COMMENT_MULTILINE;
+		Font baseFont = codeInput.getFont(); // RSyntaxTextArea.getDefaultFont();
+		
+		StyleContext sc = StyleContext.getDefaultStyleContext();
+		Font boldFont = sc.getFont(baseFont.getFamily(), Font.BOLD, baseFont.getSize());
+		Font italicFont = sc.getFont(baseFont.getFamily(), Font.ITALIC, baseFont.getSize());
+		Font commentFont = italicFont;//baseFont.deriveFont(Font.ITALIC);
+		Font keywordFont = boldFont;//baseFont.deriveFont(Font.BOLD);
+		
+		syntaxScheme.setStyle(Token.COMMENT_MULTILINE, new Style(comment, null, commentFont));
+		syntaxScheme.setStyle(Token.COMMENT_EOL, new Style(comment, null, commentFont));
+		
+		
+		
+		
+		syntaxScheme.setStyle(Token.DATA_TYPE, new Style(Styles.UN_RESERVED_WORD, null, keywordFont));
+		syntaxScheme.setStyle(Token.RESERVED_WORD, new Style(Styles.UN_RESERVED_WORD, null, keywordFont));
+		syntaxScheme.setStyle(Token.RESERVED_WORD_2, new Style(Styles.UN_RESERVED_WORD_2, null, keywordFont));
+
+//		styles[RESERVED_WORD]				= new Style(keyword, null, keywordFont);
+//		styles[RESERVED_WORD_2]			= new Style(keyword, null, keywordFont);
+//		styles[FUNCTION]					= new Style(function);
+//		styles[DATA_TYPE]				= new Style(dataType, null, keywordFont);
+		
 		return syntaxScheme;
 	}
 	public JPanel getUI() {
