@@ -40,7 +40,7 @@ public class Utils {
 			return ContextType.ARRAY;
 		else if(type.contains("*"))
 			return ContextType.POINTER;
-		else if(type.contains("composition "))
+		else if(type.contains("composition"))
 			return ContextType.STRUCT;
 		else
 			return ContextType.NORMAL;

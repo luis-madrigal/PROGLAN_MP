@@ -24,12 +24,23 @@ public class Styles {
 	public final static Color SKY_BLUE = new Color(56, 231, 255);
 	public final static Color SKY_BLUE_TRANS = new Color(32, 227, 255, 200);
 	public final static Color UN_HIGHLIGHT = new Color(64, 64, 64);
-	public final static Color UN_LITERAL_STRING_DOUBLE_QUOTE = new Color(14, 247, 177); // SUBLIME_KEYWORD; // new Color(117, 219, 27); // new Color(23, 198, 163);
+	public final static Color UN_LITERAL_STRING_DOUBLE_QUOTE = new Color(68, 255, 189); // SUBLIME_KEYWORD; // new Color(117, 219, 27); // new Color(23, 198, 163);
 	public final static Color UN_VARIABLE = new Color(82, 227, 246);
 
-	public final static Color UN_RESERVED_WORD = SKY_BLUE; //new Color(103, 194, 217); // new Color(255, 0, 127);	
-	public final static Color UN_COMMENT_KEYWORD = VIOLET; // new Color(99, 221, 221);// new Color(167, 236, 33);	
+	
+	public final static Color UN_LITERAL_NUMBER_DECIMAL = Color.WHITE; // new Color(255, 203, 244);
+	public final static Color UN_RUN_LITERAL_NUMBER_FLOAT = UN_LITERAL_NUMBER_DECIMAL;
+	public final static Color UN_LITERAL_NUMBER_HEXADECIMAL = UN_LITERAL_NUMBER_DECIMAL;
+
+	
+	public final static Color UN_RESERVED_WORD = new Color(119, 235, 255); //new Color(103, 194, 217); // new Color(255, 0, 127);	
+	public final static Color UN_RESERVED_WORD_2 = new Color(13, 153, 141);//new Color(178, 0, 255); // new Color(247,  2,  124); //new Color(103, 194, 217); // new Color(255, 0, 127);	
+	public final static Color UN_RESERVED_WORD_3 = new Color(166, 2, 255);// new Color(178, 0, 255);//new Color(178, 0, 255); // new Color(247,  2,  124); //new Color(103, 194, 217); // new Color(255, 0, 127);	
+	public final static Color UN_FUNCTION = new Color(0, 255, 250);//new Color(1, 140, 126); // new Color(247,  2,  124); //new Color(103, 194, 217); // new Color(255, 0, 127);	
+	public final static Color UN_COMMENT_KEYWORD =  new Color(238, 9, 123);//new Color(89, 255, 0); //VIOLET; // new Color(99, 221, 221);// new Color(167, 236, 33);	
+	public final static Color UN_COMMENT_MULTILINE = UN_COMMENT_KEYWORD; // new Color(99, 221, 221);// new Color(167, 236, 33);	
 	public final static Color UN_COMMENT_EOL = UN_COMMENT_KEYWORD;// new Color(167, 236, 33);	
+	public final static Color UN_BOOLEAN = UN_RESERVED_WORD_3; //new Color(171, 252, 32); // Color(251, 115, 116);
 	
 	public final static Color UN_OPERATOR = TEXT_GRAY; //Color.WHITE;
 	public final static Color UN_SEPARATOR = new Color(97, 187, 229);
