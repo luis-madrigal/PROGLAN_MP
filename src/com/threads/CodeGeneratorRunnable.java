@@ -59,7 +59,6 @@ public class CodeGeneratorRunnable implements Runnable {
 	private HashMap<String, TACStatement> labelMap;
 	private HashMap<String, Register> registers;
 	private HashMap<String, Scope> variables;
-	private Scope parentScope;
 	private Scope globalScope;
 	private Scope currentScope;
 	private Stack<Scope> prevBlocks;
@@ -315,6 +314,9 @@ public class CodeGeneratorRunnable implements Runnable {
 			}
 			
 			Object value = this.run(stmt.getMethodName(), params); 
+			if(value instanceof SymbolContext) {
+				System.out.println("amasymbolcontext");
+			}
 //			System.out.println(value);
 			r.setValue(value);
 			registers.put(r.getName(), r);
@@ -371,6 +373,13 @@ public class CodeGeneratorRunnable implements Runnable {
 					} else {
 						SymbolContext assignCtx = ptrInf.getPointee();
 						assignCtx.setValue(this.getValue(registers, aStmt.getValue()));
+					}
+				} else if (this.isArray(sctx) || this.isStruct(sctx)) {
+					Object val = this.getValue(registers, aStmt.getValue());
+					if(val instanceof SymbolContext) {//this gets the array returned
+						System.out.println("GET RETURNED ARRAY");
+						this.currentScope.getSymTable().put(v.getAlias(), (SymbolContext) val);
+						sctx = (SymbolContext) val;
 					}
 				} else {
 					sctx.setValue(this.getValue(registers, aStmt.getValue()));
@@ -596,17 +605,17 @@ public class CodeGeneratorRunnable implements Runnable {
 		case REGISTER:
 			Register r = (Register) operand;
 			Object value = registers.get(r.getName()).getValue();
-			if(value instanceof SymbolContext) {//TODO: never ata papsok
-				SymbolContext sctx = this.currentScope.findVar(r.getName());
-				if(this.isPointer(sctx)) {//if pointer
-					PointerInfo ptrInf = (PointerInfo) sctx.getOther();
-					return ptrInf.getPointee().getValue();
-				} else if(this.isArray(sctx)) {//if array
-					return sctx;
-				} else if(this.isStruct(sctx)) {
-					return sctx;
-				}
-			}
+//			if(value instanceof SymbolContext) {//TODO: never ata papsok
+//				SymbolContext sctx = this.currentScope.findVar(r.getName());
+//				if(this.isPointer(sctx)) {//if pointer
+//					PointerInfo ptrInf = (PointerInfo) sctx.getOther();
+//					return ptrInf.getPointee().getValue();
+//				} else if(this.isArray(sctx)) {//if array
+//					return sctx;
+//				} else if(this.isStruct(sctx)) {
+//					return sctx;
+//				}
+//			}
 			return value;
 		case LITERAL:
 			return operand.getValue();
