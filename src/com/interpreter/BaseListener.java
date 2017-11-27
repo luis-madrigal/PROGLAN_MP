@@ -876,6 +876,7 @@ public class BaseListener extends ManuScriptBaseListener{
 		
 		for (ExpressionContext ectx : ctx.expression()) {
 			String type = this.expressionCheck(ectx);
+			System.out.println("index :"+type+"?= arrType: "+aInfo.getArrType());
 			if(!this.regexComparison(aInfo.getArrType(), type)) {
 				SemanticErrors.throwError(SemanticErrors.INVALID_INDEX, lineNum, charPos);
 			}
