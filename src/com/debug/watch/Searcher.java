@@ -27,6 +27,17 @@ public class Searcher {
 		this.isDepthAdded = false;
 	}
 	
+	public void reset() {
+		this.varList = new ArrayList<VariableNode>();
+		this.blocks = new Stack<String>();
+		this.count = "";
+		this.counter = new ArrayList<Integer>();
+		
+		this.depth = -1;
+		this.shouldAdd = false;
+		
+		this.isDepthAdded = false;
+	}
 	public ArrayList<VariableNode> getVarList() {
 		return this.varList;
 	}
@@ -35,6 +46,7 @@ public class Searcher {
 		if(!this.varList.isEmpty())
 			this.varList.clear();
 		
+		this.reset();
 		int lineNumber = 0;
 		String dataType = "";
 		String literal = "";

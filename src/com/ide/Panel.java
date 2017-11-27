@@ -133,7 +133,8 @@ public class Panel implements CaretListener, Runnable, ActionListener, KeyListen
 	
 	private ScannerModel scanner;
 	private Searcher watcher;
-
+	private ArrayList<VariableNode> listWatchVariables;
+	
 	public static int baseFontSize = (int) Frame.SCREEN_SIZE.getHeight() / 60;
 
 	public Panel() {
@@ -1275,8 +1276,11 @@ public class Panel implements CaretListener, Runnable, ActionListener, KeyListen
 			ArrayList<VariableNode> selectedVar = new ArrayList<VariableNode>();
 			selectedVar = this.dlgWatch.getSelectedVar();
 			
+			this.listWatchVariables = this.dlgWatch.getSelectedVar();
+			
 			for(VariableNode var : selectedVar) {
 				this.modelWatchTable.addRow(new Object[] {var.getDataType()+" "+var.getLiteral(), var.getLineNumber(), var.getFuncParent()+" ("+var.getFuncChild()+")", "0"});
+				System.out.println("var "+var.getLiteral()+" "+var.getCount());
 			}
 			
 			this.outputTabs.setSelectedIndex(this.outputTabs.getTabCount()-1);
