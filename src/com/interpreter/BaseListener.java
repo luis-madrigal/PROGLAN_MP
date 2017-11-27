@@ -873,11 +873,13 @@ public class BaseListener extends ManuScriptBaseListener{
 		if(aInfo.getDims() != ctx.expression().size()) {
 			SemanticErrors.throwError(SemanticErrors.INVALID_DIM_ACCESS, lineNum, charPos, aInfo.getDims());
 		}
-		
+
+
 		for (ExpressionContext ectx : ctx.expression()) {
+			System.out.println("ex "+ectx.getText());
 			String type = this.expressionCheck(ectx);
 			System.out.println("index :"+type+"?= arrType: "+aInfo.getArrType());
-			if(!this.regexComparison(aInfo.getArrType(), type)) {
+			if(!this.regexComparison("int", type)) {
 				SemanticErrors.throwError(SemanticErrors.INVALID_INDEX, lineNum, charPos);
 			}
 		}

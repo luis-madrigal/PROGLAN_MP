@@ -80,7 +80,12 @@ public class Console {
 	 */
 	public void err(String msg) {
 		System.out.println("MSG "+msg);
-		this.err(msg, extractLineNumber(msg));
+		try {
+			this.err(msg, extractLineNumber(msg));
+		}catch(Exception e){
+			System.out.println("error dodgedddddd");
+		}
+//		this.err(msg, extractLineNumber(msg));
 //		StyledDocument doc = this.textPane.getStyledDocument();
 //		Style styleError = doc.addStyle("styleErrorM", StyleContext.getDefaultStyleContext().getStyle(StyleContext.DEFAULT_STYLE));
 //		StyleConstants.setForeground(styleError, Styles.UN_CONSOLE_ERR);
