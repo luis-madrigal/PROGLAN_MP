@@ -406,10 +406,6 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
             node.addChild(scanTo);
         }
 
-        if(ctx.typeType() != null) {
-//            System.out.println("Scan type: "+ ctx.typeType().getText());
-            node.setValue(ctx.typeType().getText());
-        }
         return node;
     }
 
