@@ -33,4 +33,12 @@ public class PointerInfo implements  GenericInfo<PointerInfo>{
         return pointsToCtxType;
     }
 
+	public void setPointsToCtxType(ContextType pointsToCtxType) {
+		this.pointsToCtxType = pointsToCtxType;
+	}
+
+	public void setPointsToType(String pointsToType) {
+		this.pointsToType = pointsToType;
+	}
+
 }

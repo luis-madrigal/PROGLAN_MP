@@ -11,7 +11,9 @@ import com.interpreter.AST.ASTBuildVisitor;
 import com.interpreter.AST.NodeType;
 import com.interpreter.AST.ProcedureNode;
 import com.interpreter.contexts.ArrayInfo;
+import com.interpreter.contexts.ContextType;
 import com.interpreter.contexts.MethodContext;
+import com.interpreter.contexts.PointerInfo;
 import com.interpreter.contexts.SymbolContext;
 import com.interpreter.matchers.LiteralMatcher;
 import com.interpreter.modules.ExpressionEvaluator;
@@ -154,9 +156,16 @@ public class CodeGeneratorRunnable implements Runnable {
 		
 		ArrayList<String> fnArgs = this.methodTable.get(methodName).getArgs();
 		for(int i = 0; i < args.length; i++) {
-			System.out.println(args[i]);
-			methodScope.findVar(fnArgs.get(i)).setValue(args[i]);
-
+			if(args[i] instanceof SymbolContext) {
+				SymbolContext argCtx = (SymbolContext) args[i];
+				SymbolContext ctx = methodScope.findVar(fnArgs.get(i));
+				if(argCtx.getCtxType() != ContextType.NORMAL) {
+					ctx.setOther(argCtx.getOther());
+				} 
+				ctx.setValue(argCtx.getValue());
+			} else {
+				methodScope.findVar(fnArgs.get(i)).setValue(args[i]);
+			}
 		}
 
 //		Panel.printWatch(methodScope.getSymTable().get("solanaceae").getValue().toString());
@@ -267,7 +276,16 @@ public class CodeGeneratorRunnable implements Runnable {
 			
 			Object[] params = new Object[stmt.getParams().size()];
 			for(int i = 0; i < stmt.getParams().size(); i++) {
-				params[i] = this.getValue(registers, stmt.getParams().get(i));
+				if(stmt.getParams().get(i) instanceof Variable) {
+					Variable var = (Variable) stmt.getParams().get(i);
+					SymbolContext ctx = this.currentScope.findVar(var.getAlias());
+					if(this.isPointer(ctx) || this.isStruct(ctx) || this.isArray(ctx))
+						params[i] = Cloner.standard().deepClone(ctx);
+					else
+						params[i] = this.getValue(registers, stmt.getParams().get(i));
+				} else {
+					params[i] = this.getValue(registers, stmt.getParams().get(i));
+				}
 			}
 			
 			Object value = this.run(stmt.getMethodName(), params); 
@@ -284,8 +302,29 @@ public class CodeGeneratorRunnable implements Runnable {
 			break;
 		case ASSIGN:
 			TACAssignStatement aStmt = (TACAssignStatement) statement;
+			SymbolContext sctx = this.currentScope.findVar(aStmt.getVariable().getAlias());
+			
+			//if its type is a pointer TODO: also include for structs and arrays
+			if(this.isPointer(sctx)) {
+				PointerInfo ptrInf = (PointerInfo) sctx.getOther();
+				if(aStmt.getValue().getOperandType() == OperandTypes.VARIABLE) { //pointer assigned should be variable
+					System.out.println("POINTER ASSIGN: "+aStmt.getValue().toString());
+					SymbolContext assignCtx = this.currentScope.findVar(aStmt.getValue().toString());
+					if(this.isPointer(assignCtx)) {
+						sctx.setOther(assignCtx.getOther());
+					} else {
+						ptrInf.setPointee(assignCtx);
+						ptrInf.setPointsToCtxType(assignCtx.getCtxType());
+						ptrInf.setPointsToType(assignCtx.getSymbolType());
+					}
+					
+				}
+//				sctx.setValue(this.getValue(registers, aStmt.getValue()));
+			} else {
+				sctx.setValue(this.getValue(registers, aStmt.getValue()));
+			}
 
-			this.currentScope.findVar(aStmt.getVariable().getAlias()).setValue(this.getValue(registers, aStmt.getValue()));
+//			this.currentScope.findVar(aStmt.getVariable().getAlias()).setValue(this.getValue(registers, aStmt.getValue()));
 			
 			if(aStmt.isBreakpoint()) {
 				System.out.println("BRK "+	aStmt.getType()+": "+aStmt.isBreakpoint());
@@ -486,13 +525,33 @@ public class CodeGeneratorRunnable implements Runnable {
 		switch (operand.getOperandType()) {
 		case REGISTER:
 			Register r = (Register) operand;
-			return registers.get(r.getName()).getValue();
+			Object value = registers.get(r.getName()).getValue();
+			if(value instanceof Variable) {
+				SymbolContext sctx = this.currentScope.findVar(r.getName());
+				if(this.isPointer(sctx)) {//if pointer
+					PointerInfo ptrInf = (PointerInfo) sctx.getOther();
+					return ptrInf.getPointee().getValue();
+				} else if(this.isArray(sctx)) {//if array
+					return sctx;
+				} else if(this.isStruct(sctx)) {
+					return sctx;
+				}
+			}
+			return value;
 		case LITERAL:
 			return operand.getValue();
 		case VARIABLE:
 			Variable v = (Variable) operand;
-			//TODO not the case for arrays and pointers
-			Object valueClone = Cloner.standard().deepClone(this.currentScope.findVar(v.getAlias()).getValue());
+			SymbolContext ctx = this.currentScope.findVar(v.getAlias());
+			if(this.isPointer(ctx)) {
+				PointerInfo ptrInf = (PointerInfo) ctx.getOther();
+				return ptrInf.getPointee().getValue();
+			} else if(this.isArray(ctx)) {
+				return ctx;
+			} else if(this.isStruct(ctx)) {
+				return ctx;
+			}
+			Object valueClone = Cloner.standard().deepClone(ctx.getValue());
 			return valueClone;
 		default:
 			return null;
@@ -517,6 +576,18 @@ public class CodeGeneratorRunnable implements Runnable {
 		this.prevBlocks.pop();
 		if(!this.prevBlocks.isEmpty())
 			this.currentScope = this.prevBlocks.peek();
+	}
+	
+	private boolean isPointer(SymbolContext ctx) {
+		return ctx.getCtxType() == ContextType.POINTER;
+	}
+	
+	private boolean isStruct(SymbolContext ctx) {
+		return ctx.getCtxType() == ContextType.STRUCT;
+	}
+
+	private boolean isArray(SymbolContext ctx) {
+		return ctx.getCtxType() == ContextType.ARRAY;
 	}
 	
 	public void pause() {
