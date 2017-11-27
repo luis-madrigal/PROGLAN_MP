@@ -1118,16 +1118,12 @@ public class Panel implements CaretListener, Runnable, ActionListener, KeyListen
 		documentSplitPane.setDividerLocation(20);
 		documentSplitPane.revalidate();
 		documentSplitPane.repaint();
-		documentPane.revalidate();
-		documentPane.repaint();
 	}
 		
 	public void unfoldDoument() {
 		documentSplitPane.setDividerLocation(160);
 		documentSplitPane.revalidate();
 		documentSplitPane.repaint();
-		documentPane.revalidate();
-		documentPane.repaint();
 	}
 
 
@@ -1207,9 +1203,6 @@ public class Panel implements CaretListener, Runnable, ActionListener, KeyListen
 			
 			for(VariableNode var : selectedVar) {
 				this.modelWatchTable.addRow(new Object[] {var.getDataType()+" "+var.getLiteral(), var.getLineNumber(), var.getFuncParent()+" ("+var.getFuncChild()+")", "0"});
-				
-//				System.out.println("Line "+var.getLineNumber()+": "+var.getDataType()+" "+var.getLiteral()+
-//						" ("+var.getFuncParent()+", "+var.getFuncChild()+")");
 			}
 			
 			this.outputTabs.setSelectedIndex(this.outputTabs.getTabCount()-1);
