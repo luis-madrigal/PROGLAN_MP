@@ -42,6 +42,7 @@ import com.interpreter.tac.operands.ArrayAccess;
 import com.interpreter.tac.operands.Operand;
 import com.interpreter.tac.operands.OperandTypes;
 import com.interpreter.tac.operands.Register;
+import com.interpreter.tac.operands.StructAccess;
 import com.interpreter.tac.operands.Variable;
 import com.rits.cloning.Cloner;
 import com.utils.Console;
@@ -319,6 +320,16 @@ public class CodeGeneratorRunnable implements Runnable {
 				}
 				
 				arInf.setObject(this.getValue(registers, aStmt.getValue()), indeces);
+			} else if(aStmt.getOperand().getOperandType() == OperandTypes.STRUCT_ACCESS) {
+				StructAccess s= (StructAccess) aStmt.getOperand();
+				SymbolContext sctx = this.currentScope.findVar(s.getAlias());
+				StructInfo sInf = (StructInfo) sctx.getOther();
+				
+				for(int i = 0; i < s.getVars().size(); i++) {
+					sctx = sInf.getMember(s.getVars().get(i).getAlias());
+				}
+				
+				sctx.setValue(this.getValue(registers, aStmt.getValue()));
 			} else if(aStmt.getOperand().getOperandType() == OperandTypes.VARIABLE) {
 				Variable v = (Variable) aStmt.getOperand();
 				SymbolContext sctx = this.currentScope.findVar(v.getAlias());
@@ -338,10 +349,6 @@ public class CodeGeneratorRunnable implements Runnable {
 						}
 						
 					}
-//						sctx.setValue(this.getValue(registers, aStmt.getValue()));
-				} else if(this.isStruct(sctx)) {
-					StructInfo strInf = (StructInfo) sctx.getOther();
-//						strInf.
 				} else {
 					sctx.setValue(this.getValue(registers, aStmt.getValue()));
 				}
@@ -592,6 +599,16 @@ public class CodeGeneratorRunnable implements Runnable {
 			}
 			
 			return arInfo.getObject(indeces);
+		case STRUCT_ACCESS:
+			StructAccess s = (StructAccess) operand;
+			SymbolContext sCtx = this.currentScope.findVar(s.getAlias());
+			StructInfo sInfo = (StructInfo) sCtx.getOther();
+			
+			for(int i = 0; i < s.getVars().size(); i++) {
+				sCtx = sInfo.getMember(s.getVars().get(i).getAlias());
+			}
+			
+			return sCtx.getValue();
 		default:
 			return null;
 		}
