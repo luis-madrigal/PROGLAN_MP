@@ -304,10 +304,11 @@ public class CodeGeneratorRunnable implements Runnable {
 				if(stmt.getParams().get(i) instanceof Variable) {
 					Variable var = (Variable) stmt.getParams().get(i);
 					SymbolContext ctx = this.currentScope.findVar(var.getAlias());
-					if(this.isPointer(ctx) || this.isStruct(ctx) || this.isArray(ctx))
-						params[i] = Cloner.standard().deepClone(ctx);
-					else
-						params[i] = this.getValue(registers, stmt.getParams().get(i));
+//					if(this.isPointer(ctx) || this.isStruct(ctx) || this.isArray(ctx))
+//						params[i] = Cloner.standard().deepClone(ctx);
+//					else
+//						params[i] = this.getValue(registers, stmt.getParams().get(i));
+					params[i] = ctx;
 				} else {
 					params[i] = this.getValue(registers, stmt.getParams().get(i));
 				}
