@@ -84,12 +84,19 @@ public class ManuScriptTokenMaker extends AbstractTokenMaker {
 //		            	   System.out.println("LINE out "+line);
 		            	 
 		            	   
-		            	   if(line.contains("]:")) {
+		            	   if(line.length() > 2 && line.substring(0, 3).contains("]:")) {
 		            		   currentTokenType = Token.COMMENT_EOL;
 				               break;
 		            	   }
 		            	   
+		            	   if(line.length() > 2 && line.substring(0, 3).contains("]*")) {
+		            		   currentTokenType = Token.COMMENT_MULTILINE;
+				               break;
+		            	   }
 		            	   
+		            	   currentTokenType = Token.MARKUP_TAG_ATTRIBUTE;
+			               break;
+		            	   /*
 		               case '*':
 		            	   line = "";
 		            	   for(int k = i; k < end; k++) {
@@ -102,6 +109,7 @@ public class ManuScriptTokenMaker extends AbstractTokenMaker {
 		            		   currentTokenType = Token.COMMENT_MULTILINE;
 				               break;
 		            	   }
+		            	   */
 		            	   
 		               default:
 		                  if (RSyntaxUtilities.isDigit(c)) {
@@ -147,27 +155,42 @@ public class ManuScriptTokenMaker extends AbstractTokenMaker {
 		            	   for(int k = i; k < end; k++) {
 		            		   line += array[k];
 		            	   }
-	
-		            	  
-		            	   if(line.contains("]:")) {
+		            	   
+		            	   if(line.length() > 2 && line.substring(0, 3).contains("]:")) {
 		            		   currentTokenType = Token.COMMENT_EOL;
 				               break;
 		            	   }
+		            	   
+		            	   if(line.length() > 2 && line.substring(0, 3).contains("]*")) {
+		            		   currentTokenType = Token.COMMENT_MULTILINE;
+				               break;
+		            	   }
+		            	   
+		            	   currentTokenType = Token.MARKUP_TAG_ATTRIBUTE;
+			               break;
+			               
+
+//	
+//		            	  
+//		            	   if(line.contains("]:")) {
+//		            		   currentTokenType = Token.COMMENT_EOL;
+//				               break;
+//		            	   }
 			                  
-		               case '*':
-		            	   line = "";
-		            	   for(int k = i; k < end; k++) {
-		            		   line += array[k];
-		            	   }
-	
-		            	  
-		            	   if(line.length() > 2 &&
-		            			   line.substring(0, 3).contains("]*")) {
-		            		   addToken(text, currentTokenStart,i-1, Token.WHITESPACE, newStartOffset+currentTokenStart);
-				                  currentTokenStart = i;
-				                  currentTokenType = Token.COMMENT_MULTILINE;
-				                  break;
-		            	   }
+//		               case '*':
+//		            	   line = "";
+//		            	   for(int k = i; k < end; k++) {
+//		            		   line += array[k];
+//		            	   }
+//	
+//		            	  
+//		            	   if(line.length() > 2 &&
+//		            			   line.substring(0, 3).contains("]*")) {
+//		            		   addToken(text, currentTokenStart,i-1, Token.WHITESPACE, newStartOffset+currentTokenStart);
+//				                  currentTokenStart = i;
+//				                  currentTokenType = Token.COMMENT_MULTILINE;
+//				                  break;
+//		            	   }
 			                
 	
 		               default:   // Add the whitespace token and start anew.
@@ -214,20 +237,45 @@ public class ManuScriptTokenMaker extends AbstractTokenMaker {
 					                  currentTokenType = Token.LITERAL_CHAR;
 					                  break;
 					                  
-				               case '*':
+				               case '[':
 				            	   String line = "";
 				            	   for(int k = i; k < end; k++) {
 				            		   line += array[k];
 				            	   }
-			
-				            	  
-				            	   if(line.length() > 2 &&
-				            			   line.substring(0, 3).contains("]*")) {
+				            	   
+				            	   if(line.length() > 2 && line.substring(0, 3).contains("]:")) {
 				            		   addToken(text, currentTokenStart,i-1, Token.IDENTIFIER, newStartOffset+currentTokenStart);
-						                  currentTokenStart = i;
-						                  currentTokenType = Token.COMMENT_MULTILINE;
-						                  break;
-				            	   }					                 
+				            		   currentTokenStart = i;
+						                 
+				            		   currentTokenType = Token.COMMENT_EOL;
+						               break;
+				            	   }
+				            	   
+				            	   if(line.length() > 2 && line.substring(0, 3).contains("]*")) {
+				            		   addToken(text, currentTokenStart,i-1, Token.IDENTIFIER, newStartOffset+currentTokenStart);
+						               currentTokenStart = i;
+						                 
+						               currentTokenType = Token.COMMENT_MULTILINE;
+						               break;
+				            	   }
+				            	   addToken(text, currentTokenStart,i-1, Token.IDENTIFIER, newStartOffset+currentTokenStart);
+					               currentTokenStart = i;
+					                 
+				            	   currentTokenType = Token.MARKUP_TAG_ATTRIBUTE;
+					               break;
+//				            	   String line = "";
+//				            	   for(int k = i; k < end; k++) {
+//				            		   line += array[k];
+//				            	   }
+//			
+//				            	  
+//				            	   if(line.length() > 2 &&
+//				            			   line.substring(0, 3).contains("]*")) {
+//				            		   addToken(text, currentTokenStart,i-1, Token.IDENTIFIER, newStartOffset+currentTokenStart);
+//						                  currentTokenStart = i;
+//						                  currentTokenType = Token.COMMENT_MULTILINE;
+//						                  break;
+//				            	   }					                 
 			
 				               default:
 				                  if (RSyntaxUtilities.isLetterOrDigit(c) || c=='/' || c=='_') {
@@ -264,21 +312,40 @@ public class ManuScriptTokenMaker extends AbstractTokenMaker {
 
 		               
 	               case '[': // TODO [S]
+	            	  
+//	            	   if(line.length() > 2 &&
+//	            			   line.substring(0, 3).contains("]*")) {
+//	            		      addToken(text, currentTokenStart,i-1, Token.LITERAL_NUMBER_DECIMAL_INT, newStartOffset+currentTokenStart);
+//			                  currentTokenStart = i;
+//			                  currentTokenType = Token.COMMENT_MULTILINE;
+//			                  break;
+//	            	   }					                 
+		            
 	            	   String line = "";
 	            	   for(int k = i; k < end; k++) {
 	            		   line += array[k];
 	            	   }
-
-	            	  
-	            	   if(line.length() > 2 &&
-	            			   line.substring(0, 3).contains("]*")) {
-	            		      addToken(text, currentTokenStart,i-1, Token.LITERAL_NUMBER_DECIMAL_INT, newStartOffset+currentTokenStart);
-			                  currentTokenStart = i;
-			                  currentTokenType = Token.COMMENT_MULTILINE;
-			                  break;
-	            	   }					                 
-		            
-		                  
+	            	   
+	            	   if(line.length() > 2 && line.substring(0, 3).contains("]:")) {
+	            		   addToken(text, currentTokenStart,i-1, Token.LITERAL_NUMBER_DECIMAL_INT, newStartOffset+currentTokenStart);
+			               currentTokenStart = i;
+			                 
+	            		   currentTokenType = Token.COMMENT_EOL;
+			               break;
+	            	   }
+	            	   
+	            	   if(line.length() > 2 && line.substring(0, 3).contains("]*")) {
+	            		   addToken(text, currentTokenStart,i-1, Token.LITERAL_NUMBER_DECIMAL_INT, newStartOffset+currentTokenStart);
+			               currentTokenStart = i;
+			                 
+			               currentTokenType = Token.COMMENT_MULTILINE;
+			               break;
+	            	   }
+	            	   addToken(text, currentTokenStart,i-1, Token.LITERAL_NUMBER_DECIMAL_INT, newStartOffset+currentTokenStart);
+		               currentTokenStart = i;
+		                 
+	            	   currentTokenType = Token.MARKUP_TAG_ATTRIBUTE;
+		               break;
 	               default:
 
 	                  if (RSyntaxUtilities.isDigit(c)) {
@@ -310,6 +377,12 @@ public class ManuScriptTokenMaker extends AbstractTokenMaker {
 	         case Token.LITERAL_CHAR:
 		            if (c=='\'') {
 		               addToken(text, currentTokenStart,i, Token.LITERAL_CHAR, newStartOffset+currentTokenStart);
+		               currentTokenType = Token.NULL;
+		            }
+		            break;
+	         case Token.MARKUP_TAG_ATTRIBUTE:
+		            if (c==']') {
+		               addToken(text, currentTokenStart,i, Token.MARKUP_TAG_ATTRIBUTE, newStartOffset+currentTokenStart);
 		               currentTokenType = Token.NULL;
 		            }
 		            break;
