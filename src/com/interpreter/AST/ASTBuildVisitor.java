@@ -130,8 +130,12 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
     }
 
     private void configureIsBreakpoint(int lineNumber) {
+    	if(!listBreakpoints.isEmpty())
+    		System.out.println("LN "+lineNumber+" : TOP "+listBreakpoints.peek());
+    	System.out.println();
+    	System.out.println();
     	if(!listBreakpoints.isEmpty() &&
-    			lineNumber != this.triggeringLineNumber &&
+//    			lineNumber != this.triggeringLineNumber &&
     			lineNumber >= listBreakpoints.peek()) {
     		listBreakpoints.pop();
     		isBreakpoint = true;
