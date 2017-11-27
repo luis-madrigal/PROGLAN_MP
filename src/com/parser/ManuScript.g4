@@ -656,8 +656,8 @@ structExpr
     ;
 
 structMember
-    :   Identifier '.' structMember
-    |   Identifier
+    :   Identifier
+    |   Identifier '.' structMember
     ;
 
 structName
