@@ -177,7 +177,8 @@ public class CodeGeneratorRunnable implements Runnable {
 			if(isPlay) {
 				pnlParent.changeToInactive();
 				stmt = this.labelMap.get(pointer);
-				Panel.printWatch("evaluating: "+pointer);
+				// TODO
+//				Panel.printWatch("evaluating: "+pointer);
 				pointerCount = this.evaluate(methodScope, registers, stmt, pointerCount);
 				pointer = ICGenerator.LABEL_ALIAS+pointerCount;
 				
@@ -218,9 +219,9 @@ public class CodeGeneratorRunnable implements Runnable {
 	}
 	
 	private int evaluate(Scope methodScope, HashMap<String, Register> registers, TACStatement statement, int pointerCount) {
-		
-		Panel.printWatch("P"+pointerCount+"    "+methodScope.getSymTable().keySet().toString());
-		Panel.printWatch(statement+"");
+		// TODO
+//		Panel.printWatch("P"+pointerCount+"    "+methodScope.getSymTable().keySet().toString());
+//		Panel.printWatch(statement+"");
 		
 		switch (statement.getType()) {
 		

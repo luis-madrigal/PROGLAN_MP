@@ -968,6 +968,8 @@ public class Panel implements CaretListener, Runnable, ActionListener, KeyListen
 
 		syntaxScheme.setStyle(Token.LITERAL_NUMBER_HEXADECIMAL, new Style(Styles.UN_LITERAL_NUMBER_HEXADECIMAL));
 
+		syntaxScheme.setStyle(Token.MARKUP_TAG_ATTRIBUTE, new Style(Styles.UN_MARKUP_TAG_ATTRIBUTE, null, keywordFont));
+		
 		return syntaxScheme;
 	}
 	public JPanel getUI() {

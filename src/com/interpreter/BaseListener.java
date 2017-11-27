@@ -690,7 +690,6 @@ public class BaseListener extends ManuScriptBaseListener{
 
 			System.out.println("KEK "+sctx.getSymbolType());
 			arInf = (ArrayInfo)sctx.getOther();
-
 		}
 		else {
 			String arrName = ctx.equationExpr().getText();
@@ -706,6 +705,7 @@ public class BaseListener extends ManuScriptBaseListener{
 			ManuScriptParser.CreatorContext crCtx = ((ArrayInitExprContext) ctx.expression()).creator();
 			System.out.println("created text: " + crCtx.createdName().getText());
 			if (!crCtx.createdName().getText().equals(arInf.getArrType())) {
+				System.out.println("this error");
 				SemanticErrors.throwError(SemanticErrors.ARR_TYPE_MISMATCH,
 						crCtx.createdName().getStart().getLine(),
 						crCtx.createdName().getStart().getCharPositionInLine(),
@@ -741,13 +741,16 @@ public class BaseListener extends ManuScriptBaseListener{
 
 					for (ExpressionContext expr : crCtx.arrayCreatorRest().expression()) {
 						String types = this.expressionCheck(expr);
-						if (!arInf.getArrType().matches(types)) {
+						if (!this.regexComparison("int",types)) {
+							System.out.println("(arInf) "+arInf.getArrType()+"?=(types) "+types);
+							System.out.println("this error2");
 							SemanticErrors.throwError(SemanticErrors.ARR_TYPE_MISMATCH, expr.getStart().getLine(), expr.getStart().getCharPositionInLine(), arInf.getArrType());
 						}
 					}
 				}
 
 			}
+			System.out.println("exit correct");
 			return sctx.getSymbolType();
 		}
 		return "null";
