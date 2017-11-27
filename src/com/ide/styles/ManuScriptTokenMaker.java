@@ -81,7 +81,7 @@ public class ManuScriptTokenMaker extends AbstractTokenMaker {
 		            	   for(int k = i; k < end; k++) {
 		            		   line += array[k];
 		            	   }
-		            	   System.out.println("LINE out "+line);
+//		            	   System.out.println("LINE out "+line);
 		            	 
 		            	   
 		            	   if(line.contains("]:")) {
@@ -326,7 +326,7 @@ public class ManuScriptTokenMaker extends AbstractTokenMaker {
 		            	  
 		            	   if(line.length() > 2 &&
 		            			   line.substring(0, 3).contains("*[]")) {
-		            		   System.out.println("SUBLINE "+line.substring(0, 3));
+//		            		   System.out.println("SUBLINE "+line.substring(0, 3));
 //		            		   addToken(segment, start, end, tokenType, newStartOffset);
 		            		   addToken(text, currentTokenStart,i, Token.COMMENT_MULTILINE, newStartOffset+currentTokenStart);
 				               currentTokenType = Token.NULL;
@@ -383,7 +383,10 @@ public class ManuScriptTokenMaker extends AbstractTokenMaker {
 	   
 	   String[] keywords_1 = Tokens.KEYWORDS_1.trim().split("\\|");
 	   String[] keywords_2 = Tokens.KEYWORDS_2.trim().split("\\|");
+	   String[] keywords_3 = Tokens.KEYWORDS_3.trim().split("\\|");
 	   String[] data_type = Tokens.DATA_TYPE.trim().split("\\|");
+	   String[] function = Tokens.FUNCTION.trim().split("\\|");
+	   String[] lit_boolean = Tokens.BOOLEAN.trim().split("\\|");
 			
 	   String token;
 	   
@@ -417,10 +420,28 @@ public class ManuScriptTokenMaker extends AbstractTokenMaker {
 			   tokenMap.put(token, Token.RESERVED_WORD_2);
 	   }
 	   
+	   for(int i = 0; i < keywords_3.length; i++) {
+		   token = keywords_3[i].trim().replace("\\", "");
+		   if(!token.isEmpty())
+			   tokenMap.put(token, Token.VARIABLE);
+	   }
+	   
 	   for(int i = 0; i < data_type.length; i++) {
 		   token = data_type[i].trim().replace("\\", "");
 		   if(!token.isEmpty())
 			   tokenMap.put(token, Token.DATA_TYPE);
+	   }
+
+	   
+	   for(int i = 0; i < function.length; i++) {
+		   token = function[i].trim().replace("\\", "");
+		   if(!token.isEmpty())
+			   tokenMap.put(token, Token.FUNCTION);
+	   }
+	   for(int i = 0; i < lit_boolean.length; i++) {
+		   token = lit_boolean[i].trim().replace("\\", "");
+		   if(!token.isEmpty())
+			   tokenMap.put(token, Token.LITERAL_BOOLEAN);
 	   }
 	   
 	   
