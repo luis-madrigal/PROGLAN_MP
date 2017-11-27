@@ -978,19 +978,19 @@ public class BaseListener extends ManuScriptBaseListener{
 	private String getExprReturnedType(int lineNum, int charPos, OPERATOR operator, String type) {
 		switch (operator) {
 		case ADD:
-			if(this.canBeOfType(type, "int", "float", "char"))
+			if(this.canBeOfType(type, "int", "float", "char", "int*", "float*", "char*"))
 				return type;
 		case SUB: 
-			if(this.canBeOfType(type, "int", "float"))
+			if(this.canBeOfType(type, "int", "float", "int*", "float*"))
 				return type;
 			break;
 		case INC:
 		case DEC:
-			if(this.canBeOfType(type, "int", "float", "char"))
+			if(this.canBeOfType(type, "int", "float", "char", "int*", "float*", "char*"))
 				return type;
 			break;
 		case NOT:
-			if(this.canBeOfType(type, "boolean"))
+			if(this.canBeOfType(type, "boolean", "boolean*"))
 				return type;
 			break;
 		default:
@@ -1004,9 +1004,9 @@ public class BaseListener extends ManuScriptBaseListener{
 	private String getExprReturnedType(int lineNum, int charPos, OPERATOR operator, String type1, String type2) {
 		switch(operator) {
 		case ADD:
-			if(this.canBeOfType(type1, "string") && this.canBeOfType(type2, "string", "int", "char", "float"))
+			if(this.canBeOfType(type1, "string", "string*") && this.canBeOfType(type2, "string", "int", "char", "float", "string*", "int*", "char*", "float*"))
 				return type1;
-			if(this.canBeOfType(type1, "string", "int", "char", "float") && this.canBeOfType(type2, "string"))
+			if(this.canBeOfType(type1, "string", "int", "char", "float", "string*", "int*", "char*", "float*") && this.canBeOfType(type2, "string", "string*"))
 				return type2;
 		case SUB:
 		case MULT:
@@ -1020,49 +1020,49 @@ public class BaseListener extends ManuScriptBaseListener{
 			if(this.pointerAssignCheck(type1, type2)) //will work for all pointers
 				return type1;
 		case PLUSASSIGN:
-			if(this.canBeOfType(type1, "string") && this.canBeOfType(type2, "string"))
+			if(this.canBeOfType(type1, "string", "string*") && this.canBeOfType(type2, "string", "string*"))
 				return type1;
 		case SUBASSIGN:
 		case MULTASSIGN:
 		case DIVASSIGN:
 		case MODASSIGN:
-			if(this.canBeOfType(type1, "int") && this.canBeOfType(type2, "int"))
+			if(this.canBeOfType(type1, "int", "int*") && this.canBeOfType(type2, "int", "int*"))
 				return "int|char|float";
-			if(this.canBeOfType(type1, "int") && this.canBeOfType(type2, "float"))
+			if(this.canBeOfType(type1, "int", "int*") && this.canBeOfType(type2, "float", "float*"))
 				return "float";
-			if(this.canBeOfType(type1, "float") && this.canBeOfType(type2, "int"))
+			if(this.canBeOfType(type1, "float", "float*") && this.canBeOfType(type2, "int", "int*"))
 				return "float";
-			if(this.canBeOfType(type1, "float") && this.canBeOfType(type2, "float"))
+			if(this.canBeOfType(type1, "float", "float*") && this.canBeOfType(type2, "float", "float*"))
 				return "float";
-			if(this.canBeOfType(type1, "char") && this.canBeOfType(type2, "char"))
+			if(this.canBeOfType(type1, "char", "char*") && this.canBeOfType(type2, "char", "char*"))
 				return "int|char|float";
-			if(this.canBeOfType(type1, "char") && this.canBeOfType(type2, "int"))
+			if(this.canBeOfType(type1, "char", "char*") && this.canBeOfType(type2, "int", "int*"))
 				return "int|char|float";
-			if(this.canBeOfType(type1, "int") && this.canBeOfType(type2, "char"))
+			if(this.canBeOfType(type1, "int", "int*") && this.canBeOfType(type2, "char", "char*"))
 				return "int|char|float";
-			if(this.canBeOfType(type1, "float") && this.canBeOfType(type2, "char"))
+			if(this.canBeOfType(type1, "float", "float*") && this.canBeOfType(type2, "char", "char*"))
 				return "float";
-			if(this.canBeOfType(type1, "char") && this.canBeOfType(type2, "float"))
+			if(this.canBeOfType(type1, "char", "char*") && this.canBeOfType(type2, "float", "float*"))
 				return "float";
 			break;
 		case EQUAL:
 		case NEQUAL:
-			if(this.canBeOfType(type1, "string") && this.canBeOfType(type2, "string"))
+			if(this.canBeOfType(type1, "string", "string*") && this.canBeOfType(type2, "string", "string*"))
 				return "boolean";
-			if(this.canBeOfType(type1, "boolean") && this.canBeOfType(type2, "boolean"))
+			if(this.canBeOfType(type1, "boolean", "boolean*") && this.canBeOfType(type2, "boolean", "boolean*"))
 				return "boolean";
 		case LESS:
 		case LEQ:
 		case GREATER:
 		case GEQ:
-			if(this.canBeOfType(type1, "int", "float", "char") && this.canBeOfType(type2, "int", "float", "char"))
+			if(this.canBeOfType(type1, "int", "float", "char", "int*", "float*", "char*") && this.canBeOfType(type2, "int", "float", "char", "int*", "float*", "char*"))
 				return "boolean";
-			if(this.canBeOfType(type1, "boolean") && this.canBeOfType(type2, "boolean"))
+			if(this.canBeOfType(type1, "boolean", "boolean*") && this.canBeOfType(type2, "boolean", "boolean*"))
 				return "boolean";
 			break;
 		case AND:
 		case OR:
-			if(this.canBeOfType(type1, "boolean") && this.canBeOfType(type2, "boolean"))
+			if(this.canBeOfType(type1, "boolean", "boolean*") && this.canBeOfType(type2, "boolean", "boolean*"))
 				return "boolean";
 		default:
 			break;

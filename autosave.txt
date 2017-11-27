@@ -1,48 +1,11 @@
 
+ACT main starring () {
+	int x = 10;
+	int * ptr = x;
 
-composition subrecord{
-	int a;
-	int* b, cd;
-	string k;	
-	string[] c;
-}
-
-
-composition record {
-	composition subrecord*[] cd;
-	int*[] k;
-	int a, b, c;
-	float d;
-	
-}
-
-[ asd]: composition subred rec;
-
-ACT asd starring(){
-	Say "asd";
-}
-
-ACT bubbleSort starring (int[] arr, int len) {
-	replay ( int i = 0; i < len-1; i++) {
-		replay ( int j = 0; j < len-i-1; j++) {
-			if ( arr[j] > arr[j+1] ) {
-				int temp = arr[j];
-				arr[j] = arr[j+1];
-				arr[j+1] = temp;
-			}
-		}
-	}
-
-	give arr;
-}
-
-
-ACT main starring ()  {
-	composition subrecord rec;
-
-	int[] toSort = new int[] {1, 10, 9, 8, 3, 5, 6, 1, 4, 6};
-	toSort = bubbleSort(toSort);
-	replay (int i = 0; i < 10; i++) {
-		Say toSort[i];
-	}
+	Say ptr;
+	x += 10;
+	Say ptr;
+	ptr += 10;
+	Say x;
 }

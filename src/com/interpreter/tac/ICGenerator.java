@@ -96,7 +96,7 @@ public class ICGenerator {
 				break;
 			}
 			if(currentMethodBlock != null) {
-				if(currentMethodBlock.getChildren().size() > 0 && currentMethodBlock != null && currentMethodBlock.getChild(currentMethodBlock.getChildren().size()-1).equals(n)) { //if block is finished
+				if(currentMethodBlock.getChildren().size() > 0 && currentMethodBlock.getChild(currentMethodBlock.getChildren().size()-1).equals(n)) { //if block is finished
 					this.exitBlock(n.isBreakpoint());
 				}
 			}
@@ -459,7 +459,9 @@ public class ICGenerator {
 	}
 	
 	public Scope getScope() {
-		return scopes.peek().getChildren().get(0);
+		if(!scopes.peek().getChildren().isEmpty())
+			return scopes.peek().getChildren().get(0);
+		return scopes.peek();
 	}
 
 }

@@ -368,6 +368,9 @@ public class CodeGeneratorRunnable implements Runnable {
 							ptrInf.setPointsToType(assignCtx.getSymbolType());
 						}
 						
+					} else {
+						SymbolContext assignCtx = ptrInf.getPointee();
+						assignCtx.setValue(this.getValue(registers, aStmt.getValue()));
 					}
 				} else {
 					sctx.setValue(this.getValue(registers, aStmt.getValue()));
@@ -581,7 +584,7 @@ public class CodeGeneratorRunnable implements Runnable {
 		case REGISTER:
 			Register r = (Register) operand;
 			Object value = registers.get(r.getName()).getValue();
-			if(value instanceof Variable) {
+			if(value instanceof SymbolContext) {//TODO: never ata papsok
 				SymbolContext sctx = this.currentScope.findVar(r.getName());
 				if(this.isPointer(sctx)) {//if pointer
 					PointerInfo ptrInf = (PointerInfo) sctx.getOther();
