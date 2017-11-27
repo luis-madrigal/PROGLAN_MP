@@ -536,7 +536,8 @@ public class BaseListener extends ManuScriptBaseListener{
 						&& ((PrimaryExprContext) ectx).primary().equationExpr() != null
 						&& ((PrimaryExprContext) ectx).primary().equationExpr().Identifier() != null) {
 					//variable but not in scope or not declared.
-					SemanticErrors.throwError(SemanticErrors.UNDECLARED_VAR, ectxLineNum, ectxCharPosAtLine, arg);
+					if(scopes.peek().checkTables(arg) == null)
+						SemanticErrors.throwError(SemanticErrors.UNDECLARED_VAR, ectxLineNum, ectxCharPosAtLine, arg);
 				} else {
 					//literal or expression
 					String type = this.expressionCheck(ectx);
