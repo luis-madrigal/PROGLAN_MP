@@ -256,7 +256,7 @@ public class ManuScriptTokenMaker extends AbstractTokenMaker {
 		            	else {
 		            		
 		            	
-		            		System.out.println("IDENTIFIER");
+//		            		System.out.println("IDENTIFIER");
 				            switch (c) {
 			
 				               case ' ':
