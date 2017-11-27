@@ -87,6 +87,7 @@ public class ICGenerator {
 				break;
 			case PRINT: this.addStatement(new TACPrintStatement(n.getNodeType(), this.storeExpression(n.getChild(0)), n.isBreakpoint())); flag = false; break;
 			case SCAN: this.addStatement(new TACScanStatement(n.getNodeType(), (Variable) this.storeExpression(n.getChild(0)), n.isBreakpoint())); flag = false; break;
+			case ARRAY_ASSIGN: this.assignArray(n); flag = false; break;
 			default:
 				break;
 			}
@@ -102,10 +103,40 @@ public class ICGenerator {
 		}
 	}
 	
+	private void assignArray(AbstractSyntaxTree n) {
+//		this.declareVar(n);
+		SymbolContext sctx = (SymbolContext) n.getChild(0).getValue();
+		this.currentScope.addToScope(sctx);
+		
+		TACArrayAssignStatement stmt = new TACArrayAssignStatement(sctx, n.getNodeType(), n.isBreakpoint());
+		stmt.setValue(this.evalArrayInit(n.getChild(1)));
+		
+		this.addStatement(stmt);	
+	}
+	
+	private Operand evalArrayInit(AbstractSyntaxTree n) {
+		System.out.println("visit eval array init-------------------");
+		if(n.getChild(0).getNodeType() == NodeType.ARRAY_BLOCK) {
+			TACArrayBlockStatement bStmt = new TACArrayBlockStatement(NodeType.ARRAY_BLOCK, n.isBreakpoint());
+			bStmt.initArr(n.getChildren().size());
+			for(int i = 0; i < n.getChildren().size(); i++) {
+				bStmt.add(i, this.storeExpression(n.getChild(i)));
+			}
+			return this.addOutputStatement(bStmt);
+		} else {
+			TACArrayDimsStatement dStmt = new TACArrayDimsStatement(NodeType.ARRAY_DIMS, n.isBreakpoint());
+			dStmt.initArr(n.getChildren().size());
+			for (int i = 0; i < n.getChildren().size(); i++) {
+				dStmt.add(i, this.storeExpression(n.getChild(i)));
+			}
+			return this.addOutputStatement(dStmt);
+		}
+	}
+	
 	private void declareVar(AbstractSyntaxTree n) {
 		LeafNode lNode = (LeafNode) n.getChild(0);
 		SymbolContext ctx = (SymbolContext) lNode.getValue();
-		this.addStatement(new TACVariableDeclaration(n.getNodeType(), ctx, n.isBreakpoint()));
+		this.addStatement(new TACVariableDeclaration(NodeType.VAR_DECLARE, ctx, n.isBreakpoint()));
 		this.currentScope.addToScope(ctx);
 		
 		if(n.getValue() != null) {
@@ -234,6 +265,8 @@ public class ICGenerator {
 							return this.addOutputStatement(stmt);
 			case ARRAY_ACCESS: stmt = new TACIndexingStatement(node.getNodeType(), this.storeExpression(node.getChild(0)).toString(), this.storeExpression(n.getChild(1)), n.isBreakpoint());
 							   return this.addOutputStatement(stmt);
+			case ARRAY_INIT: return this.evalArrayInit(n);
+			case ARRAY_BLOCK: return this.genArrayBlock(n);
 			case FUNCTION_INVOKE: return this.funcInvoke(n); 
 			default:
 				break;
@@ -244,6 +277,16 @@ public class ICGenerator {
 		}
 
 		return null;
+	}
+	
+	private Operand genArrayBlock(AbstractSyntaxTree node) {
+		TACArrayBlockStatement stmt = new TACArrayBlockStatement(NodeType.ARRAY_BLOCK, node.isBreakpoint());
+		stmt.initArr(node.getChildren().size());
+		for(int i = 0; i < node.getChildren().size(); i++) {
+			stmt.add(i, this.storeExpression(node.getChild(i)));
+		}
+		
+		return this.addOutputStatement(stmt);
 	}
 	
 	private Operand funcInvoke(AbstractSyntaxTree node) {
