@@ -1,3 +1,13 @@
+
+
+composition subrecord{
+	int a;
+	int* b, cd;
+	string k;	
+	string[] c;
+}
+
+
 composition record {
 	composition subrecord*[] cd;
 	int*[] k;
@@ -20,5 +30,6 @@ ACT main starring ()  {
 
 	int[][] array2 = new int[2][3];
 	int[][] array = new int[][]{{1,2,34,x+5,2},{1,23,34,32,2}};
-	
- }
+
+	Say array[0][0];
+}
