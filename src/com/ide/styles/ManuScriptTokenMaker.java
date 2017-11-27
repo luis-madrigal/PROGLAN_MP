@@ -84,7 +84,7 @@ public class ManuScriptTokenMaker extends AbstractTokenMaker {
 //		            	   System.out.println("LINE out "+line);
 		            	 
 		            	   
-		            	   if(line.length() > 2 && line.substring(0, 3).contains("]:")) {
+		            	   if(line.contains("]:")) {
 		            		   currentTokenType = Token.COMMENT_EOL;
 				               break;
 		            	   }
@@ -156,7 +156,7 @@ public class ManuScriptTokenMaker extends AbstractTokenMaker {
 		            		   line += array[k];
 		            	   }
 		            	   
-		            	   if(line.length() > 2 && line.substring(0, 3).contains("]:")) {
+		            	   if(line.contains("]:")) {
 		            		   currentTokenType = Token.COMMENT_EOL;
 				               break;
 		            	   }
@@ -243,7 +243,7 @@ public class ManuScriptTokenMaker extends AbstractTokenMaker {
 				            		   line += array[k];
 				            	   }
 				            	   
-				            	   if(line.length() > 2 && line.substring(0, 3).contains("]:")) {
+				            	   if(line.contains("]:")) {
 				            		   addToken(text, currentTokenStart,i-1, Token.IDENTIFIER, newStartOffset+currentTokenStart);
 				            		   currentTokenStart = i;
 						                 
@@ -326,7 +326,7 @@ public class ManuScriptTokenMaker extends AbstractTokenMaker {
 	            		   line += array[k];
 	            	   }
 	            	   
-	            	   if(line.length() > 2 && line.substring(0, 3).contains("]:")) {
+	            	   if(line.contains("]:")) {
 	            		   addToken(text, currentTokenStart,i-1, Token.LITERAL_NUMBER_DECIMAL_INT, newStartOffset+currentTokenStart);
 			               currentTokenStart = i;
 			                 
