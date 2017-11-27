@@ -135,10 +135,12 @@ public class CodeGeneratorRunnable implements Runnable {
 		TACStatement stmt = null;
 		
 		do {
-			System.out.println(pointer);
-			stmt = this.labelMap.get(pointer);
-			pointerCount = this.evaluate(this.globalScope, registers, stmt, pointerCount);
-			pointer = ICGenerator.LABEL_ALIAS+pointerCount;
+//			if(isPlay) {
+				System.out.println(pointer);
+				stmt = this.labelMap.get(pointer);
+				pointerCount = this.evaluate(this.globalScope, registers, stmt, pointerCount);
+				pointer = ICGenerator.LABEL_ALIAS+pointerCount;	
+//			}			
 		}while(this.checkEndRun(pointer));
 		
 		System.out.println("+++++++++++ RUN MAIN");
@@ -224,9 +226,12 @@ public class CodeGeneratorRunnable implements Runnable {
 		// TODO
 //		Panel.printWatch("P"+pointerCount+"    "+methodScope.getSymTable().keySet().toString());
 //		Panel.printWatch(statement+"");
+		System.out.println("BRK "+	statement.getLabel() + " " + statement.getType()+": "+statement.isBreakpoint());
+		
 		if(statement.isBreakpoint()) {
-//			System.out.println("BRK "+	bStmt.getType()+": "+bStmt.isBreakpoint());
+//			System.out.println("BRK "+	statement.getLabel() + " " + statement.getType()+": "+statement.isBreakpoint());
 			this.isPlay = false;
+//			return pointerCount++;
 		}
 		switch (statement.getType()) {
 		
@@ -473,15 +478,15 @@ public class CodeGeneratorRunnable implements Runnable {
 				
 			}
 			
-			if(statement.isBreakpoint()) {
-				System.out.println("BRK "+	statement.getType()+": "+statement.isBreakpoint());
-				this.isPlay = false;
-			}
+			
 			
 			pointerCount++;
 			break;
 		}
-		
+//		if(statement.isBreakpoint()) {
+//			System.out.println("BRK "+	statement.getType()+": "+statement.isBreakpoint());
+//			this.isPlay = false;
+//		}
 		return pointerCount;
 	}
 	

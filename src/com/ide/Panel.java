@@ -133,7 +133,8 @@ public class Panel implements CaretListener, Runnable, ActionListener, KeyListen
 	
 	private ScannerModel scanner;
 	private Searcher watcher;
-
+	private ArrayList<VariableNode> listWatchVariables;
+	
 	public static int baseFontSize = (int) Frame.SCREEN_SIZE.getHeight() / 60;
 
 	public Panel() {
@@ -1084,16 +1085,23 @@ public class Panel implements CaretListener, Runnable, ActionListener, KeyListen
 	public Stack<Integer> getListBreakpoints(String text) {
 		Stack<Integer> listBreakpoints = new Stack<Integer>();
 		String listText = codeInput.getText();
-		int length = listText.split("\n").length;
+		String[] strText= listText.split("\n");
+		int length = strText.length; //listText.split("\n").length;
 		
-		for(int i = 0; i < length; i++) {
+		for(int i = length-1; i >= 0; i--) {
 			if(gutter.hasBookmark(i)) {
+				if(i-1 >= 0 &&  strText[i-1].trim().length() > 0) {
 
-				listBreakpoints.push(i);
+					listBreakpoints.push(i);
+				}
+				else {
+					
+					listBreakpoints.push(getPreviousLineWithText(i, strText));
+				}
 //				System.out.println(i+" has");
 			}
 		}
-
+		System.out.println("LISTBRK "+listBreakpoints.size());
 //		this.gutter.hasBookmark(5);
 		
 		
@@ -1105,6 +1113,31 @@ public class Panel implements CaretListener, Runnable, ActionListener, KeyListen
 //		listBreakpoints.push(7);
 		
 		return listBreakpoints;
+	}
+	
+	public int getPreviousLineWithText(int from, String[] listText) {
+		boolean notMultilineComment = true;
+		for(int i = from-1; i >= 0; i--) {
+			
+			// When a *[] is encountered, consider the text as a multiline comment
+			// until a []* is seen.
+			if(listText[i].contains("*[]")) {
+				notMultilineComment = false;
+			}
+			else if(listText[i].contains("[]*")) {
+				notMultilineComment = true;
+			}
+			
+			if(listText[i].trim().length() > 0 && 
+					!listText[i].contains("]:") &&
+					!listText[i].contains("[]*") &&
+					!listText[i].contains("*[]") &&
+					notMultilineComment) {
+				return i;
+			}
+		}
+		return 0;
+		
 	}
 	@Override
 	public void keyReleased(KeyEvent e) {
@@ -1243,8 +1276,11 @@ public class Panel implements CaretListener, Runnable, ActionListener, KeyListen
 			ArrayList<VariableNode> selectedVar = new ArrayList<VariableNode>();
 			selectedVar = this.dlgWatch.getSelectedVar();
 			
+			this.listWatchVariables = this.dlgWatch.getSelectedVar();
+			
 			for(VariableNode var : selectedVar) {
 				this.modelWatchTable.addRow(new Object[] {var.getDataType()+" "+var.getLiteral(), var.getLineNumber(), var.getFuncParent()+" ("+var.getFuncChild()+")", "0"});
+				System.out.println("var "+var.getLiteral()+" "+var.getCount());
 			}
 			
 			this.outputTabs.setSelectedIndex(this.outputTabs.getTabCount()-1);
