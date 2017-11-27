@@ -236,7 +236,8 @@ public class CodeGeneratorRunnable implements Runnable {
 				this.setArrayBlockValues(methodScope, registers, asStmt);
 			}
 			else {
-				
+				System.out.println("ARRAY DIMS");
+				this.setArrayDims(methodScope, registers, asStmt);
 			}
 				
 			pointerCount++;
@@ -372,7 +373,7 @@ public class CodeGeneratorRunnable implements Runnable {
 					Register rb2 = iOp.getOutputRegister();
 					SymbolContext iCtx = this.currentScope.findVar(iOp.getArrayName());
 					ArrayInfo info = (ArrayInfo) iCtx.getOther();
-					System.out.println(info);
+					
 					registers.put(rb2.getName(), rb2);
 					registers.get(rb2.getName()).setValue(info.getObject(Integer.parseInt(this.getValue(registers, iOp.getIndex()).toString())));
 					pointerCount++;
@@ -395,24 +396,44 @@ public class CodeGeneratorRunnable implements Runnable {
 		return pointerCount;
 	}
 	
+	private void setArrayDims(Scope methodScope, HashMap<String, Register> registers, TACArrayAssignStatement stmt) {
+		SymbolContext sctx = methodScope.checkTables(stmt.getArrName());
+		ArrayInfo arInf = (ArrayInfo) sctx.getOther();
+		Object[] dimVals = (Object[]) this.getValue(registers, stmt.getValue());
+		int[] dims = new int[dimVals.length];
+		
+		for(int i = 0; i < dims.length; i++) {
+			dims[i] = Integer.parseInt(this.getValue(registers, (Operand) dimVals[i]).toString());
+		}
+		
+		arInf.initArr(dims);
+	}
+	
 	private void setArrayBlockValues(Scope methodScope, HashMap<String, Register> registers, TACArrayAssignStatement stmt) {
 		SymbolContext sctx = methodScope.checkTables(stmt.getArrName());
 		ArrayInfo arInf = (ArrayInfo) sctx.getOther();
-		Register r = registers.get(stmt.getValue());
-		System.out.println(registers.containsKey(stmt.getValue()));
-		Object val = this.getValue(registers, stmt.getValue());
-//		val = this.getValue(registers, val);
+		Object[] temp = (Object[]) this.getValue(registers, stmt.getValue());
+		if(temp.length == 0)
+			return;
+		Operand toEval = (Operand) temp[0];
+		Object[] arr = (Object[]) this.evalBlocks(registers, toEval);
 		
-//		Object[][] arr = (Object[][]) val;
-//		
-//		System.out.println("------------------");
-//		for(int i = 0; i < arr.length; i++) {
-//			for(int j = 0; j < arr[i].length; j++)
-//				System.out.println(arr[i][j]);
-//		}
-//		System.out.println("------------------");
+		arInf.setArray(arr);
 	}
 	
+	private Object evalBlocks(HashMap<String, Register> registers, Operand block) {
+		Object ob = this.getValue(registers, block);
+		if(ob instanceof Object[]) {
+			Object[] arr = (Object[]) ob;
+			Object[] arrToStore = new Object[arr.length];
+			for(int i = 0; i < arrToStore.length; i++) {
+				arrToStore[i] = this.evalBlocks(registers, (Operand)arr[i]);
+			}
+			return arrToStore;
+		} else {
+			return this.getValue(registers, block);
+		}
+	}
 	
 	private HashMap<String, TACStatement> addToLabelMap(ArrayList<TACStatement> icode) {
 		for (TACStatement tacStatement : icode) {

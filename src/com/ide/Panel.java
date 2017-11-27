@@ -766,7 +766,7 @@ public class Panel implements CaretListener, Runnable, ActionListener, KeyListen
 //		if(this.codeInput.getText().contains("ACT ")) {
 		this.codeInput.repaint();
 		this.codeInput.revalidate();
-		documentOut.generate(this.codeInput.getText());
+			documentOut.generate(this.codeInput.getText());
 //			System.out.println(" "+this.codeInput.getText());
 //		}
 		this.pnlMain.revalidate();
@@ -912,7 +912,7 @@ public class Panel implements CaretListener, Runnable, ActionListener, KeyListen
 		this.codeInput = codeInput;
 	}
 
-
+	
 	/*
 	 * Specify the color for a Token type here using syntaxScheme.
 	 * 
@@ -1150,25 +1150,12 @@ public class Panel implements CaretListener, Runnable, ActionListener, KeyListen
 		documentSplitPane.setDividerLocation(20);
 		documentSplitPane.revalidate();
 		documentSplitPane.repaint();
-		documentPane.revalidate();
-		documentPane.repaint();
-		documentOut.revalidate();
-		documentOut.repaint();
-		pnlMain.revalidate();
-		pnlMain.repaint();
 	}
 		
 	public void unfoldDoument() {
 		documentSplitPane.setDividerLocation(160);
 		documentSplitPane.revalidate();
 		documentSplitPane.repaint();
-		documentPane.revalidate();
-		documentPane.repaint();
-		documentOut.revalidate();
-		documentOut.repaint();
-		pnlMain.revalidate();
-		pnlMain.repaint();
-		
 	}
 
 
@@ -1248,9 +1235,6 @@ public class Panel implements CaretListener, Runnable, ActionListener, KeyListen
 			
 			for(VariableNode var : selectedVar) {
 				this.modelWatchTable.addRow(new Object[] {var.getDataType()+" "+var.getLiteral(), var.getLineNumber(), var.getFuncParent()+" ("+var.getFuncChild()+")", "0"});
-				
-//				System.out.println("Line "+var.getLineNumber()+": "+var.getDataType()+" "+var.getLiteral()+
-//						" ("+var.getFuncParent()+", "+var.getFuncChild()+")");
 			}
 			
 			this.outputTabs.setSelectedIndex(this.outputTabs.getTabCount()-1);

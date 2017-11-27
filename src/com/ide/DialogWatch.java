@@ -35,7 +35,6 @@ public class DialogWatch extends JDialog implements MouseListener {
 	private JPanel paneWatch;
 	private JScrollPane scrollWatch;
 	
-	private JLabel lblHeader;
 	private JLabel lblLine;
 	private JLabel lblVarName;
 	private JLabel lblType;
@@ -43,6 +42,7 @@ public class DialogWatch extends JDialog implements MouseListener {
 	private JLabel lblBlock;
 	
 	private ArrayList<JCheckBox> checkboxList;
+	private JCheckBox selectAll;
 	private JButton btnOK;
 	private JButton btnClose;
 	
@@ -68,9 +68,15 @@ public class DialogWatch extends JDialog implements MouseListener {
 		this.paneWatch = new JPanel();
 		this.paneWatch.setLayout(new GridBagLayout());
 		this.paneWatch.setMaximumSize(new Dimension(MAX_WIDTH, MAX_HEIGHT));
-//		this.paneWatch.setPreferredSize(new Dimension(MAX_WIDTH, MAX_HEIGHT));
 		this.paneWatch.setBackground(Color.WHITE);
-//		this.add(this.paneWatch);
+		
+		GridBagConstraints gbc = new GridBagConstraints();
+		gbc.gridx = 0;
+		gbc.gridy = 0;
+		gbc.weightx = 1;
+		gbc.weighty = 1;
+		gbc.anchor = GridBagConstraints.FIRST_LINE_START;
+		gbc.fill = GridBagConstraints.BOTH;
 		
 		this.scrollWatch = new JScrollPane(this.paneWatch);
 		this.scrollWatch.setPreferredSize(new Dimension(MAX_WIDTH, MAX_HEIGHT));
@@ -79,28 +85,9 @@ public class DialogWatch extends JDialog implements MouseListener {
 		this.scrollWatch.getVerticalScrollBar().setPreferredSize(new Dimension(
 				10,
 				(int)scrollWatch.getVerticalScrollBar().getPreferredSize().getHeight()));
-		this.scrollWatch.getHorizontalScrollBar().setUI(new CustomScrollBarUISky());
 		this.scrollWatch.setBorder(null);
-//		this.scrollWatch.getHorizontalScrollBar().
+		this.add(this.scrollWatch, gbc);
 		
-//		this.scrollWatch.setBackground(Color.WHITE);
-//		this.scrollWatch.setPreferredSize(new Dimension((int) Frame.SCREEN_SIZE.getWidth()/2, 150));
-//		this.scrollWatch.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-//		this.scrollWatch.getVerticalScrollBar().setUI(new CustomScrollBarUISky());
-//		this.scrollWatch.getHorizontalScrollBar().setUI(new CustomScrollBarUISky());
-//		this.scrollWatch.setBorder(null);
-//		this.scrollWatch.getHorizontalScrollBar().setPreferredSize(new Dimension(
-//				(int)scrollWatch.getHorizontalScrollBar().getPreferredSize().getWidth(),
-//				10));
-//		this.scrollWatch.getVerticalScrollBar().setPreferredSize(new Dimension(
-//				10,
-//				(int)scrollWatch.getVerticalScrollBar().getPreferredSize().getHeight()));	
-		this.add(this.scrollWatch);
-		
-//		JLabel sample = new JLabel("Sample");
-//		this.paneWatch.add(sample);
-		
-		this.lblHeader = this.initLabelHeader("");
 		this.lblLine = this.initLabelHeader("Line No.");
 		this.lblVarName = this.initLabelHeader("Variable");
 		this.lblType = this.initLabelHeader("Data Type");
@@ -108,6 +95,10 @@ public class DialogWatch extends JDialog implements MouseListener {
 		this.lblBlock = this.initLabelHeader("In method block");
 		
 		this.checkboxList = new ArrayList<JCheckBox>();
+		
+		this.selectAll = new JCheckBox();
+		this.selectAll.setBackground(Styles.SKY_BLUE);
+		this.selectAll.addMouseListener(this);
 		
 		this.btnOK = new JButton("OK");
 		this.btnOK.setRolloverEnabled(false);
@@ -129,8 +120,7 @@ public class DialogWatch extends JDialog implements MouseListener {
 		gbc.fill = GridBagConstraints.BOTH;
 		gbc.gridy = 0;
 		gbc.gridx = 0;
-		this.paneWatch.add(this.lblHeader, gbc);
-//		this.add(this.lblHeader, gbc);
+		this.paneWatch.add(this.selectAll, gbc);
 		
 		gbc = new GridBagConstraints();
 		gbc.fill = GridBagConstraints.BOTH;
@@ -138,7 +128,6 @@ public class DialogWatch extends JDialog implements MouseListener {
 		gbc.gridy = 0;
 		gbc.gridx = 1;
 		this.paneWatch.add(this.lblVarName, gbc);
-//		this.add(this.lblVarName, gbc);
 		
 		gbc = new GridBagConstraints();
 		gbc.fill = GridBagConstraints.BOTH;
@@ -146,7 +135,6 @@ public class DialogWatch extends JDialog implements MouseListener {
 		gbc.gridy = 0;
 		gbc.gridx = 2;
 		this.paneWatch.add(this.lblType, gbc);
-//		this.add(this.lblType, gbc);
 		
 		gbc = new GridBagConstraints();
 		gbc.fill = GridBagConstraints.BOTH;
@@ -154,7 +142,6 @@ public class DialogWatch extends JDialog implements MouseListener {
 		gbc.gridy = 0;
 		gbc.gridx = 3;
 		this.paneWatch.add(this.lblLine, gbc);
-//		this.add(this.lblLine, gbc);
 		
 		gbc = new GridBagConstraints();
 		gbc.fill = GridBagConstraints.BOTH;
@@ -162,7 +149,6 @@ public class DialogWatch extends JDialog implements MouseListener {
 		gbc.gridy = 0;
 		gbc.gridx = 4;
 		this.paneWatch.add(this.lblMethod, gbc);
-//		this.add(this.lblMethod, gbc);
 		
 		gbc = new GridBagConstraints();
 		gbc.fill = GridBagConstraints.BOTH;
@@ -170,7 +156,6 @@ public class DialogWatch extends JDialog implements MouseListener {
 		gbc.gridy = 0;
 		gbc.gridx = 5;
 		this.paneWatch.add(this.lblBlock, gbc);
-//		this.add(this.lblBlock, gbc);
 		
 		gbc = new GridBagConstraints();
 		gbc.gridx = 0;
@@ -181,7 +166,6 @@ public class DialogWatch extends JDialog implements MouseListener {
 		gbc.weightx = 1;
 		JSeparator mainSep = this.initSeparatorHorizontal();
 		this.paneWatch.add(mainSep, gbc);
-//		this.add(mainSep, gbc);
 		
 		int y = 2;
 		
@@ -195,32 +179,26 @@ public class DialogWatch extends JDialog implements MouseListener {
 			checkbox.setSelected(false);
 			this.checkboxList.add(checkbox);
 			this.paneWatch.add(checkbox, gbc);
-//			this.add(checkbox, gbc);
 			
 			gbc.gridx = 1;
 			JLabel varName = this.initLabelVarName(variable.getLiteral());
 			this.paneWatch.add(varName, gbc);
-//			this.add(varName, gbc);
 			
 			gbc.gridx = 2;
 			JLabel dataType = this.initLabelDataType(variable.getDataType());
 			this.paneWatch.add(dataType, gbc);
-//			this.add(dataType, gbc);
 			
 			gbc.gridx = 3;
 			JLabel lineNo = this.initLabelLineNum(String.valueOf(variable.getLineNumber()));
 			this.paneWatch.add(lineNo, gbc);
-//			this.add(lineNo, gbc);
 			
 			gbc.gridx = 4;
 			JLabel method = this.initLabelMethod(variable.getFuncParent());
 			this.paneWatch.add(method, gbc);
-//			this.add(method, gbc);
 			
 			gbc.gridx = 5;
 			JLabel methodBlock = this.initLabelMethod(variable.getFuncChild());
 			this.paneWatch.add(methodBlock, gbc);
-//			this.add(methodBlock, gbc);
 			
 			y+=2;
 		}
@@ -232,7 +210,6 @@ public class DialogWatch extends JDialog implements MouseListener {
 		gbc.gridwidth = 6;
 		JSeparator lastSep = this.initSeparatorHorizontal();
 		this.paneWatch.add(lastSep, gbc);
-//		this.add(lastSep, gbc);
 		
 		gbc = new GridBagConstraints();
 		gbc.anchor = GridBagConstraints.SOUTHEAST;
@@ -240,11 +217,9 @@ public class DialogWatch extends JDialog implements MouseListener {
 		gbc.gridx = 5;
 		gbc.insets = new Insets(10, 0, 10, 10);
 		this.paneWatch.add(this.btnClose, gbc);
-//		this.add(this.btnClose, gbc);
 		
 		gbc.insets = new Insets(10, 0, 10, 100);
 		this.paneWatch.add(this.btnOK, gbc);
-//		this.add(this.btnOK, gbc);
 		
 		this.pack();
 	}
@@ -260,9 +235,9 @@ public class DialogWatch extends JDialog implements MouseListener {
 	
 	public JCheckBox initCheckbox() {
 		JCheckBox checkbox = new JCheckBox();
+		checkbox.setBackground(Color.WHITE);
 		checkbox.setSelected(false);
 		checkbox.setOpaque(true);
-		checkbox.setBackground(Color.WHITE);
 		checkbox.setAlignmentX(JFrame.CENTER_ALIGNMENT);
 		
 		return checkbox;
@@ -362,7 +337,17 @@ public class DialogWatch extends JDialog implements MouseListener {
 	
 	@Override
 	public void mouseReleased(MouseEvent arg0) {
-		if(arg0.getSource().equals(this.btnOK)) {
+		if(arg0.getSource().equals(this.selectAll)) {
+			if(!this.checkboxList.isEmpty()) {
+				for(int i = 0; i < this.checkboxList.size(); i++) {
+					if(this.checkboxList.get(i).isSelected())
+						this.checkboxList.get(i).setSelected(false);
+					else
+						this.checkboxList.get(i).setSelected(true);
+				}
+			}
+		}
+		else if(arg0.getSource().equals(this.btnOK)) {
 			for(int i = 0; i < this.checkboxList.size(); i++) {
 				if(this.checkboxList.get(i).isSelected()) {
 					this.selectedVar.add(this.varList.get(i));
