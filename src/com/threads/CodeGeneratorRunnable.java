@@ -226,7 +226,7 @@ public class CodeGeneratorRunnable implements Runnable {
 		// TODO
 //		Panel.printWatch("P"+pointerCount+"    "+methodScope.getSymTable().keySet().toString());
 //		Panel.printWatch(statement+"");
-		System.out.println("BRK "+	statement.getLabel() + " " + statement.getType()+": "+statement.isBreakpoint());
+//		System.out.println("BRK "+	statement.getLabel() + " " + statement.getType()+": "+statement.isBreakpoint());
 		
 		if(statement.isBreakpoint()) {
 //			System.out.println("BRK "+	statement.getLabel() + " " + statement.getType()+": "+statement.isBreakpoint());
@@ -368,6 +368,9 @@ public class CodeGeneratorRunnable implements Runnable {
 							ptrInf.setPointsToType(assignCtx.getSymbolType());
 						}
 						
+					} else {
+						SymbolContext assignCtx = ptrInf.getPointee();
+						assignCtx.setValue(this.getValue(registers, aStmt.getValue()));
 					}
 				} else {
 					sctx.setValue(this.getValue(registers, aStmt.getValue()));
@@ -413,8 +416,20 @@ public class CodeGeneratorRunnable implements Runnable {
 			break;
 		case PRINT:
 			TACPrintStatement printStmt = (TACPrintStatement) statement;
-
-			Writer.printText(this.getValue(registers, printStmt.getExpression()).toString());
+			
+			if(printStmt.getExpression().getOperandType() == OperandTypes.VARIABLE) {
+				Variable v= (Variable) printStmt.getExpression();
+				SymbolContext ctx = this.currentScope.findVar(v.getAlias());
+				if(ctx.getSymbolType().contains("char")) {
+					if(ctx.getValue() instanceof Integer)
+						Writer.printText((char)Integer.parseInt(ctx.getValue().toString()));
+					else
+						Writer.printText((Character) ctx.getValue());
+				}else
+					Writer.printText(this.getValue(registers, printStmt.getExpression()).toString());
+			} else {
+				Writer.printText(this.getValue(registers, printStmt.getExpression()).toString());
+			}
 			
 //			if(printStmt.isBreakpoint()) {
 //				System.out.println("BRK "+	printStmt.getType()+": "+printStmt.isBreakpoint());
@@ -581,7 +596,7 @@ public class CodeGeneratorRunnable implements Runnable {
 		case REGISTER:
 			Register r = (Register) operand;
 			Object value = registers.get(r.getName()).getValue();
-			if(value instanceof Variable) {
+			if(value instanceof SymbolContext) {//TODO: never ata papsok
 				SymbolContext sctx = this.currentScope.findVar(r.getName());
 				if(this.isPointer(sctx)) {//if pointer
 					PointerInfo ptrInf = (PointerInfo) sctx.getOther();

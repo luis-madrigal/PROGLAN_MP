@@ -150,7 +150,7 @@ public class BaseListener extends ManuScriptBaseListener{
 					PrimaryContext primary = ((PrimaryExprContext) vdi.expression()).primary();
 					if(primary.equationExpr() != null) {
 						if (primary.equationExpr().Identifier() != null) {
-							SymbolContext symRight = getCurrentSymTable().get(primary.equationExpr().Identifier().getText());
+							SymbolContext symRight = scopes.peek().checkTables(primary.equationExpr().Identifier().getText());
 							if (symRight == null) {
 								SemanticErrors.throwError(SemanticErrors.UNDECLARED_VAR,primary.equationExpr().getStart().getLine(), primary.equationExpr().getStart().getCharPositionInLine(), primary.equationExpr().Identifier().getText());
 							} else {
@@ -536,12 +536,13 @@ public class BaseListener extends ManuScriptBaseListener{
 						&& ((PrimaryExprContext) ectx).primary().equationExpr() != null
 						&& ((PrimaryExprContext) ectx).primary().equationExpr().Identifier() != null) {
 					//variable but not in scope or not declared.
-					SemanticErrors.throwError(SemanticErrors.UNDECLARED_VAR, ectxLineNum, ectxCharPosAtLine, arg);
+					if(scopes.peek().checkTables(arg) == null)
+						SemanticErrors.throwError(SemanticErrors.UNDECLARED_VAR, ectxLineNum, ectxCharPosAtLine, arg);
 				} else {
 					//literal or expression
 					String type = this.expressionCheck(ectx);
 					System.out.println("check:"+type);
-					if(!this.regexComparison(mcx.getArgTypes().get(i),type))
+					if(!this.regexComparison(mcx.getArgTypes().get(i).replace("*", ""),type))
 						SemanticErrors.throwError(SemanticErrors.TYPE_MISMATCH, ectxLineNum, ectxCharPosAtLine, mcx.getArgTypes().get(i));
 				}
 				i++;
@@ -875,6 +876,7 @@ public class BaseListener extends ManuScriptBaseListener{
 		
 		for (ExpressionContext ectx : ctx.expression()) {
 			String type = this.expressionCheck(ectx);
+			System.out.println("index :"+type+"?= arrType: "+aInfo.getArrType());
 			if(!this.regexComparison(aInfo.getArrType(), type)) {
 				SemanticErrors.throwError(SemanticErrors.INVALID_INDEX, lineNum, charPos);
 			}
@@ -978,19 +980,19 @@ public class BaseListener extends ManuScriptBaseListener{
 	private String getExprReturnedType(int lineNum, int charPos, OPERATOR operator, String type) {
 		switch (operator) {
 		case ADD:
-			if(this.canBeOfType(type, "int", "float", "char"))
+			if(this.canBeOfType(type, "int", "float", "char", "int*", "float*", "char*"))
 				return type;
 		case SUB: 
-			if(this.canBeOfType(type, "int", "float"))
+			if(this.canBeOfType(type, "int", "float", "int*", "float*"))
 				return type;
 			break;
 		case INC:
 		case DEC:
-			if(this.canBeOfType(type, "int", "float", "char"))
+			if(this.canBeOfType(type, "int", "float", "char", "int*", "float*", "char*"))
 				return type;
 			break;
 		case NOT:
-			if(this.canBeOfType(type, "boolean"))
+			if(this.canBeOfType(type, "boolean", "boolean*"))
 				return type;
 			break;
 		default:
@@ -1004,9 +1006,9 @@ public class BaseListener extends ManuScriptBaseListener{
 	private String getExprReturnedType(int lineNum, int charPos, OPERATOR operator, String type1, String type2) {
 		switch(operator) {
 		case ADD:
-			if(this.canBeOfType(type1, "string") && this.canBeOfType(type2, "string", "int", "char", "float"))
+			if(this.canBeOfType(type1, "string", "string*") && this.canBeOfType(type2, "string", "int", "char", "float", "string*", "int*", "char*", "float*"))
 				return type1;
-			if(this.canBeOfType(type1, "string", "int", "char", "float") && this.canBeOfType(type2, "string"))
+			if(this.canBeOfType(type1, "string", "int", "char", "float", "string*", "int*", "char*", "float*") && this.canBeOfType(type2, "string", "string*"))
 				return type2;
 		case SUB:
 		case MULT:
@@ -1020,49 +1022,49 @@ public class BaseListener extends ManuScriptBaseListener{
 			if(this.pointerAssignCheck(type1, type2)) //will work for all pointers
 				return type1;
 		case PLUSASSIGN:
-			if(this.canBeOfType(type1, "string") && this.canBeOfType(type2, "string"))
+			if(this.canBeOfType(type1, "string", "string*") && this.canBeOfType(type2, "string", "string*"))
 				return type1;
 		case SUBASSIGN:
 		case MULTASSIGN:
 		case DIVASSIGN:
 		case MODASSIGN:
-			if(this.canBeOfType(type1, "int") && this.canBeOfType(type2, "int"))
+			if(this.canBeOfType(type1, "int", "int*") && this.canBeOfType(type2, "int", "int*"))
 				return "int|char|float";
-			if(this.canBeOfType(type1, "int") && this.canBeOfType(type2, "float"))
+			if(this.canBeOfType(type1, "int", "int*") && this.canBeOfType(type2, "float", "float*"))
 				return "float";
-			if(this.canBeOfType(type1, "float") && this.canBeOfType(type2, "int"))
+			if(this.canBeOfType(type1, "float", "float*") && this.canBeOfType(type2, "int", "int*"))
 				return "float";
-			if(this.canBeOfType(type1, "float") && this.canBeOfType(type2, "float"))
+			if(this.canBeOfType(type1, "float", "float*") && this.canBeOfType(type2, "float", "float*"))
 				return "float";
-			if(this.canBeOfType(type1, "char") && this.canBeOfType(type2, "char"))
+			if(this.canBeOfType(type1, "char", "char*") && this.canBeOfType(type2, "char", "char*"))
 				return "int|char|float";
-			if(this.canBeOfType(type1, "char") && this.canBeOfType(type2, "int"))
+			if(this.canBeOfType(type1, "char", "char*") && this.canBeOfType(type2, "int", "int*"))
 				return "int|char|float";
-			if(this.canBeOfType(type1, "int") && this.canBeOfType(type2, "char"))
+			if(this.canBeOfType(type1, "int", "int*") && this.canBeOfType(type2, "char", "char*"))
 				return "int|char|float";
-			if(this.canBeOfType(type1, "float") && this.canBeOfType(type2, "char"))
+			if(this.canBeOfType(type1, "float", "float*") && this.canBeOfType(type2, "char", "char*"))
 				return "float";
-			if(this.canBeOfType(type1, "char") && this.canBeOfType(type2, "float"))
+			if(this.canBeOfType(type1, "char", "char*") && this.canBeOfType(type2, "float", "float*"))
 				return "float";
 			break;
 		case EQUAL:
 		case NEQUAL:
-			if(this.canBeOfType(type1, "string") && this.canBeOfType(type2, "string"))
+			if(this.canBeOfType(type1, "string", "string*") && this.canBeOfType(type2, "string", "string*"))
 				return "boolean";
-			if(this.canBeOfType(type1, "boolean") && this.canBeOfType(type2, "boolean"))
+			if(this.canBeOfType(type1, "boolean", "boolean*") && this.canBeOfType(type2, "boolean", "boolean*"))
 				return "boolean";
 		case LESS:
 		case LEQ:
 		case GREATER:
 		case GEQ:
-			if(this.canBeOfType(type1, "int", "float", "char") && this.canBeOfType(type2, "int", "float", "char"))
+			if(this.canBeOfType(type1, "int", "float", "char", "int*", "float*", "char*") && this.canBeOfType(type2, "int", "float", "char", "int*", "float*", "char*"))
 				return "boolean";
-			if(this.canBeOfType(type1, "boolean") && this.canBeOfType(type2, "boolean"))
+			if(this.canBeOfType(type1, "boolean", "boolean*") && this.canBeOfType(type2, "boolean", "boolean*"))
 				return "boolean";
 			break;
 		case AND:
 		case OR:
-			if(this.canBeOfType(type1, "boolean") && this.canBeOfType(type2, "boolean"))
+			if(this.canBeOfType(type1, "boolean", "boolean*") && this.canBeOfType(type2, "boolean", "boolean*"))
 				return "boolean";
 		default:
 			break;
@@ -1083,7 +1085,7 @@ public class BaseListener extends ManuScriptBaseListener{
 	}
 	
 	private boolean regexComparison(String val, String regex) {
-		String reg = regex.replace("*", "\\*").replace("[", "\\[").replace("]", "\\]");
+		String reg = regex.replace("*", "").replace("[", "\\[").replace("]", "\\]");
 		
 		return val.matches(reg);
 	}
@@ -1112,16 +1114,30 @@ public class BaseListener extends ManuScriptBaseListener{
 //			return false;
 		if(type1.equals(type2))
 			return true;
-
+		
 		String t1WOpointer = type1.replace("*", "");
-		System.out.println(t1WOpointer+"~~~~~~~~~~~~~~~~~~"+type2);
-		if(t1WOpointer.equals(type2)) //if type1 without '*' equal to type2
+		String t2WOpointer = type2.replace("*", "");
+		
+		System.out.println(t1WOpointer+"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"+t2WOpointer);
+		
+		if(this.regexComparison(t1WOpointer, t2WOpointer))
+			return true;
+		if(this.regexComparison(t1WOpointer, t2WOpointer))
 			return true;
 
-		String t2WOpointer = type2.replace("*", "");
-		System.out.println(t2WOpointer+"~~~~~~~~~~~~~~~~~~"+type1);
-		if(t2WOpointer.equals(type1)) //if type1 without '*' equal to type2
-			return true;
+//		String t1WOpointer = type1.replace("*", "");
+//		System.out.println(t1WOpointer+"~~~~~~~~~~~~~~~~~~"+type2);
+////		if(t1WOpointer.equals(type2)) //if type1 without '*' equal to type2
+////			return true;
+//		if(this.regexComparison(t1WOpointer, type2))
+//			return true;
+//
+//		String t2WOpointer = type2.replace("*", "");
+//		System.out.println(t2WOpointer+"~~~~~~~~~~~~~~~~~~"+type1);
+////		if(t2WOpointer.equals(type1)) //if type1 without '*' equal to type2
+////			return true;
+//		if(this.regexComparison(t2WOpointer, type2))
+//			return true;
 
 		return false;
 	}

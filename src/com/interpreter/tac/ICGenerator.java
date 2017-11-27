@@ -96,7 +96,7 @@ public class ICGenerator {
 				break;
 			}
 			if(currentMethodBlock != null) {
-				if(currentMethodBlock.getChildren().size() > 0 && currentMethodBlock != null && currentMethodBlock.getChild(currentMethodBlock.getChildren().size()-1).equals(n)) { //if block is finished
+				if(currentMethodBlock.getChildren().size() > 0 && currentMethodBlock.getChild(currentMethodBlock.getChildren().size()-1).equals(n)) { //if block is finished
 					this.exitBlock(n.isBreakpoint());
 				}
 			}
@@ -197,8 +197,8 @@ public class ICGenerator {
 	}
 	
 	private void forStmt(AbstractSyntaxTree node) {
-		this.enterBlock(node.isBreakpoint());
 		this.storeStatement(node.getChild(0));
+		this.enterBlock(node.isBreakpoint());
 		int currentLblCount = this.labelCount + 1;
 		TACLoopStatement stmt = new TACLoopStatement(node.getNodeType(), this.storeExpression(node.getChild(1)), node.isBreakpoint());
 		this.addStatement(stmt);
@@ -459,7 +459,9 @@ public class ICGenerator {
 	}
 	
 	public Scope getScope() {
-		return scopes.peek().getChildren().get(0);
+		if(!scopes.peek().getChildren().isEmpty())
+			return scopes.peek().getChildren().get(0);
+		return scopes.peek();
 	}
 
 }

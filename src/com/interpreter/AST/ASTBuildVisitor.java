@@ -854,6 +854,7 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
                             node.addChild(varRight);
                         }
                     }
+
                 }
             } //array end
             else {  //if variable is normal type
@@ -886,7 +887,8 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
             node.addChild(target);
         }
 
-        if(!target.nodeType.equals(NodeType.ARRAY_ACCESS) && ((SymbolContext)target.getValue()).getCtxType().equals(ContextType.ARRAY)){
+        System.out.println("target node: "+target.getNodeType());
+        if(!target.getNodeType().equals(NodeType.ARRAY_ACCESS) && ((SymbolContext)target.getValue()).getCtxType().equals(ContextType.ARRAY)){
             //array start
             if(ctx.expression() instanceof ManuScriptParser.ArrayInitExprContext){
                 //for '= int[x];' && '= int[]{a,b,c};'
@@ -896,9 +898,14 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
                     node.addChild(value);
                 }
             } else{
-                //if arNew = arOld;
                 AbstractSyntaxTree varRight = visit(ctx.expression());
-                if (varRight != null) {
+                //if function invoke
+                if(ctx.expression() instanceof ManuScriptParser.FunctionExprContext){
+                    varRight.setParent(node);
+                    node.addChild(varRight);
+                }
+                //if arNew = arOld;
+                else if (varRight != null) {
                     if(varRight.getChildren().size() == 0) {
                         SymbolContext symCtxL = (SymbolContext)target.getValue();
                         SymbolContext symCtxR = (SymbolContext)varRight.getValue();
@@ -945,7 +952,7 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
                 //id array
                 System.out.println("entered array access");
                 variable.setNodeType(NodeType.ARRAY_ACCESS);
-                symCtx = curScope.getSymTable().get(ctx.variableExpr().Identifier().getText());
+                symCtx = curScope.checkTables(ctx.variableExpr().Identifier().getText());
                 System.out.println("arr access: "+symCtx);
                 if(symCtx != null){
                     variable.setValue(symCtx);
