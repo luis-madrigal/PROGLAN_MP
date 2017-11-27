@@ -14,7 +14,7 @@ public class Tokens {
 	public static final String FUNCTION = "ACT|starring";
 	public static final String BOOLEAN = "true|false";
 	
-	public static final String DATA_TYPE = "boolean|int|char|float|string|null|boolean*|int*|char*|float*|string*|boolean[]|int[]|char[]|float[]|string[]|boolean*[]|int*[]|char*[]|float*[]|string*[]";
+	public static final String DATA_TYPE = "boolean|int|char|float|string|null|boolean*|int*|char*|float*|string*|boolean[]|int[]|char[]|float[]|string[]|boolean*[]|int*[]|char*[]|float*[]|string*[]|boolean[][]|int[][]|char[][]|float[][]|string[][]|boolean*[][]|int*[][]|char*[][]|float*[][]|string*[][]";
 	@SuppressWarnings("serial")
 	public static final ArrayList<String> COMPOUND_KEYWORDS_START = new ArrayList<String>() {{
 																		add("take");
