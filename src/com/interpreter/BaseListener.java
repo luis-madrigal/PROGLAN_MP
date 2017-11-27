@@ -150,7 +150,7 @@ public class BaseListener extends ManuScriptBaseListener{
 					PrimaryContext primary = ((PrimaryExprContext) vdi.expression()).primary();
 					if(primary.equationExpr() != null) {
 						if (primary.equationExpr().Identifier() != null) {
-							SymbolContext symRight = getCurrentSymTable().get(primary.equationExpr().Identifier().getText());
+							SymbolContext symRight = scopes.peek().checkTables(primary.equationExpr().Identifier().getText());
 							if (symRight == null) {
 								SemanticErrors.throwError(SemanticErrors.UNDECLARED_VAR,primary.equationExpr().getStart().getLine(), primary.equationExpr().getStart().getCharPositionInLine(), primary.equationExpr().Identifier().getText());
 							} else {
