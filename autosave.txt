@@ -1,5 +1,4 @@
 
-
 composition subrecord{
 	int a;
 	int* b, cd;
@@ -40,6 +39,6 @@ ACT main starring ()  {
 	Say ptr;
 	Say ptr2;*[]
 
-	array[0][0] = 2;
+	array[0][0] = array[1][1];
 	Say "ASD"+array[0][0];
 }
