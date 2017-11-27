@@ -5,6 +5,7 @@ import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -33,12 +34,16 @@ import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.JTextPane;
+import javax.swing.Painter;
 import javax.swing.ScrollPaneConstants;
+import javax.swing.UIDefaults;
 import javax.swing.UIManager;
 import javax.swing.border.Border;
+import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
+import javax.swing.plaf.ColorUIResource;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
@@ -145,6 +150,54 @@ public class Panel implements CaretListener, Runnable, ActionListener, KeyListen
 
 	public Panel() {
 		Console.instance().setPnlParent(this);
+
+//		InternalFrame.optionDialogBackground
+//		InternalFrame.optionDialogTitleFont
+		UIManager.getDefaults().put("OptionPane.background", Color.WHITE);
+		UIManager.getDefaults().put("OptionPane.background", Color.WHITE);
+//		UIManager.getDefaults().put("OptionPane.border", new EmptyBorder(15, 0, 0, 15));
+//		UIManager.getDefaults().put("OptionPane.buttonAreaBorder", new EmptyBorder(0, 15, 10, 0));
+		UIManager.getDefaults().put("OptionPane.messageAreaBorder", new EmptyBorder(0, 0, 15, 0));
+
+		UIDefaults defaults = UIManager.getLookAndFeelDefaults();
+		defaults.put("Button.focus", new ColorUIResource(new Color(0, 0, 0, 0)));
+		UIManager.getDefaults().put("OptionPane.titleText", "");
+		UIManager.getDefaults().put("Panel.background", Color.WHITE);
+
+		UIManager.getDefaults().put("Button.background", Color.WHITE);
+		UIManager.getDefaults().put("Button.opaque", false);
+		UIManager.getDefaults().put("Button.defaultButtonFollowsFocus", false);
+		UIManager.getDefaults().put("Button.highlight", Color.WHITE);
+		UIManager.getDefaults().put("Button.light", Color.WHITE);
+		UIManager.getDefaults().put("Button.light", Color.WHITE);
+		
+		Painter<Component> p = new Painter<Component>() {
+		     public void paint(Graphics2D g, Component c, int width, int height) {
+		    	 c.setBackground(Color.WHITE);
+		         g.setColor(c.getBackground());
+		         c.paint(g);
+		        
+		     }
+		 };
+
+		UIManager.getDefaults().put("Button[Default+MouseOver].backgroundPainter", p);
+		UIManager.getDefaults().put("Button[Default+Focused+MouseOver].backgroundPainter", p);
+		UIManager.getDefaults().put("Button[MouseOver].backgroundPainter", p);
+		UIManager.getDefaults().put("Button[Pressed].backgroundPainter", p);
+		UIManager.getDefaults().put("Button[Focused].backgroundPainter", p);
+		UIManager.getDefaults().put("Button[Enabled].backgroundPainter", p);
+		
+
+		UIManager.getDefaults().put("OptionPane.questionIcon", new ImageIcon(getClass().getClassLoader().getResource("res/ico_question.png")));
+		UIManager.getDefaults().put("OptionPane.separatorPadding", 0);
+		UIManager.getDefaults().put("OptionPane.messageAnchor", 10);
+		UIManager.getDefaults().put("OptionPane:\"OptionPane.messageArea\".contentMargins", new Insets(0, 0, 10,0));
+	
+//		UIManager.getDefaults().put("Button.highlight", Styles.UN_RESERVED_WORD);
+		UIManager.getDefaults().put("OptionPane.messageAreaBorder", new EmptyBorder(0, 0, 0, 5));
+//		UIManager.getDefaults().put("OptionPaneUI", new EmptyBorder(0, 0, 0, 0));
+//		UIManager.getDefaults().put("TabbedPane.tabsOverlapBorder", true);
+		
 		// Remove JTabbedPane "Borders"
 		UIManager.getDefaults().put("TabbedPane.contentBorderInsets", new Insets(0,0,0,0));
 		UIManager.getDefaults().put("TabbedPane.tabsOverlapBorder", true);
