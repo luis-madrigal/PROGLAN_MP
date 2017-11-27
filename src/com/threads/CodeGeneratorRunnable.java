@@ -14,6 +14,7 @@ import com.interpreter.contexts.ArrayInfo;
 import com.interpreter.contexts.ContextType;
 import com.interpreter.contexts.MethodContext;
 import com.interpreter.contexts.PointerInfo;
+import com.interpreter.contexts.StructInfo;
 import com.interpreter.contexts.SymbolContext;
 import com.interpreter.matchers.LiteralMatcher;
 import com.interpreter.modules.ExpressionEvaluator;
@@ -320,6 +321,8 @@ public class CodeGeneratorRunnable implements Runnable {
 					
 				}
 //				sctx.setValue(this.getValue(registers, aStmt.getValue()));
+			} else if(this.isStruct(sctx)) {
+				StructInfo strInf = (StructInfo) sctx.getOther();
 			} else {
 				sctx.setValue(this.getValue(registers, aStmt.getValue()));
 			}
@@ -407,16 +410,16 @@ public class CodeGeneratorRunnable implements Runnable {
 					Register rb1 = unOp.getOutputRegister();
 					registers.put(rb1.getName(), rb1);
 					registers.get(rb1.getName()).setValue(this.unOpEval(registers, unOp.getOperator(), unOp.getOperand1())); break;
-				case ARRAY_ACCESS:
-					TACIndexingStatement iOp = (TACIndexingStatement) statement;
-					Register rb2 = iOp.getOutputRegister();
-					SymbolContext iCtx = this.currentScope.findVar(iOp.getArrayName());
-					ArrayInfo info = (ArrayInfo) iCtx.getOther();
-					
-					registers.put(rb2.getName(), rb2);
-					registers.get(rb2.getName()).setValue(info.getObject(Integer.parseInt(this.getValue(registers, iOp.getIndex()).toString())));
-					pointerCount++;
-					break;
+//				case ARRAY_ACCESS:
+//					TACIndexingStatement iOp = (TACIndexingStatement) statement;
+//					Register rb2 = iOp.getOutputRegister();
+//					SymbolContext iCtx = this.currentScope.findVar(iOp.getArrayName());
+//					ArrayInfo info = (ArrayInfo) iCtx.getOther();
+//					
+//					registers.put(rb2.getName(), rb2);
+//					registers.get(rb2.getName()).setValue(info.getObject(Integer.parseInt(this.getValue(registers, iOp.getIndex()).toString())));
+//					pointerCount++;
+//					break;
 				default:
 					break;
 				}

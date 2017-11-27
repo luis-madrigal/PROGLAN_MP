@@ -14,16 +14,11 @@ ACT main starring () {
 	int x;
 	int fibo;
 
-	[]*Say "Enter a number: ";
 	Write to x;
 
 	fibo = generateFibo(x);
 	Say "Fibonacci Number "+x+": "+fibo;
-	Say count; *[]
+	Say count; 
 
-	replay (int i = 0; i < 10; i++) {
-		replay (int j = 0; j < 10; j++) {
-			Say i+j;
-		}
-	}
+	
 }

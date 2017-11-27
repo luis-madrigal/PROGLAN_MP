@@ -265,8 +265,8 @@ public class ICGenerator {
 			case UNIPRE_ARITHMETIC:
 			case UNI_LOGIC: stmt = new TACUnaryOpStatement(node.getNodeType(), OPERATOR.getEnum(n.getValue()), this.storeExpression(n.getChild(0)), n.isBreakpoint());
 							return this.addOutputStatement(stmt);
-			case ARRAY_ACCESS: stmt = new TACIndexingStatement(node.getNodeType(), this.storeExpression(node.getChild(0)).toString(), this.storeExpression(n.getChild(1)), n.isBreakpoint());
-							   return this.addOutputStatement(stmt);
+//			case ARRAY_ACCESS: stmt = new TACIndexingStatement(node.getNodeType(), this.storeExpression(node.getChild(0)).toString(), this.storeExpression(n.getChild(1)), n.isBreakpoint());
+//							   return this.addOutputStatement(stmt);
 			case ARRAY_INIT: return this.evalArrayInit(n);
 			case ARRAY_BLOCK: return this.genArrayBlock(n);
 			case FUNCTION_INVOKE: return this.funcInvoke(n); 
@@ -280,6 +280,10 @@ public class ICGenerator {
 
 		return null;
 	}
+	
+//	private Operand arrayAccess(AbstractSyntaxTree node) {
+//		TACIndexingStatement iStmt = new TACIndexingStatement(NodeType.ARRAY_ACCESS, arrayName, isBreakpoint)
+//	}
 	
 	private Operand genArrayBlock(AbstractSyntaxTree node) {
 		TACArrayBlockStatement stmt = new TACArrayBlockStatement(NodeType.ARRAY_BLOCK, node.isBreakpoint());
