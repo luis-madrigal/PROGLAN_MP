@@ -11,8 +11,10 @@ public class SemanticErrors {
 
 	//ARRAY
 	public static final String UNINITIALIZED = LINE_INFO + "Array has not been initialized.";
-	public static final String OUT_OF_BOUNDS = LINE_INFO + "Array index is out of bounds. index: %s -- array length: %s";
+	public static final String OUT_OF_BOUNDS = "Array index is out of bounds. index: %s -- array length: %s";
+//	public static final String OUT_OF_BOUNDS = LINE_INFO + "Array index is out of bounds. index: %s -- array length: %s";
 	public static final String INVALID_DIMS = LINE_INFO + "Invalid dimensions. # initialized dims: %s -- # correct dims: %s";
+	public static final String INVALID_DIMS_NINFO = "Invalid dimensions. # initialized dims: %s -- # correct dims: %s";
 	public static final String ARR_TYPE_MISMATCH = LINE_INFO + "Array initialization type mismatch. Array should be of type '%s'";
 	public static final String INVALID_INIT = LINE_INFO + "Illegal array initialization.";
 	public static final String ARR_INIT_ELEMENT_MISMATCH = LINE_INFO + "Array initialization type mismatch. Elements can only be of type '%s'";
@@ -63,6 +65,10 @@ public class SemanticErrors {
 	
 	public static void throwError(String error, Object ...args) {
 		Console.instance().err(String.format(error, args), (int)args[0]);
+	}
+
+	public static void throwErrorNoInfo(String error, Object ...args) {
+		Console.instance().err(String.format(error, args));
 	}
 	
 	public static void throwError(String error) {

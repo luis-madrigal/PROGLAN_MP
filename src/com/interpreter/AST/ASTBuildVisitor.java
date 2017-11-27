@@ -11,11 +11,7 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.RuleNode;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Stack;
+import java.util.*;
 
 public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
 
@@ -53,6 +49,15 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
 
     public void printAST(String rootName){
         methodASTTable.get(rootName).print();
+    }
+
+    public void printAllAST(){
+        Iterator it = methodASTTable.entrySet().iterator();
+        while(it.hasNext()){
+            Map.Entry<String,AbstractSyntaxTree> root = (Map.Entry)it.next();
+            System.out.println("-----------"+root.getKey()+"-----------");
+            root.getValue().print();
+        }
     }
 
     @Override
