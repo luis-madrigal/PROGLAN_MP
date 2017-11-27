@@ -39,7 +39,7 @@ public class Styles {
 	public final static Color UN_MARKUP_TAG_ATTRIBUTE = SKY_BLUE;// new Color(178, 0, 255);//new Color(178, 0, 255); // new Color(247,  2,  124); //new Color(103, 194, 217); // new Color(255, 0, 127);	
 	
 	public final static Color UN_FUNCTION = new Color(0, 255, 250);//new Color(1, 140, 126); // new Color(247,  2,  124); //new Color(103, 194, 217); // new Color(255, 0, 127);	
-	public final static Color UN_COMMENT_KEYWORD =  new Color(238, 9, 123);//new Color(89, 255, 0); //VIOLET; // new Color(99, 221, 221);// new Color(167, 236, 33);	
+	public final static Color UN_COMMENT_KEYWORD =  new Color(244, 9, 123);//new Color(89, 255, 0); //VIOLET; // new Color(99, 221, 221);// new Color(167, 236, 33);	
 	public final static Color UN_COMMENT_MULTILINE = UN_COMMENT_KEYWORD; // new Color(99, 221, 221);// new Color(167, 236, 33);	
 	public final static Color UN_COMMENT_EOL = UN_COMMENT_KEYWORD;// new Color(167, 236, 33);	
 	public final static Color UN_BOOLEAN = UN_RESERVED_WORD_3; //new Color(171, 252, 32); // Color(251, 115, 116);
