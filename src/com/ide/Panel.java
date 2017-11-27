@@ -397,7 +397,6 @@ public class Panel implements CaretListener, Runnable, ActionListener, KeyListen
 		this.threeACPane.getVerticalScrollBar().setUI(new CustomScrollBarUISky());
 		this.threeACPane.getHorizontalScrollBar().setUI(new CustomScrollBarUISky());
 		this.threeACPane.setBorder(null);
-	
 		this.threeACPane.getHorizontalScrollBar().setPreferredSize(new Dimension(
 		        (int)threeACPane.getHorizontalScrollBar().getPreferredSize().getWidth(),
 		        (int)horizontalHeight
@@ -520,7 +519,7 @@ public class Panel implements CaretListener, Runnable, ActionListener, KeyListen
 		parentPane.add(treePane);
 		
 		this.outputTabs = new JTabbedPane();
-		this.outputTabs.add("3 Address Code", this.threeACPane);
+		this.outputTabs.add("IR Code", this.threeACPane);
 //		this.outputTabs.add("Parsed Out", this.parsedPane);
 		this.outputTabs.add("Parse Tree", parentPane);
 
@@ -652,7 +651,7 @@ public class Panel implements CaretListener, Runnable, ActionListener, KeyListen
 //		topSplitPane.getLeftComponent().setBounds(0, 0, topSplitPane.getLeftComponent().getWidth(),
 //				topSplitPane.getLeftComponent().getHeight());
 		this.topSplitPane.setRightComponent(this.outputTabs);
-		this.topSplitPane.setDividerLocation((int) Frame.SCREEN_SIZE.getWidth()-320);
+		this.topSplitPane.setDividerLocation((int) Frame.SCREEN_SIZE.getWidth()-380); // TODO
 		gbc = new GridBagConstraints();
 		gbc.anchor = GridBagConstraints.NORTHEAST;
 		gbc.fill = GridBagConstraints.BOTH;
@@ -739,11 +738,11 @@ public class Panel implements CaretListener, Runnable, ActionListener, KeyListen
 		//Scanner for input string
 		this.scanner = new ScannerModel(this);
 		
-		this.topSplitPane.setDividerSize(2);
+		this.topSplitPane.setDividerSize(5);
 		this.topSplitPane.setBackground(Color.WHITE);
 		this.topSplitPane.setContinuousLayout(true);
 		
-		this.bottomSplitPane.setDividerSize(2);
+		this.bottomSplitPane.setDividerSize(5);
 		this.bottomSplitPane.setBackground(Color.WHITE);
 		this.bottomSplitPane.setContinuousLayout(true);
 
@@ -763,6 +762,8 @@ public class Panel implements CaretListener, Runnable, ActionListener, KeyListen
 //		this.pnlMain.setComponentZOrder(pnlMenu, pnlMain.getComponentCount()-1);
 
 //		if(this.codeInput.getText().contains("ACT ")) {
+		this.codeInput.repaint();
+		this.codeInput.revalidate();
 			documentOut.generate(this.codeInput.getText());
 //			System.out.println(" "+this.codeInput.getText());
 //		}
@@ -772,7 +773,8 @@ public class Panel implements CaretListener, Runnable, ActionListener, KeyListen
 		documentOut.revalidate();
 		documentOut.repaint();
 		documentPane.addMouseListener(this);
-		this.foldDoument();
+//		this.foldDoument();
+		documentOut.generate(this.codeInput.getText());
 	}
 	
 	public void initMenuButtons() {
@@ -908,6 +910,7 @@ public class Panel implements CaretListener, Runnable, ActionListener, KeyListen
 		this.codeInput = codeInput;
 	}
 
+	
 	/*
 	 * Specify the color for a Token type here using syntaxScheme.
 	 * 

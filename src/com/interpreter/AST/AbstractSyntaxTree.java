@@ -48,7 +48,7 @@ public class AbstractSyntaxTree {
     }
 
     public AbstractSyntaxTree getChild(int index) {
-        return children.get(index);
+    	return children.get(index);
     }
 
     public void addChild(AbstractSyntaxTree child) {

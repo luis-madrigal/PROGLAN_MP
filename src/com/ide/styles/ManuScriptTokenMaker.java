@@ -184,8 +184,8 @@ public class ManuScriptTokenMaker extends AbstractTokenMaker {
 	
 		            	   System.out.println("LINE in  "+line);
 		            	   
-		            	   if(line.length() > 3 &&
-		            			   line.substring(0, 3).contains("[]*")) {
+		            	   if(line.length() > 2 &&
+		            			   line.substring(0, 3).contains("]*")) {
 		            		   multiLineFlag = true;
 		            		   System.out.println("multiLine true");
 		            		   currentTokenType = Token.COMMENT_EOL;

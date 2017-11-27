@@ -1,20 +1,19 @@
 
-[]* a
-	asdsd
-*[]
+
+ACT something starring () {
+
+}
+
+ACT somethingMore starring () {
+	
+}
+
 
 ACT main starring() {
- 	int x = 0;
- 	[]* asd
- 	
-	[]* Comment 1
-		What is your 
-	*[]
+ 	int x, b = 0;
+ 	Say "Hello World";
 	
-	[Comment]: What
-	Say "Hello World";
-	
- 	replay(int i = 0; i < 5; i++) {
+ 	replay (int i = 0; i < 5; i++) {
  		Say "Hello World";
  	}
  }

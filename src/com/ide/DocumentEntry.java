@@ -28,6 +28,8 @@ public class DocumentEntry extends JPanel implements MouseListener {
 	private JLabel lblLineNumber;
 	
 	public DocumentEntry(String title, int lineNumber, int linePosition, int width) {
+
+		this.setVisible(false);
 		this.title = title;
 		this.lineNumber = lineNumber;
 		this.linePosition = linePosition;
@@ -97,12 +99,17 @@ public class DocumentEntry extends JPanel implements MouseListener {
 		lblText.setBounds(0, 0, lblText.getWidth(), lblText.getHeight());
 		
 		lblTextBorder.add(lblText);
+		
+		
 		this.setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
 		this.add(lblLineNumberBorder);
 		this.add(lblTextBorder);
-
+		
 		this.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		lblText.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		this.revalidate();
+		this.repaint();
+		this.setVisible(true);
 	}
 
 	public String getTitle() {
