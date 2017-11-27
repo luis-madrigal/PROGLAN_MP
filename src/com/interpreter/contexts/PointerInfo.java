@@ -7,7 +7,7 @@ public class PointerInfo implements  GenericInfo<PointerInfo>{
     private SymbolContext pointee;
     private ContextType pointsToCtxType;
     private String pointsToType;
-    private Operand pointsToOp;
+    private Object pointsToObj;
 
     public PointerInfo(String type){
         this.pointsToType = type.substring(0,type.indexOf('*'));
@@ -43,12 +43,12 @@ public class PointerInfo implements  GenericInfo<PointerInfo>{
 		this.pointsToType = pointsToType;
 	}
 
-	public Operand getPointsToOp() {
-		return pointsToOp;
+	public Object getPointsToObj() {
+		return pointsToObj;
 	}
 
-	public void setPointsToOp(Operand pointsToOp) {
-		this.pointsToOp = pointsToOp;
+	public void setPointsToObj(Object pointsToOp) {
+		this.pointsToObj = pointsToOp;
 	}
 
 }

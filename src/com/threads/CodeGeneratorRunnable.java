@@ -176,10 +176,13 @@ public class CodeGeneratorRunnable implements Runnable {
 				ctx.setValue(argCtx.getValue());
 			} else {
 				if(this.isPointer(ctx)) {
-					PointerInfo p = (PointerInfo) ctx.getOther();
-					if(args[i] instanceof Operand) {
-						p.setPointsToOp((Operand)args[i]);
-					}
+					PointerInfo p = new PointerInfo(ctx.getSymbolType());
+//					if(args[i] instanceof Operand) {
+//						System.out.println("AMOPERAND");
+//						p.setPointsToOp((Operand)args[i]);
+//					}
+					p.setPointsToObj(args[i]);
+					ctx.setOther(p);
 				}
 				methodScope.findVar(fnArgs.get(i)).setValue(args[i]);
 			}
@@ -377,7 +380,9 @@ public class CodeGeneratorRunnable implements Runnable {
 //					if(aStmt.getValue().getOperandType() == OperandTypes.VARIABLE) { //pointer assigned should be variable
 					System.out.println("POINTER ASSIGN: "+aStmt.getValue().toString());
 //						SymbolContext assignCtx = this.currentScope.findVar(aStmt.getValue().toString());
-					if(this.isPointer(assignCtx)) {
+					if(assignCtx == null) {
+						ptrInf.getPointee().setValue(this.getValue(registers, aStmt.getValue()));
+					} else if(this.isPointer(assignCtx)) {
 						System.out.println(assignCtx.getOther());
 						sctx.setOther(assignCtx.getOther());
 					} else {
@@ -400,8 +405,8 @@ public class CodeGeneratorRunnable implements Runnable {
 					}
 				} else if(assignCtx != null && this.isPointer(assignCtx)) {
 					PointerInfo pInfo = (PointerInfo) assignCtx.getOther();
-					if(pInfo != null && pInfo.getPointsToOp() != null)
-						sctx.setValue(pInfo.getPointsToOp().getValue());
+					if(pInfo != null && pInfo.getPointsToObj() != null)
+						sctx.setValue(pInfo.getPointsToObj());
 //					this.currentScope.getSymTable().put(sctx.getIdentifier(), pInfo.getPointee());
 				} else
 					sctx.setValue(this.getValue(registers, aStmt.getValue()));
