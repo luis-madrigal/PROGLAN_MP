@@ -587,7 +587,7 @@ outputStatement
 	;
 
 inputStatement
-	:	SCAN typeType? SCANTO variableDeclaratorId
+	:	SCAN SCANTO variableDeclaratorId
 	;
 
 // EXPRESSIONS
