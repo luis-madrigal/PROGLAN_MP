@@ -542,7 +542,7 @@ public class BaseListener extends ManuScriptBaseListener{
 					//literal or expression
 					String type = this.expressionCheck(ectx);
 					System.out.println("check:"+type);
-					if(!this.regexComparison(mcx.getArgTypes().get(i),type))
+					if(!this.regexComparison(mcx.getArgTypes().get(i).replace("*", ""),type))
 						SemanticErrors.throwError(SemanticErrors.TYPE_MISMATCH, ectxLineNum, ectxCharPosAtLine, mcx.getArgTypes().get(i));
 				}
 				i++;
@@ -1085,7 +1085,7 @@ public class BaseListener extends ManuScriptBaseListener{
 	}
 	
 	private boolean regexComparison(String val, String regex) {
-		String reg = regex.replace("*", "\\*").replace("[", "\\[").replace("]", "\\]");
+		String reg = regex.replace("*", "").replace("[", "\\[").replace("]", "\\]");
 		
 		return val.matches(reg);
 	}
@@ -1114,16 +1114,30 @@ public class BaseListener extends ManuScriptBaseListener{
 //			return false;
 		if(type1.equals(type2))
 			return true;
-
+		
 		String t1WOpointer = type1.replace("*", "");
-		System.out.println(t1WOpointer+"~~~~~~~~~~~~~~~~~~"+type2);
-		if(t1WOpointer.equals(type2)) //if type1 without '*' equal to type2
+		String t2WOpointer = type2.replace("*", "");
+		
+		System.out.println(t1WOpointer+"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"+t2WOpointer);
+		
+		if(this.regexComparison(t1WOpointer, t2WOpointer))
+			return true;
+		if(this.regexComparison(t1WOpointer, t2WOpointer))
 			return true;
 
-		String t2WOpointer = type2.replace("*", "");
-		System.out.println(t2WOpointer+"~~~~~~~~~~~~~~~~~~"+type1);
-		if(t2WOpointer.equals(type1)) //if type1 without '*' equal to type2
-			return true;
+//		String t1WOpointer = type1.replace("*", "");
+//		System.out.println(t1WOpointer+"~~~~~~~~~~~~~~~~~~"+type2);
+////		if(t1WOpointer.equals(type2)) //if type1 without '*' equal to type2
+////			return true;
+//		if(this.regexComparison(t1WOpointer, type2))
+//			return true;
+//
+//		String t2WOpointer = type2.replace("*", "");
+//		System.out.println(t2WOpointer+"~~~~~~~~~~~~~~~~~~"+type1);
+////		if(t2WOpointer.equals(type1)) //if type1 without '*' equal to type2
+////			return true;
+//		if(this.regexComparison(t2WOpointer, type2))
+//			return true;
 
 		return false;
 	}
