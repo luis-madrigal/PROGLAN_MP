@@ -21,14 +21,12 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
 
     private Scope curScope;
 
-    private ArrayList<Integer> levelIndexTracker;
     private ProcedureNode fieldDecNode;
-    private int lvlDepth;
-    private int lvlIndex;
-    private int nExitBlock;
     private Stack<Integer> listBreakpoints;
     private boolean isBreakpoint;
     private int triggeringLineNumber;
+    private Stack<Integer> indexTracker;
+    private Integer hold;
 
     private HashMap<String, ProcedureNode> methodASTTable;
 
@@ -36,12 +34,7 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
     public ASTBuildVisitor(Scope symbolTable, Stack<Integer> listBreakpoints){
         methodASTTable = new HashMap<String, ProcedureNode>();
         this.curScope = symbolTable;
-        this.levelIndexTracker = new ArrayList<>();
-        this.levelIndexTracker.add(0);
 //        System.out.println("init size: "+levelIndexTracker.size());
-        this.lvlIndex = 0;
-        this.lvlDepth = 0;
-        this.nExitBlock = 0;
         this.listBreakpoints = listBreakpoints;
         this.isBreakpoint = false;
         this.triggeringLineNumber = 0;
@@ -49,6 +42,9 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
         this.fieldDecNode = new ProcedureNode(null,"%FIELD");
         this.fieldDecNode.setNodeType(NodeType.FIELD_DEC);
         methodASTTable.put(this.fieldDecNode.procedureName,fieldDecNode);
+
+        this.indexTracker = new Stack<>();
+        this.hold = null;
     }
 
     public HashMap<String, ProcedureNode> getMethodASTTable() {
@@ -90,30 +86,18 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
 //    }
 
     private void exitBlock(){
-        curScope = curScope.getParent();    //go out
-        //this.levelIndexTracker.set(lvlDepth,++lvlIndex);    //sets next expected index
-        nExitBlock++;
-        if(nExitBlock >= 2){
-            nExitBlock = 0;
-            levelIndexTracker.set(lvlDepth , 0);
-        }
-        lvlDepth--;
-        System.out.println("newnextIndex#: "+ Arrays.deepToString(levelIndexTracker.toArray()));
-
+        curScope = curScope.getParent();
+        this.hold = indexTracker.pop();
     }
 
     private void enterBlock(){
-        nExitBlock = 0;
-        lvlIndex = this.levelIndexTracker.get(lvlDepth);
-        System.out.println("nextIndex#: "+ Arrays.deepToString(levelIndexTracker.toArray()));
-        System.out.println("Depth: "+lvlDepth+" ;block#: "+lvlIndex);
-        curScope = curScope.getChildren().get(lvlIndex);    //go deeper
-
-        this.levelIndexTracker.set(lvlDepth,++lvlIndex);    //sets next expected index
-        lvlDepth++;
-        if(lvlDepth >= this.levelIndexTracker.size())
-            this.levelIndexTracker.add(0);
-
+        if(this.hold == null)
+            indexTracker.push(0);
+        else{
+            indexTracker.push(this.hold+1);
+            this.hold = null;
+        }
+        curScope = curScope.getChildren().get(indexTracker.peek());
     }
 
     @Override
