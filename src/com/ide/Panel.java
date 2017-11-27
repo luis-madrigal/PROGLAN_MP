@@ -1113,12 +1113,16 @@ public class Panel implements CaretListener, Runnable, ActionListener, KeyListen
 		documentSplitPane.setDividerLocation(20);
 		documentSplitPane.revalidate();
 		documentSplitPane.repaint();
+		documentPane.revalidate();
+		documentPane.repaint();
 	}
 		
 	public void unfoldDoument() {
 		documentSplitPane.setDividerLocation(160);
 		documentSplitPane.revalidate();
 		documentSplitPane.repaint();
+		documentPane.revalidate();
+		documentPane.repaint();
 	}
 
 
