@@ -54,17 +54,14 @@ public class ArrayInfo implements GenericInfo<ArrayInfo>{
                 SemanticErrors.throwError(SemanticErrors.INVALID_DIMS, index.length, dims);
             } else {
                 Object cur = array;
-                for (int i : index) {
-                    if (i < Array.getLength(cur)) {
-                        cur = Array.get(cur, i);
+                for (int i = 0 ;i < index.length - 1; i++) {
+                    if (index[i] < Array.getLength(cur)) {
+                        cur = Array.get(cur, index[i]);
                     } else {
-                        //todo might not work properly -- no line number, charnumber
-                        SemanticErrors.throwError(SemanticErrors.OUT_OF_BOUNDS, i, Array.getLength(cur));
                         break set;
                     }
                 }
-
-                cur = toSet;
+                Array.set(cur,index[index.length-1],toSet);
             }
         }
     }
@@ -103,6 +100,10 @@ public class ArrayInfo implements GenericInfo<ArrayInfo>{
 
     public Object[] getArray() {
         return array;
+    }
+    
+    public void setArray(Object[] arr) {
+        this.array = arr;
     }
 
     @Override

@@ -18,6 +18,9 @@ import com.interpreter.modules.ExpressionEvaluator;
 import com.interpreter.modules.Reader;
 import com.interpreter.modules.Writer;
 import com.interpreter.tac.ICGenerator;
+import com.interpreter.tac.TACArrayAssignStatement;
+import com.interpreter.tac.TACArrayBlockStatement;
+import com.interpreter.tac.TACArrayDimsStatement;
 import com.interpreter.tac.TACAssignStatement;
 import com.interpreter.tac.TACBinaryOpStatement;
 import com.interpreter.tac.TACBlockStatement;
@@ -200,7 +203,8 @@ public class CodeGeneratorRunnable implements Runnable {
 	}
 	
 	private void exitBlock() {
-		this.currentScope = this.prevBlocks.pop();
+		this.prevBlocks.pop();
+		this.currentScope = this.prevBlocks.peek();
 	}
 	
 	private int evaluate(Scope methodScope, HashMap<String, Register> registers, TACStatement statement, int pointerCount) {
@@ -223,7 +227,37 @@ public class CodeGeneratorRunnable implements Runnable {
 			}
 			
 			pointerCount++;
-			break;			
+			break;		
+		case ARRAY_ASSIGN:
+			TACArrayAssignStatement asStmt = (TACArrayAssignStatement) statement;
+			if(this.labelMap.containsKey(ICGenerator.LABEL_ALIAS+(pointerCount-1))
+					&& this.labelMap.get(ICGenerator.LABEL_ALIAS+(pointerCount-1)).getType() == NodeType.ARRAY_BLOCK) {
+				System.out.println("ARRAY BLOCK");
+				this.setArrayBlockValues(methodScope, registers, asStmt);
+			}
+			else {
+				
+			}
+				
+			pointerCount++;
+			break;
+		case ARRAY_DIMS:
+			TACArrayDimsStatement adStmt = (TACArrayDimsStatement) statement;
+			Register r2 = new Register(OperandTypes.REGISTER, adStmt.getOutputRegister().getName());
+			r2.setValue(adStmt.getDims());
+			registers.put(r2.getName(), r2);
+			
+			pointerCount++;
+			break;
+		case ARRAY_BLOCK:
+			TACArrayBlockStatement abStmt = (TACArrayBlockStatement) statement;
+			Register r1 = new Register(OperandTypes.REGISTER, abStmt.getOutputRegister().getName());
+			r1.setValue(abStmt.getArr());
+			registers.put(r1.getName(), r1);
+			System.out.println(r1.getName()+"=================");
+			
+			pointerCount++;
+			break;
 		case FUNCTION_INVOKE: 
 			TACFuncInvokeStatement stmt = (TACFuncInvokeStatement) statement;
 //			this.currentMethod = stmt.getMethodName();
@@ -359,6 +393,24 @@ public class CodeGeneratorRunnable implements Runnable {
 		}
 		
 		return pointerCount;
+	}
+	
+	private void setArrayBlockValues(Scope methodScope, HashMap<String, Register> registers, TACArrayAssignStatement stmt) {
+		SymbolContext sctx = methodScope.checkTables(stmt.getArrName());
+		ArrayInfo arInf = (ArrayInfo) sctx.getOther();
+		Register r = registers.get(stmt.getValue());
+		System.out.println(registers.containsKey(stmt.getValue()));
+		Object val = this.getValue(registers, stmt.getValue());
+//		val = this.getValue(registers, val);
+		
+//		Object[][] arr = (Object[][]) val;
+//		
+//		System.out.println("------------------");
+//		for(int i = 0; i < arr.length; i++) {
+//			for(int j = 0; j < arr[i].length; j++)
+//				System.out.println(arr[i][j]);
+//		}
+//		System.out.println("------------------");
 	}
 	
 	
