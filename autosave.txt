@@ -1,19 +1,23 @@
 
-ACT generateFibo starring (int number) {
-	if(number == 1 || number == 2) {
-		give 1;
+ACT bubbleSort starring (int[] arr, int len) {
+	replay ( int i = 0; i < len-1; i++) {
+		replay ( int j = 0; j < len-i-1; j++) {
+			if ( arr[j] > arr[j+1] ) {
+				int temp = arr[j];
+				arr[j] = arr[j+1];
+				arr[j+1] = temp;
+			}
+		}
 	}
 
-	give generateFibo(number-1)+generateFibo(number-2);
+	give arr;
 }
 
-ACT main starring () {
-	int x;
-	int fibo;
 
-	Say "Enter a number: ";
-	Write to x;
-
-	fibo = generateFibo(x);
-	Say "Fibonacci Number "+x+": "+fibo;
+ACT main starring ()  {
+	int[] toSort = new int[] {1, 10, 9, 8, 3, 5, 6, 1, 4, 6};
+	toSort = bubbleSort(toSort, 10);
+	replay (int i = 0; i < 10; i++) {
+		Say toSort[i];
+	}
 }

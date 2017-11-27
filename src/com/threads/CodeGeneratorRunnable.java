@@ -378,13 +378,13 @@ public class CodeGeneratorRunnable implements Runnable {
 				} else if (this.isArray(sctx) || this.isStruct(sctx)) {
 					Object val = this.getValue(registers, aStmt.getValue());
 					if(val instanceof SymbolContext) {//this gets the array returned
-						System.out.println("GET RETURNED ARRAY");
-						this.currentScope.getSymTable().put(v.getAlias(), (SymbolContext) val);
-						sctx = (SymbolContext) val;
+//						System.out.println("GET RETURNED ARRAY");
+						this.currentScope.getSymTable().put(v.getAlias(), Cloner.standard().deepClone((SymbolContext)val));
+//						sctx = (SymbolContext) val;
 					}
-				} else {
+				} else
 					sctx.setValue(this.getValue(registers, aStmt.getValue()));
-				}
+				
 			}
 
 //			this.currentScope.findVar(aStmt.getVariable().getAlias()).setValue(this.getValue(registers, aStmt.getValue()));
