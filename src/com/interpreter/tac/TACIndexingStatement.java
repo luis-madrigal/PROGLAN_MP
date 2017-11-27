@@ -1,17 +1,19 @@
 package com.interpreter.tac;
 
+import java.util.ArrayList;
+
 import com.interpreter.AST.NodeType;
 import com.interpreter.tac.operands.Operand;
 
 public class TACIndexingStatement extends TACOutputStatement {
 	
 	private String arrayName;
-	private Operand index;
+	private ArrayList<Operand> indeces;
 
-	public TACIndexingStatement(NodeType type, String arrayName, Operand index, boolean isBreakpoint) {
+	public TACIndexingStatement(NodeType type, String arrayName, boolean isBreakpoint) {
 		super(type, isBreakpoint);
 		this.arrayName = arrayName;
-		this.index = index;
+		this.indeces = new ArrayList<>();
 	}
 
 	public String getArrayName() {
@@ -22,16 +24,20 @@ public class TACIndexingStatement extends TACOutputStatement {
 		this.arrayName = arrayName;
 	}
 
-	public Operand getIndex() {
-		return index;
-	}
-
-	public void setIndex(Operand index) {
-		this.index = index;
+	public void addIndex(Operand op) {
+		this.indeces.add(op);
 	}
 	
+	public ArrayList<Operand> getIndeces() {
+		return indeces;
+	}
+
 	public String toString() {
-		return super.toString() + this.arrayName + "[" + this.index.toString() + "]";
+		String str = super.toString() + this.arrayName;
+		for (Operand index : indeces) {
+			str = str.concat("[" + index.toString() + "]");
+		}
+		return str;
 	}
 
 }

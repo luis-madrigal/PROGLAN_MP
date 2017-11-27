@@ -14,6 +14,7 @@ import com.interpreter.contexts.ArrayInfo;
 import com.interpreter.contexts.ContextType;
 import com.interpreter.contexts.MethodContext;
 import com.interpreter.contexts.PointerInfo;
+import com.interpreter.contexts.StructInfo;
 import com.interpreter.contexts.SymbolContext;
 import com.interpreter.matchers.LiteralMatcher;
 import com.interpreter.modules.ExpressionEvaluator;
@@ -37,9 +38,11 @@ import com.interpreter.tac.TACReturnStatement;
 import com.interpreter.tac.TACScanStatement;
 import com.interpreter.tac.TACStatement;
 import com.interpreter.tac.TACUnaryOpStatement;
+import com.interpreter.tac.operands.ArrayAccess;
 import com.interpreter.tac.operands.Operand;
 import com.interpreter.tac.operands.OperandTypes;
 import com.interpreter.tac.operands.Register;
+import com.interpreter.tac.operands.StructAccess;
 import com.interpreter.tac.operands.Variable;
 import com.rits.cloning.Cloner;
 import com.utils.Console;
@@ -178,8 +181,7 @@ public class CodeGeneratorRunnable implements Runnable {
 			if(isPlay) {
 				pnlParent.changeToInactive();
 				stmt = this.labelMap.get(pointer);
-				// TODO
-//				Panel.printWatch("evaluating: "+pointer);
+				Panel.printWatch("evaluating: "+pointer);
 				pointerCount = this.evaluate(methodScope, registers, stmt, pointerCount);
 				pointer = ICGenerator.LABEL_ALIAS+pointerCount;
 				
@@ -230,7 +232,6 @@ public class CodeGeneratorRunnable implements Runnable {
 			this.isPlay = false;
 //			return pointerCount++;
 		}
-		
 		switch (statement.getType()) {
 		
 		case BLOCK:
@@ -274,7 +275,7 @@ public class CodeGeneratorRunnable implements Runnable {
 			Register r1 = new Register(OperandTypes.REGISTER, abStmt.getOutputRegister().getName());
 			r1.setValue(abStmt.getArr());
 			registers.put(r1.getName(), r1);
-			System.out.println(r1.getName()+"=================");
+//			System.out.println(r1.getName()+"=================");
 			
 			pointerCount++;
 			break;
@@ -312,26 +313,50 @@ public class CodeGeneratorRunnable implements Runnable {
 			break;
 		case ASSIGN:
 			TACAssignStatement aStmt = (TACAssignStatement) statement;
-			SymbolContext sctx = this.currentScope.findVar(aStmt.getVariable().getAlias());
 			
-			//if its type is a pointer TODO: also include for structs and arrays
-			if(this.isPointer(sctx)) {
-				PointerInfo ptrInf = (PointerInfo) sctx.getOther();
-				if(aStmt.getValue().getOperandType() == OperandTypes.VARIABLE) { //pointer assigned should be variable
-					System.out.println("POINTER ASSIGN: "+aStmt.getValue().toString());
-					SymbolContext assignCtx = this.currentScope.findVar(aStmt.getValue().toString());
-					if(this.isPointer(assignCtx)) {
-						sctx.setOther(assignCtx.getOther());
-					} else {
-						ptrInf.setPointee(assignCtx);
-						ptrInf.setPointsToCtxType(assignCtx.getCtxType());
-						ptrInf.setPointsToType(assignCtx.getSymbolType());
-					}
-					
+			if(aStmt.getOperand().getOperandType() == OperandTypes.ARR_ACCESS) {
+				ArrayAccess a = (ArrayAccess) aStmt.getOperand();
+				SymbolContext sctx = this.currentScope.findVar(a.getAlias());
+				ArrayInfo arInf = (ArrayInfo) sctx.getOther();
+				
+				int[] indeces = new int[arInf.getDims()];
+				for(int i = 0; i < indeces.length; i++) {
+					indeces[i] = Integer.parseInt(this.getValue(registers, a.getIndeces().get(i)).toString());
 				}
-//				sctx.setValue(this.getValue(registers, aStmt.getValue()));
-			} else {
+				
+				arInf.setObject(this.getValue(registers, aStmt.getValue()), indeces);
+			} else if(aStmt.getOperand().getOperandType() == OperandTypes.STRUCT_ACCESS) {
+				StructAccess s= (StructAccess) aStmt.getOperand();
+				SymbolContext sctx = this.currentScope.findVar(s.getAlias());
+				StructInfo sInf = (StructInfo) sctx.getOther();
+				
+				for(int i = 0; i < s.getVars().size(); i++) {
+					sctx = sInf.getMember(s.getVars().get(i).getAlias());
+				}
+				
 				sctx.setValue(this.getValue(registers, aStmt.getValue()));
+			} else if(aStmt.getOperand().getOperandType() == OperandTypes.VARIABLE) {
+				Variable v = (Variable) aStmt.getOperand();
+				SymbolContext sctx = this.currentScope.findVar(v.getAlias());
+				
+				//if its type is a pointer TODO: also include for structs
+				if(this.isPointer(sctx)) {
+					PointerInfo ptrInf = (PointerInfo) sctx.getOther();
+					if(aStmt.getValue().getOperandType() == OperandTypes.VARIABLE) { //pointer assigned should be variable
+						System.out.println("POINTER ASSIGN: "+aStmt.getValue().toString());
+						SymbolContext assignCtx = this.currentScope.findVar(aStmt.getValue().toString());
+						if(this.isPointer(assignCtx)) {
+							sctx.setOther(assignCtx.getOther());
+						} else {
+							ptrInf.setPointee(assignCtx);
+							ptrInf.setPointsToCtxType(assignCtx.getCtxType());
+							ptrInf.setPointsToType(assignCtx.getSymbolType());
+						}
+						
+					}
+				} else {
+					sctx.setValue(this.getValue(registers, aStmt.getValue()));
+				}
 			}
 
 //			this.currentScope.findVar(aStmt.getVariable().getAlias()).setValue(this.getValue(registers, aStmt.getValue()));
@@ -409,7 +434,8 @@ public class CodeGeneratorRunnable implements Runnable {
 					Register rb = binOp.getOutputRegister();
 					registers.put(rb.getName(), rb);
 					registers.get(rb.getName()).setValue(this.binOpEval(registers, binOp.getOperator(), binOp.getOperand1(), binOp.getOperand2())); 
-					System.out.println(registers.get(rb.getName()).getValue());break;
+//					System.out.println(registers.get(rb.getName()).getValue());
+					break;
 				case UNIPRE_ARITHMETIC:
 				case UNIPOST_ARITHMETIC:
 				case UNI_LOGIC:
@@ -417,16 +443,20 @@ public class CodeGeneratorRunnable implements Runnable {
 					Register rb1 = unOp.getOutputRegister();
 					registers.put(rb1.getName(), rb1);
 					registers.get(rb1.getName()).setValue(this.unOpEval(registers, unOp.getOperator(), unOp.getOperand1())); break;
-				case ARRAY_ACCESS:
-					TACIndexingStatement iOp = (TACIndexingStatement) statement;
-					Register rb2 = iOp.getOutputRegister();
-					SymbolContext iCtx = this.currentScope.findVar(iOp.getArrayName());
-					ArrayInfo info = (ArrayInfo) iCtx.getOther();
-					
-					registers.put(rb2.getName(), rb2);
-					registers.get(rb2.getName()).setValue(info.getObject(Integer.parseInt(this.getValue(registers, iOp.getIndex()).toString())));
-					pointerCount++;
-					break;
+//				case ARRAY_ACCESS:
+//					TACIndexingStatement iOp = (TACIndexingStatement) statement;
+//					Register rb2 = iOp.getOutputRegister();
+//					SymbolContext iCtx = this.currentScope.findVar(iOp.getArrayName());
+//					ArrayInfo info = (ArrayInfo) iCtx.getOther();
+//					
+//					int[] indeces = new int[info.getDims()];
+//					for(int i = 0; i < indeces.length; i++) {
+//						indeces[i] = Integer.parseInt(this.getValue(registers, iOp.getIndeces().get(i)).toString());
+//					}
+//					System.out.println(info.getObject(indeces)+"------------");
+//					registers.put(rb2.getName(), rb2);
+//					registers.get(rb2.getName()).setValue(info.getObject(indeces));
+//					break;
 				default:
 					break;
 				}
@@ -563,6 +593,27 @@ public class CodeGeneratorRunnable implements Runnable {
 			}
 			Object valueClone = Cloner.standard().deepClone(ctx.getValue());
 			return valueClone;
+		case ARR_ACCESS:
+			ArrayAccess a = (ArrayAccess) operand;
+			SymbolContext aCtx = this.currentScope.findVar(a.getAlias());
+			ArrayInfo arInfo = (ArrayInfo) aCtx.getOther();
+			
+			int[] indeces = new int[arInfo.getDims()];
+			for(int i = 0; i < indeces.length; i++) {
+				indeces[i] = Integer.parseInt(this.getValue(registers, a.getIndeces().get(i)).toString());
+			}
+			
+			return arInfo.getObject(indeces);
+		case STRUCT_ACCESS:
+			StructAccess s = (StructAccess) operand;
+			SymbolContext sCtx = this.currentScope.findVar(s.getAlias());
+			StructInfo sInfo = (StructInfo) sCtx.getOther();
+			
+			for(int i = 0; i < s.getVars().size(); i++) {
+				sCtx = sInfo.getMember(s.getVars().get(i).getAlias());
+			}
+			
+			return sCtx.getValue();
 		default:
 			return null;
 		}
