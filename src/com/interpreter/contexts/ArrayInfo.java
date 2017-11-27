@@ -26,25 +26,27 @@ public class ArrayInfo implements GenericInfo<ArrayInfo>{
     }
 
     public Object getObject(int ... index){
-        if(isInitialized) {
-            get: if (index.length != dims) {
-                //todo might not work properly -- no line number, charnumber
-                SemanticErrors.throwError(SemanticErrors.INVALID_DIMS, index.length, dims);
-                return null;
-            } else {
-                Object cur = array;
-                for (int i : index) {
-                    if (i < Array.getLength(cur)) {
-                        cur = Array.get(cur, i);
-                    } else {
-                        //todo might not work properly -- no line number, charnumber
-                        SemanticErrors.throwError(SemanticErrors.OUT_OF_BOUNDS, i, Array.getLength(cur));
-                        break get;
+            if (isInitialized) {
+                get:
+                if (index.length != dims) {
+                    //todo might not work properly -- no line number, charnumber
+                    SemanticErrors.throwErrorNoInfo(SemanticErrors.INVALID_DIMS_NINFO, index.length, dims);
+                    return null;
+                } else {
+                    Object cur = array;
+                    for (int i : index) {
+                        if (i < Array.getLength(cur)) {
+                            cur = Array.get(cur, i);
+                        } else {
+                            //todo might not work properly -- no line number, charnumber
+                            SemanticErrors.throwErrorNoInfo(SemanticErrors.OUT_OF_BOUNDS, i, Array.getLength(cur));
+                            break get;
+                        }
                     }
+                    return cur;
                 }
-                return cur;
             }
-        }
+
         return null;
     }
 
@@ -52,11 +54,12 @@ public class ArrayInfo implements GenericInfo<ArrayInfo>{
         if(isInitialized) {
             set:
             if (index.length != dims) {
-                SemanticErrors.throwError(SemanticErrors.INVALID_DIMS, index.length, dims);
+                SemanticErrors.throwErrorNoInfo(SemanticErrors.INVALID_DIMS_NINFO, index.length, dims);
             } else {
                 Object cur = array;
                 for (int i = 0 ;i < index.length - 1; i++) {
                     if (index[i] < Array.getLength(cur)) {
+                        SemanticErrors.throwErrorNoInfo(SemanticErrors.OUT_OF_BOUNDS, i, Array.getLength(cur));
                         cur = Array.get(cur, index[i]);
                     } else {
                         break set;

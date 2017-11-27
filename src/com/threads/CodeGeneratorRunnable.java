@@ -59,7 +59,6 @@ public class CodeGeneratorRunnable implements Runnable {
 	private HashMap<String, TACStatement> labelMap;
 	private HashMap<String, Register> registers;
 	private HashMap<String, Scope> variables;
-	private Scope parentScope;
 	private Scope globalScope;
 	private Scope currentScope;
 	private Stack<Scope> prevBlocks;
@@ -162,14 +161,29 @@ public class CodeGeneratorRunnable implements Runnable {
 		
 		ArrayList<String> fnArgs = this.methodTable.get(methodName).getArgs();
 		for(int i = 0; i < args.length; i++) {
+			SymbolContext ctx = methodScope.findVar(fnArgs.get(i));
 			if(args[i] instanceof SymbolContext) {
 				SymbolContext argCtx = (SymbolContext) args[i];
-				SymbolContext ctx = methodScope.findVar(fnArgs.get(i));
 				if(argCtx.getCtxType() != ContextType.NORMAL) {
 					ctx.setOther(argCtx.getOther());
 				} 
+				if(ctx.getCtxType() == ContextType.POINTER) {
+					PointerInfo p = (PointerInfo) ctx.getOther();
+					p.setPointee(argCtx);
+					ctx.setOther(p);
+					System.out.println("pointer argument");
+				}
 				ctx.setValue(argCtx.getValue());
 			} else {
+				if(this.isPointer(ctx)) {
+					PointerInfo p = new PointerInfo(ctx.getSymbolType());
+//					if(args[i] instanceof Operand) {
+//						System.out.println("AMOPERAND");
+//						p.setPointsToOp((Operand)args[i]);
+//					}
+					p.setPointsToObj(args[i]);
+					ctx.setOther(p);
+				}
 				methodScope.findVar(fnArgs.get(i)).setValue(args[i]);
 			}
 		}
@@ -180,6 +194,7 @@ public class CodeGeneratorRunnable implements Runnable {
 //		System.out.println("METHSCOP "+methodScope.printString());
 		do {
 			if(isPlay) {
+				System.out.println(pointer);
 				pnlParent.changeToInactive();
 				stmt = this.labelMap.get(pointer);
 				Panel.printWatch("evaluating: "+pointer);
@@ -305,16 +320,20 @@ public class CodeGeneratorRunnable implements Runnable {
 				if(stmt.getParams().get(i) instanceof Variable) {
 					Variable var = (Variable) stmt.getParams().get(i);
 					SymbolContext ctx = this.currentScope.findVar(var.getAlias());
-					if(this.isPointer(ctx) || this.isStruct(ctx) || this.isArray(ctx))
-						params[i] = Cloner.standard().deepClone(ctx);
-					else
-						params[i] = this.getValue(registers, stmt.getParams().get(i));
+//					if(this.isPointer(ctx) || this.isStruct(ctx) || this.isArray(ctx))
+//						params[i] = Cloner.standard().deepClone(ctx);
+//					else
+//						params[i] = this.getValue(registers, stmt.getParams().get(i));
+					params[i] = ctx;
 				} else {
 					params[i] = this.getValue(registers, stmt.getParams().get(i));
 				}
 			}
 			
 			Object value = this.run(stmt.getMethodName(), params); 
+			if(value instanceof SymbolContext) {
+				System.out.println("amasymbolcontext");
+			}
 //			System.out.println(value);
 			r.setValue(value);
 			registers.put(r.getName(), r);
@@ -353,28 +372,45 @@ public class CodeGeneratorRunnable implements Runnable {
 			} else if(aStmt.getOperand().getOperandType() == OperandTypes.VARIABLE) {
 				Variable v = (Variable) aStmt.getOperand();
 				SymbolContext sctx = this.currentScope.findVar(v.getAlias());
+				SymbolContext assignCtx = this.currentScope.findVar(aStmt.getValue().toString());
 				
 				//if its type is a pointer TODO: also include for structs
 				if(this.isPointer(sctx)) {
 					PointerInfo ptrInf = (PointerInfo) sctx.getOther();
-					if(aStmt.getValue().getOperandType() == OperandTypes.VARIABLE) { //pointer assigned should be variable
-						System.out.println("POINTER ASSIGN: "+aStmt.getValue().toString());
-						SymbolContext assignCtx = this.currentScope.findVar(aStmt.getValue().toString());
-						if(this.isPointer(assignCtx)) {
-							sctx.setOther(assignCtx.getOther());
-						} else {
-							ptrInf.setPointee(assignCtx);
-							ptrInf.setPointsToCtxType(assignCtx.getCtxType());
-							ptrInf.setPointsToType(assignCtx.getSymbolType());
-						}
-						
+//					if(aStmt.getValue().getOperandType() == OperandTypes.VARIABLE) { //pointer assigned should be variable
+					System.out.println("POINTER ASSIGN: "+aStmt.getValue().toString());
+//						SymbolContext assignCtx = this.currentScope.findVar(aStmt.getValue().toString());
+					if(assignCtx == null) {
+						ptrInf.getPointee().setValue(this.getValue(registers, aStmt.getValue()));
+					} else if(this.isPointer(assignCtx)) {
+						System.out.println(assignCtx.getOther());
+						sctx.setOther(assignCtx.getOther());
 					} else {
-						SymbolContext assignCtx = ptrInf.getPointee();
-						assignCtx.setValue(this.getValue(registers, aStmt.getValue()));
+						ptrInf.setPointee(assignCtx);
+						ptrInf.setPointsToCtxType(assignCtx.getCtxType());
+						ptrInf.setPointsToType(assignCtx.getSymbolType());
 					}
-				} else {
+						
+//					} 
+//					else {
+//						SymbolContext assignCtx = ptrInf.getPointee();
+//						assignCtx.setValue(this.getValue(registers, aStmt.getValue()));
+//					}
+				} else if (this.isArray(sctx) || this.isStruct(sctx)) {
+					Object val = this.getValue(registers, aStmt.getValue());
+					if(val instanceof SymbolContext) {//this gets the array returned
+//						System.out.println("GET RETURNED ARRAY");
+						this.currentScope.getSymTable().put(v.getAlias(), Cloner.standard().deepClone((SymbolContext)val));
+//						sctx = (SymbolContext) val;
+					}
+				} else if(assignCtx != null && this.isPointer(assignCtx)) {
+					PointerInfo pInfo = (PointerInfo) assignCtx.getOther();
+					if(pInfo != null && pInfo.getPointsToObj() != null)
+						sctx.setValue(pInfo.getPointsToObj());
+//					this.currentScope.getSymTable().put(sctx.getIdentifier(), pInfo.getPointee());
+				} else
 					sctx.setValue(this.getValue(registers, aStmt.getValue()));
-				}
+				
 			}
 
 //			this.currentScope.findVar(aStmt.getVariable().getAlias()).setValue(this.getValue(registers, aStmt.getValue()));
@@ -596,17 +632,17 @@ public class CodeGeneratorRunnable implements Runnable {
 		case REGISTER:
 			Register r = (Register) operand;
 			Object value = registers.get(r.getName()).getValue();
-			if(value instanceof SymbolContext) {//TODO: never ata papsok
-				SymbolContext sctx = this.currentScope.findVar(r.getName());
-				if(this.isPointer(sctx)) {//if pointer
-					PointerInfo ptrInf = (PointerInfo) sctx.getOther();
-					return ptrInf.getPointee().getValue();
-				} else if(this.isArray(sctx)) {//if array
-					return sctx;
-				} else if(this.isStruct(sctx)) {
-					return sctx;
-				}
-			}
+//			if(value instanceof SymbolContext) {//TODO: never ata papsok
+//				SymbolContext sctx = this.currentScope.findVar(r.getName());
+//				if(this.isPointer(sctx)) {//if pointer
+//					PointerInfo ptrInf = (PointerInfo) sctx.getOther();
+//					return ptrInf.getPointee().getValue();
+//				} else if(this.isArray(sctx)) {//if array
+//					return sctx;
+//				} else if(this.isStruct(sctx)) {
+//					return sctx;
+//				}
+//			}
 			return value;
 		case LITERAL:
 			return operand.getValue();

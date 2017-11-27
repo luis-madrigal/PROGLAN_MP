@@ -115,8 +115,8 @@ public class ScannerModel {
 			this.astbv = new ASTBuildVisitor(scope, listBreakpoints);
 			astbv.visit(tree);
 			if(astbv.getMethodASTTable().containsKey("main")) {
-				astbv.printAST("main");
-				
+//				astbv.printAST("main");
+				astbv.printAllAST();
 				this.stopThread();
 					
 				this.runnableCodeGenerator = new CodeGeneratorRunnable(this.pnlParent, this.astbv, methodTable);
