@@ -237,7 +237,7 @@ public class DialogWatch extends JDialog implements MouseListener {
 		gbc.anchor = GridBagConstraints.NORTHWEST;
 		gbc.fill = GridBagConstraints.BOTH;
 		gbc.weightx = 1;
-		gbc.weighty = 0.1;
+		gbc.weighty = 0.9;
 		JSeparator mainSep = this.initSeparatorHorizontal();
 		mainSep.setBackground(Color.WHITE);
 		this.paneWatch.add(mainSep, gbc);
