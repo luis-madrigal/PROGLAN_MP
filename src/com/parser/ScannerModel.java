@@ -24,6 +24,7 @@ import org.antlr.v4.runtime.dfa.DFA;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
+import com.debug.watch.VariableNode;
 import com.ide.Panel;
 import com.interpreter.BaseListener;
 import com.interpreter.Scope;
@@ -53,7 +54,7 @@ public class ScannerModel {
 		this.pnlParent = pnlParent;
 	}
 	
-	public String getTokens(String input, Stack<Integer> listBreakpoints) {
+	public String getTokens(String input, Stack<Integer> listBreakpoints, ArrayList<VariableNode> varList) {
 		ANTLRInputStream istream = new ANTLRInputStream(input);
 		
 		message = "";
@@ -106,20 +107,21 @@ public class ScannerModel {
 		
 		Scope scope = new Scope(null); //scope of program. contains the symbol tables
 		this.methodTable = new HashMap<String, MethodContext>(); //the methods in the program. no overloading
-		
-		ParseTreeWalker.DEFAULT.walk(new BaseListener(scope, methodTable), this.tree);
+
+		BaseListener baseListen = new BaseListener(scope, methodTable);
+		ParseTreeWalker.DEFAULT.walk(baseListen, this.tree);
 		
 		if(Console.instance().errorCount == 0) {
 			scope.print();
 			
-			this.astbv = new ASTBuildVisitor(scope, listBreakpoints);
+			this.astbv = new ASTBuildVisitor(scope, baseListen.getMethodTable(), listBreakpoints);
 			astbv.visit(tree);
 			if(astbv.getMethodASTTable().containsKey("main")) {
 //				astbv.printAST("main");
 				astbv.printAllAST();
 				this.stopThread();
 					
-				this.runnableCodeGenerator = new CodeGeneratorRunnable(this.pnlParent, this.astbv, methodTable);
+				this.runnableCodeGenerator = new CodeGeneratorRunnable(this.pnlParent, this.astbv, methodTable, varList);
 				this.threadCodeGenerator = new Thread(runnableCodeGenerator);
 				threadCodeGenerator.start();
 			} else

@@ -29,6 +29,7 @@ import com.parser.ManuScriptParser.MethodBodyContext;
 import com.parser.ManuScriptParser.MultDivModExprContext;
 import com.parser.ManuScriptParser.NegationExprContext;
 import com.parser.ManuScriptParser.OrExprContext;
+import com.parser.ManuScriptParser.OutputStatementContext;
 import com.parser.ManuScriptParser.ParExpressionContext;
 import com.parser.ManuScriptParser.PostIncDecExprContext;
 import com.parser.ManuScriptParser.PreIncDecSignExprContext;
@@ -47,18 +48,22 @@ public class BaseListener extends ManuScriptBaseListener{
 	private HashMap<String, MethodContext> methodTable;
 	private String currentMethod;
 	private HashMap<String, StructInfo> structDefTable;
-	
+
 	public BaseListener(Scope parentScope, HashMap<String, MethodContext> methodTable) {
 		this.scopes = new Stack<Scope>();
 		this.scopes.push(parentScope);
 		this.methodTable = methodTable;
 		this.structDefTable = new HashMap<>();
 	}
-	
+
 	public BaseListener() {
 		scopes = new Stack<Scope>();
 		scopes.push(new Scope(null));
 		methodTable = new HashMap<String, MethodContext>();
+	}
+
+	public HashMap<String, MethodContext> getMethodTable() {
+		return methodTable;
 	}
 
 	@Override public void enterBlock(ManuScriptParser.BlockContext ctx) {
@@ -101,11 +106,13 @@ public class BaseListener extends ManuScriptBaseListener{
 
 						ManuScriptParser.ArrayInitializerContext arInit = crCtx.arrayCreatorRest().arrayInitializer();
 						int height = getBlockHeight(arInit.getText());
-						if (height != dimCount)
+						if (height != dimCount) {
+							System.out.println("er 105");
 							SemanticErrors.throwError(SemanticErrors.ILLEGAL_INIT,
 									crCtx.arrayCreatorRest().arrayInitializer().getStart().getLine(),
 									crCtx.arrayCreatorRest().arrayInitializer().getStart().getCharPositionInLine(),
 									varType);
+						}
 						this.arrUniformityChecker(arInit, dimCount);
 						this.arrayInitCheck(arInit, arInf.getArrType());
 					} else {
@@ -127,14 +134,16 @@ public class BaseListener extends ManuScriptBaseListener{
 
 				}
 			} else {
-				if(vdi.arrayInitializer() != null){
+				if (vdi.arrayInitializer() != null) {
 					//checking if array init is of type = {1,2,32,4,21};
 					int height = getBlockHeight(vdi.arrayInitializer().getText());
-					if(dimCount != height)
+					if (dimCount != height) {
+						System.out.println("er 136");
 						SemanticErrors.throwError(SemanticErrors.ILLEGAL_INIT,
 								vdi.arrayInitializer().getStart().getLine(),
 								vdi.arrayInitializer().getStart().getCharPositionInLine(),
 								varType);
+					}
 //					else{
 //						for(ManuScriptParser.VariableInitializerContext varInit : vdi.arrayInitializer().variableInitializer()){
 //								String types = this.expressionCheck(varInit);
@@ -145,36 +154,63 @@ public class BaseListener extends ManuScriptBaseListener{
 //					}
 					this.arrayInitCheck(vdi.arrayInitializer(), arInf.getArrType());
 
-				}
-				else if(vdi.expression() instanceof PrimaryExprContext){
+				} else if (vdi.expression() instanceof PrimaryExprContext) {
 					//for derefencing other array variables
 					PrimaryContext primary = ((PrimaryExprContext) vdi.expression()).primary();
-					if(primary.equationExpr() != null) {
+					if (primary.equationExpr() != null) {
 						if (primary.equationExpr().Identifier() != null) {
 							SymbolContext symRight = scopes.peek().checkTables(primary.equationExpr().Identifier().getText());
 							if (symRight == null) {
-								SemanticErrors.throwError(SemanticErrors.UNDECLARED_VAR,primary.equationExpr().getStart().getLine(), primary.equationExpr().getStart().getCharPositionInLine(), primary.equationExpr().Identifier().getText());
+								SemanticErrors.throwError(SemanticErrors.UNDECLARED_VAR, primary.equationExpr().getStart().getLine(), primary.equationExpr().getStart().getCharPositionInLine(), primary.equationExpr().Identifier().getText());
 							} else {
 								if (!symRight.getSymbolType().equals(varType)) {
 									SemanticErrors.throwError(SemanticErrors.TYPE_MISMATCH, primary.equationExpr().getStart().getLine(), primary.equationExpr().getStart().getCharPositionInLine(), varType);
-								}else if(symRight.getOther() instanceof ArrayInfo)
-									return (ArrayInfo)symRight.getOther();
+								} else if (symRight.getOther() instanceof ArrayInfo)
+									return (ArrayInfo) symRight.getOther();
+							}
+						} else {
+							if(primary.equationExpr().structExpr() != null){
+								String structName = primary.equationExpr().structExpr().structName().getText();
+								SymbolContext sctx = getCurrentSymTable().get(structName);
+								StructInfo stInf;
+								ManuScriptParser.StructMemberContext smctx = primary.equationExpr().structExpr().structMember();
+								while(smctx != null){
+									System.out.println("loop");
+									stInf = (StructInfo) sctx.getOther();
+									sctx = stInf.getMember(smctx.Identifier().getText());
+									if(sctx == null)
+										break; //todo better implementation
+									smctx = smctx.structMember();
+								}
+
+								System.out.println("KEK "+sctx.getSymbolType());
+								if(sctx.getSymbolType().equals(varType)) {
+									arInf = (ArrayInfo) sctx.getOther();
+									return arInf;
+								}
+								else{
+									SemanticErrors.throwError(SemanticErrors.INVALID_INIT, primary.equationExpr().structExpr().getStart().getLine(), primary.equationExpr().structExpr().getStart().getCharPositionInLine());
+								}
+							}
+							else {
+								SemanticErrors.throwError(SemanticErrors.INVALID_INIT, primary.equationExpr().getStart().getLine(), primary.equationExpr().getStart().getCharPositionInLine());
+								System.out.println("invalid init 169");
 							}
 						}
-						else
-							SemanticErrors.throwError(SemanticErrors.INVALID_INIT,primary.equationExpr().getStart().getLine(), primary.equationExpr().getStart().getCharPositionInLine());
-					}
-					else
+					} else {
 						SemanticErrors.throwError(SemanticErrors.INVALID_INIT, primary.getStart().getLine(), primary.getStart().getCharPositionInLine());
-				}
-				else
+						System.out.println("invalid init 173");
+					}
+				} else {
 					SemanticErrors.throwError(SemanticErrors.INVALID_INIT, vdi.getStart().getLine(), vdi.getStart().getCharPositionInLine());
+					System.out.println("invalid init 176");
+				}
 			}
 		}
 
 		return arInf;
 	}
-	
+
 
 	@Override
 	public void enterStructDefinition(ManuScriptParser.StructDefinitionContext ctx) {
@@ -184,7 +220,7 @@ public class BaseListener extends ManuScriptBaseListener{
 			SemanticErrors.throwError(SemanticErrors.DUPLICATE_STRUCT, ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), name);
 		}
 		else {
-			
+
 			ArrayList<SymbolContext> members = new ArrayList<SymbolContext>();
 			for (ManuScriptParser.StructDeclarationContext strCtx : ctx.structDeclarationList().structDeclaration()) {
 				//declares new type
@@ -262,7 +298,7 @@ public class BaseListener extends ManuScriptBaseListener{
 		System.out.println("new method");
 
 		scopes.push(scope);
-		
+
 		if(ctx.formalParameters().formalParameterList() != null) {
 			//parameter semantic checking
 			for (FormalParameterContext fpctx : ctx.formalParameters().formalParameterList().formalParameter()) {
@@ -320,7 +356,7 @@ public class BaseListener extends ManuScriptBaseListener{
 			}
 		}
 	}
-	
+
 	@Override public void exitMethodDeclaration(ManuScriptParser.MethodDeclarationContext ctx) {
 		MethodContext mctx = methodTable.get(currentMethod);
 		if(mctx.getReturnType().equals(Types.NULL)) {
@@ -350,7 +386,7 @@ public class BaseListener extends ManuScriptBaseListener{
 		for (VariableDeclaratorContext vdctx : ctx.variableDeclarators().variableDeclarator()) {
 			//iterates through varname list (int a,b,...,z)
 			String varName = vdctx.variableDeclaratorId().getText();
-			
+
 			if (getCurrentSymTable().containsKey(varName)) {//CHECK FOR DUPLICATE VARNAME
 				SemanticErrors.throwError(SemanticErrors.DUPLICATE_VAR, ctx.getStart().getLine(),ctx.getStart().getCharPositionInLine(), varName);
 			}
@@ -428,6 +464,16 @@ public class BaseListener extends ManuScriptBaseListener{
 				else if (ctx.typeType().pointerType() != null) {	//declaration is pointer
 					PointerInfo ptrInf = new PointerInfo(varType);
 					symCtx.setOther(ptrInf);
+					if (vdctx.variableInitializer() != null) {
+						System.out.println("vinit");
+						String types = this.expressionCheck(vdctx.variableInitializer().expression());
+						if(!this.regexComparison(varType, types)) {
+							System.out.println("fault "+types);
+//							if(vdctx.variableInitializer().)
+							if(!this.regexComparison(varType.replace("*", ""), types))
+								SemanticErrors.throwError(SemanticErrors.VAR_ASSIGN_MISMATCH, vdctx.getStart().getLine(), vdctx.getStart().getCharPositionInLine(), varName, types);
+						}
+					}
 				}
 				else if (ctx.typeType().structType() != null) {	//declaration is of type struct
 					if (structDefTable.containsKey(ctx.typeType().structType().Identifier().getText())) {
@@ -455,15 +501,15 @@ public class BaseListener extends ManuScriptBaseListener{
 	}
 
 	@Override//TODO: possibly executing twice
-	public void enterAssignExpr(ManuScriptParser.AssignExprContext ctx) { 
+	public void enterAssignExpr(ManuScriptParser.AssignExprContext ctx) {
 		String varName = ctx.equationExpr().getText();
 		varName = varName.split("\\[")[0];//TODO: bad implementation
 		SymbolContext sctx;
 		System.out.println("assign expr");
-		
+
 		int lineNumStart = ctx.getStart().getLine();
 		int charNumStart = ctx.getStart().getCharPositionInLine();
-		
+
 		if((sctx = scopes.peek().checkTables(varName)) != null){
 //			String varType = sctx.getSymbolType();
 			if(sctx.isConstant())
@@ -475,12 +521,12 @@ public class BaseListener extends ManuScriptBaseListener{
 //						SemanticErrors.throwError(SemanticErrors.VAR_ASSIGN_MISMATCH, lineNumStart, charNumStart, varName, types);
 //				}
 			}
-		} 
+		}
 //	else {
 //			SemanticErrors.throwError(SemanticErrors.UNDECLARED_VAR, ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), varName);
 //		}
 //	}
-	
+
 	@Override
 	public void enterStatementExpression(ManuScriptParser.StatementExpressionContext ctx) {
 		this.expressionCheck(ctx.expression());
@@ -496,7 +542,8 @@ public class BaseListener extends ManuScriptBaseListener{
 		} else {
 			if(mctx.getReturnType().equals("void") && ctx.expression() != null) {
 				SemanticErrors.throwError(SemanticErrors.INVALID_RETURN_TYPE, ctx.getStart().getLine(), ctx.getStop().getCharPositionInLine(), currentMethod, mctx.getReturnType());
-			} else if(!mctx.getReturnType().equals(this.expressionCheck(ctx.expression()))) {
+			} else if(!this.regexComparison(this.expressionCheck(ctx.expression()),mctx.getReturnType())) {
+				System.out.println(!this.regexComparison(this.expressionCheck(ctx.expression()),mctx.getReturnType()));
 				SemanticErrors.throwError(SemanticErrors.INVALID_RETURN_TYPE, ctx.expression().getStart().getLine(), ctx.expression().getStop().getCharPositionInLine(), currentMethod, mctx.getReturnType());
 			}
 		}
@@ -532,7 +579,8 @@ public class BaseListener extends ManuScriptBaseListener{
 					System.out.println("IN SCOP");
 					SymbolContext varArg = scopes.peek().checkTables(arg);
 					//Existing variable. now check for type mismatch
-					if(!scopes.peek().checkTables(arg).getSymbolType().equals(mcx.getArgTypes().get(i).replace("*", "")))
+					System.out.println("argASD: "+arg);
+					if(!scopes.peek().checkTables(arg).getSymbolType().equals(mcx.getArgTypes().get(i)))
 						SemanticErrors.throwError(SemanticErrors.TYPE_MISMATCH, ectxLineNum, ectxCharPosAtLine, mcx.getArgTypes().get(i));
 				} else if(ectx instanceof PrimaryExprContext
 						&& ((PrimaryExprContext) ectx).primary().equationExpr() != null
@@ -558,7 +606,7 @@ public class BaseListener extends ManuScriptBaseListener{
 	
 	@Override
 	public void enterOutputStatement(ManuScriptParser.OutputStatementContext ctx) {
-		this.expressionCheck(ctx.expression());
+		this.expressionCheck(ctx);
 	}
 	
 	//not overriden. primary function is to assure no constant modification
@@ -689,6 +737,7 @@ public class BaseListener extends ManuScriptBaseListener{
 		SymbolContext sctx = null;
 		if(ctx.equationExpr().variableExpr() != null){
 			//if array[] = #NOT ALLOWED
+			System.out.println("invalid init 679");
 			SemanticErrors.throwError(SemanticErrors.INVALID_INIT,
 					ctx.equationExpr().variableExpr().getStart().getLine(),
 					ctx.equationExpr().variableExpr().getStart().getCharPositionInLine());
@@ -745,11 +794,13 @@ public class BaseListener extends ManuScriptBaseListener{
 
 					ManuScriptParser.ArrayInitializerContext arInit = crCtx.arrayCreatorRest().arrayInitializer();
 					int height = getBlockHeight(arInit.getText());
-					if (height != dimCount)
+					if (height != dimCount) {
+						System.out.println("er 734");
 						SemanticErrors.throwError(SemanticErrors.ILLEGAL_INIT,
 								crCtx.arrayCreatorRest().arrayInitializer().getStart().getLine(),
 								crCtx.arrayCreatorRest().arrayInitializer().getStart().getCharPositionInLine(),
 								varType);
+					}
 					this.arrUniformityChecker(arInit, dimCount);
 					this.arrayInitCheck(arInit, arInf.getArrType());
 				} else {
@@ -862,12 +913,16 @@ public class BaseListener extends ManuScriptBaseListener{
 		
 
 		SymbolContext sctx = scopes.peek().checkTables(structName);
+		if(!(sctx.getOther() instanceof StructInfo)){
+			SemanticErrors.throwError(SemanticErrors.STRUCT_INVALID_ACCESS, lineNum, charPos, structName);
+			return "null";
+		}
 
 		if(sctx == null) {
 			SemanticErrors.throwError(SemanticErrors.UNDECLARED_VAR, lineNum, charPos, structName);
 			return "null";
 		}
-		
+
 		return this.structMemberEval(ctx.structMember(), sctx);
 	}
 	
@@ -909,7 +964,11 @@ public class BaseListener extends ManuScriptBaseListener{
 		if(node.getChildCount() == 1) {
 			return this.getTypeOf(node.getChild(0));
 			
-		} else if(node instanceof ParExpressionContext) {
+		} else if(node instanceof  OutputStatementContext) {
+			ParserRuleContext pCtx = (ParserRuleContext) ((OutputStatementContext) node).expression();
+			System.out.println("OUTPUT");
+			return this.getExprReturnedType(pCtx.getStart().getLine(), pCtx.getStart().getCharPositionInLine(), OPERATOR.ADD, "string", this.getTypeOf(pCtx));
+		}else if(node instanceof ParExpressionContext) {
 			return this.getTypeOf(node.getChild(1));
 		} else if(node instanceof FunctionExprContext) {
 			System.out.println("ENTER FUNCTION CALL");
@@ -927,7 +986,7 @@ public class BaseListener extends ManuScriptBaseListener{
 		} else if(node instanceof PreIncDecSignExprContext) {
 			this.enterPreIncDecSignExpr(((PreIncDecSignExprContext) node));
 			return this.getExprReturnedType(((PreIncDecSignExprContext) node).getStart().getLine(), ((PreIncDecSignExprContext) node).getStart().getCharPositionInLine(), OPERATOR.getEnum(node.getChild(0)), this.getTypeOf(node.getChild(1)));
-		
+
 		} else if(node instanceof MultDivModExprContext
 				|| node instanceof AddSubExprContext
 				|| node instanceof ComparisonExprContext
@@ -1033,9 +1092,9 @@ public class BaseListener extends ManuScriptBaseListener{
 	private String getExprReturnedType(int lineNum, int charPos, OPERATOR operator, String type1, String type2) {
 		switch(operator) {
 		case ADD:
-			if(this.canBeOfType(type1, "string", "string*") && this.canBeOfType(type2, "string", "int", "char", "float", "string*", "int*", "char*", "float*"))
+			if(this.canBeOfType(type1, "string", "string*") && this.canBeOfType(type2, "string", "int", "char", "float", "string*", "int*", "char*", "float*","boolean"))
 				return type1;
-			if(this.canBeOfType(type1, "string", "int", "char", "float", "string*", "int*", "char*", "float*") && this.canBeOfType(type2, "string", "string*"))
+			if(this.canBeOfType(type1, "string", "int", "char", "float", "string*", "int*", "char*", "float*","boolean") && this.canBeOfType(type2, "string", "string*"))
 				return type2;
 		case SUB:
 		case MULT:
