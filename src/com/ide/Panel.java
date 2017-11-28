@@ -1239,11 +1239,13 @@ public class Panel implements CaretListener, Runnable, ActionListener, KeyListen
 
 	public void printVarList(ArrayList<VariableNode>  listVar) {
 //		this.listWatchVariables = this.dlgWatch.getSelectedVar();
-//		purgeWatchTab();
+		purgeWatchTab();
 		if(listVar != null && listVar.size() > 0) {
 			String strTab = "   ";
 			for(VariableNode var : listVar) {
-				this.modelWatchTable.addRow(new Object[] {strTab+var.getDataType()+" "+var.getLiteral(), var.getLineNumber(), strTab+var.getFuncParent()+" ("+var.getFuncChild()+")", "0"});
+				if(var.isPrint()) {
+					this.modelWatchTable.addRow(new Object[] {strTab+var.getDataType()+" "+var.getLiteral(), var.getLineNumber(), strTab+var.getFuncParent()+" ("+var.getFuncChild()+")", var.getValue()});
+				}
 				System.out.println("var "+var.getLiteral()+" "+var.getCount());
 			}
 			
@@ -1268,6 +1270,7 @@ public class Panel implements CaretListener, Runnable, ActionListener, KeyListen
 			else {
 				Console.instance().purge();
 				purgeWatch();
+				purgeWatchTab();
 				
 				this.changeToPause();
 				String text = this.codeInput.getText();		
@@ -1334,7 +1337,7 @@ public class Panel implements CaretListener, Runnable, ActionListener, KeyListen
 			if(gutter.hasBookmark(i)) {
 				if(i-1 >= 0 &&  strText[i-1].trim().length() > 0) {
 
-					listBreakpoints.push(i);
+					listBreakpoints.push(i+1); // From i TODO
 				}
 				else {
 					
@@ -1521,7 +1524,9 @@ public class Panel implements CaretListener, Runnable, ActionListener, KeyListen
 			this.listWatchVariables = this.dlgWatch.getSelectedVar();
 			String strTab = "   ";
 			for(VariableNode var : selectedVar) {
-				this.modelWatchTable.addRow(new Object[] {strTab+var.getDataType()+" "+var.getLiteral(), var.getLineNumber(), strTab+var.getFuncParent()+" ("+var.getFuncChild()+")", "0"});
+				if(var.isPrint()) {
+					this.modelWatchTable.addRow(new Object[] {strTab+var.getDataType()+" "+var.getLiteral(), var.getLineNumber(), strTab+var.getFuncParent()+" ("+var.getFuncChild()+")", var.getValue()});
+				}
 				System.out.println("var "+var.getLiteral()+" "+var.getCount());
 			}
 			
@@ -1578,7 +1583,9 @@ public class Panel implements CaretListener, Runnable, ActionListener, KeyListen
 		this.listWatchVariables = this.dlgWatch.getSelectedVar();
 		String strTab = "   ";
 		for(VariableNode var : selectedVar) {
-			this.modelWatchTable.addRow(new Object[] {strTab+var.getDataType()+" "+var.getLiteral(), var.getLineNumber(), strTab+var.getFuncParent()+" ("+var.getFuncChild()+")", "0"});
+			if(var.isPrint()) {
+				this.modelWatchTable.addRow(new Object[] {strTab+var.getDataType()+" "+var.getLiteral(), var.getLineNumber(), strTab+var.getFuncParent()+" ("+var.getFuncChild()+")", var.getValue()});
+			}
 			System.out.println("var "+var.getLiteral()+" "+var.getCount());
 		}
 		

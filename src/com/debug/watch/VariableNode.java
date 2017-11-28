@@ -7,6 +7,8 @@ public class VariableNode {
 	private String funcParent;
 	private String funcChild;
 	private String count;
+	private String value;
+	private boolean isPrint;
 	
 	public VariableNode(int lineNumber, String dataType, String literal, String funcName, String funcBlock, String count) {
 		this.setLineNumber(lineNumber);
@@ -15,6 +17,8 @@ public class VariableNode {
 		this.setFuncParent(funcName);
 		this.setFuncChild(funcBlock);
 		this.setCount(count);
+		this.setValue("");
+		this.setPrint(true);
 	}
 
 	public int getLineNumber() {
@@ -63,6 +67,22 @@ public class VariableNode {
 
 	public void setCount(String count) {
 		this.count = count;
+	}
+
+	public String getValue() {
+		return value;
+	}
+
+	public void setValue(String value) {
+		this.value = value;
+	}
+
+	public boolean isPrint() {
+		return isPrint;
+	}
+
+	public void setPrint(boolean isPrint) {
+		this.isPrint = isPrint;
 	}
 	
 }
