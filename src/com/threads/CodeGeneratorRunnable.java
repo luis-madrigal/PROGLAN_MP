@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Stack;
 
+import com.debug.watch.VariableNode;
 import com.ide.Panel;
 import com.interpreter.Scope;
 import com.interpreter.AST.ASTBuildVisitor;
@@ -65,8 +66,10 @@ public class CodeGeneratorRunnable implements Runnable {
 	private HashMap<String, MethodContext> methodTable;
 	private HashMap<String, ProcedureNode> methodASTTable;
 	private Panel pnlParent;
-	public CodeGeneratorRunnable(Panel pnlParent, ASTBuildVisitor astbv, HashMap<String, MethodContext> methodTable) {
+	private ArrayList<VariableNode> varList;
+	public CodeGeneratorRunnable(Panel pnlParent, ASTBuildVisitor astbv, HashMap<String, MethodContext> methodTable, ArrayList<VariableNode> varList) {
 		this.astbv = astbv;
+		this.varList = varList;
 		this.methodASTTable = astbv.getMethodASTTable();
 		this.methodTable = methodTable;
 		this.isRunning = true;
@@ -138,7 +141,9 @@ public class CodeGeneratorRunnable implements Runnable {
 				System.out.println(pointer);
 				stmt = this.labelMap.get(pointer);
 				pointerCount = this.evaluate(this.globalScope, registers, stmt, pointerCount);
-				pointer = ICGenerator.LABEL_ALIAS+pointerCount;	
+				pointer = ICGenerator.LABEL_ALIAS+pointerCount;
+				
+				
 //			}			
 		}while(this.checkEndRun(pointer));
 		
@@ -242,7 +247,8 @@ public class CodeGeneratorRunnable implements Runnable {
 //		Panel.printWatch("P"+pointerCount+"    "+methodScope.getSymTable().keySet().toString());
 //		Panel.printWatch(statement+"");
 //		System.out.println("BRK "+	statement.getLabel() + " " + statement.getType()+": "+statement.isBreakpoint());
-		
+
+		pnlParent.printVarList(this.varList);
 		if(statement.isBreakpoint()) {
 //			System.out.println("BRK "+	statement.getLabel() + " " + statement.getType()+": "+statement.isBreakpoint());
 			this.isPlay = false;
