@@ -578,7 +578,8 @@ public class BaseListener extends ManuScriptBaseListener{
 					System.out.println("IN SCOP");
 					SymbolContext varArg = scopes.peek().checkTables(arg);
 					//Existing variable. now check for type mismatch
-					if(!scopes.peek().checkTables(arg).getSymbolType().equals(mcx.getArgTypes().get(i).replace("*", "")))
+					System.out.println("argASD: "+arg);
+					if(!scopes.peek().checkTables(arg).getSymbolType().equals(mcx.getArgTypes().get(i)))
 						SemanticErrors.throwError(SemanticErrors.TYPE_MISMATCH, ectxLineNum, ectxCharPosAtLine, mcx.getArgTypes().get(i));
 				} else if(ectx instanceof PrimaryExprContext
 						&& ((PrimaryExprContext) ectx).primary().equationExpr() != null
