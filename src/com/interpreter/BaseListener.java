@@ -557,7 +557,7 @@ public class BaseListener extends ManuScriptBaseListener{
 	
 	@Override
 	public void enterOutputStatement(ManuScriptParser.OutputStatementContext ctx) {
-		this.expressionCheck(ctx.expression());
+		this.expressionCheck(ctx);
 	}
 	
 	//not overriden. primary function is to assure no constant modification
@@ -894,7 +894,8 @@ public class BaseListener extends ManuScriptBaseListener{
 			
 		} else if(node instanceof  OutputStatementContext) {
 			ParserRuleContext pCtx = (ParserRuleContext) ((OutputStatementContext) node).expression();
-			return this.getExprReturnedType(pCtx.getStart().getLine(), pCtx.getStart().getCharPositionInLine(), OPERATOR.getEnum(node.getChild(1)), "string", this.getTypeOf(pCtx));
+			System.out.println("OUTPUT");
+			return this.getExprReturnedType(pCtx.getStart().getLine(), pCtx.getStart().getCharPositionInLine(), OPERATOR.ADD, "string", this.getTypeOf(pCtx));
 		}else if(node instanceof ParExpressionContext) {
 			return this.getTypeOf(node.getChild(1));
 		} else if(node instanceof FunctionExprContext) {
