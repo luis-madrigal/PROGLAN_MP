@@ -169,6 +169,9 @@ public class CodeGeneratorRunnable implements Runnable {
 				} 
 				if(ctx.getCtxType() == ContextType.POINTER) {
 					PointerInfo p = (PointerInfo) ctx.getOther();
+					//null pointerinfo
+					if(p == null)
+						p = new PointerInfo(ctx.getSymbolType());
 					p.setPointee(argCtx);
 					ctx.setOther(p);
 					System.out.println("pointer argument");

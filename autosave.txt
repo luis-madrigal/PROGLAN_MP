@@ -1,9 +1,16 @@
 
+ACT swap starring (int* a, int* b) {
+	int t = a;
+	a = b;
+	b = t;
+}
+
 ACT main starring () {
 	int a = 5;
-	int* b = a;
+	int b = 10;
 
-	b++;
+	swap(a, b);
 
 	Say a;
+	Say b;
 }
