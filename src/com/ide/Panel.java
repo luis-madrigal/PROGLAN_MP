@@ -56,6 +56,7 @@ import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyleContext;
 
+import org.antlr.v4.codegen.model.dbg;
 import org.antlr.v4.gui.TreeViewer;
 import org.fife.ui.rsyntaxtextarea.AbstractTokenMakerFactory;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
@@ -292,15 +293,16 @@ public class Panel implements CaretListener, Runnable, ActionListener, KeyListen
 		this.pnlMenu = new JPanel();
 //		pnlMenu.setBackground(FrameStatic.clrTransparent);
 //		pnlMenu.setOpaque(false);
-		pnlMenu.setBackground(Color.WHITE);
+//		pnlMenu.setBackground(Color.gray);
 		pnlMenu.setLayout(null);
 		
 //		pnlMenu.setLayout(new BoxLayout(pnlMenu, BoxLayout.X_AXIS));
 //		pnlMenu.setMinimumSize(new Dimension(400, 30));
-		pnlMenu.setSize(new Dimension(400, 30));
+		pnlMenu.setSize(new Dimension(600, 30));
 		pnlMenu.setMinimumSize(pnlMenu.getSize());
 		pnlMenu.setMaximumSize(pnlMenu.getSize());
 		pnlMenu.setPreferredSize(pnlMenu.getSize());
+		pnlMenu.setAlignmentX(JPanel.LEFT_ALIGNMENT);
 //		pnlMenu.setMaximumSize(new Dimension(400, 30));
 
 //		pnlMenu.setPreferredSize(new Dimension(400, 30));
@@ -634,6 +636,7 @@ public class Panel implements CaretListener, Runnable, ActionListener, KeyListen
 		parentPane.setBackground(Color.WHITE);
 		//Scale Button
 		JPanel pnlScaleMenu = new JPanel();
+		
 		pnlScaleMenu.setLayout(null);
         this.btnScaleUp = new JButton();
         btnScaleUp.setBackground(Color.WHITE);
@@ -642,8 +645,8 @@ public class Panel implements CaretListener, Runnable, ActionListener, KeyListen
         btnScaleUp.setIcon(new ImageIcon(getClass().getClassLoader().getResource("res/ico_add_off.png")));
         btnScaleUp.setRolloverIcon(new ImageIcon(getClass().getClassLoader().getResource("res/ico_add_on.png")));
         btnScaleUp.setPressedIcon(new ImageIcon(getClass().getClassLoader().getResource("res/ico_add_on.png")));
+
         btnScaleUp.setFocusable(false);
-        
 		this.btnScaleUp.setBounds(3, 3, 30, 30);
 		this.btnScaleUp.addActionListener(this);
 		pnlScaleMenu.add(this.btnScaleUp);
@@ -679,6 +682,7 @@ public class Panel implements CaretListener, Runnable, ActionListener, KeyListen
 		this.outputTabs.setFont(FrameStatic.fntDefault);
 		outputTabs.setBackground(Color.WHITE);
 		outputTabs.setForeground(Styles.TEXT_GRAY);
+
 		parentPane.setSize(outputTabs.getWidth(), 40);
 		
 	
@@ -801,7 +805,7 @@ public class Panel implements CaretListener, Runnable, ActionListener, KeyListen
 //		topSplitPane.getLeftComponent().setBounds(0, 0, topSplitPane.getLeftComponent().getWidth(),
 //				topSplitPane.getLeftComponent().getHeight());
 		this.topSplitPane.setRightComponent(this.outputTabs);
-		this.topSplitPane.setDividerLocation((int) Frame.SCREEN_SIZE.getWidth()-380); // TODO
+		this.topSplitPane.setDividerLocation((int) Frame.SCREEN_SIZE.getWidth()-280); // TODO
 		gbc = new GridBagConstraints();
 		gbc.anchor = GridBagConstraints.NORTHEAST;
 		gbc.fill = GridBagConstraints.BOTH;
@@ -924,6 +928,7 @@ public class Panel implements CaretListener, Runnable, ActionListener, KeyListen
 		documentOut.repaint();
 		documentPane.addMouseListener(this);
 //		this.foldDoument();
+		this.unfoldDoument();
 		documentOut.generate(this.codeInput.getText());
 	}
 	
@@ -1023,32 +1028,102 @@ public class Panel implements CaretListener, Runnable, ActionListener, KeyListen
 		btnContinue.setPreferredSize(btnContinue.getSize());
 		pnlMenu.add(btnContinue);
 		
-		this.btnPause = new JButton("Pause");
+		this.btnPause = new JButton();
+		btnPause.setFont(FrameStatic.fntDefault);
 		btnPause.setFocusable(false);
-		btnPause.addActionListener(this);
-		btnPause.addMouseListener(this);
-//		btnPause.setBorder(null);
-		btnPause.setBorder(FrameStatic.brdrBarUn);
+//		btnPause.addActionListener(this);
+//		btnPause.addMouseListener(this);
+		
+		btnPause.setBorder(null);
+//		btnPause.setBorder(FrameStatic.brdrBarUn);
 		btnPause.setBackground(Color.WHITE);
-//		btnPause.setIcon(new ImageIcon(getClass().getClassLoader().getResource("res/ico_watch_off.png")));
-//		btnPause.setRolloverIcon(new ImageIcon(getClass().getClassLoader().getResource("res/ico_watch_on.png")));
-//		btnPause.setPressedIcon(new ImageIcon(getClass().getClassLoader().getResource("res/ico_watch_on.png")));
+		btnPause.setIcon(new ImageIcon(getClass().getClassLoader().getResource("res/ico_tab.png")));
+		btnPause.setRolloverIcon(new ImageIcon(getClass().getClassLoader().getResource("res/ico_tab.png")));
+		btnPause.setPressedIcon(new ImageIcon(getClass().getClassLoader().getResource("res/ico_tab.png")));
 		btnPause.setFocusable(false);
 		btnPause.getInsets().set(0, 0, 0, 0);
 
-		btnPause.setSize(width, height);
+		btnPause.setSize(btnPause.getIcon().getIconWidth(), height);
 		btnPause.setPreferredSize(btnPause.getSize());
-//		pnlMenu.add(btnPause);
+		btnPause.setLayout(null);
+		JLabel lblManuscript = new JLabel();
+		lblManuscript.setFont(FrameStatic.fntDefault14_BOLD);
+		lblManuscript.setForeground(Styles.BRIGHT_BLUE);
+		
+		lblManuscript.setSize(btnPause.getSize());
+		lblManuscript.setPreferredSize(btnPause.getSize());
+		lblManuscript.setMinimumSize(btnPause.getSize());
+		lblManuscript.setMaximumSize(btnPause.getSize());
+
+		lblManuscript.setHorizontalTextPosition(JLabel.CENTER);
+		lblManuscript.setVerticalTextPosition(JLabel.CENTER);
+//		lblManuscript.setLayout(new BoxLayout(lblManuscript, BoxLayout.X_AXIS));
+		lblManuscript.setLayout(null);
+		JLabel lblManuscript1 = new JLabel("Manu");
+		lblManuscript1.setFont(FrameStatic.fntDefault14_BOLD);
+		lblManuscript1.setForeground(Styles.TEXT_GRAY);
+		
+		lblManuscript1.setSize(39, lblManuscript.getHeight());
+		lblManuscript1.setPreferredSize(lblManuscript1.getSize());
+		lblManuscript1.setMinimumSize(lblManuscript1.getSize());
+		lblManuscript1.setMaximumSize(lblManuscript1.getSize());
+
+		lblManuscript1.setHorizontalTextPosition(JLabel.CENTER);
+		lblManuscript1.setVerticalTextPosition(JLabel.CENTER);
 		
 
-		int offsetX = 0;
+		lblManuscript.setLocation(25, lblManuscript.getY());
+		lblManuscript.add(lblManuscript1);
+		
+		JLabel lblManuscript2 = new JLabel("Script");
+		lblManuscript2.setFont(FrameStatic.fntDefault14_BOLD);
+		lblManuscript2.setForeground(Styles.TEXT_GRAY);
+		
+		lblManuscript2.setSize(50, lblManuscript.getHeight());
+		lblManuscript2.setPreferredSize(lblManuscript2.getSize());
+		lblManuscript2.setMinimumSize(lblManuscript2.getSize());
+		lblManuscript2.setMaximumSize(lblManuscript2.getSize());
 
-		btnRun.setLocation(28, 0);
+		lblManuscript2.setHorizontalTextPosition(JLabel.CENTER);
+		lblManuscript2.setVerticalTextPosition(JLabel.CENTER);
+		lblManuscript2.setLocation(lblManuscript1.getX()+lblManuscript1.getWidth(), lblManuscript1.getY());
+		lblManuscript.add(lblManuscript2);
+		
+		lblManuscript.setLocation(lblManuscript.getX(), lblManuscript.getY());
+		
+		JLabel lblManuscript3 = new JLabel("IDE");
+		lblManuscript3.setFont(FrameStatic.fntDefault14_BOLD);
+		lblManuscript3.setForeground(Styles.TEXT_GRAY);
+		
+		lblManuscript3.setSize(lblManuscript.getWidth()/2, lblManuscript.getHeight());
+		lblManuscript3.setPreferredSize(lblManuscript3.getSize());
+		lblManuscript3.setMinimumSize(lblManuscript3.getSize());
+		lblManuscript3.setMaximumSize(lblManuscript3.getSize());
+
+		lblManuscript3.setLocation(lblManuscript2.getX()+lblManuscript2.getWidth(), lblManuscript1.getY());
+		lblManuscript.add(lblManuscript3);
+		
+		lblManuscript.setLocation(lblManuscript.getX(), lblManuscript.getY());
+		
+//		btnPause.setLayout(null);
+		btnPause.add(lblManuscript);
+		pnlMenu.add(btnPause);
+		
+		
+		int offsetX = 0;
+		btnPause.setLocation(33, 0);
+		btnRun.setLocation(btnPause.getX()+btnPause.getWidth()+5, 0); // 28
 		btnLoad.setLocation(btnRun.getX()+btnRun.getWidth()+offsetX, btnRun.getY());
 		btnSave.setLocation(btnLoad.getX()+btnLoad.getWidth()+offsetX, btnRun.getY());
 		btnWatch.setLocation(btnSave.getX()+btnSave.getWidth()+offsetX, btnRun.getY());
 		btnContinue.setLocation(btnWatch.getX()+btnWatch.getWidth()+offsetX, btnRun.getY());
-		btnPause.setLocation(btnContinue.getX()+btnContinue.getWidth()+offsetX, btnRun.getY());
+//		btnPause.setLocation(btnContinue.getX()+btnContinue.getWidth()+offsetX, btnRun.getY());
+		
+
+
+//		JLabel lblTitle = new JLabel("ManuScript IDE");
+//		lblTitle.setBounds(btnContinue.getX()+btnContinue.getWidth(), btnRun.getY(), 400, btnRun.getHeight());
+//		pnlMain.add(lblTitle);
 		
 	}
 	

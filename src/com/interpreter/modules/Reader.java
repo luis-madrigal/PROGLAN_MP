@@ -62,6 +62,7 @@ public class Reader {
 
 
 		String input = txt.getText(); //OptionPane.showInputDialog(msg); //JOptionPane.showInputDialog(msg);
+//		System.out.println("LEN "+input.trim().length());
 		if(input != null && input.length() > 0) {
 			try {
 				return Integer.parseInt(input);
