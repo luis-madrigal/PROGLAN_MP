@@ -464,7 +464,7 @@ public class BaseListener extends ManuScriptBaseListener{
 						String types = this.expressionCheck(vdctx.variableInitializer().expression());
 						if(!this.regexComparison(varType, types)) {
 							System.out.println("fault "+types);
-							if(vdctx.variableInitializer().expression())
+//							if(vdctx.variableInitializer().expression())
 							if(!this.regexComparison(varType.replace("*", ""), types))
 								SemanticErrors.throwError(SemanticErrors.VAR_ASSIGN_MISMATCH, vdctx.getStart().getLine(), vdctx.getStart().getCharPositionInLine(), varName, types);
 						}
