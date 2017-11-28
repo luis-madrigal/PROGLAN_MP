@@ -480,7 +480,7 @@ public class DialogWatch extends JDialog implements MouseListener {
 					this.selectedVar.add(this.varList.get(i));
 				}
 			}
-			
+			pnlParentPanel.setListWatchVariables(this.selectedVar);
 			this.dispose();
 		}
 		else if(arg0.getSource().equals(this.btnClose)) {

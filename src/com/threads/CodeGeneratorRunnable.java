@@ -68,6 +68,7 @@ public class CodeGeneratorRunnable implements Runnable {
 	private HashMap<String, ProcedureNode> methodASTTable;
 	private Panel pnlParent;
 	private ArrayList<VariableNode> varList;
+	private ArrayList<Integer> listBlockDepth;
 	public CodeGeneratorRunnable(Panel pnlParent, ASTBuildVisitor astbv, HashMap<String, MethodContext> methodTable, ArrayList<VariableNode> varList) {
 		this.astbv = astbv;
 		this.varList = varList;
@@ -76,7 +77,8 @@ public class CodeGeneratorRunnable implements Runnable {
 		this.isRunning = true;
 		this.isPlay = true;
 		this.pnlParent = pnlParent;
-		
+
+		this.listBlockDepth = new ArrayList<Integer>();
 		this.methodTable = methodTable;
 		this.methodICodes = new HashMap<String, ArrayList<TACStatement>>();
 		this.labelMap = new HashMap<String, TACStatement>();
@@ -136,10 +138,11 @@ public class CodeGeneratorRunnable implements Runnable {
 		int pointerCount = Integer.parseInt(icode.get(0).getLabel().substring(1));
 		HashMap<String, Register> registers = Cloner.standard().deepClone(this.registers);
 		TACStatement stmt = null;
-		
+
+		this.listBlockDepth = new ArrayList<Integer>();
+		this.listBlockDepth.add(0);
 		do {
 //			if(isPlay) {
-				System.out.println(pointer);
 				stmt = this.labelMap.get(pointer);
 				pointerCount = this.evaluate(this.globalScope, registers, stmt, pointerCount, "main");
 				pointer = ICGenerator.LABEL_ALIAS+pointerCount;
@@ -156,6 +159,7 @@ public class CodeGeneratorRunnable implements Runnable {
 	}
 	
 	private Object run(String methodName, Object ...args) {
+
 		ArrayList<TACStatement> icode = this.methodICodes.get(methodName);
 		String pointer = icode.get(0).getLabel();
 		int pointerCount = Integer.parseInt(icode.get(0).getLabel().substring(1));
@@ -198,13 +202,19 @@ public class CodeGeneratorRunnable implements Runnable {
 //		Panel.printWatch(methodScope.getSymTable().keySet().toString());
 		
 //		System.out.println("METHSCOP "+methodScope.printString());
-		do {
+		do {	//System.out.println("varlist size "+varList.size());
+
 			if(isPlay) {
 //				pnlParent.printVarList(this.varList);
-				filterPrintVarList(this.varList, methodScope, methodName);
-				System.out.println(pointer);
+//				System.out.println("varlist size "+varList.size());
+//				filterPrintVarList(this.varList, methodScope, methodName);
 				pnlParent.changeToInactive();
 				stmt = this.labelMap.get(pointer);
+				System.out.println("STMT "+stmt);
+				
+				this.checkBlockCount(stmt);
+				System.out.println("CHECKBLOCKMETH "+convertToMethodString(this.listBlockDepth));
+				
 //				Panel.printWatch("evaluating: "+pointer);
 				pointerCount = this.evaluate(methodScope, registers, stmt, pointerCount, methodName);
 				pointer = ICGenerator.LABEL_ALIAS+pointerCount;
@@ -233,7 +243,52 @@ public class CodeGeneratorRunnable implements Runnable {
 		this.returnScope();
 		return value;
 	}
-	public void filterPrintVarList(ArrayList<VariableNode> listVar, Scope scopeMethod, String methodName) {
+	
+	public void checkBlockCount(TACStatement stmt) {
+		System.out.println("STMT TYPE "+stmt.getType());
+		
+			
+		if(stmt.getType() == NodeType.VAR_DECLARE) {
+			if(listBlockDepth.size() > 0) {
+				
+				this.listBlockDepth.set(
+						this.listBlockDepth.size()-1,
+						this.listBlockDepth.get(listBlockDepth.size()-1)+1);
+			}
+			else {
+			
+				this.listBlockDepth.add(0);
+			}
+		}
+		else if(stmt.toString().contains("ENTER BLOCK")) { 
+			this.listBlockDepth.add(new Integer(0)); // Add new depth
+			System.out.println("LB ENTER "+listBlockDepth.size());
+		}
+		else if(stmt.toString().contains("EXIT BLOCK")) {
+			if(this.listBlockDepth.size() > 0)
+				this.listBlockDepth.remove(listBlockDepth.size()-1);
+			System.out.println("LB EXIT "+listBlockDepth.size());
+		}
+		
+	}
+	
+	public String convertToMethodString(ArrayList<Integer> listDepth) {
+		String strMethod = "";
+		if(listDepth != null) {
+			int size = listDepth.size();
+			if(size > 0) {
+
+				for(int i = size-1; i >= 0; i--) {
+					strMethod += listDepth.get(0)+"-";
+					listDepth.remove(0);
+				}
+			}
+		}
+		System.out.println("STRMETHOD "+strMethod);
+		return strMethod;
+	}
+	public void filterPrintVarList(ArrayList<VariableNode> listVar, Scope scopeMethod, String methodName, TACStatement stmt) {
+		
 		if(listVar != null) {
 			System.out.println(scopeMethod.getSymTable().keySet());
 			ArrayList<VariableNode> printListVar = new ArrayList<VariableNode>();
@@ -243,7 +298,9 @@ public class CodeGeneratorRunnable implements Runnable {
 			for(String key : listKeys) {
 				for(VariableNode node : listVar) {
 					if(node.getLiteral().trim().equals(key) &&
-							methodName.trim().equals(node.getFuncParent().trim())) {
+							methodName.trim().equals(node.getFuncParent().trim()) &&
+							node.getCount().trim().equals(this.convertToMethodString(this.listBlockDepth))) {
+						System.out.println("PRINTDEPTHTRUE");
 						node.setValue(scopeMethod.getSymTable().get(key).getValue().toString());
 						node.setPrint(true);
 					}
@@ -252,7 +309,8 @@ public class CodeGeneratorRunnable implements Runnable {
 					}
 					System.out.println(node.isPrint()+" NODE "+node.getLiteral().trim()+" || KEY "+key+
 							" || Func "+node.getFuncParent().trim()+
-							" || methodName "+methodName);
+							" || methodName "+methodName+" || METHCODE A: "+this.convertToMethodString(this.listBlockDepth)+
+							" B: "+node.getCount());
 				}
 			}
 		}
@@ -276,8 +334,8 @@ public class CodeGeneratorRunnable implements Runnable {
 //		Panel.printWatch("P"+pointerCount+"    "+methodScope.getSymTable().keySet().toString());
 //		Panel.printWatch(statement+"");
 //		System.out.println("BRK "+	statement.getLabel() + " " + statement.getType()+": "+statement.isBreakpoint());
-		filterPrintVarList(this.varList, methodScope, methodName);
-
+		filterPrintVarList(this.varList, methodScope, methodName, statement);
+		
 		if(statement.isBreakpoint()) {
 //			System.out.println("BRK "+	statement.getLabel() + " " + statement.getType()+": "+statement.isBreakpoint());
 			this.isPlay = false;
