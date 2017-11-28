@@ -29,6 +29,7 @@ public class SemanticErrors {
 	public static final String UNDEFINED_STRUCT = LINE_INFO + "Undefined structure '%s'";
 	public static final String DUPLICATE_STRUCT = LINE_INFO + "Duplicate structure '%s'";
 	public static final String INVALID_MEMBER = LINE_INFO + "Member '%s' does not exist for struct '%s'";
+	public static final String STRUCT_INVALID_ACCESS = LINE_INFO + "Variable '%s' is not a structure type";
 
 	//TYPE MISMATCH
 	public static final String TYPE_MISMATCH = LINE_INFO + "Type mismatch. Value should be of type '%s'";

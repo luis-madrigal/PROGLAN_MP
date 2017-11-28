@@ -101,11 +101,13 @@ public class BaseListener extends ManuScriptBaseListener{
 
 						ManuScriptParser.ArrayInitializerContext arInit = crCtx.arrayCreatorRest().arrayInitializer();
 						int height = getBlockHeight(arInit.getText());
-						if (height != dimCount)
+						if (height != dimCount) {
+							System.out.println("er 105");
 							SemanticErrors.throwError(SemanticErrors.ILLEGAL_INIT,
 									crCtx.arrayCreatorRest().arrayInitializer().getStart().getLine(),
 									crCtx.arrayCreatorRest().arrayInitializer().getStart().getCharPositionInLine(),
 									varType);
+						}
 						this.arrUniformityChecker(arInit, dimCount);
 						this.arrayInitCheck(arInit, arInf.getArrType());
 					} else {
@@ -127,14 +129,16 @@ public class BaseListener extends ManuScriptBaseListener{
 
 				}
 			} else {
-				if(vdi.arrayInitializer() != null){
+				if (vdi.arrayInitializer() != null) {
 					//checking if array init is of type = {1,2,32,4,21};
 					int height = getBlockHeight(vdi.arrayInitializer().getText());
-					if(dimCount != height)
+					if (dimCount != height) {
+						System.out.println("er 136");
 						SemanticErrors.throwError(SemanticErrors.ILLEGAL_INIT,
 								vdi.arrayInitializer().getStart().getLine(),
 								vdi.arrayInitializer().getStart().getCharPositionInLine(),
 								varType);
+					}
 //					else{
 //						for(ManuScriptParser.VariableInitializerContext varInit : vdi.arrayInitializer().variableInitializer()){
 //								String types = this.expressionCheck(varInit);
@@ -145,30 +149,57 @@ public class BaseListener extends ManuScriptBaseListener{
 //					}
 					this.arrayInitCheck(vdi.arrayInitializer(), arInf.getArrType());
 
-				}
-				else if(vdi.expression() instanceof PrimaryExprContext){
+				} else if (vdi.expression() instanceof PrimaryExprContext) {
 					//for derefencing other array variables
 					PrimaryContext primary = ((PrimaryExprContext) vdi.expression()).primary();
-					if(primary.equationExpr() != null) {
+					if (primary.equationExpr() != null) {
 						if (primary.equationExpr().Identifier() != null) {
 							SymbolContext symRight = scopes.peek().checkTables(primary.equationExpr().Identifier().getText());
 							if (symRight == null) {
-								SemanticErrors.throwError(SemanticErrors.UNDECLARED_VAR,primary.equationExpr().getStart().getLine(), primary.equationExpr().getStart().getCharPositionInLine(), primary.equationExpr().Identifier().getText());
+								SemanticErrors.throwError(SemanticErrors.UNDECLARED_VAR, primary.equationExpr().getStart().getLine(), primary.equationExpr().getStart().getCharPositionInLine(), primary.equationExpr().Identifier().getText());
 							} else {
 								if (!symRight.getSymbolType().equals(varType)) {
 									SemanticErrors.throwError(SemanticErrors.TYPE_MISMATCH, primary.equationExpr().getStart().getLine(), primary.equationExpr().getStart().getCharPositionInLine(), varType);
-								}else if(symRight.getOther() instanceof ArrayInfo)
-									return (ArrayInfo)symRight.getOther();
+								} else if (symRight.getOther() instanceof ArrayInfo)
+									return (ArrayInfo) symRight.getOther();
+							}
+						} else {
+							if(primary.equationExpr().structExpr() != null){
+								String structName = primary.equationExpr().structExpr().structName().getText();
+								SymbolContext sctx = getCurrentSymTable().get(structName);
+								StructInfo stInf;
+								ManuScriptParser.StructMemberContext smctx = primary.equationExpr().structExpr().structMember();
+								while(smctx != null){
+									System.out.println("loop");
+									stInf = (StructInfo) sctx.getOther();
+									sctx = stInf.getMember(smctx.Identifier().getText());
+									if(sctx == null)
+										break; //todo better implementation
+									smctx = smctx.structMember();
+								}
+
+								System.out.println("KEK "+sctx.getSymbolType());
+								if(sctx.getSymbolType().equals(varType)) {
+									arInf = (ArrayInfo) sctx.getOther();
+									return arInf;
+								}
+								else{
+									SemanticErrors.throwError(SemanticErrors.INVALID_INIT, primary.equationExpr().structExpr().getStart().getLine(), primary.equationExpr().structExpr().getStart().getCharPositionInLine());
+								}
+							}
+							else {
+								SemanticErrors.throwError(SemanticErrors.INVALID_INIT, primary.equationExpr().getStart().getLine(), primary.equationExpr().getStart().getCharPositionInLine());
+								System.out.println("invalid init 169");
 							}
 						}
-						else
-							SemanticErrors.throwError(SemanticErrors.INVALID_INIT,primary.equationExpr().getStart().getLine(), primary.equationExpr().getStart().getCharPositionInLine());
-					}
-					else
+					} else {
 						SemanticErrors.throwError(SemanticErrors.INVALID_INIT, primary.getStart().getLine(), primary.getStart().getCharPositionInLine());
-				}
-				else
+						System.out.println("invalid init 173");
+					}
+				} else {
 					SemanticErrors.throwError(SemanticErrors.INVALID_INIT, vdi.getStart().getLine(), vdi.getStart().getCharPositionInLine());
+					System.out.println("invalid init 176");
+				}
 			}
 		}
 
@@ -672,6 +703,7 @@ public class BaseListener extends ManuScriptBaseListener{
 		SymbolContext sctx = null;
 		if(ctx.equationExpr().variableExpr() != null){
 			//if array[] = #NOT ALLOWED
+			System.out.println("invalid init 679");
 			SemanticErrors.throwError(SemanticErrors.INVALID_INIT,
 					ctx.equationExpr().variableExpr().getStart().getLine(),
 					ctx.equationExpr().variableExpr().getStart().getCharPositionInLine());
@@ -728,11 +760,13 @@ public class BaseListener extends ManuScriptBaseListener{
 
 					ManuScriptParser.ArrayInitializerContext arInit = crCtx.arrayCreatorRest().arrayInitializer();
 					int height = getBlockHeight(arInit.getText());
-					if (height != dimCount)
+					if (height != dimCount) {
+						System.out.println("er 734");
 						SemanticErrors.throwError(SemanticErrors.ILLEGAL_INIT,
 								crCtx.arrayCreatorRest().arrayInitializer().getStart().getLine(),
 								crCtx.arrayCreatorRest().arrayInitializer().getStart().getCharPositionInLine(),
 								varType);
+					}
 					this.arrUniformityChecker(arInit, dimCount);
 					this.arrayInitCheck(arInit, arInf.getArrType());
 				} else {
@@ -845,12 +879,16 @@ public class BaseListener extends ManuScriptBaseListener{
 		
 
 		SymbolContext sctx = scopes.peek().checkTables(structName);
+		if(!(sctx.getOther() instanceof StructInfo)){
+			SemanticErrors.throwError(SemanticErrors.STRUCT_INVALID_ACCESS, lineNum, charPos, structName);
+			return "null";
+		}
 
 		if(sctx == null) {
 			SemanticErrors.throwError(SemanticErrors.UNDECLARED_VAR, lineNum, charPos, structName);
 			return "null";
 		}
-		
+
 		return this.structMemberEval(ctx.structMember(), sctx);
 	}
 	
