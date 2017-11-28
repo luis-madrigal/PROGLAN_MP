@@ -1,0 +1,9 @@
+
+ACT getSum starring ( int x, int y ){
+	give x + y;
+}
+
+ACT main starring (){
+	int sum = getSum(2,3);
+	Say sum;
+}
