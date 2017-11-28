@@ -232,12 +232,14 @@ public class DialogWatch extends JDialog implements MouseListener {
 		gbc = new GridBagConstraints();
 		gbc.anchor = GridBagConstraints.NORTHWEST;
 		gbc.gridx = 0;
-		gbc.gridy = 1;
-		gbc.gridwidth = 6;
+//		gbc.gridy = 1;
+		gbc.gridwidth = 4;
 		gbc.anchor = GridBagConstraints.NORTHWEST;
-		gbc.fill = GridBagConstraints.HORIZONTAL;
-		gbc.weightx = 0.1;
+		gbc.fill = GridBagConstraints.BOTH;
+		gbc.weightx = 1;
+		gbc.weighty = 0.1;
 		JSeparator mainSep = this.initSeparatorHorizontal();
+		mainSep.setBackground(Color.WHITE);
 		this.paneWatch.add(mainSep, gbc);
 		int y = 2;
 		for(VariableNode variable : varList) {
@@ -247,8 +249,10 @@ public class DialogWatch extends JDialog implements MouseListener {
 			gbc.fill = GridBagConstraints.VERTICAL;
 			gbc.anchor = GridBagConstraints.NORTHWEST;
 			gbc.gridy = y;
-			gbc.gridwidth = 6;
+			gbc.gridwidth = 4;
 			gbc.gridx = 0;
+//			gbc.weightx = 1;
+//			gbc.weighty = 1;
 //			gbc.weightx = 0.1;
 			JCheckBox checkbox = this.initCheckbox();
 			checkbox.setSelected(false);
