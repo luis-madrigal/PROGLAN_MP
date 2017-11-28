@@ -107,7 +107,9 @@ public class CodeGeneratorRunnable implements Runnable {
 				ArrayList<String> argTypes = methodTable.get(entry.getKey()).getArgTypes();
 				for(int i = 0; i < args.size(); i++) {
 	//				System.out.println(this.variables.get(entry.getKey()).getSymTable().containsKey(args.get(i)));
-					this.variables.get(entry.getKey()).addToScope(new SymbolContext(argTypes.get(i), icg.getGlobalScope(), args.get(i)));
+//					SymbolContext sctx = new SymbolContext(argTypes.get(i), icg.getGlobalScope(), args.get(i));
+//					if(arg)
+//					this.variables.get(entry.getKey()).addToScope(new SymbolContext(argTypes.get(i), icg.getGlobalScope(), args.get(i)));
 				}
 			}
 		}

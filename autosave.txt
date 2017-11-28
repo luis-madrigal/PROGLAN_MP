@@ -1,16 +1,13 @@
 
-ACT swap starring (int* a, int* b) {
-	int t = a;
-	a = b;
-	b = t;
+ACT test starring () {
+	give 4;
 }
 
 ACT main starring () {
-	int a = 5;
-	int b = 10;
+	int num = 2;
 
-	swap(a, b);
-
-	Say a;
-	Say b;
+	if ((num * 3 > test()) && !(num + 3 > 6))
+		Say "Yay";
+	else
+		Say "No";
 }

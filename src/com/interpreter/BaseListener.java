@@ -27,6 +27,7 @@ import com.parser.ManuScriptParser.FormalParameterContext;
 import com.parser.ManuScriptParser.FunctionExprContext;
 import com.parser.ManuScriptParser.MethodBodyContext;
 import com.parser.ManuScriptParser.MultDivModExprContext;
+import com.parser.ManuScriptParser.NegationExprContext;
 import com.parser.ManuScriptParser.OrExprContext;
 import com.parser.ManuScriptParser.ParExpressionContext;
 import com.parser.ManuScriptParser.PostIncDecExprContext;
@@ -561,6 +562,22 @@ public class BaseListener extends ManuScriptBaseListener{
 	}
 	
 	//not overriden. primary function is to assure no constant modification
+	public boolean enterNegationExpression(ManuScriptParser.NegationExprContext ctx) {
+		String varName = ctx.getText();
+		SymbolContext sctx;
+		
+		if((sctx = scopes.peek().checkTables(varName)) != null){
+			if(sctx.isConstant()) {
+				SemanticErrors.throwError(SemanticErrors.CONSTANT_MOD, ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), varName);
+				return false;
+			}
+		} else {
+			return true;
+		}
+		return true;
+	}
+	
+	//not overriden. primary function is to assure no constant modification
 	public boolean enterPostIncDecExpression(ManuScriptParser.PostIncDecExprContext ctx) {
 		String varName = ctx.equationExpr().getText();
 		SymbolContext sctx;
@@ -898,7 +915,12 @@ public class BaseListener extends ManuScriptBaseListener{
 			System.out.println("ENTER FUNCTION CALL");
 			return this.enterFunctionExpression((FunctionExprContext) node);
 			
-		} else if(node instanceof PostIncDecExprContext) {
+		} else if (node instanceof NegationExprContext) {
+			this.enterNegationExpr(((NegationExprContext) node));
+			return this.getExprReturnedType(((NegationExprContext) node).getStart().getLine(), ((NegationExprContext) node).getStart().getCharPositionInLine(), OPERATOR.getEnum(node.getChild(0)), this.getTypeOf(node.getChild(1)));
+		
+		}
+		else if(node instanceof PostIncDecExprContext) {
 			this.enterPostIncDecExpression(((PostIncDecExprContext) node));
 			return this.getExprReturnedType(((PostIncDecExprContext) node).getStart().getLine(), ((PostIncDecExprContext) node).getStart().getCharPositionInLine(), OPERATOR.getEnum(node.getChild(1)), this.getTypeOf(node.getChild(0)));
 		
@@ -995,10 +1017,12 @@ public class BaseListener extends ManuScriptBaseListener{
 				return type;
 			break;
 		case NOT:
+			System.out.println("NOT--------------------");
 			if(this.canBeOfType(type, "boolean", "boolean*"))
 				return type;
 			break;
 		default:
+			System.out.println("DI PUMASKO");
 			break;
 		}
 		SemanticErrors.throwError(SemanticErrors.UN_OP_TYPE_MISMATCH, lineNum, charPos, operator.toString(), type);
