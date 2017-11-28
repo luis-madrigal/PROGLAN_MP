@@ -47,14 +47,14 @@ public class BaseListener extends ManuScriptBaseListener{
 	private HashMap<String, MethodContext> methodTable;
 	private String currentMethod;
 	private HashMap<String, StructInfo> structDefTable;
-	
+
 	public BaseListener(Scope parentScope, HashMap<String, MethodContext> methodTable) {
 		this.scopes = new Stack<Scope>();
 		this.scopes.push(parentScope);
 		this.methodTable = methodTable;
 		this.structDefTable = new HashMap<>();
 	}
-	
+
 	public BaseListener() {
 		scopes = new Stack<Scope>();
 		scopes.push(new Scope(null));
@@ -205,7 +205,7 @@ public class BaseListener extends ManuScriptBaseListener{
 
 		return arInf;
 	}
-	
+
 
 	@Override
 	public void enterStructDefinition(ManuScriptParser.StructDefinitionContext ctx) {
@@ -215,7 +215,7 @@ public class BaseListener extends ManuScriptBaseListener{
 			SemanticErrors.throwError(SemanticErrors.DUPLICATE_STRUCT, ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), name);
 		}
 		else {
-			
+
 			ArrayList<SymbolContext> members = new ArrayList<SymbolContext>();
 			for (ManuScriptParser.StructDeclarationContext strCtx : ctx.structDeclarationList().structDeclaration()) {
 				//declares new type
@@ -293,7 +293,7 @@ public class BaseListener extends ManuScriptBaseListener{
 		System.out.println("new method");
 
 		scopes.push(scope);
-		
+
 		if(ctx.formalParameters().formalParameterList() != null) {
 			//parameter semantic checking
 			for (FormalParameterContext fpctx : ctx.formalParameters().formalParameterList().formalParameter()) {
@@ -351,7 +351,7 @@ public class BaseListener extends ManuScriptBaseListener{
 			}
 		}
 	}
-	
+
 	@Override public void exitMethodDeclaration(ManuScriptParser.MethodDeclarationContext ctx) {
 		MethodContext mctx = methodTable.get(currentMethod);
 		if(mctx.getReturnType().equals(Types.NULL)) {
@@ -381,7 +381,7 @@ public class BaseListener extends ManuScriptBaseListener{
 		for (VariableDeclaratorContext vdctx : ctx.variableDeclarators().variableDeclarator()) {
 			//iterates through varname list (int a,b,...,z)
 			String varName = vdctx.variableDeclaratorId().getText();
-			
+
 			if (getCurrentSymTable().containsKey(varName)) {//CHECK FOR DUPLICATE VARNAME
 				SemanticErrors.throwError(SemanticErrors.DUPLICATE_VAR, ctx.getStart().getLine(),ctx.getStart().getCharPositionInLine(), varName);
 			}
@@ -459,6 +459,16 @@ public class BaseListener extends ManuScriptBaseListener{
 				else if (ctx.typeType().pointerType() != null) {	//declaration is pointer
 					PointerInfo ptrInf = new PointerInfo(varType);
 					symCtx.setOther(ptrInf);
+					if (vdctx.variableInitializer() != null) {
+						System.out.println("vinit");
+						String types = this.expressionCheck(vdctx.variableInitializer().expression());
+						if(!this.regexComparison(varType, types)) {
+							System.out.println("fault "+types);
+							if(vdctx.variableInitializer().expression())
+							if(!this.regexComparison(varType.replace("*", ""), types))
+								SemanticErrors.throwError(SemanticErrors.VAR_ASSIGN_MISMATCH, vdctx.getStart().getLine(), vdctx.getStart().getCharPositionInLine(), varName, types);
+						}
+					}
 				}
 				else if (ctx.typeType().structType() != null) {	//declaration is of type struct
 					if (structDefTable.containsKey(ctx.typeType().structType().Identifier().getText())) {
@@ -486,15 +496,15 @@ public class BaseListener extends ManuScriptBaseListener{
 	}
 
 	@Override//TODO: possibly executing twice
-	public void enterAssignExpr(ManuScriptParser.AssignExprContext ctx) { 
+	public void enterAssignExpr(ManuScriptParser.AssignExprContext ctx) {
 		String varName = ctx.equationExpr().getText();
 		varName = varName.split("\\[")[0];//TODO: bad implementation
 		SymbolContext sctx;
 		System.out.println("assign expr");
-		
+
 		int lineNumStart = ctx.getStart().getLine();
 		int charNumStart = ctx.getStart().getCharPositionInLine();
-		
+
 		if((sctx = scopes.peek().checkTables(varName)) != null){
 //			String varType = sctx.getSymbolType();
 			if(sctx.isConstant())
@@ -506,12 +516,12 @@ public class BaseListener extends ManuScriptBaseListener{
 //						SemanticErrors.throwError(SemanticErrors.VAR_ASSIGN_MISMATCH, lineNumStart, charNumStart, varName, types);
 //				}
 			}
-		} 
+		}
 //	else {
 //			SemanticErrors.throwError(SemanticErrors.UNDECLARED_VAR, ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), varName);
 //		}
 //	}
-	
+
 	@Override
 	public void enterStatementExpression(ManuScriptParser.StatementExpressionContext ctx) {
 		this.expressionCheck(ctx.expression());
@@ -527,7 +537,8 @@ public class BaseListener extends ManuScriptBaseListener{
 		} else {
 			if(mctx.getReturnType().equals("void") && ctx.expression() != null) {
 				SemanticErrors.throwError(SemanticErrors.INVALID_RETURN_TYPE, ctx.getStart().getLine(), ctx.getStop().getCharPositionInLine(), currentMethod, mctx.getReturnType());
-			} else if(!mctx.getReturnType().equals(this.expressionCheck(ctx.expression()))) {
+			} else if(!this.regexComparison(this.expressionCheck(ctx.expression()),mctx.getReturnType())) {
+				System.out.println(!this.regexComparison(this.expressionCheck(ctx.expression()),mctx.getReturnType()));
 				SemanticErrors.throwError(SemanticErrors.INVALID_RETURN_TYPE, ctx.expression().getStart().getLine(), ctx.expression().getStop().getCharPositionInLine(), currentMethod, mctx.getReturnType());
 			}
 		}
