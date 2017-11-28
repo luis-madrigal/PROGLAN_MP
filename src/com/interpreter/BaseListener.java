@@ -28,6 +28,7 @@ import com.parser.ManuScriptParser.FunctionExprContext;
 import com.parser.ManuScriptParser.MethodBodyContext;
 import com.parser.ManuScriptParser.MultDivModExprContext;
 import com.parser.ManuScriptParser.OrExprContext;
+import com.parser.ManuScriptParser.OutputStatementContext;
 import com.parser.ManuScriptParser.ParExpressionContext;
 import com.parser.ManuScriptParser.PostIncDecExprContext;
 import com.parser.ManuScriptParser.PreIncDecSignExprContext;
@@ -891,7 +892,10 @@ public class BaseListener extends ManuScriptBaseListener{
 		if(node.getChildCount() == 1) {
 			return this.getTypeOf(node.getChild(0));
 			
-		} else if(node instanceof ParExpressionContext) {
+		} else if(node instanceof  OutputStatementContext) {
+			ParserRuleContext pCtx = (ParserRuleContext) ((OutputStatementContext) node).expression();
+			return this.getExprReturnedType(pCtx.getStart().getLine(), pCtx.getStart().getCharPositionInLine(), OPERATOR.getEnum(node.getChild(1)), "string", this.getTypeOf(pCtx));
+		}else if(node instanceof ParExpressionContext) {
 			return this.getTypeOf(node.getChild(1));
 		} else if(node instanceof FunctionExprContext) {
 			System.out.println("ENTER FUNCTION CALL");
@@ -904,7 +908,7 @@ public class BaseListener extends ManuScriptBaseListener{
 		} else if(node instanceof PreIncDecSignExprContext) {
 			this.enterPreIncDecSignExpr(((PreIncDecSignExprContext) node));
 			return this.getExprReturnedType(((PreIncDecSignExprContext) node).getStart().getLine(), ((PreIncDecSignExprContext) node).getStart().getCharPositionInLine(), OPERATOR.getEnum(node.getChild(0)), this.getTypeOf(node.getChild(1)));
-		
+
 		} else if(node instanceof MultDivModExprContext
 				|| node instanceof AddSubExprContext
 				|| node instanceof ComparisonExprContext
@@ -1008,9 +1012,9 @@ public class BaseListener extends ManuScriptBaseListener{
 	private String getExprReturnedType(int lineNum, int charPos, OPERATOR operator, String type1, String type2) {
 		switch(operator) {
 		case ADD:
-			if(this.canBeOfType(type1, "string", "string*") && this.canBeOfType(type2, "string", "int", "char", "float", "string*", "int*", "char*", "float*"))
+			if(this.canBeOfType(type1, "string", "string*") && this.canBeOfType(type2, "string", "int", "char", "float", "string*", "int*", "char*", "float*","boolean"))
 				return type1;
-			if(this.canBeOfType(type1, "string", "int", "char", "float", "string*", "int*", "char*", "float*") && this.canBeOfType(type2, "string", "string*"))
+			if(this.canBeOfType(type1, "string", "int", "char", "float", "string*", "int*", "char*", "float*","boolean") && this.canBeOfType(type2, "string", "string*"))
 				return type2;
 		case SUB:
 		case MULT:
