@@ -146,7 +146,7 @@ public class Panel implements CaretListener, Runnable, ActionListener, KeyListen
 	private ScannerModel scanner;
 	private Searcher watcher;
 	private ArrayList<VariableNode> listWatchVariables;
-	
+	private ArrayList<VariableNode> varList;
 	public static int baseFontSize = (int) Frame.SCREEN_SIZE.getHeight() / 60;
 
 	public Panel() {
@@ -1236,7 +1236,23 @@ public class Panel implements CaretListener, Runnable, ActionListener, KeyListen
 		btnContinue.setPressedIcon(new ImageIcon(getClass().getClassLoader().getResource("res/ico_continue_on.png")));
 		
 	}
-	
+
+	public void printVarList(ArrayList<VariableNode>  listVar) {
+//		this.listWatchVariables = this.dlgWatch.getSelectedVar();
+		purgeWatchTab();
+		if(listVar != null && listVar.size() > 0) {
+			String strTab = "   ";
+			for(VariableNode var : listVar) {
+				if(var.isPrint()) {
+					this.modelWatchTable.addRow(new Object[] {strTab+var.getDataType()+" "+var.getLiteral(), var.getLineNumber(), strTab+var.getFuncParent()+" ("+var.getFuncChild()+")", var.getValue()});
+				}
+				System.out.println("var "+var.getLiteral()+" "+var.getCount());
+			}
+			
+			this.outputTabs.setSelectedIndex(this.outputTabs.getTabCount()-1);
+			
+		}
+	}
 	
 	
 	@Override
@@ -1254,13 +1270,14 @@ public class Panel implements CaretListener, Runnable, ActionListener, KeyListen
 			else {
 				Console.instance().purge();
 				purgeWatch();
+				purgeWatchTab();
 				
 				this.changeToPause();
 				String text = this.codeInput.getText();		
 				
 				this.parsedOut.setText("");
 
-				this.parsedOut.setText(this.parsedOut.getText() + this.scanner.getTokens(text+newline, this.getListBreakpoints(text+newline)));
+				this.parsedOut.setText(this.parsedOut.getText() + this.scanner.getTokens(text+newline, this.getListBreakpoints(text+newline), this.varList));
 				this.scanner.generateTree(); // Required to do this
 				this.treePane.setViewportView(this.scanner.getTree());			
 				
@@ -1302,7 +1319,7 @@ public class Panel implements CaretListener, Runnable, ActionListener, KeyListen
 			String text = this.codeInput.getText();
 			
 			this.parsedOut.setText("");
-			this.parsedOut.setText(this.parsedOut.getText()+this.scanner.getTokens(text+newline, this.getListBreakpoints(text+newline)));
+			this.parsedOut.setText(this.parsedOut.getText()+this.scanner.getTokens(text+newline, this.getListBreakpoints(text+newline), this.varList));
 			
 			this.codeInput.selectAll();
 			
@@ -1320,7 +1337,7 @@ public class Panel implements CaretListener, Runnable, ActionListener, KeyListen
 			if(gutter.hasBookmark(i)) {
 				if(i-1 >= 0 &&  strText[i-1].trim().length() > 0) {
 
-					listBreakpoints.push(i);
+					listBreakpoints.push(i+1); // From i TODO
 				}
 				else {
 					
@@ -1493,7 +1510,7 @@ public class Panel implements CaretListener, Runnable, ActionListener, KeyListen
 		if(e.getSource() == btnWatch) {
 			System.out.println("Watch");
 			
-			ArrayList<VariableNode> varList = new ArrayList<VariableNode>();
+			this.varList = new ArrayList<VariableNode>();
 			watcher.generateVarList(this.codeInput.getText());
 			varList = watcher.getVarList();
 		
@@ -1507,7 +1524,9 @@ public class Panel implements CaretListener, Runnable, ActionListener, KeyListen
 			this.listWatchVariables = this.dlgWatch.getSelectedVar();
 			String strTab = "   ";
 			for(VariableNode var : selectedVar) {
-				this.modelWatchTable.addRow(new Object[] {strTab+var.getDataType()+" "+var.getLiteral(), var.getLineNumber(), strTab+var.getFuncParent()+" ("+var.getFuncChild()+")", "0"});
+				if(var.isPrint()) {
+					this.modelWatchTable.addRow(new Object[] {strTab+var.getDataType()+" "+var.getLiteral(), var.getLineNumber(), strTab+var.getFuncParent()+" ("+var.getFuncChild()+")", var.getValue()});
+				}
 				System.out.println("var "+var.getLiteral()+" "+var.getCount());
 			}
 			
@@ -1539,10 +1558,22 @@ public class Panel implements CaretListener, Runnable, ActionListener, KeyListen
 
 	
 	public void purgeWatchTab() {
-		for(int i = 0; i < modelWatchTable.getRowCount(); i++) {
-
-			this.modelWatchTable.removeRow(i);
+		DefaultTableModel dm = (DefaultTableModel) watchTable.getModel();
+		int rowCount = dm.getRowCount();
+		//Remove rows one by one from the end of the table
+		for (int i = rowCount - 1; i >= 0; i--) {
+		    dm.removeRow(i);
 		}
+//		watchTable.removeAll();
+//		while(watchTable.getRowCount() > 0) {
+//			this.watchTable.remove(0);
+//		}
+//		for(int i = 0; i < modelWatchTable.getRowCount(); i++) {
+//
+//			this.modelWatchTable.removeRow(i);
+		
+		
+//		}
 	}
 	public void closeWatch() {
 		
@@ -1552,7 +1583,9 @@ public class Panel implements CaretListener, Runnable, ActionListener, KeyListen
 		this.listWatchVariables = this.dlgWatch.getSelectedVar();
 		String strTab = "   ";
 		for(VariableNode var : selectedVar) {
-			this.modelWatchTable.addRow(new Object[] {strTab+var.getDataType()+" "+var.getLiteral(), var.getLineNumber(), strTab+var.getFuncParent()+" ("+var.getFuncChild()+")", "0"});
+			if(var.isPrint()) {
+				this.modelWatchTable.addRow(new Object[] {strTab+var.getDataType()+" "+var.getLiteral(), var.getLineNumber(), strTab+var.getFuncParent()+" ("+var.getFuncChild()+")", var.getValue()});
+			}
 			System.out.println("var "+var.getLiteral()+" "+var.getCount());
 		}
 		
