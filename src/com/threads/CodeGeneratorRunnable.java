@@ -3,8 +3,10 @@ package com.threads;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.Stack;
 
+import com.debug.watch.VariableNode;
 import com.ide.Panel;
 import com.interpreter.Scope;
 import com.interpreter.AST.ASTBuildVisitor;
@@ -65,8 +67,10 @@ public class CodeGeneratorRunnable implements Runnable {
 	private HashMap<String, MethodContext> methodTable;
 	private HashMap<String, ProcedureNode> methodASTTable;
 	private Panel pnlParent;
-	public CodeGeneratorRunnable(Panel pnlParent, ASTBuildVisitor astbv, HashMap<String, MethodContext> methodTable) {
+	private ArrayList<VariableNode> varList;
+	public CodeGeneratorRunnable(Panel pnlParent, ASTBuildVisitor astbv, HashMap<String, MethodContext> methodTable, ArrayList<VariableNode> varList) {
 		this.astbv = astbv;
+		this.varList = varList;
 		this.methodASTTable = astbv.getMethodASTTable();
 		this.methodTable = methodTable;
 		this.isRunning = true;
@@ -137,8 +141,10 @@ public class CodeGeneratorRunnable implements Runnable {
 //			if(isPlay) {
 				System.out.println(pointer);
 				stmt = this.labelMap.get(pointer);
-				pointerCount = this.evaluate(this.globalScope, registers, stmt, pointerCount);
-				pointer = ICGenerator.LABEL_ALIAS+pointerCount;	
+				pointerCount = this.evaluate(this.globalScope, registers, stmt, pointerCount, "main");
+				pointer = ICGenerator.LABEL_ALIAS+pointerCount;
+				
+				
 //			}			
 		}while(this.checkEndRun(pointer));
 		
@@ -197,11 +203,13 @@ public class CodeGeneratorRunnable implements Runnable {
 //		System.out.println("METHSCOP "+methodScope.printString());
 		do {
 			if(isPlay) {
+//				pnlParent.printVarList(this.varList);
+				filterPrintVarList(this.varList, methodScope, methodName);
 				System.out.println(pointer);
 				pnlParent.changeToInactive();
 				stmt = this.labelMap.get(pointer);
-				Panel.printWatch("evaluating: "+pointer);
-				pointerCount = this.evaluate(methodScope, registers, stmt, pointerCount);
+//				Panel.printWatch("evaluating: "+pointer);
+				pointerCount = this.evaluate(methodScope, registers, stmt, pointerCount, methodName);
 				pointer = ICGenerator.LABEL_ALIAS+pointerCount;
 				
 //				if(stmt.isBreakpoint()) {
@@ -228,7 +236,33 @@ public class CodeGeneratorRunnable implements Runnable {
 		this.returnScope();
 		return value;
 	}
+	public void filterPrintVarList(ArrayList<VariableNode> listVar, Scope scopeMethod, String methodName) {
+		if(listVar != null) {
+			System.out.println(scopeMethod.getSymTable().keySet());
+			ArrayList<VariableNode> printListVar = new ArrayList<VariableNode>();
+			Set<String> listKeys = scopeMethod.getSymTable().keySet();
+			
+			
+			for(String key : listKeys) {
+				for(VariableNode node : listVar) {
+					if(node.getLiteral().trim().equals(key) &&
+							methodName.trim().equals(node.getFuncParent().trim())) {
+						node.setValue(scopeMethod.getSymTable().get(key).getValue().toString());
+						node.setPrint(true);
+					}
+					else {
+						node.setPrint(false);
+					}
+					System.out.println(node.isPrint()+" NODE "+node.getLiteral().trim()+" || KEY "+key+
+							" || Func "+node.getFuncParent().trim()+
+							" || methodName "+methodName);
+				}
+			}
+		}
 	
+		pnlParent.printVarList(listVar);
+	
+	}
 	private void enterBlock(Scope methodScope, String label) {
 		Scope s = methodScope.findWithLabel(label);
 		this.currentScope = s;
@@ -240,12 +274,13 @@ public class CodeGeneratorRunnable implements Runnable {
 		this.currentScope = this.prevBlocks.peek();
 	}
 	
-	private int evaluate(Scope methodScope, HashMap<String, Register> registers, TACStatement statement, int pointerCount) {
+	private int evaluate(Scope methodScope, HashMap<String, Register> registers, TACStatement statement, int pointerCount, String methodName) {
 		// TODO
 //		Panel.printWatch("P"+pointerCount+"    "+methodScope.getSymTable().keySet().toString());
 //		Panel.printWatch(statement+"");
 //		System.out.println("BRK "+	statement.getLabel() + " " + statement.getType()+": "+statement.isBreakpoint());
-		
+		filterPrintVarList(this.varList, methodScope, methodName);
+
 		if(statement.isBreakpoint()) {
 //			System.out.println("BRK "+	statement.getLabel() + " " + statement.getType()+": "+statement.isBreakpoint());
 			this.isPlay = false;

@@ -5,6 +5,7 @@ import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -33,12 +34,16 @@ import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.JTextPane;
+import javax.swing.Painter;
 import javax.swing.ScrollPaneConstants;
+import javax.swing.UIDefaults;
 import javax.swing.UIManager;
 import javax.swing.border.Border;
+import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
+import javax.swing.plaf.ColorUIResource;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
@@ -51,6 +56,7 @@ import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyleContext;
 
+import org.antlr.v4.codegen.model.dbg;
 import org.antlr.v4.gui.TreeViewer;
 import org.fife.ui.rsyntaxtextarea.AbstractTokenMakerFactory;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
@@ -140,11 +146,65 @@ public class Panel implements CaretListener, Runnable, ActionListener, KeyListen
 	private ScannerModel scanner;
 	private Searcher watcher;
 	private ArrayList<VariableNode> listWatchVariables;
-	
+	private ArrayList<VariableNode> varList;
 	public static int baseFontSize = (int) Frame.SCREEN_SIZE.getHeight() / 60;
 
 	public Panel() {
 		Console.instance().setPnlParent(this);
+
+//		InternalFrame.optionDialogBackground
+//		InternalFrame.optionDialogTitleFont
+		UIManager.getDefaults().put("OptionPane.background", Color.WHITE);
+		UIManager.getDefaults().put("OptionPane.background", Color.WHITE);
+//		UIManager.getDefaults().put("OptionPane.border", new EmptyBorder(15, 0, 0, 15));
+//		UIManager.getDefaults().put("OptionPane.buttonAreaBorder", new EmptyBorder(0, 15, 10, 0));
+		UIManager.getDefaults().put("OptionPane.messageAreaBorder", new EmptyBorder(0, 0, 15, 0));
+
+		UIDefaults defaults = UIManager.getLookAndFeelDefaults();
+		defaults.put("Button.focus", new ColorUIResource(new Color(0, 0, 0, 0)));
+		UIManager.getDefaults().put("OptionPane.titleText", "");
+		UIManager.getDefaults().put("Panel.background", Color.WHITE);
+
+		UIManager.getDefaults().put("Button.background", Color.WHITE);
+		UIManager.getDefaults().put("Button.opaque", false);
+		UIManager.getDefaults().put("Button.defaultButtonFollowsFocus", false);
+		UIManager.getDefaults().put("Button.highlight", Color.WHITE);
+		UIManager.getDefaults().put("Button.light", Color.WHITE);
+		UIManager.getDefaults().put("Button.light", Color.WHITE);
+		
+		
+		UIManager.getDefaults().put("CheckBoxMenuItem.checkIcon", new ImageIcon(getClass().getClassLoader().getResource("res/ico_check_on.png")));
+		
+		UIManager.getDefaults().put("CheckBoxMenuItem.icon", new ImageIcon(getClass().getClassLoader().getResource("res/ico_check_on.png")));
+		
+		
+		Painter<Component> p = new Painter<Component>() {
+		     public void paint(Graphics2D g, Component c, int width, int height) {
+		    	 c.setBackground(Color.WHITE);
+		         g.setColor(c.getBackground());
+		         c.paint(g);
+		        
+		     }
+		 };
+
+		UIManager.getDefaults().put("Button[Default+MouseOver].backgroundPainter", p);
+		UIManager.getDefaults().put("Button[Default+Focused+MouseOver].backgroundPainter", p);
+		UIManager.getDefaults().put("Button[MouseOver].backgroundPainter", p);
+		UIManager.getDefaults().put("Button[Pressed].backgroundPainter", p);
+		UIManager.getDefaults().put("Button[Focused].backgroundPainter", p);
+		UIManager.getDefaults().put("Button[Enabled].backgroundPainter", p);
+		
+
+		UIManager.getDefaults().put("OptionPane.questionIcon", new ImageIcon(getClass().getClassLoader().getResource("res/ico_question.png")));
+		UIManager.getDefaults().put("OptionPane.separatorPadding", 0);
+		UIManager.getDefaults().put("OptionPane.messageAnchor", 10);
+		UIManager.getDefaults().put("OptionPane:\"OptionPane.messageArea\".contentMargins", new Insets(0, 0, 10,0));
+	
+//		UIManager.getDefaults().put("Button.highlight", Styles.UN_RESERVED_WORD);
+		UIManager.getDefaults().put("OptionPane.messageAreaBorder", new EmptyBorder(0, 0, 0, 5));
+//		UIManager.getDefaults().put("OptionPaneUI", new EmptyBorder(0, 0, 0, 0));
+//		UIManager.getDefaults().put("TabbedPane.tabsOverlapBorder", true);
+		
 		// Remove JTabbedPane "Borders"
 		UIManager.getDefaults().put("TabbedPane.contentBorderInsets", new Insets(0,0,0,0));
 		UIManager.getDefaults().put("TabbedPane.tabsOverlapBorder", true);
@@ -239,15 +299,16 @@ public class Panel implements CaretListener, Runnable, ActionListener, KeyListen
 		this.pnlMenu = new JPanel();
 //		pnlMenu.setBackground(FrameStatic.clrTransparent);
 //		pnlMenu.setOpaque(false);
-		pnlMenu.setBackground(Color.WHITE);
+//		pnlMenu.setBackground(Color.gray);
 		pnlMenu.setLayout(null);
 		
 //		pnlMenu.setLayout(new BoxLayout(pnlMenu, BoxLayout.X_AXIS));
 //		pnlMenu.setMinimumSize(new Dimension(400, 30));
-		pnlMenu.setSize(new Dimension(400, 30));
+		pnlMenu.setSize(new Dimension(600, 30));
 		pnlMenu.setMinimumSize(pnlMenu.getSize());
 		pnlMenu.setMaximumSize(pnlMenu.getSize());
 		pnlMenu.setPreferredSize(pnlMenu.getSize());
+		pnlMenu.setAlignmentX(JPanel.LEFT_ALIGNMENT);
 //		pnlMenu.setMaximumSize(new Dimension(400, 30));
 
 //		pnlMenu.setPreferredSize(new Dimension(400, 30));
@@ -581,6 +642,7 @@ public class Panel implements CaretListener, Runnable, ActionListener, KeyListen
 		parentPane.setBackground(Color.WHITE);
 		//Scale Button
 		JPanel pnlScaleMenu = new JPanel();
+		
 		pnlScaleMenu.setLayout(null);
         this.btnScaleUp = new JButton();
         btnScaleUp.setBackground(Color.WHITE);
@@ -589,8 +651,8 @@ public class Panel implements CaretListener, Runnable, ActionListener, KeyListen
         btnScaleUp.setIcon(new ImageIcon(getClass().getClassLoader().getResource("res/ico_add_off.png")));
         btnScaleUp.setRolloverIcon(new ImageIcon(getClass().getClassLoader().getResource("res/ico_add_on.png")));
         btnScaleUp.setPressedIcon(new ImageIcon(getClass().getClassLoader().getResource("res/ico_add_on.png")));
+
         btnScaleUp.setFocusable(false);
-        
 		this.btnScaleUp.setBounds(3, 3, 30, 30);
 		this.btnScaleUp.addActionListener(this);
 		pnlScaleMenu.add(this.btnScaleUp);
@@ -626,6 +688,7 @@ public class Panel implements CaretListener, Runnable, ActionListener, KeyListen
 		this.outputTabs.setFont(FrameStatic.fntDefault);
 		outputTabs.setBackground(Color.WHITE);
 		outputTabs.setForeground(Styles.TEXT_GRAY);
+
 		parentPane.setSize(outputTabs.getWidth(), 40);
 		
 	
@@ -748,7 +811,7 @@ public class Panel implements CaretListener, Runnable, ActionListener, KeyListen
 //		topSplitPane.getLeftComponent().setBounds(0, 0, topSplitPane.getLeftComponent().getWidth(),
 //				topSplitPane.getLeftComponent().getHeight());
 		this.topSplitPane.setRightComponent(this.outputTabs);
-		this.topSplitPane.setDividerLocation((int) Frame.SCREEN_SIZE.getWidth()-380); // TODO
+		this.topSplitPane.setDividerLocation((int) Frame.SCREEN_SIZE.getWidth()-280); // TODO
 		gbc = new GridBagConstraints();
 		gbc.anchor = GridBagConstraints.NORTHEAST;
 		gbc.fill = GridBagConstraints.BOTH;
@@ -871,6 +934,7 @@ public class Panel implements CaretListener, Runnable, ActionListener, KeyListen
 		documentOut.repaint();
 		documentPane.addMouseListener(this);
 //		this.foldDoument();
+		this.unfoldDoument();
 		documentOut.generate(this.codeInput.getText());
 	}
 	
@@ -970,32 +1034,102 @@ public class Panel implements CaretListener, Runnable, ActionListener, KeyListen
 		btnContinue.setPreferredSize(btnContinue.getSize());
 		pnlMenu.add(btnContinue);
 		
-		this.btnPause = new JButton("Pause");
+		this.btnPause = new JButton();
+		btnPause.setFont(FrameStatic.fntDefault);
 		btnPause.setFocusable(false);
-		btnPause.addActionListener(this);
-		btnPause.addMouseListener(this);
-//		btnPause.setBorder(null);
-		btnPause.setBorder(FrameStatic.brdrBarUn);
+//		btnPause.addActionListener(this);
+//		btnPause.addMouseListener(this);
+		
+		btnPause.setBorder(null);
+//		btnPause.setBorder(FrameStatic.brdrBarUn);
 		btnPause.setBackground(Color.WHITE);
-//		btnPause.setIcon(new ImageIcon(getClass().getClassLoader().getResource("res/ico_watch_off.png")));
-//		btnPause.setRolloverIcon(new ImageIcon(getClass().getClassLoader().getResource("res/ico_watch_on.png")));
-//		btnPause.setPressedIcon(new ImageIcon(getClass().getClassLoader().getResource("res/ico_watch_on.png")));
+		btnPause.setIcon(new ImageIcon(getClass().getClassLoader().getResource("res/ico_tab.png")));
+		btnPause.setRolloverIcon(new ImageIcon(getClass().getClassLoader().getResource("res/ico_tab.png")));
+		btnPause.setPressedIcon(new ImageIcon(getClass().getClassLoader().getResource("res/ico_tab.png")));
 		btnPause.setFocusable(false);
 		btnPause.getInsets().set(0, 0, 0, 0);
 
-		btnPause.setSize(width, height);
+		btnPause.setSize(btnPause.getIcon().getIconWidth(), height);
 		btnPause.setPreferredSize(btnPause.getSize());
-//		pnlMenu.add(btnPause);
+		btnPause.setLayout(null);
+		JLabel lblManuscript = new JLabel();
+		lblManuscript.setFont(FrameStatic.fntDefault14_BOLD);
+		lblManuscript.setForeground(Styles.BRIGHT_BLUE);
+		
+		lblManuscript.setSize(btnPause.getSize());
+		lblManuscript.setPreferredSize(btnPause.getSize());
+		lblManuscript.setMinimumSize(btnPause.getSize());
+		lblManuscript.setMaximumSize(btnPause.getSize());
+
+		lblManuscript.setHorizontalTextPosition(JLabel.CENTER);
+		lblManuscript.setVerticalTextPosition(JLabel.CENTER);
+//		lblManuscript.setLayout(new BoxLayout(lblManuscript, BoxLayout.X_AXIS));
+		lblManuscript.setLayout(null);
+		JLabel lblManuscript1 = new JLabel("Manu");
+		lblManuscript1.setFont(FrameStatic.fntDefault14_BOLD);
+		lblManuscript1.setForeground(Styles.TEXT_GRAY);
+		
+		lblManuscript1.setSize(39, lblManuscript.getHeight());
+		lblManuscript1.setPreferredSize(lblManuscript1.getSize());
+		lblManuscript1.setMinimumSize(lblManuscript1.getSize());
+		lblManuscript1.setMaximumSize(lblManuscript1.getSize());
+
+		lblManuscript1.setHorizontalTextPosition(JLabel.CENTER);
+		lblManuscript1.setVerticalTextPosition(JLabel.CENTER);
 		
 
-		int offsetX = 0;
+		lblManuscript.setLocation(25, lblManuscript.getY());
+		lblManuscript.add(lblManuscript1);
+		
+		JLabel lblManuscript2 = new JLabel("Script");
+		lblManuscript2.setFont(FrameStatic.fntDefault14_BOLD);
+		lblManuscript2.setForeground(Styles.TEXT_GRAY);
+		
+		lblManuscript2.setSize(50, lblManuscript.getHeight());
+		lblManuscript2.setPreferredSize(lblManuscript2.getSize());
+		lblManuscript2.setMinimumSize(lblManuscript2.getSize());
+		lblManuscript2.setMaximumSize(lblManuscript2.getSize());
 
-		btnRun.setLocation(28, 0);
+		lblManuscript2.setHorizontalTextPosition(JLabel.CENTER);
+		lblManuscript2.setVerticalTextPosition(JLabel.CENTER);
+		lblManuscript2.setLocation(lblManuscript1.getX()+lblManuscript1.getWidth(), lblManuscript1.getY());
+		lblManuscript.add(lblManuscript2);
+		
+		lblManuscript.setLocation(lblManuscript.getX(), lblManuscript.getY());
+		
+		JLabel lblManuscript3 = new JLabel("IDE");
+		lblManuscript3.setFont(FrameStatic.fntDefault14_BOLD);
+		lblManuscript3.setForeground(Styles.TEXT_GRAY);
+		
+		lblManuscript3.setSize(lblManuscript.getWidth()/2, lblManuscript.getHeight());
+		lblManuscript3.setPreferredSize(lblManuscript3.getSize());
+		lblManuscript3.setMinimumSize(lblManuscript3.getSize());
+		lblManuscript3.setMaximumSize(lblManuscript3.getSize());
+
+		lblManuscript3.setLocation(lblManuscript2.getX()+lblManuscript2.getWidth(), lblManuscript1.getY());
+		lblManuscript.add(lblManuscript3);
+		
+		lblManuscript.setLocation(lblManuscript.getX(), lblManuscript.getY());
+		
+//		btnPause.setLayout(null);
+		btnPause.add(lblManuscript);
+		pnlMenu.add(btnPause);
+		
+		
+		int offsetX = 0;
+		btnPause.setLocation(33, 0);
+		btnRun.setLocation(btnPause.getX()+btnPause.getWidth()+5, 0); // 28
 		btnLoad.setLocation(btnRun.getX()+btnRun.getWidth()+offsetX, btnRun.getY());
 		btnSave.setLocation(btnLoad.getX()+btnLoad.getWidth()+offsetX, btnRun.getY());
 		btnWatch.setLocation(btnSave.getX()+btnSave.getWidth()+offsetX, btnRun.getY());
 		btnContinue.setLocation(btnWatch.getX()+btnWatch.getWidth()+offsetX, btnRun.getY());
-		btnPause.setLocation(btnContinue.getX()+btnContinue.getWidth()+offsetX, btnRun.getY());
+//		btnPause.setLocation(btnContinue.getX()+btnContinue.getWidth()+offsetX, btnRun.getY());
+		
+
+
+//		JLabel lblTitle = new JLabel("ManuScript IDE");
+//		lblTitle.setBounds(btnContinue.getX()+btnContinue.getWidth(), btnRun.getY(), 400, btnRun.getHeight());
+//		pnlMain.add(lblTitle);
 		
 	}
 	
@@ -1102,7 +1236,23 @@ public class Panel implements CaretListener, Runnable, ActionListener, KeyListen
 		btnContinue.setPressedIcon(new ImageIcon(getClass().getClassLoader().getResource("res/ico_continue_on.png")));
 		
 	}
-	
+
+	public void printVarList(ArrayList<VariableNode>  listVar) {
+//		this.listWatchVariables = this.dlgWatch.getSelectedVar();
+		purgeWatchTab();
+		if(listVar != null && listVar.size() > 0) {
+			String strTab = "   ";
+			for(VariableNode var : listVar) {
+				if(var.isPrint()) {
+					this.modelWatchTable.addRow(new Object[] {strTab+var.getDataType()+" "+var.getLiteral(), var.getLineNumber(), strTab+var.getFuncParent()+" ("+var.getFuncChild()+")", var.getValue()});
+				}
+				System.out.println("var "+var.getLiteral()+" "+var.getCount());
+			}
+			
+			this.outputTabs.setSelectedIndex(this.outputTabs.getTabCount()-1);
+			
+		}
+	}
 	
 	
 	@Override
@@ -1120,13 +1270,14 @@ public class Panel implements CaretListener, Runnable, ActionListener, KeyListen
 			else {
 				Console.instance().purge();
 				purgeWatch();
+				purgeWatchTab();
 				
 				this.changeToPause();
 				String text = this.codeInput.getText();		
 				
 				this.parsedOut.setText("");
 
-				this.parsedOut.setText(this.parsedOut.getText() + this.scanner.getTokens(text+newline, this.getListBreakpoints(text+newline)));
+				this.parsedOut.setText(this.parsedOut.getText() + this.scanner.getTokens(text+newline, this.getListBreakpoints(text+newline), this.varList));
 				this.scanner.generateTree(); // Required to do this
 				this.treePane.setViewportView(this.scanner.getTree());			
 				
@@ -1168,7 +1319,7 @@ public class Panel implements CaretListener, Runnable, ActionListener, KeyListen
 			String text = this.codeInput.getText();
 			
 			this.parsedOut.setText("");
-			this.parsedOut.setText(this.parsedOut.getText()+this.scanner.getTokens(text+newline, this.getListBreakpoints(text+newline)));
+			this.parsedOut.setText(this.parsedOut.getText()+this.scanner.getTokens(text+newline, this.getListBreakpoints(text+newline), this.varList));
 			
 			this.codeInput.selectAll();
 			
@@ -1186,7 +1337,7 @@ public class Panel implements CaretListener, Runnable, ActionListener, KeyListen
 			if(gutter.hasBookmark(i)) {
 				if(i-1 >= 0 &&  strText[i-1].trim().length() > 0) {
 
-					listBreakpoints.push(i);
+					listBreakpoints.push(i+1); // From i TODO
 				}
 				else {
 					
@@ -1359,11 +1510,11 @@ public class Panel implements CaretListener, Runnable, ActionListener, KeyListen
 		if(e.getSource() == btnWatch) {
 			System.out.println("Watch");
 			
-			ArrayList<VariableNode> varList = new ArrayList<VariableNode>();
+			this.varList = new ArrayList<VariableNode>();
 			watcher.generateVarList(this.codeInput.getText());
 			varList = watcher.getVarList();
 		
-			this.dlgWatch = new DialogWatch(varList);
+			this.dlgWatch = new DialogWatch(this, varList);
 			this.dlgWatch.placeVarList();
 			this.dlgWatch.setVisible(true);
 			
@@ -1373,7 +1524,9 @@ public class Panel implements CaretListener, Runnable, ActionListener, KeyListen
 			this.listWatchVariables = this.dlgWatch.getSelectedVar();
 			String strTab = "   ";
 			for(VariableNode var : selectedVar) {
-				this.modelWatchTable.addRow(new Object[] {strTab+var.getDataType()+" "+var.getLiteral(), var.getLineNumber(), strTab+var.getFuncParent()+" ("+var.getFuncChild()+")", "0"});
+				if(var.isPrint()) {
+					this.modelWatchTable.addRow(new Object[] {strTab+var.getDataType()+" "+var.getLiteral(), var.getLineNumber(), strTab+var.getFuncParent()+" ("+var.getFuncChild()+")", var.getValue()});
+				}
 				System.out.println("var "+var.getLiteral()+" "+var.getCount());
 			}
 			
@@ -1403,6 +1556,41 @@ public class Panel implements CaretListener, Runnable, ActionListener, KeyListen
 		this.codeInput.setText(strFile);
 	}
 
+	
+	public void purgeWatchTab() {
+		DefaultTableModel dm = (DefaultTableModel) watchTable.getModel();
+		int rowCount = dm.getRowCount();
+		//Remove rows one by one from the end of the table
+		for (int i = rowCount - 1; i >= 0; i--) {
+		    dm.removeRow(i);
+		}
+//		watchTable.removeAll();
+//		while(watchTable.getRowCount() > 0) {
+//			this.watchTable.remove(0);
+//		}
+//		for(int i = 0; i < modelWatchTable.getRowCount(); i++) {
+//
+//			this.modelWatchTable.removeRow(i);
+		
+		
+//		}
+	}
+	public void closeWatch() {
+		
+		ArrayList<VariableNode> selectedVar = new ArrayList<VariableNode>();
+		selectedVar = this.dlgWatch.getSelectedVar();
+		
+		this.listWatchVariables = this.dlgWatch.getSelectedVar();
+		String strTab = "   ";
+		for(VariableNode var : selectedVar) {
+			if(var.isPrint()) {
+				this.modelWatchTable.addRow(new Object[] {strTab+var.getDataType()+" "+var.getLiteral(), var.getLineNumber(), strTab+var.getFuncParent()+" ("+var.getFuncChild()+")", var.getValue()});
+			}
+			System.out.println("var "+var.getLiteral()+" "+var.getCount());
+		}
+		
+		this.outputTabs.setSelectedIndex(this.outputTabs.getTabCount()-1);
+	}
 	void gotoErrorLine(MouseEvent e) {
 		JTextPane textPane = Console.instance().getTextPane();
 		Element element = textPane.getStyledDocument().getCharacterElement(textPane.viewToModel(e.getPoint()));

@@ -182,101 +182,7 @@ public class Searcher {
 						this.blocks.push("MULTIPLE");
 						System.out.println("Pushed While & Multiple.");
 					}
-					
-//					System.out.println("Do-While When.");
-//					this.blocks.pop();
-//					this.blocks.pop();
-//					
-//					System.out.println("Blocks Size: "+this.blocks.size());
-//					
-//					if(!this.blocks.isEmpty()) {
-//						boolean hasMultiple = false;
-//						
-//						if(this.blocks.peek().equals("MULTIPLE")) {
-//							this.blocks.pop();
-//							hasMultiple = true;
-//						}
-//						
-//						if(this.blocks.peek().equals("IF"))
-//							funcBlock = "if";
-//						else if(this.blocks.peek().equals("FOR"))
-//							funcBlock = "replay";
-//						else if(this.blocks.peek().equals("WHILE"))
-//							funcBlock = "when";
-//						else if(this.blocks.peek().equals("DOWHILE"))
-//							funcBlock = "rehearse-when";
-//						
-//						if(hasMultiple)
-//							this.blocks.push("MULTIPLE");
-//					}
-//					else
-//						funcBlock = "";
 				}
-//				else {
-//					System.out.println("Loop While.");
-//					funcBlock = "when";
-//					
-//					if(!this.blocks.isEmpty() && !this.counter.isEmpty()) {
-//						if(this.blocks.peek().equals("MULTIPLE") && this.counter.size()*2 > this.blocks.size()) {
-//							int counterSize = this.counter.size()*2;
-//							
-//							this.shouldAdd = false;
-//							
-//							if(counterSize-this.blocks.size() > 2) {
-//								int diff = counterSize-this.blocks.size();
-//								diff /= 2;
-//								diff -= 1;
-//								int oldDepth = this.depth;
-//								this.depth = oldDepth - diff;
-//								
-//								int lastIndex = this.counter.size()-1;
-//								for(int i = 1; i <= diff; i++) {
-//									this.counter.remove(lastIndex);
-//									lastIndex--;
-//								}
-//							}
-//						}
-//						else if(this.blocks.peek().equals("MULTIPLE") && this.counter.size()*2 == this.blocks.size()) {
-//							this.shouldAdd = true;
-//						}
-//					}
-//					
-//					if(this.blocks.isEmpty()) {
-//						this.depth = 0;
-//						
-//						if(!this.counter.isEmpty()) {
-//							int prevVal = this.counter.get(this.depth);
-//							this.counter.set(this.depth, prevVal+1);
-//							
-//							int n = this.counter.size()-1;
-//							int lastIndex = n;
-//							for(int i = 0; i < n; i++) {
-//								this.counter.remove(lastIndex);
-//								lastIndex--;
-//							}
-//							
-//						}
-//						else {
-//							this.counter.add(0);
-//						}
-//					}
-//					else {
-//						if(this.shouldAdd) {
-//							this.depth++;
-//							this.counter.add(0);
-//						}
-//						else {
-//							int prevVal = this.counter.get(this.depth);
-//							this.counter.set(this.depth, prevVal+1);
-//						}
-//					}
-//					
-//					this.blocks.push("WHILE");
-//					if(line.contains("{")) {
-//						this.blocks.push("MULTIPLE");
-//						System.out.println("Pushed While & Multiple.");
-//					}
-//				}
 			}
 			
 			if(line.contains("{") && !this.blocks.isEmpty() &&
@@ -449,7 +355,6 @@ public class Searcher {
 				if(line.contains("int")) {
 					index = line.indexOf("int")+2;
 
-					
 					if(index+1 < line.length() && line.charAt(index+1) == ' ') {
 						index+=2;
 						dataType = "int";
@@ -601,6 +506,63 @@ public class Searcher {
 				}
 				
 				if(index != 0) {
+					
+					if(!this.blocks.isEmpty() && !this.counter.isEmpty()) {
+						if(this.blocks.peek().equals("MULTIPLE") && this.counter.size()*2 > this.blocks.size()) {
+							int counterSize = this.counter.size()*2;
+							
+							this.shouldAdd = false;
+							
+							if(counterSize-this.blocks.size() > 2) {
+								int diff = counterSize-this.blocks.size();
+								diff /= 2;
+								diff -= 1;
+								int oldDepth = this.depth;
+								this.depth = oldDepth - diff;
+								
+								int lastIndex = this.counter.size()-1;
+								for(int i = 1; i <= diff; i++) {
+									this.counter.remove(lastIndex);
+									lastIndex--;
+								}
+							}
+						}
+						else if(this.blocks.peek().equals("MULTIPLE") && this.counter.size()*2 == this.blocks.size()) {
+							this.shouldAdd = true;
+						}
+					}
+					
+					if(this.blocks.isEmpty()) {
+						System.out.println("Empty blocks.");
+						this.depth = 0;
+						
+						if(!this.counter.isEmpty()) {
+							int prevVal = this.counter.get(this.depth);
+							this.counter.set(this.depth, prevVal+1);
+							
+							int n = this.counter.size()-1;
+							int lastIndex = n;
+							for(int i = 0; i < n; i++) {
+								this.counter.remove(lastIndex);
+								lastIndex--;
+							}
+						}
+						else
+							this.counter.add(0);
+					}
+					else {
+						if(this.shouldAdd) {
+							System.out.println("Enter should add (var)");
+							this.depth++;
+							this.counter.add(0);
+						}
+						else {
+							int prevVal = this.counter.get(this.depth);
+							System.out.println("Prev Val: "+prevVal);
+							this.counter.set(this.depth, prevVal+1);
+						}
+					}
+					
 					while(index < line.length() && (line.charAt(index) != ';' && line.charAt(index) != '=' && line.charAt(index) != ' ')) {
 						literal += line.charAt(index);
 						

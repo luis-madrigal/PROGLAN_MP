@@ -24,6 +24,7 @@ import org.antlr.v4.runtime.dfa.DFA;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
+import com.debug.watch.VariableNode;
 import com.ide.Panel;
 import com.interpreter.BaseListener;
 import com.interpreter.Scope;
@@ -53,7 +54,7 @@ public class ScannerModel {
 		this.pnlParent = pnlParent;
 	}
 	
-	public String getTokens(String input, Stack<Integer> listBreakpoints) {
+	public String getTokens(String input, Stack<Integer> listBreakpoints, ArrayList<VariableNode> varList) {
 		ANTLRInputStream istream = new ANTLRInputStream(input);
 		
 		message = "";
@@ -119,7 +120,7 @@ public class ScannerModel {
 				astbv.printAllAST();
 				this.stopThread();
 					
-				this.runnableCodeGenerator = new CodeGeneratorRunnable(this.pnlParent, this.astbv, methodTable);
+				this.runnableCodeGenerator = new CodeGeneratorRunnable(this.pnlParent, this.astbv, methodTable, varList);
 				this.threadCodeGenerator = new Thread(runnableCodeGenerator);
 				threadCodeGenerator.start();
 			} else

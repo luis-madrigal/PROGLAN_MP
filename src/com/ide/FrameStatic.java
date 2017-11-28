@@ -285,6 +285,9 @@ public class FrameStatic extends JFrame {
 
 	public static Font fntDefault13_BOLD = new Font("Arial", Font.BOLD, 13);
 	public static Font fntDefault12_BOLD = new Font("Arial", Font.BOLD, 12);
+	public static Font fntDefault14_BOLD = new Font("Arial", Font.BOLD, 15);
+
+	public static Font fntConsolas14_BOLD = new Font("Consolas", Font.BOLD, 16);
 	
 	public static Font fntGothamLight8 = new Font("GOTHAM-LIGHT", Font.PLAIN, 8);
 	public static Font fntGothamLight12 = new Font("GOTHAM-LIGHT", Font.PLAIN, 12);
