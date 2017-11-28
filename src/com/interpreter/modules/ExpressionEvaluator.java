@@ -240,42 +240,62 @@ public class ExpressionEvaluator {
 	}
 	
 	public static Integer divide(Integer x, Integer y) {
+		if(y == 0)
+			return (int) Float.NaN;
 		return x / y;
 	}
 	
 	public static Float divide(Float x, Integer y) {
+		if(y == 0)
+			return Float.NaN;
 		return x / y;
 	}
 	
 	public static Float divide(Integer x, Float y) {
+		if(y == 0)
+			return Float.NaN;
 		return x / y;
 	}
 	
 	public static Integer divide(Integer x, Character y) {
+		if(y == 0)
+			return (int) Float.NaN;
 		return x / y;
 	}
 	
 	public static Integer divide(Character x, Integer y) {
+		if(y == 0)
+			return (int) Float.NaN;
 		return x / y;
 	}
 	
 	public static Integer modulo(Integer x, Integer y) {
+		if(y == 0)
+			return (int) Float.NaN;
 		return x % y;
 	}
 	
 	public static Float modulo(Float x, Integer y) {
+		if(y == 0)
+			return Float.NaN;
 		return x % y;
 	}
 	
 	public static Float modulo(Integer x, Float y) {
+		if(y == 0)
+			return Float.NaN;
 		return x % y;
 	}
 	
 	public static Integer modulo(Integer x, Character y) {
+		if(y == 0)
+			return (int) Float.NaN;
 		return x % y;
 	}
 	
 	public static Integer modulo(Character x, Integer y) {
+		if(y == 0)
+			return (int) Float.NaN;
 		return x % y;
 	}
 	
