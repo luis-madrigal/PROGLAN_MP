@@ -1,0 +1,26 @@
+
+ACT main starring () {
+	Say " ";
+
+	string line = "";
+	replay (int i = 1; i <= 9; i++){
+		line = line + " " + i;
+	}
+	Say line;
+	Say "-----------------------------";
+	string line2 = "";
+	replay (int k = 1; k <= 9 ; k++){
+		line2 = line2 + k + "|";
+		replay (int j = 1; j <= 9; j++) {
+			if ( k * j < 10 ) {
+				line2 = line2 + " " + k * j;
+			}
+			else {
+				line2 = line2 + " " + k * j;
+			}
+		}
+		Say line2;
+		line2 ="";
+	}
+	Say "";
+}

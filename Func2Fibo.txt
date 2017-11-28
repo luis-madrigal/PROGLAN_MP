@@ -1,0 +1,15 @@
+
+ACT fib starring (int n){
+	if (n <= 1) {
+		give n;
+	} else {
+		give fib(n-1) + fib(n-2);
+	}
+}
+
+ACT main starring () {
+	int number;
+	Write to number;
+	int answer = fib(number);
+	Say "The answer is "+answer;
+}
