@@ -172,6 +172,12 @@ public class Panel implements CaretListener, Runnable, ActionListener, KeyListen
 		UIManager.getDefaults().put("Button.light", Color.WHITE);
 		UIManager.getDefaults().put("Button.light", Color.WHITE);
 		
+		
+		UIManager.getDefaults().put("CheckBoxMenuItem.checkIcon", new ImageIcon(getClass().getClassLoader().getResource("res/ico_check_on.png")));
+		
+		UIManager.getDefaults().put("CheckBoxMenuItem.icon", new ImageIcon(getClass().getClassLoader().getResource("res/ico_check_on.png")));
+		
+		
 		Painter<Component> p = new Painter<Component>() {
 		     public void paint(Graphics2D g, Component c, int width, int height) {
 		    	 c.setBackground(Color.WHITE);
