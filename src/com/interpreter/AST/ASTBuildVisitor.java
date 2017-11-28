@@ -1,10 +1,7 @@
 package com.interpreter.AST;
 
 import com.interpreter.Scope;
-import com.interpreter.contexts.ArrayInfo;
-import com.interpreter.contexts.ContextType;
-import com.interpreter.contexts.StructInfo;
-import com.interpreter.contexts.SymbolContext;
+import com.interpreter.contexts.*;
 import com.parser.ManuScriptBaseVisitor;
 import com.parser.ManuScriptParser;
 import org.antlr.v4.runtime.tree.ParseTree;
@@ -23,13 +20,15 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
     private int triggeringLineNumber;
     private Stack<Integer> indexTracker;
     private Integer hold;
+    private HashMap<String,MethodContext> methodTable;
 
     private HashMap<String, ProcedureNode> methodASTTable;
 
 
-    public ASTBuildVisitor(Scope symbolTable, Stack<Integer> listBreakpoints){
+    public ASTBuildVisitor(Scope symbolTable, HashMap<String,MethodContext> methodTable, Stack<Integer> listBreakpoints){
         methodASTTable = new HashMap<String, ProcedureNode>();
         this.curScope = symbolTable;
+        this.methodTable = methodTable;
 //        System.out.println("init size: "+levelIndexTracker.size());
         this.listBreakpoints = listBreakpoints;
         this.isBreakpoint = false;
@@ -140,11 +139,12 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
     
     @Override
     public AbstractSyntaxTree visitBlock(ManuScriptParser.BlockContext ctx) {
-   
+
         System.out.println("visitingBL "+ctx.getStart().getLine()+"    "+ctx.getText());
         configureIsBreakpoint(ctx.getStart().getLine());
-        
-        enterBlock();
+
+        if(!(ctx.getParent().getParent() instanceof ManuScriptParser.MethodDeclarationContext))
+            enterBlock();
         AbstractSyntaxTree blockNode = new AbstractSyntaxTree(null);
         blockNode.setNodeType(NodeType.BLOCK);
         
@@ -178,8 +178,7 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
 
     @Override
     public AbstractSyntaxTree visitMethodDeclaration(ManuScriptParser.MethodDeclarationContext ctx) {
-
-
+        enterBlock();
         System.out.println("visitingME "+ctx.getStart().getLine()+"    "+ctx.getText());
         configureIsBreakpoint(ctx.getStart().getLine());
         ProcedureNode pNode = new ProcedureNode(null,ctx.Identifier().getText());
@@ -189,7 +188,27 @@ public class ASTBuildVisitor extends ManuScriptBaseVisitor<AbstractSyntaxTree> {
         pNode.setBreakpoint(this.isBreakpoint);
         if(isBreakpoint)
         	System.out.println("BP: "+pNode.getNodeType());
-        
+
+
+//        System.out.println("methodname: "+ctx.Identifier());
+//        Iterator a = methodTable.entrySet().iterator();
+//        while(a.hasNext()){
+//            Map.Entry<String,MethodContext> root = (Map.Entry)a.next();
+//            System.out.println("TABLE KEY: "+root.getKey());
+//        }
+        MethodContext mctx = methodTable.get(ctx.Identifier().getText());
+        System.out.println("METHOD: "+mctx.getIdentifier());
+        SymbolContext[] params = new SymbolContext[mctx.getArgs().size()];
+        int i = 0;
+        for(String paramName : mctx.getArgs()){
+            SymbolContext param = curScope.getSymTable().get(paramName);
+            params[i] = param;
+            System.out.println("params "+ params[i].getIdentifier());
+            i++;
+        }
+        pNode.setValue(params);
+
+
         AbstractSyntaxTree block = visit(ctx.methodBody().block());
         if (block != null) {
             block.setParent(pNode);

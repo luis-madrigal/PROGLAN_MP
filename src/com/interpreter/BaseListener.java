@@ -61,6 +61,10 @@ public class BaseListener extends ManuScriptBaseListener{
 		methodTable = new HashMap<String, MethodContext>();
 	}
 
+	public HashMap<String, MethodContext> getMethodTable() {
+		return methodTable;
+	}
+
 	@Override public void enterBlock(ManuScriptParser.BlockContext ctx) {
 		if(!(ctx.parent instanceof MethodBodyContext)) {
 			Scope scope = new Scope(scopes.peek());
