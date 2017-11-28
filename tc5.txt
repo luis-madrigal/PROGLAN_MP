@@ -1,0 +1,12 @@
+
+ACT test starring () {
+	give 2 + 4;
+}
+
+ACT main starring () {
+	int[] A = new int[] {1, 2, 3};
+	int x = 4;
+	int sum = x+2*3+((4*2*(3+2))/5) + A[0] + test();
+
+	Say "The value is" + sum;
+}

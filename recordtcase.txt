@@ -1,0 +1,21 @@
+
+composition record {
+	int a;
+	float b;
+}
+
+ACT main starring() {
+	composition record r1;
+
+	r1.a = 10;
+	r1.b = 2.0;
+
+	Say r1.a;
+	Say r1.b;
+
+	composition record r2 = r1;
+
+	r1.a += 10;
+	Say r2.a;
+	Say r2.b;
+}

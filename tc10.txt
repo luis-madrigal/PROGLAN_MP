@@ -1,0 +1,11 @@
+
+ACT main starring () {
+	int number;
+
+	Write to number;
+
+	if (number * 5 > 30 + 2)
+		Say "No";
+	else
+		Say "Yay";
+}

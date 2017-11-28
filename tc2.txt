@@ -1,0 +1,6 @@
+
+permanent int x = 3;
+
+ACT main starring () {
+	x = 2;
+}
