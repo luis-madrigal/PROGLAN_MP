@@ -1497,7 +1497,7 @@ public class Panel implements CaretListener, Runnable, ActionListener, KeyListen
 			watcher.generateVarList(this.codeInput.getText());
 			varList = watcher.getVarList();
 		
-			this.dlgWatch = new DialogWatch(varList);
+			this.dlgWatch = new DialogWatch(this, varList);
 			this.dlgWatch.placeVarList();
 			this.dlgWatch.setVisible(true);
 			
@@ -1537,6 +1537,27 @@ public class Panel implements CaretListener, Runnable, ActionListener, KeyListen
 		this.codeInput.setText(strFile);
 	}
 
+	
+	public void purgeWatchTab() {
+		for(int i = 0; i < modelWatchTable.getRowCount(); i++) {
+
+			this.modelWatchTable.removeRow(i);
+		}
+	}
+	public void closeWatch() {
+		
+		ArrayList<VariableNode> selectedVar = new ArrayList<VariableNode>();
+		selectedVar = this.dlgWatch.getSelectedVar();
+		
+		this.listWatchVariables = this.dlgWatch.getSelectedVar();
+		String strTab = "   ";
+		for(VariableNode var : selectedVar) {
+			this.modelWatchTable.addRow(new Object[] {strTab+var.getDataType()+" "+var.getLiteral(), var.getLineNumber(), strTab+var.getFuncParent()+" ("+var.getFuncChild()+")", "0"});
+			System.out.println("var "+var.getLiteral()+" "+var.getCount());
+		}
+		
+		this.outputTabs.setSelectedIndex(this.outputTabs.getTabCount()-1);
+	}
 	void gotoErrorLine(MouseEvent e) {
 		JTextPane textPane = Console.instance().getTextPane();
 		Element element = textPane.getStyledDocument().getCharacterElement(textPane.viewToModel(e.getPoint()));

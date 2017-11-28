@@ -55,12 +55,13 @@ public class DialogWatch extends JDialog implements MouseListener {
 	private JPanel pnlParent;
 	private ArrayList<VariableNode> varList;
 	private ArrayList<VariableNode> selectedVar;
-	
-	public DialogWatch(ArrayList<VariableNode> varList) {
+	private Panel pnlParentPanel;
+	public DialogWatch(Panel pnlParentPanel, ArrayList<VariableNode> varList) {
+		this.pnlParentPanel = pnlParentPanel;
+		
 		this.varList = varList;
 		this.selectedVar = new ArrayList<VariableNode>();
 		this.initComponents();
-		
 		
 
 		this.pnlTopBar = new JPanel();
@@ -173,6 +174,7 @@ public class DialogWatch extends JDialog implements MouseListener {
 	}
 	
 	public void placeVarList() {
+		
 		GridBagConstraints gbc;
 		
 		gbc = new GridBagConstraints();
@@ -471,6 +473,8 @@ public class DialogWatch extends JDialog implements MouseListener {
 			}
 		}
 		else if(arg0.getSource().equals(this.btnOK)) {
+
+			pnlParentPanel.purgeWatchTab();
 			for(int i = 0; i < this.checkboxList.size(); i++) {
 				if(this.checkboxList.get(i).isSelected()) {
 					this.selectedVar.add(this.varList.get(i));
@@ -479,8 +483,10 @@ public class DialogWatch extends JDialog implements MouseListener {
 			
 			this.dispose();
 		}
-		else if(arg0.getSource().equals(this.btnClose))
+		else if(arg0.getSource().equals(this.btnClose)) {
+			pnlParentPanel.closeWatch();
 			this.dispose();
+		}
 	}
 	
 	@Override
