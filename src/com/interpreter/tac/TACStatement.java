@@ -8,7 +8,6 @@ public abstract class TACStatement {
 	private NodeType type;
 	private boolean isBreakpoint;
 	
-	
 	public TACStatement(NodeType type, boolean isBreakpoint) {
 		this.type = type;
 		this.isBreakpoint = isBreakpoint;

@@ -10,7 +10,6 @@ public class TACVariableDeclaration extends TACStatement{
 	public TACVariableDeclaration(NodeType type, SymbolContext ctx, boolean isBreakpoint) {
 		super(type, isBreakpoint);
 		this.ctx = ctx;
-		// TODO Auto-generated constructor stub
 	}
 
 	public SymbolContext getCtx() {

@@ -24,13 +24,11 @@ public class Scope extends HashSet<String>{
 	}
 	
 	public SymbolContext findVar(String varName) {
-//		System.out.println("find var with name: "+varName);
 		if(this.symTable.containsKey(varName))
 			return this.symTable.get(varName);
 		else if(parent != null)
 			return this.parent.findVar(varName);
 		else {
-			System.out.println("not existing var");
 			return null;
 		}
 	}
@@ -43,7 +41,6 @@ public class Scope extends HashSet<String>{
 	}
 	
 	public Scope findWithLabel(String label) {
-//		System.out.println("looking for: "+label+" in "+this.label);
 		if(this.parent != null && this.label.equals(label)) {
 			return this;
 		}
@@ -51,19 +48,15 @@ public class Scope extends HashSet<String>{
 			for (Scope scope : children) {
 				Scope s;
 				if((s = scope.findWithLabel(label)) != null) {
-//					System.out.println("found");
 					return s;
-				} else
-					System.out.println("not found");
+				}
 			}
 		}
-//		System.out.println("nothing");
 		return null;
 	}
 	
 	public void addToScope(SymbolContext ctx) {
 		this.symTable.put(ctx.getIdentifier(), ctx);
-		System.out.println("add "+ctx.getIdentifier()+" to scope");
 	}
 	
 	public boolean inScope(String varName) {
@@ -163,16 +156,5 @@ public class Scope extends HashSet<String>{
 		}
 		
 		return sTable;
-	}
-	
-	private ArrayList<Scope> cloneChildren() {
-		ArrayList<Scope> scopes = new ArrayList<Scope>();
-		for (Scope scope : this.getChildren()) {
-			Scope s = scope.clone();
-			s.setSymTable(s.cloneSymbolTable());
-			scopes.add(s);
-		}
-		
-		return scopes;
 	}
 }

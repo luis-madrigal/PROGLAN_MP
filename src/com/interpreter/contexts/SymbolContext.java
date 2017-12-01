@@ -11,7 +11,7 @@ public class SymbolContext extends Context{
 	
 	protected String type;	//the type of the variable itself
 	protected boolean isConstant = false;
-	protected Object value;	//todo: is this needed?
+	protected Object value;
 	protected GenericInfo other; //pointer if symbol is array/struct/pointer type
 	protected ContextType ctxType;
 		

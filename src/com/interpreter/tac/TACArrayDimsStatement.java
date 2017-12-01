@@ -9,7 +9,6 @@ public class TACArrayDimsStatement extends TACOutputStatement{
 
 	public TACArrayDimsStatement(NodeType type, boolean isBreakpoint) {
 		super(type, isBreakpoint);
-		// TODO Auto-generated constructor stub
 	}
 	
 	public void initArr(int i) {

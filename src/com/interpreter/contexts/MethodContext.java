@@ -12,7 +12,7 @@ import com.utils.Utils;
 public class MethodContext extends Context{
 
 	private MethodDeclarationContext ctx;
-	private ArrayList<String> argTypes;//TODO: bad implementation
+	private ArrayList<String> argTypes;
 	private ArrayList<String> args;
 
 	private String returnType;

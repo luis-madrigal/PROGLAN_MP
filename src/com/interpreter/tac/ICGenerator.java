@@ -52,8 +52,6 @@ public class ICGenerator {
 		Scope s = new Scope(null);
 		this.scopes.push(s);
 		this.currentScope = s;
-//		registerCount = 0;
-//		labelCount = 0;
 		this.storeStatement(tree);
 		if(!isField)
 			this.addStatement(new TACFuncDeclarationStatement(NodeType.FUNCTION_END, this.methodName));
@@ -115,7 +113,6 @@ public class ICGenerator {
 	}
 	
 	private void assignArray(AbstractSyntaxTree n) {
-//		this.declareVar(n);
 		SymbolContext sctx = (SymbolContext) n.getChild(0).getValue();
 		this.currentScope.addToScope(sctx);
 		
@@ -139,7 +136,6 @@ public class ICGenerator {
 	}
 	
 	private Operand evalArrayInit(AbstractSyntaxTree n) {
-		System.out.println("visit eval array init-------------------");
 		if(n.getChild(0).getNodeType() == NodeType.ARRAY_BLOCK) {
 			TACArrayBlockStatement bStmt = new TACArrayBlockStatement(NodeType.ARRAY_BLOCK, n.isBreakpoint());
 			bStmt.initArr(n.getChildren().size());
@@ -247,13 +243,12 @@ public class ICGenerator {
 		stmt.setJumpDestTrue(ICGenerator.LABEL_ALIAS+(this.labelCount));
 		
 		this.storeStatement(node.getChild(1));
-//		this.addStatement(new TACGotoStatement(ICGenerator.LABEL_ALIAS+(this.labelCount-1)));
 		this.exitBlock(node.isBreakpoint());
 		this.addStatement(gotoStmt);
 		stmt.setJumpDestFalse(ICGenerator.LABEL_ALIAS+(this.labelCount+1));
 
 		for(int i = 2; i < node.getChildren().size(); i++) {
-			if(node.getChild(i).getNodeType().equals(NodeType.BLOCK)) { //ELSE STMT
+			if(node.getChild(i).getNodeType().equals(NodeType.BLOCK)) {
 				this.enterBlock(node.isBreakpoint());
 				this.storeStatement(node.getChild(i));	
 				this.exitBlock(node.isBreakpoint());
@@ -274,7 +269,7 @@ public class ICGenerator {
 		while(!queue.isEmpty()) {
 			AbstractSyntaxTree n = queue.poll();
 			switch(n.getNodeType()) {
-			case VARIABLE: System.out.println(n.getValue());
+			case VARIABLE:
 				SymbolContext ctx = (SymbolContext)n.getValue();
 				return new Variable(OperandTypes.VARIABLE, ctx.getValue(), ctx.getIdentifier());
 			case LITERAL: return new Literal(OperandTypes.LITERAL, LiteralMatcher.instance().parseAttempt(n.getValue()), LITERAL_TYPE.getEnum(((LeafNode)n).getLiteralType()));
@@ -317,14 +312,12 @@ public class ICGenerator {
 	private ArrayAccess arrayAccess(AbstractSyntaxTree node) {
 		SymbolContext ctx = (SymbolContext) node.getValue();
 		ArrayAccess a = new ArrayAccess(ctx.getIdentifier(), OperandTypes.ARR_ACCESS, ctx.getValue());
-//		TACIndexingStatement iStmt = new TACIndexingStatement(NodeType.ARRAY_ACCESS, ctx.getIdentifier(), node.isBreakpoint());
 		
 		for(int i = 0; i < node.getChildren().size(); i++) {
 			a.addIndex(this.storeExpression(node.getChild(i)));
 		}
 		
 		return a;
-//		return this.addOutputStatement(iStmt);
 	}
 	
 	private Operand genArrayBlock(AbstractSyntaxTree node) {
@@ -379,7 +372,6 @@ public class ICGenerator {
 	}
 		
 	private Register convertUnaryOp(TACUnaryOpStatement stmt) {
-		int[] arr = new int[3];
 		Register r = null;
 		this.registerCount++;
 		r = new Register(OperandTypes.REGISTER, ICGenerator.REGISTER_ALIAS+this.registerCount);
@@ -390,7 +382,6 @@ public class ICGenerator {
 				TACBinaryOpStatement binOp = new TACBinaryOpStatement(NodeType.BIN_ARITHMETIC, OPERATOR.ADD, stmt.getOperand1(), new Literal(OperandTypes.LITERAL, new Integer(1), LITERAL_TYPE.INT), stmt.isBreakpoint());
 				binOp.setOutputRegister(r);
 				this.addStatement(binOp);
-//				this.assign(node, OPERATOR.ASSIGN);
 				TACAssignStatement assign = new TACAssignStatement(NodeType.ASSIGN, OPERATOR.ASSIGN, (Variable)stmt.getOperand1(), r, stmt.isBreakpoint());
 				this.addAssignStatement(assign);
 				break;
@@ -432,12 +423,10 @@ public class ICGenerator {
 		this.labelCount++;
 		this.tac.add(stmt);
 		stmt.setLabel(ICGenerator.LABEL_ALIAS+this.labelCount);
-		System.out.println(stmt.toString());
 	}
 	
 	public void print() {
 		for (TACStatement tacStatement : tac) {
-//			// System.out.println(tacStatement.toString());
 			Panel.threeACOut.setText(Panel.threeACOut.getText() + tacStatement.toString() + "\n");
 		}
 		Panel.threeACOut.setText(Panel.threeACOut.getText() + "\n");

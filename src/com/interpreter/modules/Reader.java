@@ -1,30 +1,16 @@
 package com.interpreter.modules;
 
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Container;
 import java.awt.Dimension;
-import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 import javax.swing.BoxLayout;
-import javax.swing.JButton;
-import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
-import javax.swing.UIManager;
-
-import com.ide.OptionPane;
-
 
 public class Reader {
 	
 	private static boolean cancelled = false;
-	
-	
 	
 	public static Object readInput(String type){
 		Object value = null;
@@ -50,7 +36,6 @@ public class Reader {
 	}
 	
 	public static Integer readIntegerInput(String msg) {
-		String[] options = {"   Enter   "};
 		JPanel panel = new JPanel();
 		JLabel lbl = new JLabel(msg);
 		lbl.setPreferredSize(new Dimension(100, 20));
@@ -58,11 +43,8 @@ public class Reader {
 		panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
 		panel.add(lbl);
 		panel.add(txt);
-		int selectedOption = JOptionPane.showOptionDialog(null, panel, "", JOptionPane.NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
 
-
-		String input = txt.getText(); //OptionPane.showInputDialog(msg); //JOptionPane.showInputDialog(msg);
-//		System.out.println("LEN "+input.trim().length());
+		String input = txt.getText();
 		if(input != null && input.length() > 0) {
 			try {
 				return Integer.parseInt(input);
@@ -77,8 +59,6 @@ public class Reader {
 	}
 
 	public static Float readFloatInput(String msg) {
-//		String input = JOptionPane.showInputDialog(msg);
-		String[] options = {"   Enter   "};
 		JPanel panel = new JPanel();
 		JLabel lbl = new JLabel(msg);
 		lbl.setPreferredSize(new Dimension(100, 20));
@@ -86,10 +66,8 @@ public class Reader {
 		panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
 		panel.add(lbl);
 		panel.add(txt);
-		int selectedOption = JOptionPane.showOptionDialog(null, panel, "", JOptionPane.NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
 
-
-		String input = txt.getText(); //OptionPane.showInputDialog(msg); //JOptionPane.showInputDialog(msg);
+		String input = txt.getText();
 		
 		if(input != null && input.length() > 0) {
 			try {
@@ -105,8 +83,6 @@ public class Reader {
 	}
 
 	public static Character readCharInput(String msg) {
-//		String input = JOptionPane.showInputDialog(msg);
-		String[] options = {"   Enter   "};
 		JPanel panel = new JPanel();
 		JLabel lbl = new JLabel(msg);
 		lbl.setPreferredSize(new Dimension(100, 20));
@@ -114,10 +90,8 @@ public class Reader {
 		panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
 		panel.add(lbl);
 		panel.add(txt);
-		int selectedOption = JOptionPane.showOptionDialog(null, panel, "", JOptionPane.NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
 
-
-		String input = txt.getText(); //OptionPane.showInputDialog(msg); //JOptionPane.showInputDialog(msg);
+		String input = txt.getText();
 		
 		if(input != null && input.length() > 0) {
 			try {
@@ -135,8 +109,6 @@ public class Reader {
 	}
 	
 	public static String readStringInput(String msg) {
-//		String input = JOptionPane.showInputDialog(msg);
-		String[] options = {"   Enter   "};
 		JPanel panel = new JPanel();
 		JLabel lbl = new JLabel(msg);
 		lbl.setPreferredSize(new Dimension(100, 20));
@@ -144,10 +116,9 @@ public class Reader {
 		panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
 		panel.add(lbl);
 		panel.add(txt);
-		int selectedOption = JOptionPane.showOptionDialog(null, panel, "", JOptionPane.NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
 
 
-		String input = txt.getText(); //OptionPane.showInputDialog(msg); //JOptionPane.showInputDialog(msg);
+		String input = txt.getText();
 		
 		if(input != null && input.length() > 0) {
 			return input;
@@ -158,8 +129,6 @@ public class Reader {
 	}
 
 	public static Boolean readBoolInput(String msg) {
-//		String input = JOptionPane.showInputDialog(msg);
-		String[] options = {"   Enter   "};
 		JPanel panel = new JPanel();
 		JLabel lbl = new JLabel(msg);
 		lbl.setPreferredSize(new Dimension(100, 20));
@@ -167,10 +136,8 @@ public class Reader {
 		panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
 		panel.add(lbl);
 		panel.add(txt);
-		int selectedOption = JOptionPane.showOptionDialog(null, panel, "", JOptionPane.NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
 
-
-		String input = txt.getText(); //OptionPane.showInputDialog(msg); //JOptionPane.showInputDialog(msg);
+		String input = txt.getText();
 		
 		if(input != null && input.length() > 0) {
 			try {

@@ -1,13 +1,23 @@
 
-ACT test starring () {
-	give 4;
+ACT bubbleSort starring (int[] arr, int len) {
+	replay ( int i = 0; i < len-1; i++) {
+		replay ( int j = 0; j < len-i-1; j++) {
+			if ( arr[j] > arr[j+1] ) {
+				int temp = arr[j];
+				arr[j] = arr[j+1];
+				arr[j+1] = temp;
+			}
+		}
+	}
+
+	give arr;
 }
 
-ACT main starring () {
-	int num = 2;
 
-	if ((num * 3 > test()) && !(num + 3 > 6))
-		Say "Yay";
-	else
-		Say "No";
+ACT main starring ()  {
+	int[] toSort = new int[] {1, 10, 9, 8, 3, 5, 6, 1, 4, 6};
+	toSort = bubbleSort(toSort, 10);
+	replay (int i = 0; i < 10; i++) {
+		Say toSort[i];
+	}
 }

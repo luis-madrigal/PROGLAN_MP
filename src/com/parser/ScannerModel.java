@@ -100,7 +100,6 @@ public class ScannerModel {
 		parser.removeErrorListeners();
 		parser.setErrorHandler(new ManuscriptErrorHandler());
 		parser.addErrorListener(listener);
-		
 
 		this.ruleNames = Arrays.asList(parser.getRuleNames());
 		this.tree = parser.compilationUnit();
@@ -117,7 +116,6 @@ public class ScannerModel {
 			this.astbv = new ASTBuildVisitor(scope, baseListen.getMethodTable(), listBreakpoints);
 			astbv.visit(tree);
 			if(astbv.getMethodASTTable().containsKey("main")) {
-//				astbv.printAST("main");
 				astbv.printAllAST();
 				this.stopThread();
 					
@@ -144,7 +142,6 @@ public class ScannerModel {
 		if(this.threadCodeGenerator != null) {
 			this.runnableCodeGenerator.stop();
 			this.threadCodeGenerator.interrupt();
-			System.out.println("isAlive "+threadCodeGenerator.isAlive());
 		}
 	}
 	public ICGenerator getIcg() {

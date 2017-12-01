@@ -11,7 +11,6 @@ public class TACFuncDeclarationStatement extends TACStatement{
 		this.methodName = methodName;
 	}
 	
-	// TODO
 	public TACFuncDeclarationStatement(NodeType type, String methodName) {
 		super(type, false);
 		this.methodName = methodName;
