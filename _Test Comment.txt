@@ -1,0 +1,15 @@
+
+
+ACT main starring() {
+ 	int x = 0;
+	[]* Comment 1
+		What is your 
+	*[]
+	
+	[Comment]: What
+	Say "Hello World";
+	
+ 	replay(int i = 0; i < 5; i++) {
+ 		Say "Hello World";
+ 	}
+ }
