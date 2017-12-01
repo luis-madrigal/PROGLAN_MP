@@ -447,7 +447,7 @@ public class BaseListener extends ManuScriptBaseListener{
 	@Override
 	public void enterAssignExpr(ManuScriptParser.AssignExprContext ctx) {
 		String varName = ctx.equationExpr().getText();
-		varName = varName.split("\\[")[0];//TODO: bad implementation
+		varName = varName.split("\\[")[0];
 		SymbolContext sctx;
 
 		int lineNumStart = ctx.getStart().getLine();
@@ -469,8 +469,9 @@ public class BaseListener extends ManuScriptBaseListener{
 		if(mctx.getReturnType().equals(Types.NULL)) {
 			if(ctx.expression() == null) {
 				mctx.setReturnType("void");
-			} else
+			} else {
 				mctx.setReturnType(this.expressionCheck(ctx.expression()));
+			}
 		} else {
 			if(mctx.getReturnType().equals("void") && ctx.expression() != null) {
 				SemanticErrors.throwError(SemanticErrors.INVALID_RETURN_TYPE, ctx.getStart().getLine(), ctx.getStop().getCharPositionInLine(), currentMethod, mctx.getReturnType());
@@ -1064,6 +1065,9 @@ public class BaseListener extends ManuScriptBaseListener{
 	
 	private boolean regexComparison(String val, String regex) {
 		String reg = regex.replace("*", "").replace("[", "\\[").replace("]", "\\]");
+		
+		if(val.equals(regex))
+			return true;
 		
 		return val.matches(reg);
 	}

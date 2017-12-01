@@ -1,0 +1,37 @@
+
+ACT power starring ( int n, int exp )
+{
+	int result = 1;
+	if ( n >= 0 && exp == 0 ) {
+		result = 1;
+	}
+	else if ( n == 0 && exp >= 1 )	{ 
+		result = 0;
+	} else {
+		replay ( int i = 1; i <= exp; i++ ) {
+			result = result * n;
+		}	    
+	}
+	give result;
+}
+
+ACT log2 starring ( int input ) {
+	if ( input == 1 )
+		give 0;
+
+	int i = 1, pow = 0;
+	when ( pow < input ) {
+		pow = power ( 2, i );
+		i++;
+	}
+
+	give i-1;
+}
+
+ACT main starring () {
+	int input;
+
+	Write to input;
+
+	Say "Output: " + log2(input);
+}
