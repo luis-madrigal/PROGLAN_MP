@@ -1680,12 +1680,4 @@ public class Panel implements CaretListener, Runnable, ActionListener, KeyListen
 		}
 		
 	}
-
-	public ArrayList<VariableNode> getListWatchVariables() {
-		return listWatchVariables;
-	}
-
-	public void setListWatchVariables(ArrayList<VariableNode> listWatchVariables) {
-		this.listWatchVariables = listWatchVariables;
-	}
 }
