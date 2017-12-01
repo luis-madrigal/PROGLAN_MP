@@ -52,7 +52,8 @@ public class AbstractSyntaxTree {
     }
 
     public AbstractSyntaxTree getChild(int index) {
-    	return children.get(index);
+        System.out.println("Value "+value);
+        return children.get(index);
     }
 
     public void addChild(AbstractSyntaxTree child) {
