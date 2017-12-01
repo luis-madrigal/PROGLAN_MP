@@ -101,6 +101,7 @@ public class CodeGeneratorRunnable implements Runnable {
 				this.methodICodes.put(entry.getKey(), icg.generateICode(entry.getValue(), false));
 				this.variables.put(entry.getKey(), icg.getScope());
 				this.addToLabelMap(this.methodICodes.get(entry.getKey()));
+				icg.print();
 			}
 		}
 		

@@ -465,10 +465,7 @@ public class DialogWatch extends JDialog implements MouseListener {
 		if(arg0.getSource().equals(this.selectAll)) {
 			if(!this.checkboxList.isEmpty()) {
 				for(int i = 0; i < this.checkboxList.size(); i++) {
-//					if(this.checkboxList.get(i).isSelected())
-//						this.checkboxList.get(i).setSelected(false);
-//					else
-						this.checkboxList.get(i).setSelected(this.selectAll.isSelected());
+					this.checkboxList.get(i).setSelected(this.selectAll.isSelected());
 				}
 			}
 		}
