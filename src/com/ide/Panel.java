@@ -137,14 +137,6 @@ public class Panel implements CaretListener, Runnable, ActionListener, KeyListen
 	private JButton btnScaleUp;
 	private JButton btnScaleDown;
 
-	public ArrayList<VariableNode> getListWatchVariables() {
-		return listWatchVariables;
-	}
-
-	public void setListWatchVariables(ArrayList<VariableNode> listWatchVariables) {
-		this.listWatchVariables = listWatchVariables;
-	}
-
 	public final static Color SUBLIME_BG = new Color(39, 40, 34);
 	public final static Color SUBLIME_HIGHLIGHT = new Color(51, 51, 42);
 	public final static Color SUBLIME_KEYWORD = new Color(102, 217, 239);
