@@ -1,0 +1,7 @@
+[comment]: this is a comment
+
+ACT main starring () {
+	int a = 2;
+	float b = 2.0;
+	String test = "Hello World";
+}

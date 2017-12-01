@@ -1,0 +1,5 @@
+
+ACT main starring() {
+	int x;
+	x = "Hello";
+}

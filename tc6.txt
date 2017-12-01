@@ -1,0 +1,14 @@
+
+ACT main starring () {
+	int number;
+
+	Write to number;
+
+	if (number > 0) {
+		Say "Number is positive.";
+	} else if(number < 0) {
+		Say "Number is negative.";
+	} else {
+		Say "Number is 0.";
+	}
+}

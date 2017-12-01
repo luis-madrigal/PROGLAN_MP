@@ -1,0 +1,13 @@
+
+permanent float MULTIPLIER = 2.0f;
+permanent float DIVIDER = 1.5f;
+
+ACT main starring () {
+	int x = 0, y = 0, z = 0;
+ 	x += 4;
+ 	y += 5;
+ 	z += 6;
+
+ 	float finalValue = (((x + y) * MULTIPLIER) / DIVIDER + x + y) - y * MULTIPLIER;
+ 	Say "Value is: " + (finalValue * MULTIPLIER * MULTIPLIER);
+}

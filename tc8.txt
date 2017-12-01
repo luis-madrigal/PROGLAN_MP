@@ -1,0 +1,6 @@
+
+ACT main starring () {
+	replay (int i = 10; i > 1; i--) {
+		Say "The value of i is: "+i;
+	}
+}

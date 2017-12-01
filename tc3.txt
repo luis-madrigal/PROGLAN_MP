@@ -1,0 +1,12 @@
+
+ACT main starring () {
+	string fName;
+	string mName;
+	string lName;
+
+	Write to fName;
+	Write to mName;
+	Write to lName;
+
+	Say "Welcome: "+fName+" "+mName+" "+lName+"!";
+}

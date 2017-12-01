@@ -1,0 +1,17 @@
+
+ACT like starring () {
+	Say "What";
+}
+
+[Comment]: Oh
+
+ACT main starring() {
+ 	int x = 0;
+ 	int what = 2;
+
+	Say "Hello World";
+	
+ 	replay(int i = 0; i < 5; i++) {
+ 		Say "Hello World";
+ 	}
+ }

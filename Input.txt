@@ -1,0 +1,9 @@
+
+[Info]: Driver program to test above functions
+ACT main starring ()
+{
+    int[] arr = new int[]{10, 7, 8, 9, 1, 5};
+    int n = 6;
+    Write to n;
+    Say "Sorted array: "+n;
+}

@@ -1,0 +1,9 @@
+
+ACT main starring () {
+	int num = 2;
+
+	if(num * 3 > 5 && num + 3 == 5)
+		Say "No";
+	else
+		Say "Yay";
+}

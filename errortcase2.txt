@@ -1,0 +1,9 @@
+
+ACT main starring() {
+	int x = 0;
+	if(x == 0) {
+		int y = 2;
+	}
+
+	Say "Y is undeclared " + y;
+}

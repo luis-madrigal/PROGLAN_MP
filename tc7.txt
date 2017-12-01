@@ -1,0 +1,11 @@
+
+ACT main starring () {
+	int sum = 0, i = 100;
+
+	when (i != 0) {
+		sum += i;
+		--i;
+	}
+
+	Say "Sum = " + sum;
+}

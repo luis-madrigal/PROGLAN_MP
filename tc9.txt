@@ -1,0 +1,9 @@
+
+ACT main starring () {
+	int i = 10;
+
+	rehearse {
+		Say i;
+		i--;
+	} when (i > 1);
+}
